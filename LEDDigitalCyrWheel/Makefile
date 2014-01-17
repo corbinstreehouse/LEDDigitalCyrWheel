@@ -36,11 +36,9 @@
 # Typing = 0 takes none
 # Otherwise, leaving empty considers all (default)
 
-# List Arduino/chipKIT/Wiring/Energia/Maple libraries here 
+# List Arduino libraries here
 #
-#APP_LIBS_LIST = Wire Wire/utility EEPROM Ethernet Ethernet/utility \
-	SPI Firmata LiquidCrystal Matrix Sprite SD SD/utility Servo SoftwareSerial Stepper 
-
+#APP_LIBS_LIST = Wire Wire/utility EEPROM Ethernet Ethernet/utility	SPI Firmata LiquidCrystal Matrix Sprite SD SD/utility Servo SoftwareSerial Stepper
 #APP_LIBS_LIST = Wire Wire/utility EEPROM  SoftwareSerial
 #APP_LIBS_LIST = Wire Wire/utility
 

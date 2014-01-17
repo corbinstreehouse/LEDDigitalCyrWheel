@@ -9,7 +9,7 @@
 
 #updated a lot by corbin dunn, corbinstreehouse.com
 
-
+# not used for teensy..
 include $(MAKEFILE_PATH)/Avrdude.mk
 
 ifeq ($(TARGET_NAME),Upload)

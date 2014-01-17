@@ -12,8 +12,7 @@
 //#include <avr/eeprom.h>
 
 #include <stdint.h> // We can compile without this, but it kills xcode completion without it! it took me a while to discover that..
-
-
+#include "CDExportedImage.h"
 
 
 #define PIN 14

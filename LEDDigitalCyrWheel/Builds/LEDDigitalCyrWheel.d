@@ -29,4 +29,5 @@ Builds/LEDDigitalCyrWheel.o: LEDDigitalCyrWheel.cpp \
  /Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_flightsim.h \
  /Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/elapsedMillis.h \
  /Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Arduino.h \
- /Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/IntervalTimer.h
+ /Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/IntervalTimer.h \
+ CDExportedImage.h CDPatternData.h

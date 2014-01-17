@@ -5,19 +5,19 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>9A1D6108-39A1-46BB-A3DF-AB82AB3B674F</string>
+	<string>23A547CD-4F70-441A-BCF7-0DC6FE479AA2</string>
 	<key>IDESourceControlProjectName</key>
 	<string>LEDDigitalCyrWheel</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>1116FF82-F9E0-41A1-92FE-11DB031EEF21</key>
-		<string>https://github.com/corbinstreehouse/ElithionBMSDisplay.git</string>
 		<key>31D19277-93C1-4B36-8D47-39BAE008E6C8</key>
 		<string>https://github.com/adafruit/Adafruit_NeoPixel.git</string>
 		<key>581ADA72-D596-47B7-96A2-A3DFDF0C6864</key>
 		<string>https://github.com/corbinstreehouse/ElithionBMSCanBus.git</string>
 		<key>7B373F31-FC1C-4563-BCFF-DFA44AB4C0D0</key>
 		<string>https://github.com/adafruit/SD.git</string>
+		<key>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</key>
+		<string>https://github.com/corbinstreehouse/LEDDigitalCyrWheel.git</string>
 		<key>BB79AA8B-9CED-45F6-9A86-44FF4DDD236C</key>
 		<string>https://github.com/adafruit/RTClib.git</string>
 		<key>D49A604E-E9FF-408A-B3BC-33F3DEF41E6B</key>
@@ -27,25 +27,25 @@
 	<string>LEDDigitalCyrWheel.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>1116FF82-F9E0-41A1-92FE-11DB031EEF21</key>
-		<string>../..</string>
 		<key>31D19277-93C1-4B36-8D47-39BAE008E6C8</key>
 		<string>../../../../../Documents/Arduino/Libraries/AdaFruit_NeoPixel</string>
 		<key>581ADA72-D596-47B7-96A2-A3DFDF0C6864</key>
 		<string>../../../../../Documents/Arduino/Libraries/Canbus</string>
 		<key>7B373F31-FC1C-4563-BCFF-DFA44AB4C0D0</key>
 		<string>../../../../../Documents/Arduino/Libraries/SD</string>
+		<key>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</key>
+		<string>../..</string>
 		<key>BB79AA8B-9CED-45F6-9A86-44FF4DDD236C</key>
 		<string>../../../../../Documents/Arduino/Libraries/RTClib</string>
 		<key>D49A604E-E9FF-408A-B3BC-33F3DEF41E6B</key>
 		<string>../../../../../Documents/Arduino/Libraries/UTFT</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/corbinstreehouse/ElithionBMSDisplay.git</string>
+	<string>https://github.com/corbinstreehouse/LEDDigitalCyrWheel.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>1116FF82-F9E0-41A1-92FE-11DB031EEF21</string>
+	<string>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -68,7 +68,7 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>1116FF82-F9E0-41A1-92FE-11DB031EEF21</string>
+			<string>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</string>
 			<key>IDESourceControlWCCName</key>
 			<string>LEDDigitalCyrWheel</string>
 		</dict>

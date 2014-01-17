@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D1234C21889AD1100A97482 /* Arduino.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D5202EF1656C3E200F3BF4E /* Arduino.h */; };
 		9D5200CE1650691000F3BF4E /* DefaultFonts.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C61650691000F3BF4E /* DefaultFonts.c */; };
 		9D5200CF1650691000F3BF4E /* HW_AVR_defines.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C71650691000F3BF4E /* HW_AVR_defines.h */; };
 		9D5200D01650691000F3BF4E /* HW_AVR.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C81650691000F3BF4E /* HW_AVR.h */; };
@@ -60,20 +61,12 @@
 		9D5203221656C3E200F3BF4E /* wiring_shift.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D52030F1656C3E200F3BF4E /* wiring_shift.c */; };
 		9D5203231656C3E200F3BF4E /* WMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5203101656C3E200F3BF4E /* WMath.cpp */; };
 		9D5203241656C3E200F3BF4E /* WString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5203111656C3E200F3BF4E /* WString.cpp */; };
-		9DCC769B1589A3D300564CB8 /* Canbus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76201589A3D300564CB8 /* Canbus.cpp */; };
-		9DCC769C1589A3D300564CB8 /* mcp2515.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76281589A3D300564CB8 /* mcp2515.c */; };
-		9DCC769D1589A3D300564CB8 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC762E1589A3D300564CB8 /* main.c */; };
-		9DCC76A01589A3D300564CB8 /* uart.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76331589A3D300564CB8 /* uart.c */; };
 		9DCC76A51589A3D300564CB8 /* RTClib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC764F1589A3D300564CB8 /* RTClib.cpp */; };
 		9DCC76A61589A3D300564CB8 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC765D1589A3D300564CB8 /* File.cpp */; };
 		9DCC76A71589A3D300564CB8 /* SD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76601589A3D300564CB8 /* SD.cpp */; };
 		9DCC76A81589A3D300564CB8 /* Sd2Card.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76641589A3D300564CB8 /* Sd2Card.cpp */; };
 		9DCC76A91589A3D300564CB8 /* SdFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC766A1589A3D300564CB8 /* SdFile.cpp */; };
 		9DCC76AA1589A3D300564CB8 /* SdVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC766C1589A3D300564CB8 /* SdVolume.cpp */; };
-		9DCC76AB1589A3D300564CB8 /* DS1307RTC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC766F1589A3D300564CB8 /* DS1307RTC.cpp */; };
-		9DCC76AC1589A3D300564CB8 /* DateStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76751589A3D300564CB8 /* DateStrings.cpp */; };
-		9DCC76AD1589A3D300564CB8 /* Time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC768B1589A3D300564CB8 /* Time.cpp */; };
-		9DCC76AE1589A3D300564CB8 /* TimeAlarms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76931589A3D300564CB8 /* TimeAlarms.cpp */; };
 		9DCC76B01589A40100564CB8 /* SD.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76611589A3D300564CB8 /* SD.h */; };
 		9DCC76B11589A40100564CB8 /* FatStructs.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76631589A3D300564CB8 /* FatStructs.h */; };
 		9DCC76B21589A40100564CB8 /* Sd2Card.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76651589A3D300564CB8 /* Sd2Card.h */; };
@@ -82,11 +75,12 @@
 		9DCC76B51589A40100564CB8 /* SdFatmainpage.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76681589A3D300564CB8 /* SdFatmainpage.h */; };
 		9DCC76B61589A40100564CB8 /* SdFatUtil.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76691589A3D300564CB8 /* SdFatUtil.h */; };
 		9DCC76B71589A40100564CB8 /* SdInfo.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC766B1589A3D300564CB8 /* SdInfo.h */; };
-		9DCC76B81589A41000564CB8 /* Canbus.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76211589A3D300564CB8 /* Canbus.h */; };
 		9DD818E91886692900AD92E2 /* Adafruit_NeoPixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD818E01886690A00AD92E2 /* Adafruit_NeoPixel.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9D1234C01889AC2300A97482 /* CDExportedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDExportedImage.h; sourceTree = "<group>"; };
+		9D1234C11889AC3B00A97482 /* CDPatternData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDPatternData.h; sourceTree = "<group>"; };
 		9D5200C61650691000F3BF4E /* DefaultFonts.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = DefaultFonts.c; path = ../../../Documents/Arduino/Libraries/UTFT/DefaultFonts.c; sourceTree = "<group>"; };
 		9D5200C71650691000F3BF4E /* HW_AVR_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HW_AVR_defines.h; path = ../../../Documents/Arduino/Libraries/UTFT/HW_AVR_defines.h; sourceTree = "<group>"; };
 		9D5200C81650691000F3BF4E /* HW_AVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HW_AVR.h; path = ../../../Documents/Arduino/Libraries/UTFT/HW_AVR.h; sourceTree = "<group>"; };
@@ -447,44 +441,13 @@
 		9D8ED2C617C01F7F001E1C06 /* Arduino mega2560.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino mega2560.xcconfig"; sourceTree = "<group>"; };
 		9D8ED2C717C01F7F001E1C06 /* Arduino mini pro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino mini pro.xcconfig"; sourceTree = "<group>"; };
 		9D8ED2C817C01F7F001E1C06 /* Arduino Uno.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino Uno.xcconfig"; sourceTree = "<group>"; };
-		9D8ED2C917C01F7F001E1C06 /* chipKIT Uno32.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "chipKIT Uno32.xcconfig"; sourceTree = "<group>"; };
-		9D8ED2CA17C01F7F001E1C06 /* FraunchPad with MSP430FR5739.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "FraunchPad with MSP430FR5739.xcconfig"; sourceTree = "<group>"; };
-		9D8ED2CB17C01F7F001E1C06 /* LaunchPad with msp430g2231.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "LaunchPad with msp430g2231.xcconfig"; sourceTree = "<group>"; };
-		9D8ED2CC17C01F7F001E1C06 /* LaunchPad with msp430g2452.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "LaunchPad with msp430g2452.xcconfig"; sourceTree = "<group>"; };
-		9D8ED2CD17C01F7F001E1C06 /* LaunchPad with msp430g2553.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "LaunchPad with msp430g2553.xcconfig"; sourceTree = "<group>"; };
-		9D8ED2CE17C01F7F001E1C06 /* Maple Flash (revision 3+).xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Maple Flash (revision 3+).xcconfig"; sourceTree = "<group>"; };
 		9D8ED2CF17C01F7F001E1C06 /* Sparkfun Uno.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Sparkfun Uno.xcconfig"; sourceTree = "<group>"; };
-		9D8ED2D017C01F7F001E1C06 /* Wiring S.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Wiring S.xcconfig"; sourceTree = "<group>"; };
 		9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = LEDDigitalCyrWheel.cpp; path = LEDDigitalCyrWheel/LEDDigitalCyrWheel.cpp; sourceTree = SOURCE_ROOT; };
 		9D8ED2D317C01F7F001E1C06 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = Makefile; path = LEDDigitalCyrWheel/Makefile; sourceTree = SOURCE_ROOT; };
 		9D8ED2D517C01F7F001E1C06 /* Arduino.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Arduino.mk; sourceTree = "<group>"; };
-		9D8ED2D617C01F7F001E1C06 /* Arduino1.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Arduino1.mk; sourceTree = "<group>"; };
-		9D8ED2D717C01F7F001E1C06 /* Arduino23.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Arduino23.mk; sourceTree = "<group>"; };
-		9D8ED2D917C01F7F001E1C06 /* Doxygen.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Doxygen.mk; sourceTree = "<group>"; };
-		9D8ED2DA17C01F7F001E1C06 /* Energia.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Energia.mk; sourceTree = "<group>"; };
-		9D8ED2DB17C01F7F001E1C06 /* MapleIDE.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = MapleIDE.mk; sourceTree = "<group>"; };
-		9D8ED2DC17C01F7F001E1C06 /* Mpide.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mpide.mk; sourceTree = "<group>"; };
 		9D8ED2DD17C01F7F001E1C06 /* Step1.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step1.mk; sourceTree = "<group>"; };
 		9D8ED2DE17C01F7F001E1C06 /* Step2.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step2.mk; sourceTree = "<group>"; usesTabs = 1; };
-		9D8ED2DF17C01F7F001E1C06 /* Wiring.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Wiring.mk; sourceTree = "<group>"; };
 		9D922F0C17C711630097A027 /* Arduino micro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino micro.xcconfig"; sourceTree = "<group>"; };
-		9DCC76201589A3D300564CB8 /* Canbus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Canbus.cpp; sourceTree = "<group>"; };
-		9DCC76211589A3D300564CB8 /* Canbus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Canbus.h; sourceTree = "<group>"; };
-		9DCC76221589A3D300564CB8 /* defaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defaults.h; sourceTree = "<group>"; };
-		9DCC76251589A3D300564CB8 /* ecu_reader_logger.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ecu_reader_logger.ino; sourceTree = "<group>"; };
-		9DCC76261589A3D300564CB8 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global.h; sourceTree = "<group>"; };
-		9DCC76281589A3D300564CB8 /* mcp2515.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mcp2515.c; sourceTree = "<group>"; };
-		9DCC76291589A3D300564CB8 /* mcp2515.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mcp2515.h; sourceTree = "<group>"; };
-		9DCC762A1589A3D300564CB8 /* mcp2515_defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mcp2515_defs.h; sourceTree = "<group>"; };
-		9DCC762C1589A3D300564CB8 /* defaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defaults.h; sourceTree = "<group>"; };
-		9DCC762D1589A3D300564CB8 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global.h; sourceTree = "<group>"; };
-		9DCC762E1589A3D300564CB8 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		9DCC762F1589A3D300564CB8 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
-		9DCC76301589A3D300564CB8 /* mcp2515.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mcp2515.c; sourceTree = "<group>"; };
-		9DCC76311589A3D300564CB8 /* mcp2515.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mcp2515.h; sourceTree = "<group>"; };
-		9DCC76321589A3D300564CB8 /* mcp2515_defs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mcp2515_defs.h; sourceTree = "<group>"; };
-		9DCC76331589A3D300564CB8 /* uart.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = uart.c; sourceTree = "<group>"; };
-		9DCC76341589A3D300564CB8 /* uart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = uart.h; sourceTree = "<group>"; };
 		9DCC76491589A3D300564CB8 /* datecalc.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = datecalc.pde; sourceTree = "<group>"; };
 		9DCC764B1589A3D300564CB8 /* ds1307.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ds1307.pde; sourceTree = "<group>"; };
 		9DCC764D1589A3D300564CB8 /* softrtc.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = softrtc.pde; sourceTree = "<group>"; };
@@ -511,30 +474,6 @@
 		9DCC766A1589A3D300564CB8 /* SdFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdFile.cpp; sourceTree = "<group>"; };
 		9DCC766B1589A3D300564CB8 /* SdInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdInfo.h; sourceTree = "<group>"; };
 		9DCC766C1589A3D300564CB8 /* SdVolume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdVolume.cpp; sourceTree = "<group>"; };
-		9DCC766F1589A3D300564CB8 /* DS1307RTC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DS1307RTC.cpp; sourceTree = "<group>"; };
-		9DCC76701589A3D300564CB8 /* DS1307RTC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DS1307RTC.h; sourceTree = "<group>"; };
-		9DCC76711589A3D300564CB8 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
-		9DCC76721589A3D300564CB8 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
-		9DCC76731589A3D300564CB8 /* release_notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.txt; sourceTree = "<group>"; };
-		9DCC76751589A3D300564CB8 /* DateStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateStrings.cpp; sourceTree = "<group>"; };
-		9DCC76791589A3D300564CB8 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
-		9DCC767A1589A3D300564CB8 /* SyncArduinoClock.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SyncArduinoClock.pde; sourceTree = "<group>"; };
-		9DCC767C1589A3D300564CB8 /* TimeGPS.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TimeGPS.pde; sourceTree = "<group>"; };
-		9DCC767E1589A3D300564CB8 /* TimeNTP.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TimeNTP.pde; sourceTree = "<group>"; };
-		9DCC76801589A3D300564CB8 /* TimeRTC.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TimeRTC.pde; sourceTree = "<group>"; };
-		9DCC76821589A3D300564CB8 /* TimeRTCLog.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TimeRTCLog.pde; sourceTree = "<group>"; };
-		9DCC76841589A3D300564CB8 /* TimeRTCSet.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TimeRTCSet.pde; sourceTree = "<group>"; };
-		9DCC76861589A3D300564CB8 /* TimeSerial.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TimeSerial.pde; sourceTree = "<group>"; };
-		9DCC76881589A3D300564CB8 /* TimeSerialDateStrings.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TimeSerialDateStrings.pde; sourceTree = "<group>"; };
-		9DCC76891589A3D300564CB8 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
-		9DCC768A1589A3D300564CB8 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
-		9DCC768B1589A3D300564CB8 /* Time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Time.cpp; sourceTree = "<group>"; };
-		9DCC768C1589A3D300564CB8 /* Time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Time.h; sourceTree = "<group>"; };
-		9DCC76901589A3D300564CB8 /* TimeAlarmExample.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TimeAlarmExample.pde; sourceTree = "<group>"; };
-		9DCC76911589A3D300564CB8 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
-		9DCC76921589A3D300564CB8 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
-		9DCC76931589A3D300564CB8 /* TimeAlarms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeAlarms.cpp; sourceTree = "<group>"; };
-		9DCC76941589A3D300564CB8 /* TimeAlarms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeAlarms.h; sourceTree = "<group>"; };
 		9DD818DA188647B600AD92E2 /* Teensy31.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Teensy31.xcconfig; sourceTree = "<group>"; };
 		9DD818DB18864BD300AD92E2 /* Teensy.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Teensy.mk; sourceTree = "<group>"; };
 		9DD818E01886690A00AD92E2 /* Adafruit_NeoPixel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_NeoPixel.cpp; sourceTree = "<group>"; };
@@ -1760,10 +1699,13 @@
 				9D8ED2C317C01F7F001E1C06 /* Builds */,
 				9D8ED2C417C01F7F001E1C06 /* Config */,
 				9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */,
+				9D1234C01889AC2300A97482 /* CDExportedImage.h */,
+				9D1234C11889AC3B00A97482 /* CDPatternData.h */,
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,
 				9D8ED2D417C01F7F001E1C06 /* Makefiles */,
 			);
-			path = LEDCyrWheel;
+			name = LEDCyrWheel;
+			path = LEDDigitalCyrWheel;
 			sourceTree = "<group>";
 		};
 		9D8ED2C317C01F7F001E1C06 /* Builds */ = {
@@ -1780,19 +1722,11 @@
 				9D8ED2C617C01F7F001E1C06 /* Arduino mega2560.xcconfig */,
 				9D8ED2C717C01F7F001E1C06 /* Arduino mini pro.xcconfig */,
 				9D8ED2C817C01F7F001E1C06 /* Arduino Uno.xcconfig */,
-				9D8ED2C917C01F7F001E1C06 /* chipKIT Uno32.xcconfig */,
-				9D8ED2CA17C01F7F001E1C06 /* FraunchPad with MSP430FR5739.xcconfig */,
-				9D8ED2CB17C01F7F001E1C06 /* LaunchPad with msp430g2231.xcconfig */,
-				9D8ED2CC17C01F7F001E1C06 /* LaunchPad with msp430g2452.xcconfig */,
-				9D8ED2CD17C01F7F001E1C06 /* LaunchPad with msp430g2553.xcconfig */,
-				9D8ED2CE17C01F7F001E1C06 /* Maple Flash (revision 3+).xcconfig */,
 				9D8ED2CF17C01F7F001E1C06 /* Sparkfun Uno.xcconfig */,
-				9D8ED2D017C01F7F001E1C06 /* Wiring S.xcconfig */,
 				9D922F0C17C711630097A027 /* Arduino micro.xcconfig */,
 				9DD818DA188647B600AD92E2 /* Teensy31.xcconfig */,
 			);
-			name = Config;
-			path = LEDDigitalCyrWheel/Config;
+			path = Config;
 			sourceTree = "<group>";
 		};
 		9D8ED2D417C01F7F001E1C06 /* Makefiles */ = {
@@ -1803,16 +1737,8 @@
 				9D8ED2DE17C01F7F001E1C06 /* Step2.mk */,
 				9DD818DB18864BD300AD92E2 /* Teensy.mk */,
 				9D8ED2D517C01F7F001E1C06 /* Arduino.mk */,
-				9D8ED2D617C01F7F001E1C06 /* Arduino1.mk */,
-				9D8ED2D717C01F7F001E1C06 /* Arduino23.mk */,
-				9D8ED2D917C01F7F001E1C06 /* Doxygen.mk */,
-				9D8ED2DA17C01F7F001E1C06 /* Energia.mk */,
-				9D8ED2DB17C01F7F001E1C06 /* MapleIDE.mk */,
-				9D8ED2DC17C01F7F001E1C06 /* Mpide.mk */,
-				9D8ED2DF17C01F7F001E1C06 /* Wiring.mk */,
 			);
-			name = Makefiles;
-			path = LEDDigitalCyrWheel/Makefiles;
+			path = Makefiles;
 			sourceTree = "<group>";
 		};
 		9DCC75F61589A3D300564CB8 /* Libraries */ = {
@@ -1820,61 +1746,11 @@
 			children = (
 				9DD818DF1886690A00AD92E2 /* AdaFruit_NeoPixel */,
 				9D5200D61650691D00F3BF4E /* UTFT */,
-				9DCC761F1589A3D300564CB8 /* Canbus */,
 				9DCC76461589A3D300564CB8 /* RTClib */,
 				9DCC76511589A3D300564CB8 /* SD */,
-				9DCC766D1589A3D300564CB8 /* Time */,
 			);
 			name = Libraries;
 			path = ../../../Documents/Arduino/Libraries;
-			sourceTree = "<group>";
-		};
-		9DCC761F1589A3D300564CB8 /* Canbus */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76201589A3D300564CB8 /* Canbus.cpp */,
-				9DCC76211589A3D300564CB8 /* Canbus.h */,
-				9DCC76221589A3D300564CB8 /* defaults.h */,
-				9DCC76231589A3D300564CB8 /* examples */,
-				9DCC76261589A3D300564CB8 /* global.h */,
-				9DCC76281589A3D300564CB8 /* mcp2515.c */,
-				9DCC76291589A3D300564CB8 /* mcp2515.h */,
-				9DCC762A1589A3D300564CB8 /* mcp2515_defs.h */,
-				9DCC762B1589A3D300564CB8 /* mcp2515_demo */,
-			);
-			path = Canbus;
-			sourceTree = "<group>";
-		};
-		9DCC76231589A3D300564CB8 /* examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76241589A3D300564CB8 /* ecu_reader_logger */,
-			);
-			path = examples;
-			sourceTree = "<group>";
-		};
-		9DCC76241589A3D300564CB8 /* ecu_reader_logger */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76251589A3D300564CB8 /* ecu_reader_logger.ino */,
-			);
-			path = ecu_reader_logger;
-			sourceTree = "<group>";
-		};
-		9DCC762B1589A3D300564CB8 /* mcp2515_demo */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC762C1589A3D300564CB8 /* defaults.h */,
-				9DCC762D1589A3D300564CB8 /* global.h */,
-				9DCC762E1589A3D300564CB8 /* main.c */,
-				9DCC762F1589A3D300564CB8 /* makefile */,
-				9DCC76301589A3D300564CB8 /* mcp2515.c */,
-				9DCC76311589A3D300564CB8 /* mcp2515.h */,
-				9DCC76321589A3D300564CB8 /* mcp2515_defs.h */,
-				9DCC76331589A3D300564CB8 /* uart.c */,
-				9DCC76341589A3D300564CB8 /* uart.h */,
-			);
-			path = mcp2515_demo;
 			sourceTree = "<group>";
 		};
 		9DCC76461589A3D300564CB8 /* RTClib */ = {
@@ -2003,157 +1879,6 @@
 				9DCC766C1589A3D300564CB8 /* SdVolume.cpp */,
 			);
 			path = utility;
-			sourceTree = "<group>";
-		};
-		9DCC766D1589A3D300564CB8 /* Time */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC766E1589A3D300564CB8 /* DS1307RTC */,
-				9DCC76731589A3D300564CB8 /* release_notes.txt */,
-				9DCC76741589A3D300564CB8 /* Time */,
-				9DCC768D1589A3D300564CB8 /* TimeAlarms */,
-			);
-			path = Time;
-			sourceTree = "<group>";
-		};
-		9DCC766E1589A3D300564CB8 /* DS1307RTC */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC766F1589A3D300564CB8 /* DS1307RTC.cpp */,
-				9DCC76701589A3D300564CB8 /* DS1307RTC.h */,
-				9DCC76711589A3D300564CB8 /* keywords.txt */,
-				9DCC76721589A3D300564CB8 /* readme.txt */,
-			);
-			path = DS1307RTC;
-			sourceTree = "<group>";
-		};
-		9DCC76741589A3D300564CB8 /* Time */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76751589A3D300564CB8 /* DateStrings.cpp */,
-				9DCC76761589A3D300564CB8 /* Examples */,
-				9DCC76891589A3D300564CB8 /* keywords.txt */,
-				9DCC768A1589A3D300564CB8 /* Readme.txt */,
-				9DCC768B1589A3D300564CB8 /* Time.cpp */,
-				9DCC768C1589A3D300564CB8 /* Time.h */,
-			);
-			path = Time;
-			sourceTree = "<group>";
-		};
-		9DCC76761589A3D300564CB8 /* Examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76771589A3D300564CB8 /* Processing */,
-				9DCC767B1589A3D300564CB8 /* TimeGPS */,
-				9DCC767D1589A3D300564CB8 /* TimeNTP */,
-				9DCC767F1589A3D300564CB8 /* TimeRTC */,
-				9DCC76811589A3D300564CB8 /* TimeRTCLog */,
-				9DCC76831589A3D300564CB8 /* TimeRTCSet */,
-				9DCC76851589A3D300564CB8 /* TimeSerial */,
-				9DCC76871589A3D300564CB8 /* TimeSerialDateStrings */,
-			);
-			path = Examples;
-			sourceTree = "<group>";
-		};
-		9DCC76771589A3D300564CB8 /* Processing */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76781589A3D300564CB8 /* SyncArduinoClock */,
-			);
-			path = Processing;
-			sourceTree = "<group>";
-		};
-		9DCC76781589A3D300564CB8 /* SyncArduinoClock */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76791589A3D300564CB8 /* readme.txt */,
-				9DCC767A1589A3D300564CB8 /* SyncArduinoClock.pde */,
-			);
-			path = SyncArduinoClock;
-			sourceTree = "<group>";
-		};
-		9DCC767B1589A3D300564CB8 /* TimeGPS */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC767C1589A3D300564CB8 /* TimeGPS.pde */,
-			);
-			path = TimeGPS;
-			sourceTree = "<group>";
-		};
-		9DCC767D1589A3D300564CB8 /* TimeNTP */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC767E1589A3D300564CB8 /* TimeNTP.pde */,
-			);
-			path = TimeNTP;
-			sourceTree = "<group>";
-		};
-		9DCC767F1589A3D300564CB8 /* TimeRTC */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76801589A3D300564CB8 /* TimeRTC.pde */,
-			);
-			path = TimeRTC;
-			sourceTree = "<group>";
-		};
-		9DCC76811589A3D300564CB8 /* TimeRTCLog */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76821589A3D300564CB8 /* TimeRTCLog.pde */,
-			);
-			path = TimeRTCLog;
-			sourceTree = "<group>";
-		};
-		9DCC76831589A3D300564CB8 /* TimeRTCSet */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76841589A3D300564CB8 /* TimeRTCSet.pde */,
-			);
-			path = TimeRTCSet;
-			sourceTree = "<group>";
-		};
-		9DCC76851589A3D300564CB8 /* TimeSerial */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76861589A3D300564CB8 /* TimeSerial.pde */,
-			);
-			path = TimeSerial;
-			sourceTree = "<group>";
-		};
-		9DCC76871589A3D300564CB8 /* TimeSerialDateStrings */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76881589A3D300564CB8 /* TimeSerialDateStrings.pde */,
-			);
-			path = TimeSerialDateStrings;
-			sourceTree = "<group>";
-		};
-		9DCC768D1589A3D300564CB8 /* TimeAlarms */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC768E1589A3D300564CB8 /* Examples */,
-				9DCC76911589A3D300564CB8 /* keywords.txt */,
-				9DCC76921589A3D300564CB8 /* readme.txt */,
-				9DCC76931589A3D300564CB8 /* TimeAlarms.cpp */,
-				9DCC76941589A3D300564CB8 /* TimeAlarms.h */,
-			);
-			path = TimeAlarms;
-			sourceTree = "<group>";
-		};
-		9DCC768E1589A3D300564CB8 /* Examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC768F1589A3D300564CB8 /* TimeAlarmExample */,
-			);
-			path = Examples;
-			sourceTree = "<group>";
-		};
-		9DCC768F1589A3D300564CB8 /* TimeAlarmExample */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76901589A3D300564CB8 /* TimeAlarmExample.pde */,
-			);
-			path = TimeAlarmExample;
 			sourceTree = "<group>";
 		};
 		9DD818DF1886690A00AD92E2 /* AdaFruit_NeoPixel */ = {
@@ -2346,6 +2071,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D1234C21889AD1100A97482 /* Arduino.h in Sources */,
 				9D5200CE1650691000F3BF4E /* DefaultFonts.c in Sources */,
 				9D5200CF1650691000F3BF4E /* HW_AVR_defines.h in Sources */,
 				9D5200D01650691000F3BF4E /* HW_AVR.h in Sources */,
@@ -2353,7 +2079,6 @@
 				9D5200D31650691000F3BF4E /* memorysaver.h in Sources */,
 				9D5200D41650691000F3BF4E /* UTFT.cpp in Sources */,
 				9D5200D51650691000F3BF4E /* UTFT.h in Sources */,
-				9DCC76B81589A41000564CB8 /* Canbus.h in Sources */,
 				9DCC76B01589A40100564CB8 /* SD.h in Sources */,
 				9DCC76B11589A40100564CB8 /* FatStructs.h in Sources */,
 				9DCC76B21589A40100564CB8 /* Sd2Card.h in Sources */,
@@ -2362,20 +2087,12 @@
 				9DCC76B51589A40100564CB8 /* SdFatmainpage.h in Sources */,
 				9DCC76B61589A40100564CB8 /* SdFatUtil.h in Sources */,
 				9DCC76B71589A40100564CB8 /* SdInfo.h in Sources */,
-				9DCC769B1589A3D300564CB8 /* Canbus.cpp in Sources */,
-				9DCC769C1589A3D300564CB8 /* mcp2515.c in Sources */,
-				9DCC769D1589A3D300564CB8 /* main.c in Sources */,
-				9DCC76A01589A3D300564CB8 /* uart.c in Sources */,
 				9DCC76A51589A3D300564CB8 /* RTClib.cpp in Sources */,
 				9DCC76A61589A3D300564CB8 /* File.cpp in Sources */,
 				9DCC76A71589A3D300564CB8 /* SD.cpp in Sources */,
 				9DCC76A81589A3D300564CB8 /* Sd2Card.cpp in Sources */,
 				9DCC76A91589A3D300564CB8 /* SdFile.cpp in Sources */,
 				9DCC76AA1589A3D300564CB8 /* SdVolume.cpp in Sources */,
-				9DCC76AB1589A3D300564CB8 /* DS1307RTC.cpp in Sources */,
-				9DCC76AC1589A3D300564CB8 /* DateStrings.cpp in Sources */,
-				9DCC76AD1589A3D300564CB8 /* Time.cpp in Sources */,
-				9DCC76AE1589A3D300564CB8 /* TimeAlarms.cpp in Sources */,
 				9D5202301656C30E00F3BF4E /* EEPROM.cpp in Sources */,
 				9D5202311656C30E00F3BF4E /* Dhcp.cpp in Sources */,
 				9D5202321656C30E00F3BF4E /* Dns.cpp in Sources */,
@@ -2473,6 +2190,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9DD818DA188647B600AD92E2 /* Teensy31.xcconfig */;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					__MK20DX256__,
+					"ARDUINO=101",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;

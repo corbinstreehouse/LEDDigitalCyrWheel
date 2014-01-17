@@ -33,7 +33,6 @@ endif
 
 # Early info
 #
-ifneq ($(TARGET_NAME),boards)
 ifneq ($(TARGET_NAME),clean)
 $(info  ---- info ----)
 $(info Project)
@@ -42,7 +41,6 @@ $(info .    name		$(PROJECT_NAME))
 $(info .    tag 		$(BOARD_TAG))
 $(info .    extension	$(SKETCH_EXTENSION))
 endif
-endif
 
 
 # Board selection
@@ -50,11 +48,9 @@ endif
 # Board specifics defined in .xconfig file
 # BOARD_TAG and AVRDUDE_PORT 
 #
-ifneq ($(TARGET_NAME),boards)
 ifneq ($(TARGET_NAME),clean)
 ifndef BOARD_TAG
     $(error BOARD_TAG not defined)
-endif
 endif
 endif
 
