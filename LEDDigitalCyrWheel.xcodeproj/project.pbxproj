@@ -61,6 +61,45 @@
 		9D5203221656C3E200F3BF4E /* wiring_shift.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D52030F1656C3E200F3BF4E /* wiring_shift.c */; };
 		9D5203231656C3E200F3BF4E /* WMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5203101656C3E200F3BF4E /* WMath.cpp */; };
 		9D5203241656C3E200F3BF4E /* WString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5203111656C3E200F3BF4E /* WString.cpp */; };
+		9D5D593E1889B1DC00CEBA92 /* analog.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D58DF1889B1DC00CEBA92 /* analog.c */; };
+		9D5D593F1889B1DC00CEBA92 /* AudioStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D58E31889B1DC00CEBA92 /* AudioStream.cpp */; };
+		9D5D59401889B1DC00CEBA92 /* avr_emulation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D58EA1889B1DC00CEBA92 /* avr_emulation.cpp */; };
+		9D5D59411889B1DC00CEBA92 /* eeprom.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D58F41889B1DC00CEBA92 /* eeprom.c */; };
+		9D5D59421889B1DC00CEBA92 /* HardwareSerial1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D58F71889B1DC00CEBA92 /* HardwareSerial1.cpp */; };
+		9D5D59431889B1DC00CEBA92 /* HardwareSerial2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D58F81889B1DC00CEBA92 /* HardwareSerial2.cpp */; };
+		9D5D59441889B1DC00CEBA92 /* HardwareSerial3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D58F91889B1DC00CEBA92 /* HardwareSerial3.cpp */; };
+		9D5D59451889B1DC00CEBA92 /* IntervalTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D58FA1889B1DC00CEBA92 /* IntervalTimer.cpp */; };
+		9D5D59461889B1DC00CEBA92 /* IPAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D58FC1889B1DC00CEBA92 /* IPAddress.cpp */; };
+		9D5D59471889B1DC00CEBA92 /* keylayouts.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D58FE1889B1DC00CEBA92 /* keylayouts.c */; };
+		9D5D59481889B1DC00CEBA92 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59001889B1DC00CEBA92 /* main.cpp */; };
+		9D5D59491889B1DC00CEBA92 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59011889B1DC00CEBA92 /* Makefile */; };
+		9D5D594A1889B1DC00CEBA92 /* math_helper.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59021889B1DC00CEBA92 /* math_helper.c */; };
+		9D5D594B1889B1DC00CEBA92 /* mk20dx128.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59041889B1DC00CEBA92 /* mk20dx128.c */; };
+		9D5D594C1889B1DC00CEBA92 /* new.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59081889B1DC00CEBA92 /* new.cpp */; };
+		9D5D594D1889B1DC00CEBA92 /* nonstd.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D590A1889B1DC00CEBA92 /* nonstd.c */; };
+		9D5D594E1889B1DC00CEBA92 /* pins_teensy.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D590C1889B1DC00CEBA92 /* pins_teensy.c */; };
+		9D5D594F1889B1DC00CEBA92 /* Print.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D590D1889B1DC00CEBA92 /* Print.cpp */; };
+		9D5D59501889B1DC00CEBA92 /* serial1.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59101889B1DC00CEBA92 /* serial1.c */; };
+		9D5D59511889B1DC00CEBA92 /* serial2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59111889B1DC00CEBA92 /* serial2.c */; };
+		9D5D59521889B1DC00CEBA92 /* serial3.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59121889B1DC00CEBA92 /* serial3.c */; };
+		9D5D59531889B1DC00CEBA92 /* Stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59151889B1DC00CEBA92 /* Stream.cpp */; };
+		9D5D59541889B1DC00CEBA92 /* Tone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59171889B1DC00CEBA92 /* Tone.cpp */; };
+		9D5D59551889B1DC00CEBA92 /* touch.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59181889B1DC00CEBA92 /* touch.c */; };
+		9D5D59561889B1DC00CEBA92 /* usb_desc.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D591A1889B1DC00CEBA92 /* usb_desc.c */; };
+		9D5D59571889B1DC00CEBA92 /* usb_dev.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D591C1889B1DC00CEBA92 /* usb_dev.c */; };
+		9D5D59581889B1DC00CEBA92 /* usb_flightsim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D591E1889B1DC00CEBA92 /* usb_flightsim.cpp */; };
+		9D5D59591889B1DC00CEBA92 /* usb_inst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59201889B1DC00CEBA92 /* usb_inst.cpp */; };
+		9D5D595A1889B1DC00CEBA92 /* usb_joystick.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59211889B1DC00CEBA92 /* usb_joystick.c */; };
+		9D5D595B1889B1DC00CEBA92 /* usb_keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59231889B1DC00CEBA92 /* usb_keyboard.c */; };
+		9D5D595C1889B1DC00CEBA92 /* usb_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59251889B1DC00CEBA92 /* usb_mem.c */; };
+		9D5D595D1889B1DC00CEBA92 /* usb_midi.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59271889B1DC00CEBA92 /* usb_midi.c */; };
+		9D5D595E1889B1DC00CEBA92 /* usb_mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59291889B1DC00CEBA92 /* usb_mouse.c */; };
+		9D5D595F1889B1DC00CEBA92 /* usb_rawhid.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D592C1889B1DC00CEBA92 /* usb_rawhid.c */; };
+		9D5D59601889B1DC00CEBA92 /* usb_seremu.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D592E1889B1DC00CEBA92 /* usb_seremu.c */; };
+		9D5D59611889B1DC00CEBA92 /* usb_serial.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59301889B1DC00CEBA92 /* usb_serial.c */; };
+		9D5D59621889B1DC00CEBA92 /* WMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59391889B1DC00CEBA92 /* WMath.cpp */; };
+		9D5D59631889B1DC00CEBA92 /* WString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D593B1889B1DC00CEBA92 /* WString.cpp */; };
+		9D5D59641889B1DC00CEBA92 /* yield.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D593D1889B1DC00CEBA92 /* yield.c */; };
 		9DCC76A51589A3D300564CB8 /* RTClib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC764F1589A3D300564CB8 /* RTClib.cpp */; };
 		9DCC76A61589A3D300564CB8 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC765D1589A3D300564CB8 /* File.cpp */; };
 		9DCC76A71589A3D300564CB8 /* SD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76601589A3D300564CB8 /* SD.cpp */; };
@@ -436,6 +475,99 @@
 		9D5203111656C3E200F3BF4E /* WString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WString.cpp; sourceTree = "<group>"; };
 		9D5203121656C3E200F3BF4E /* WString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WString.h; sourceTree = "<group>"; };
 		9D52034A1657FE9900F3BF4E /* UGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UGeometry.h; path = ../../../Documents/Arduino/Libraries/UTFT/UGeometry.h; sourceTree = "<group>"; };
+		9D5D58DF1889B1DC00CEBA92 /* analog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = analog.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/analog.c; sourceTree = "<group>"; };
+		9D5D58E01889B1DC00CEBA92 /* Arduino.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Arduino.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Arduino.h; sourceTree = "<group>"; };
+		9D5D58E11889B1DC00CEBA92 /* arm_common_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arm_common_tables.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/arm_common_tables.h; sourceTree = "<group>"; };
+		9D5D58E21889B1DC00CEBA92 /* arm_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arm_math.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/arm_math.h; sourceTree = "<group>"; };
+		9D5D58E31889B1DC00CEBA92 /* AudioStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioStream.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/AudioStream.cpp; sourceTree = "<group>"; };
+		9D5D58E41889B1DC00CEBA92 /* AudioStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioStream.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/AudioStream.h; sourceTree = "<group>"; };
+		9D5D58E61889B1DC00CEBA92 /* eeprom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = eeprom.h; sourceTree = "<group>"; };
+		9D5D58E71889B1DC00CEBA92 /* interrupt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = interrupt.h; sourceTree = "<group>"; };
+		9D5D58E81889B1DC00CEBA92 /* io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = io.h; sourceTree = "<group>"; };
+		9D5D58E91889B1DC00CEBA92 /* pgmspace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pgmspace.h; sourceTree = "<group>"; };
+		9D5D58EA1889B1DC00CEBA92 /* avr_emulation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = avr_emulation.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/avr_emulation.cpp; sourceTree = "<group>"; };
+		9D5D58EB1889B1DC00CEBA92 /* avr_emulation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = avr_emulation.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/avr_emulation.h; sourceTree = "<group>"; };
+		9D5D58EC1889B1DC00CEBA92 /* avr_functions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = avr_functions.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/avr_functions.h; sourceTree = "<group>"; };
+		9D5D58ED1889B1DC00CEBA92 /* binary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = binary.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/binary.h; sourceTree = "<group>"; };
+		9D5D58EE1889B1DC00CEBA92 /* Client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Client.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Client.h; sourceTree = "<group>"; };
+		9D5D58EF1889B1DC00CEBA92 /* core_cm4_simd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_cm4_simd.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/core_cm4_simd.h; sourceTree = "<group>"; };
+		9D5D58F01889B1DC00CEBA92 /* core_cm4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_cm4.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/core_cm4.h; sourceTree = "<group>"; };
+		9D5D58F11889B1DC00CEBA92 /* core_cmInstr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_cmInstr.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/core_cmInstr.h; sourceTree = "<group>"; };
+		9D5D58F21889B1DC00CEBA92 /* core_id.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_id.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/core_id.h; sourceTree = "<group>"; };
+		9D5D58F31889B1DC00CEBA92 /* core_pins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = core_pins.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/core_pins.h; sourceTree = "<group>"; };
+		9D5D58F41889B1DC00CEBA92 /* eeprom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = eeprom.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/eeprom.c; sourceTree = "<group>"; };
+		9D5D58F51889B1DC00CEBA92 /* elapsedMillis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = elapsedMillis.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/elapsedMillis.h; sourceTree = "<group>"; };
+		9D5D58F61889B1DC00CEBA92 /* HardwareSerial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HardwareSerial.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/HardwareSerial.h; sourceTree = "<group>"; };
+		9D5D58F71889B1DC00CEBA92 /* HardwareSerial1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HardwareSerial1.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/HardwareSerial1.cpp; sourceTree = "<group>"; };
+		9D5D58F81889B1DC00CEBA92 /* HardwareSerial2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HardwareSerial2.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/HardwareSerial2.cpp; sourceTree = "<group>"; };
+		9D5D58F91889B1DC00CEBA92 /* HardwareSerial3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HardwareSerial3.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/HardwareSerial3.cpp; sourceTree = "<group>"; };
+		9D5D58FA1889B1DC00CEBA92 /* IntervalTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IntervalTimer.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/IntervalTimer.cpp; sourceTree = "<group>"; };
+		9D5D58FB1889B1DC00CEBA92 /* IntervalTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IntervalTimer.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/IntervalTimer.h; sourceTree = "<group>"; };
+		9D5D58FC1889B1DC00CEBA92 /* IPAddress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IPAddress.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/IPAddress.cpp; sourceTree = "<group>"; };
+		9D5D58FD1889B1DC00CEBA92 /* IPAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IPAddress.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/IPAddress.h; sourceTree = "<group>"; };
+		9D5D58FE1889B1DC00CEBA92 /* keylayouts.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = keylayouts.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/keylayouts.c; sourceTree = "<group>"; };
+		9D5D58FF1889B1DC00CEBA92 /* keylayouts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = keylayouts.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/keylayouts.h; sourceTree = "<group>"; };
+		9D5D59001889B1DC00CEBA92 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/main.cpp; sourceTree = "<group>"; };
+		9D5D59011889B1DC00CEBA92 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Makefile; sourceTree = "<group>"; };
+		9D5D59021889B1DC00CEBA92 /* math_helper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = math_helper.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/math_helper.c; sourceTree = "<group>"; };
+		9D5D59031889B1DC00CEBA92 /* math_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = math_helper.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/math_helper.h; sourceTree = "<group>"; };
+		9D5D59041889B1DC00CEBA92 /* mk20dx128.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mk20dx128.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/mk20dx128.c; sourceTree = "<group>"; };
+		9D5D59051889B1DC00CEBA92 /* mk20dx128.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mk20dx128.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/mk20dx128.h; sourceTree = "<group>"; };
+		9D5D59061889B1DC00CEBA92 /* mk20dx128.ld */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mk20dx128.ld; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/mk20dx128.ld; sourceTree = "<group>"; };
+		9D5D59071889B1DC00CEBA92 /* mk20dx256.ld */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mk20dx256.ld; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/mk20dx256.ld; sourceTree = "<group>"; };
+		9D5D59081889B1DC00CEBA92 /* new.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = new.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/new.cpp; sourceTree = "<group>"; };
+		9D5D59091889B1DC00CEBA92 /* new.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = new.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/new.h; sourceTree = "<group>"; };
+		9D5D590A1889B1DC00CEBA92 /* nonstd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nonstd.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/nonstd.c; sourceTree = "<group>"; };
+		9D5D590B1889B1DC00CEBA92 /* pins_arduino.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pins_arduino.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/pins_arduino.h; sourceTree = "<group>"; };
+		9D5D590C1889B1DC00CEBA92 /* pins_teensy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pins_teensy.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/pins_teensy.c; sourceTree = "<group>"; };
+		9D5D590D1889B1DC00CEBA92 /* Print.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Print.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Print.cpp; sourceTree = "<group>"; };
+		9D5D590E1889B1DC00CEBA92 /* Print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Print.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Print.h; sourceTree = "<group>"; };
+		9D5D590F1889B1DC00CEBA92 /* Printable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Printable.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Printable.h; sourceTree = "<group>"; };
+		9D5D59101889B1DC00CEBA92 /* serial1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = serial1.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/serial1.c; sourceTree = "<group>"; };
+		9D5D59111889B1DC00CEBA92 /* serial2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = serial2.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/serial2.c; sourceTree = "<group>"; };
+		9D5D59121889B1DC00CEBA92 /* serial3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = serial3.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/serial3.c; sourceTree = "<group>"; };
+		9D5D59131889B1DC00CEBA92 /* Server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Server.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Server.h; sourceTree = "<group>"; };
+		9D5D59141889B1DC00CEBA92 /* SPIFIFO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SPIFIFO.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/SPIFIFO.h; sourceTree = "<group>"; };
+		9D5D59151889B1DC00CEBA92 /* Stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Stream.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Stream.cpp; sourceTree = "<group>"; };
+		9D5D59161889B1DC00CEBA92 /* Stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stream.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Stream.h; sourceTree = "<group>"; };
+		9D5D59171889B1DC00CEBA92 /* Tone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tone.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Tone.cpp; sourceTree = "<group>"; };
+		9D5D59181889B1DC00CEBA92 /* touch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = touch.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/touch.c; sourceTree = "<group>"; };
+		9D5D59191889B1DC00CEBA92 /* Udp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Udp.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/Udp.h; sourceTree = "<group>"; };
+		9D5D591A1889B1DC00CEBA92 /* usb_desc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_desc.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_desc.c; sourceTree = "<group>"; };
+		9D5D591B1889B1DC00CEBA92 /* usb_desc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_desc.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_desc.h; sourceTree = "<group>"; };
+		9D5D591C1889B1DC00CEBA92 /* usb_dev.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_dev.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_dev.c; sourceTree = "<group>"; };
+		9D5D591D1889B1DC00CEBA92 /* usb_dev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_dev.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_dev.h; sourceTree = "<group>"; };
+		9D5D591E1889B1DC00CEBA92 /* usb_flightsim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = usb_flightsim.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_flightsim.cpp; sourceTree = "<group>"; };
+		9D5D591F1889B1DC00CEBA92 /* usb_flightsim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_flightsim.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_flightsim.h; sourceTree = "<group>"; };
+		9D5D59201889B1DC00CEBA92 /* usb_inst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = usb_inst.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_inst.cpp; sourceTree = "<group>"; };
+		9D5D59211889B1DC00CEBA92 /* usb_joystick.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_joystick.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_joystick.c; sourceTree = "<group>"; };
+		9D5D59221889B1DC00CEBA92 /* usb_joystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_joystick.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_joystick.h; sourceTree = "<group>"; };
+		9D5D59231889B1DC00CEBA92 /* usb_keyboard.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_keyboard.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_keyboard.c; sourceTree = "<group>"; };
+		9D5D59241889B1DC00CEBA92 /* usb_keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_keyboard.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_keyboard.h; sourceTree = "<group>"; };
+		9D5D59251889B1DC00CEBA92 /* usb_mem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_mem.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_mem.c; sourceTree = "<group>"; };
+		9D5D59261889B1DC00CEBA92 /* usb_mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_mem.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_mem.h; sourceTree = "<group>"; };
+		9D5D59271889B1DC00CEBA92 /* usb_midi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_midi.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_midi.c; sourceTree = "<group>"; };
+		9D5D59281889B1DC00CEBA92 /* usb_midi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_midi.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_midi.h; sourceTree = "<group>"; };
+		9D5D59291889B1DC00CEBA92 /* usb_mouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_mouse.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_mouse.c; sourceTree = "<group>"; };
+		9D5D592A1889B1DC00CEBA92 /* usb_mouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_mouse.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_mouse.h; sourceTree = "<group>"; };
+		9D5D592B1889B1DC00CEBA92 /* usb_names.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_names.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_names.h; sourceTree = "<group>"; };
+		9D5D592C1889B1DC00CEBA92 /* usb_rawhid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_rawhid.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_rawhid.c; sourceTree = "<group>"; };
+		9D5D592D1889B1DC00CEBA92 /* usb_rawhid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_rawhid.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_rawhid.h; sourceTree = "<group>"; };
+		9D5D592E1889B1DC00CEBA92 /* usb_seremu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_seremu.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_seremu.c; sourceTree = "<group>"; };
+		9D5D592F1889B1DC00CEBA92 /* usb_seremu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_seremu.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_seremu.h; sourceTree = "<group>"; };
+		9D5D59301889B1DC00CEBA92 /* usb_serial.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = usb_serial.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_serial.c; sourceTree = "<group>"; };
+		9D5D59311889B1DC00CEBA92 /* usb_serial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = usb_serial.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/usb_serial.h; sourceTree = "<group>"; };
+		9D5D59331889B1DC00CEBA92 /* atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic.h; sourceTree = "<group>"; };
+		9D5D59341889B1DC00CEBA92 /* delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = delay.h; sourceTree = "<group>"; };
+		9D5D59351889B1DC00CEBA92 /* WCharacter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WCharacter.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/WCharacter.h; sourceTree = "<group>"; };
+		9D5D59361889B1DC00CEBA92 /* WConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WConstants.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/WConstants.h; sourceTree = "<group>"; };
+		9D5D59371889B1DC00CEBA92 /* wiring_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wiring_private.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/wiring_private.h; sourceTree = "<group>"; };
+		9D5D59381889B1DC00CEBA92 /* wiring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wiring.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/wiring.h; sourceTree = "<group>"; };
+		9D5D59391889B1DC00CEBA92 /* WMath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WMath.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/WMath.cpp; sourceTree = "<group>"; };
+		9D5D593A1889B1DC00CEBA92 /* WProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WProgram.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/WProgram.h; sourceTree = "<group>"; };
+		9D5D593B1889B1DC00CEBA92 /* WString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WString.cpp; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/WString.cpp; sourceTree = "<group>"; };
+		9D5D593C1889B1DC00CEBA92 /* WString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WString.h; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/WString.h; sourceTree = "<group>"; };
+		9D5D593D1889B1DC00CEBA92 /* yield.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = yield.c; path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/yield.c; sourceTree = "<group>"; };
 		9D77CB9D1589994A0089EB0A /* Index */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Index; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D8ED2C517C01F7F001E1C06 /* Arduino Leonardo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino Leonardo.xcconfig"; sourceTree = "<group>"; };
 		9D8ED2C617C01F7F001E1C06 /* Arduino mega2560.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino mega2560.xcconfig"; sourceTree = "<group>"; };
@@ -506,6 +638,7 @@
 		9D5201351656C2F800F3BF4E /* Arduino Reference Files */ = {
 			isa = PBXGroup;
 			children = (
+				9D5D58DE1889B1CC00CEBA92 /* teensy3 */,
 				9D5202EE1656C3E200F3BF4E /* arduino */,
 				9D52024D1656C33100F3BF4E /* include */,
 				9D5201361656C30E00F3BF4E /* libraries */,
@@ -1675,6 +1808,124 @@
 			path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/arduino/cores/arduino;
 			sourceTree = "<group>";
 		};
+		9D5D58DE1889B1CC00CEBA92 /* teensy3 */ = {
+			isa = PBXGroup;
+			children = (
+				9D5D58DF1889B1DC00CEBA92 /* analog.c */,
+				9D5D58E01889B1DC00CEBA92 /* Arduino.h */,
+				9D5D58E11889B1DC00CEBA92 /* arm_common_tables.h */,
+				9D5D58E21889B1DC00CEBA92 /* arm_math.h */,
+				9D5D58E31889B1DC00CEBA92 /* AudioStream.cpp */,
+				9D5D58E41889B1DC00CEBA92 /* AudioStream.h */,
+				9D5D58E51889B1DC00CEBA92 /* avr */,
+				9D5D58EA1889B1DC00CEBA92 /* avr_emulation.cpp */,
+				9D5D58EB1889B1DC00CEBA92 /* avr_emulation.h */,
+				9D5D58EC1889B1DC00CEBA92 /* avr_functions.h */,
+				9D5D58ED1889B1DC00CEBA92 /* binary.h */,
+				9D5D58EE1889B1DC00CEBA92 /* Client.h */,
+				9D5D58EF1889B1DC00CEBA92 /* core_cm4_simd.h */,
+				9D5D58F01889B1DC00CEBA92 /* core_cm4.h */,
+				9D5D58F11889B1DC00CEBA92 /* core_cmInstr.h */,
+				9D5D58F21889B1DC00CEBA92 /* core_id.h */,
+				9D5D58F31889B1DC00CEBA92 /* core_pins.h */,
+				9D5D58F41889B1DC00CEBA92 /* eeprom.c */,
+				9D5D58F51889B1DC00CEBA92 /* elapsedMillis.h */,
+				9D5D58F61889B1DC00CEBA92 /* HardwareSerial.h */,
+				9D5D58F71889B1DC00CEBA92 /* HardwareSerial1.cpp */,
+				9D5D58F81889B1DC00CEBA92 /* HardwareSerial2.cpp */,
+				9D5D58F91889B1DC00CEBA92 /* HardwareSerial3.cpp */,
+				9D5D58FA1889B1DC00CEBA92 /* IntervalTimer.cpp */,
+				9D5D58FB1889B1DC00CEBA92 /* IntervalTimer.h */,
+				9D5D58FC1889B1DC00CEBA92 /* IPAddress.cpp */,
+				9D5D58FD1889B1DC00CEBA92 /* IPAddress.h */,
+				9D5D58FE1889B1DC00CEBA92 /* keylayouts.c */,
+				9D5D58FF1889B1DC00CEBA92 /* keylayouts.h */,
+				9D5D59001889B1DC00CEBA92 /* main.cpp */,
+				9D5D59011889B1DC00CEBA92 /* Makefile */,
+				9D5D59021889B1DC00CEBA92 /* math_helper.c */,
+				9D5D59031889B1DC00CEBA92 /* math_helper.h */,
+				9D5D59041889B1DC00CEBA92 /* mk20dx128.c */,
+				9D5D59051889B1DC00CEBA92 /* mk20dx128.h */,
+				9D5D59061889B1DC00CEBA92 /* mk20dx128.ld */,
+				9D5D59071889B1DC00CEBA92 /* mk20dx256.ld */,
+				9D5D59081889B1DC00CEBA92 /* new.cpp */,
+				9D5D59091889B1DC00CEBA92 /* new.h */,
+				9D5D590A1889B1DC00CEBA92 /* nonstd.c */,
+				9D5D590B1889B1DC00CEBA92 /* pins_arduino.h */,
+				9D5D590C1889B1DC00CEBA92 /* pins_teensy.c */,
+				9D5D590D1889B1DC00CEBA92 /* Print.cpp */,
+				9D5D590E1889B1DC00CEBA92 /* Print.h */,
+				9D5D590F1889B1DC00CEBA92 /* Printable.h */,
+				9D5D59101889B1DC00CEBA92 /* serial1.c */,
+				9D5D59111889B1DC00CEBA92 /* serial2.c */,
+				9D5D59121889B1DC00CEBA92 /* serial3.c */,
+				9D5D59131889B1DC00CEBA92 /* Server.h */,
+				9D5D59141889B1DC00CEBA92 /* SPIFIFO.h */,
+				9D5D59151889B1DC00CEBA92 /* Stream.cpp */,
+				9D5D59161889B1DC00CEBA92 /* Stream.h */,
+				9D5D59171889B1DC00CEBA92 /* Tone.cpp */,
+				9D5D59181889B1DC00CEBA92 /* touch.c */,
+				9D5D59191889B1DC00CEBA92 /* Udp.h */,
+				9D5D591A1889B1DC00CEBA92 /* usb_desc.c */,
+				9D5D591B1889B1DC00CEBA92 /* usb_desc.h */,
+				9D5D591C1889B1DC00CEBA92 /* usb_dev.c */,
+				9D5D591D1889B1DC00CEBA92 /* usb_dev.h */,
+				9D5D591E1889B1DC00CEBA92 /* usb_flightsim.cpp */,
+				9D5D591F1889B1DC00CEBA92 /* usb_flightsim.h */,
+				9D5D59201889B1DC00CEBA92 /* usb_inst.cpp */,
+				9D5D59211889B1DC00CEBA92 /* usb_joystick.c */,
+				9D5D59221889B1DC00CEBA92 /* usb_joystick.h */,
+				9D5D59231889B1DC00CEBA92 /* usb_keyboard.c */,
+				9D5D59241889B1DC00CEBA92 /* usb_keyboard.h */,
+				9D5D59251889B1DC00CEBA92 /* usb_mem.c */,
+				9D5D59261889B1DC00CEBA92 /* usb_mem.h */,
+				9D5D59271889B1DC00CEBA92 /* usb_midi.c */,
+				9D5D59281889B1DC00CEBA92 /* usb_midi.h */,
+				9D5D59291889B1DC00CEBA92 /* usb_mouse.c */,
+				9D5D592A1889B1DC00CEBA92 /* usb_mouse.h */,
+				9D5D592B1889B1DC00CEBA92 /* usb_names.h */,
+				9D5D592C1889B1DC00CEBA92 /* usb_rawhid.c */,
+				9D5D592D1889B1DC00CEBA92 /* usb_rawhid.h */,
+				9D5D592E1889B1DC00CEBA92 /* usb_seremu.c */,
+				9D5D592F1889B1DC00CEBA92 /* usb_seremu.h */,
+				9D5D59301889B1DC00CEBA92 /* usb_serial.c */,
+				9D5D59311889B1DC00CEBA92 /* usb_serial.h */,
+				9D5D59321889B1DC00CEBA92 /* util */,
+				9D5D59351889B1DC00CEBA92 /* WCharacter.h */,
+				9D5D59361889B1DC00CEBA92 /* WConstants.h */,
+				9D5D59371889B1DC00CEBA92 /* wiring_private.h */,
+				9D5D59381889B1DC00CEBA92 /* wiring.h */,
+				9D5D59391889B1DC00CEBA92 /* WMath.cpp */,
+				9D5D593A1889B1DC00CEBA92 /* WProgram.h */,
+				9D5D593B1889B1DC00CEBA92 /* WString.cpp */,
+				9D5D593C1889B1DC00CEBA92 /* WString.h */,
+				9D5D593D1889B1DC00CEBA92 /* yield.c */,
+			);
+			name = teensy3;
+			sourceTree = "<group>";
+		};
+		9D5D58E51889B1DC00CEBA92 /* avr */ = {
+			isa = PBXGroup;
+			children = (
+				9D5D58E61889B1DC00CEBA92 /* eeprom.h */,
+				9D5D58E71889B1DC00CEBA92 /* interrupt.h */,
+				9D5D58E81889B1DC00CEBA92 /* io.h */,
+				9D5D58E91889B1DC00CEBA92 /* pgmspace.h */,
+			);
+			name = avr;
+			path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/avr;
+			sourceTree = "<group>";
+		};
+		9D5D59321889B1DC00CEBA92 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				9D5D59331889B1DC00CEBA92 /* atomic.h */,
+				9D5D59341889B1DC00CEBA92 /* delay.h */,
+			);
+			name = util;
+			path = ../../../../Applications/Arduino.app/Contents/Resources/Java/hardware/teensy/cores/teensy3/util;
+			sourceTree = "<group>";
+		};
 		9D77CB94158999490089EB0A = {
 			isa = PBXGroup;
 			children = (
@@ -2071,6 +2322,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D5D595A1889B1DC00CEBA92 /* usb_joystick.c in Sources */,
 				9D1234C21889AD1100A97482 /* Arduino.h in Sources */,
 				9D5200CE1650691000F3BF4E /* DefaultFonts.c in Sources */,
 				9D5200CF1650691000F3BF4E /* HW_AVR_defines.h in Sources */,
@@ -2078,15 +2330,27 @@
 				9DD818E91886692900AD92E2 /* Adafruit_NeoPixel.cpp in Sources */,
 				9D5200D31650691000F3BF4E /* memorysaver.h in Sources */,
 				9D5200D41650691000F3BF4E /* UTFT.cpp in Sources */,
+				9D5D595B1889B1DC00CEBA92 /* usb_keyboard.c in Sources */,
 				9D5200D51650691000F3BF4E /* UTFT.h in Sources */,
 				9DCC76B01589A40100564CB8 /* SD.h in Sources */,
 				9DCC76B11589A40100564CB8 /* FatStructs.h in Sources */,
+				9D5D595E1889B1DC00CEBA92 /* usb_mouse.c in Sources */,
 				9DCC76B21589A40100564CB8 /* Sd2Card.h in Sources */,
 				9DCC76B31589A40100564CB8 /* Sd2PinMap.h in Sources */,
 				9DCC76B41589A40100564CB8 /* SdFat.h in Sources */,
+				9D5D59561889B1DC00CEBA92 /* usb_desc.c in Sources */,
+				9D5D593F1889B1DC00CEBA92 /* AudioStream.cpp in Sources */,
 				9DCC76B51589A40100564CB8 /* SdFatmainpage.h in Sources */,
+				9D5D59461889B1DC00CEBA92 /* IPAddress.cpp in Sources */,
 				9DCC76B61589A40100564CB8 /* SdFatUtil.h in Sources */,
+				9D5D594A1889B1DC00CEBA92 /* math_helper.c in Sources */,
+				9D5D59571889B1DC00CEBA92 /* usb_dev.c in Sources */,
+				9D5D59631889B1DC00CEBA92 /* WString.cpp in Sources */,
+				9D5D59401889B1DC00CEBA92 /* avr_emulation.cpp in Sources */,
+				9D5D593E1889B1DC00CEBA92 /* analog.c in Sources */,
 				9DCC76B71589A40100564CB8 /* SdInfo.h in Sources */,
+				9D5D59641889B1DC00CEBA92 /* yield.c in Sources */,
+				9D5D59471889B1DC00CEBA92 /* keylayouts.c in Sources */,
 				9DCC76A51589A3D300564CB8 /* RTClib.cpp in Sources */,
 				9DCC76A61589A3D300564CB8 /* File.cpp in Sources */,
 				9DCC76A71589A3D300564CB8 /* SD.cpp in Sources */,
@@ -2094,7 +2358,9 @@
 				9DCC76A91589A3D300564CB8 /* SdFile.cpp in Sources */,
 				9DCC76AA1589A3D300564CB8 /* SdVolume.cpp in Sources */,
 				9D5202301656C30E00F3BF4E /* EEPROM.cpp in Sources */,
+				9D5D595F1889B1DC00CEBA92 /* usb_rawhid.c in Sources */,
 				9D5202311656C30E00F3BF4E /* Dhcp.cpp in Sources */,
+				9D5D594F1889B1DC00CEBA92 /* Print.cpp in Sources */,
 				9D5202321656C30E00F3BF4E /* Dns.cpp in Sources */,
 				9D5202331656C30E00F3BF4E /* Ethernet.cpp in Sources */,
 				9D5202341656C30E00F3BF4E /* EthernetClient.cpp in Sources */,
@@ -2103,15 +2369,25 @@
 				9D5202371656C30E00F3BF4E /* socket.cpp in Sources */,
 				9D5202381656C30E00F3BF4E /* w5100.cpp in Sources */,
 				9D5202391656C30E00F3BF4E /* Firmata.cpp in Sources */,
+				9D5D59421889B1DC00CEBA92 /* HardwareSerial1.cpp in Sources */,
 				9D52023A1656C30E00F3BF4E /* LiquidCrystal.cpp in Sources */,
 				9D52023B1656C30E00F3BF4E /* File.cpp in Sources */,
+				9D5D59431889B1DC00CEBA92 /* HardwareSerial2.cpp in Sources */,
+				9D5D59501889B1DC00CEBA92 /* serial1.c in Sources */,
+				9D5D594C1889B1DC00CEBA92 /* new.cpp in Sources */,
 				9D52023C1656C30E00F3BF4E /* SD.cpp in Sources */,
 				9D52023D1656C30E00F3BF4E /* Sd2Card.cpp in Sources */,
+				9D5D59451889B1DC00CEBA92 /* IntervalTimer.cpp in Sources */,
+				9D5D59581889B1DC00CEBA92 /* usb_flightsim.cpp in Sources */,
 				9D52023E1656C30E00F3BF4E /* SdFile.cpp in Sources */,
+				9D5D59491889B1DC00CEBA92 /* Makefile in Sources */,
 				9D52023F1656C30E00F3BF4E /* SdVolume.cpp in Sources */,
+				9D5D59551889B1DC00CEBA92 /* touch.c in Sources */,
 				9D5202401656C30E00F3BF4E /* Servo.cpp in Sources */,
 				9D5202411656C30E00F3BF4E /* SoftwareSerial.cpp in Sources */,
+				9D5D594D1889B1DC00CEBA92 /* nonstd.c in Sources */,
 				9D5202421656C30E00F3BF4E /* SPI.cpp in Sources */,
+				9D5D59521889B1DC00CEBA92 /* serial3.c in Sources */,
 				9D5202431656C30E00F3BF4E /* Stepper.cpp in Sources */,
 				9D5202441656C30E00F3BF4E /* server_drv.cpp in Sources */,
 				9D5202451656C30E00F3BF4E /* socket.c in Sources */,
@@ -2121,24 +2397,38 @@
 				9D5202491656C30E00F3BF4E /* WiFiClient.cpp in Sources */,
 				9D52024A1656C30E00F3BF4E /* WiFiServer.cpp in Sources */,
 				9D52024B1656C30E00F3BF4E /* twi.c in Sources */,
+				9D5D594B1889B1DC00CEBA92 /* mk20dx128.c in Sources */,
 				9D52024C1656C30E00F3BF4E /* Wire.cpp in Sources */,
 				9D5203131656C3E200F3BF4E /* CDC.cpp in Sources */,
 				9D5203141656C3E200F3BF4E /* HardwareSerial.cpp in Sources */,
 				9D5203151656C3E200F3BF4E /* HID.cpp in Sources */,
 				9D5203161656C3E200F3BF4E /* IPAddress.cpp in Sources */,
+				9D5D59601889B1DC00CEBA92 /* usb_seremu.c in Sources */,
+				9D5D59541889B1DC00CEBA92 /* Tone.cpp in Sources */,
+				9D5D595C1889B1DC00CEBA92 /* usb_mem.c in Sources */,
+				9D5D59591889B1DC00CEBA92 /* usb_inst.cpp in Sources */,
+				9D5D59621889B1DC00CEBA92 /* WMath.cpp in Sources */,
 				9D5203171656C3E200F3BF4E /* main.cpp in Sources */,
 				9D5203181656C3E200F3BF4E /* new.cpp in Sources */,
 				9D5203191656C3E200F3BF4E /* Print.cpp in Sources */,
+				9D5D59411889B1DC00CEBA92 /* eeprom.c in Sources */,
 				9D52031A1656C3E200F3BF4E /* Stream.cpp in Sources */,
+				9D5D59441889B1DC00CEBA92 /* HardwareSerial3.cpp in Sources */,
 				9D52031B1656C3E200F3BF4E /* Tone.cpp in Sources */,
 				9D52031C1656C3E200F3BF4E /* USBCore.cpp in Sources */,
 				9D52031D1656C3E200F3BF4E /* WInterrupts.c in Sources */,
+				9D5D59531889B1DC00CEBA92 /* Stream.cpp in Sources */,
+				9D5D595D1889B1DC00CEBA92 /* usb_midi.c in Sources */,
 				9D52031E1656C3E200F3BF4E /* wiring.c in Sources */,
+				9D5D59511889B1DC00CEBA92 /* serial2.c in Sources */,
 				9D52031F1656C3E200F3BF4E /* wiring_analog.c in Sources */,
 				9D5203201656C3E200F3BF4E /* wiring_digital.c in Sources */,
 				9D5203211656C3E200F3BF4E /* wiring_pulse.c in Sources */,
+				9D5D594E1889B1DC00CEBA92 /* pins_teensy.c in Sources */,
 				9D5203221656C3E200F3BF4E /* wiring_shift.c in Sources */,
 				9D5203231656C3E200F3BF4E /* WMath.cpp in Sources */,
+				9D5D59481889B1DC00CEBA92 /* main.cpp in Sources */,
+				9D5D59611889B1DC00CEBA92 /* usb_serial.c in Sources */,
 				9D5203241656C3E200F3BF4E /* WString.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

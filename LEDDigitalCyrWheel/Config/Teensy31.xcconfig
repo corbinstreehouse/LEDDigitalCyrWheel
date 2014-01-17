@@ -23,7 +23,10 @@ BOARD_PORT = /dev/tty.usbmodem*
 //   WIRING_APP for Wiring, ENERGIA_APP for Energia, MAPLE_APP for MapleIDE
 //
 GCC_PREPROCESSOR_DEFINITIONS = __MK20DX256__
-HEADER_SEARCH_PATHS = $(WIRING_APP)/** $(SKETCHBOOK_DIR)/Libraries/**
+// Sort of duplicated... this needs to be thought out better
+ARDUINO_APP = /Applications/Arduino.app
+APPLICATION_PATH = $(ARDUINO_APP)/Contents/Resources/Java
+HEADER_SEARCH_PATHS = $(APPLICATION_PATH)/hardware/teensy/cores/teensy3/** $(SKETCHBOOK_DIR)/Libraries/**
 
 // From the boards.txt for teensy:
 //#teensy31.menu.speed.96.build.f_cpu=96000000
