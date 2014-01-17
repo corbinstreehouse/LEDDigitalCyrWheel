@@ -97,3 +97,13 @@ ifneq ($(USB_VID),)
 endif
 endif
 
+
+
+POSTCOMPILE_COMMAND_SCRIPT_NAME = $(call PARSE_BOARD,$(BOARD_TAG),build.post_compile_script)
+POSTCOMPILE_COMMAND = $(APPLICATION_PATH)/hardware/tools/$(POSTCOMPILE_COMMAND_SCRIPT_NAME) -tools=$(APPLICATION_PATH)/hardware/tools/
+
+REBOOT_COMMAND_SCRIPT_NAME = $(call PARSE_BOARD,$(BOARD_TAG),upload.avrdude_wrapper)
+REBOOT_COMMAND = $(APPLICATION_PATH)/hardware/tools/$(REBOOT_COMMAND_SCRIPT_NAME)
+
+
+

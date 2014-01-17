@@ -112,12 +112,15 @@ void dowhite() {
 }
 
 void colorWipe(uint32_t c, uint8_t wait);
+void rainbow2(uint8_t wait);
 
 void loop() {
-    //  dowhite();
-    // return;
-    // theaterChaseRainbow(5);
-    // rainbow2(10);
+ //     dowhite();
+//    return;
+    //theaterChaseRainbow(5);
+
+    return;
+    rainbow2(10);
     // rainbowCycle(10);
     
     // Some example procedures showing how to display to the pixels:

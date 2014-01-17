@@ -198,7 +198,7 @@ ASFLAGS       = -$(MCU_FLAG_NAME)=$(MCU) -x assembler-with-cpp
 LDFLAGS       = -$(MCU_FLAG_NAME)=$(MCU) -lm -Wl,-gc-sections,-u,main -Os $(EXTRA_LDFLAGS)
 
 ifndef OBJCOPYFLAGS
-OBJCOPYFLAGS  = -Oihex -R .eeprom
+OBJCOPYFLAGS  = -O ihex -R .eeprom
 endif
 
 # Implicit rules for building everything (needed to get everything in
@@ -341,16 +341,16 @@ $(OBJDIR)/libs/%.o: $(VARIANT_PATH)/%.cpp
 #
 $(OBJDIR)/%.hex: $(OBJDIR)/%.elf
 	@echo "19hex-" $<
-	$(OBJCOPY) -Oihex -R .eeprom $< $@
+	$(OBJCOPY) $(OBJCOPYFLAGS) $< $@
 
 $(OBJDIR)/%.bin: $(OBJDIR)/%.elf
 	@echo "19bin-" $<
-	$(OBJCOPY) -Obinary -v $< $@
+	$(OBJCOPY) -O binary -v $< $@
 
 $(OBJDIR)/%.eep: $(OBJDIR)/%.elf
 	@echo "20-" $<
-	-$(OBJCOPY) -j .eeprom --set-section-flags=.eeprom="alloc,load" \
-		--change-section-lma .eeprom=0 -O ihex $< $@
+	-$(OBJCOPY) -O ihex -j .eeprom --set-section-flags=.eeprom="alloc,load" --no-change-warnings  \
+		--change-section-lma .eeprom=0 $< $@
 
 $(OBJDIR)/%.lss: $(OBJDIR)/%.elf
 	@echo "21-" $<
@@ -504,6 +504,11 @@ compile:	$(OBJDIR) $(TARGET_HEXBIN) size
 		@echo " ---- compile ---- "
 		@echo $(BOARD_TAG) > $(NEW_TAG)
        
+#for teensy
+postcompile:
+	@echo " --- post compile command: $(POSTCOMPILE_COMMAND)"
+	$(POSTCOMPILE_COMMAND)  -file=$(TARGET) -path=$(PROJECT_DIR)/$(PROJECT_NAME)/$(OBJDIR)
+
 info:
 		@echo " ---- info ---- "
 
@@ -520,22 +525,24 @@ $(DEP_FILE):	$(OBJDIR) $(DEPS)
 		@echo "24-" $<
 		@cat $(DEPS) > $(DEP_FILE)
 
-upload:		make reset raw_upload
+upload:		make reset postcompile raw_upload
 
 
 raw_upload:
-		@echo " ---- upload ---- "
-ifeq ($(UPLOADER),avrdude)
-		$(AVRDUDE) $(AVRDUDE_COM_OPTS) $(AVRDUDE_OPTS) -Uflash:w:$(TARGET_HEX):i
-else ifeq ($(UPLOADER),mspdebug)
-		$(MSPDEBUG) $(MSPDEBUG_OPTS) "$(MSPDEBUG_COMMAND) $(TARGET_HEX)"
-else ifeq ($(UPLOADER),dfu-util)
-		$(DFU_UTIL) $(DFU_UTIL_OPTS) -D $(TARGET_BIN) -R
-		sleep 4
-		$(info .)
-else
-		$(error No valid uploader)
-endif
+	@echo " ---- upload ---- "
+	$(REBOOT_COMMAND)
+
+#ifeq ($(UPLOADER),avrdude)
+#		$(AVRDUDE) $(AVRDUDE_COM_OPTS) $(AVRDUDE_OPTS) -Uflash:w:$(TARGET_HEX):i
+#else ifeq ($(UPLOADER),mspdebug)
+#		$(MSPDEBUG) $(MSPDEBUG_OPTS) "$(MSPDEBUG_COMMAND) $(TARGET_HEX)"
+#else ifeq ($(UPLOADER),dfu-util)
+#		$(DFU_UTIL) $(DFU_UTIL_OPTS) -D $(TARGET_BIN) -R
+#		sleep 4
+#		$(info .)
+#else
+#		$(error No valid uploader)
+#endif
 
 
 # stty on MacOS likes -F, but on Debian it likes -f redirecting
@@ -598,8 +605,9 @@ serial:		reset
 size:
 		@echo "---- size ---- "
 		@if [ -f $(TARGET_HEX) ]; then $(HEXSIZE); echo; fi
-#		@if [ -f $(TARGET_ELF) ]; then $(ELFSIZE); echo; fi
+		@if [ -f $(TARGET_ELF) ]; then $(ELFSIZE); echo; fi
 		@if [ -f $(TARGET_BIN) ]; then $(BINSIZE); echo; fi
+		@echo "---- end size ---- "
 
 
 clean:

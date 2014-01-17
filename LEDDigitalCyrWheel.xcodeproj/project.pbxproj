@@ -465,7 +465,7 @@
 		9D8ED2DB17C01F7F001E1C06 /* MapleIDE.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = MapleIDE.mk; sourceTree = "<group>"; };
 		9D8ED2DC17C01F7F001E1C06 /* Mpide.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mpide.mk; sourceTree = "<group>"; };
 		9D8ED2DD17C01F7F001E1C06 /* Step1.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step1.mk; sourceTree = "<group>"; };
-		9D8ED2DE17C01F7F001E1C06 /* Step2.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step2.mk; sourceTree = "<group>"; };
+		9D8ED2DE17C01F7F001E1C06 /* Step2.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step2.mk; sourceTree = "<group>"; usesTabs = 1; };
 		9D8ED2DF17C01F7F001E1C06 /* Wiring.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Wiring.mk; sourceTree = "<group>"; };
 		9D922F0C17C711630097A027 /* Arduino micro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino micro.xcconfig"; sourceTree = "<group>"; };
 		9DCC76201589A3D300564CB8 /* Canbus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Canbus.cpp; sourceTree = "<group>"; };
