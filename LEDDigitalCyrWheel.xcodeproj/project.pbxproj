@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9D3A0DA81889BE64001AD553 /* LEDDigitalCyrWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */; };
+		9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DAC188A0EBD001AD553 /* Button.cpp */; };
 		9D5200CE1650691000F3BF4E /* DefaultFonts.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C61650691000F3BF4E /* DefaultFonts.c */; };
 		9D5200CF1650691000F3BF4E /* HW_AVR_defines.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C71650691000F3BF4E /* HW_AVR_defines.h */; };
 		9D5200D01650691000F3BF4E /* HW_AVR.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C81650691000F3BF4E /* HW_AVR.h */; };
@@ -102,6 +103,8 @@
 /* Begin PBXFileReference section */
 		9D1234C01889AC2300A97482 /* CDExportedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDExportedImage.h; sourceTree = "<group>"; };
 		9D1234C11889AC3B00A97482 /* CDPatternData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDPatternData.h; sourceTree = "<group>"; };
+		9D3A0DAC188A0EBD001AD553 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Button.cpp; sourceTree = "<group>"; };
+		9D3A0DAD188A0EBD001AD553 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Button.h; sourceTree = "<group>"; };
 		9D5200C61650691000F3BF4E /* DefaultFonts.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = DefaultFonts.c; path = ../../../Documents/Arduino/Libraries/UTFT/DefaultFonts.c; sourceTree = "<group>"; };
 		9D5200C71650691000F3BF4E /* HW_AVR_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HW_AVR_defines.h; path = ../../../Documents/Arduino/Libraries/UTFT/HW_AVR_defines.h; sourceTree = "<group>"; };
 		9D5200C81650691000F3BF4E /* HW_AVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HW_AVR.h; path = ../../../Documents/Arduino/Libraries/UTFT/HW_AVR.h; sourceTree = "<group>"; };
@@ -1854,6 +1857,8 @@
 				9D1234C01889AC2300A97482 /* CDExportedImage.h */,
 				9D1234C11889AC3B00A97482 /* CDPatternData.h */,
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,
+				9D3A0DAC188A0EBD001AD553 /* Button.cpp */,
+				9D3A0DAD188A0EBD001AD553 /* Button.h */,
 				9D8ED2D417C01F7F001E1C06 /* Makefiles */,
 			);
 			name = LEDCyrWheel;
@@ -2296,6 +2301,7 @@
 				9D5202471656C30E00F3BF4E /* wifi_drv.cpp in Sources */,
 				9D5202481656C30E00F3BF4E /* WiFi.cpp in Sources */,
 				9D5202491656C30E00F3BF4E /* WiFiClient.cpp in Sources */,
+				9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */,
 				9D52024A1656C30E00F3BF4E /* WiFiServer.cpp in Sources */,
 				9D52024B1656C30E00F3BF4E /* twi.c in Sources */,
 				9D5D594B1889B1DC00CEBA92 /* mk20dx128.c in Sources */,

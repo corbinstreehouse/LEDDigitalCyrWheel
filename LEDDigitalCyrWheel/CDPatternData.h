@@ -19,6 +19,7 @@ typedef struct  __attribute__((__packed__)) _CDPatternDataHeader {
 //    uint16 duration; // TODO: use it..
 //    uint8_t patternSide; // TODO:
     uint16_t height; // aka: the number of pixels. width is just read in till the end of the data..
+    uint16_t width; // Could be calculated, but easier to do iterations with it.
     uint16_t dataLength; // how long the data is following
 } CDPatternDataHeader;
 

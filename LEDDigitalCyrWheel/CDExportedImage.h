@@ -10,26 +10,36 @@
 #include "CDPatternData.h"
 
 // Test: 3 colors...
-#define IMAGE_DATA_LENGTH (3*3)
+#define IMAGE_DATA_LENGTH (12*3)
 #define PATTERN_STRUCT_TYPE_NAME CGPatternDataImage // Rename if you have more than one in a project
-#define PATTERN_NAME GImageData // change if needed
+#define PATTERN_NAME g_imageData // change if needed
 
 typedef struct __attribute__((__packed__)) {
     uint8_t data[IMAGE_DATA_LENGTH];
     CDPatternDataHeader header;
 } PATTERN_STRUCT_TYPE_NAME;
 
-static PATTERN_STRUCT_TYPE_NAME GImageData = {
+static PATTERN_STRUCT_TYPE_NAME PATTERN_NAME = {
     // Data...how it is organized varies depending on the encoding
-    .data = {
-            255, 0, 0,
-            0, 255, 0,
-            0, 0, 255,
+    {
+        255, 0, 0,
+        0, 255, 0,
+        0, 0, 255,
+        255, 0, 0,
+        0, 255, 0,
+        0, 0, 255,
+        255, 0, 0,
+        0, 255, 0,
+        0, 0, 255,
+        255, 0, 0,
+        0, 255, 0,
+        0, 0, 255,
     },
     // CDPatternDataHeader
     {
-        .height = 3,
-        .dataLength = IMAGE_DATA_LENGTH,
+        12, // height
+        1, // width
+        IMAGE_DATA_LENGTH, // datalength
     }
 };
 

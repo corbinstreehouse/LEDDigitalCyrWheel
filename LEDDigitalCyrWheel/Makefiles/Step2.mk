@@ -14,7 +14,7 @@ include $(MAKEFILE_PATH)/Avrdude.mk
 
 ifeq ($(TARGET_NAME),Upload)
     ifeq ($(AVRDUDE_PORT),)
-        $(error Serial port not available)
+   #     $(error Serial port not available)
     endif
 endif
 
