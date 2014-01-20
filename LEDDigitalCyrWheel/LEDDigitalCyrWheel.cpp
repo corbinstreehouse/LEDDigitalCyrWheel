@@ -10,7 +10,6 @@
 */
 
 #include  "Arduino.h"
-#include <Adafruit_NeoPixel.h>
 
 #include "Button.h"
 //#include <Wire.h>
@@ -21,10 +20,18 @@
 #include <stdint.h> // We can compile without this, but it kills xcode completion without it! it took me a while to discover that..
 #include "CDExportedImage.h"
 
+#define USE_ADAFRUIT 0
+#if USE_ADAFRUIT
+#include <Adafruit_NeoPixel.h>
+#else
+#include <OctoWS2811.h>
+#endif
+
 
 #define DEBUG 1
 
 #define STRIP_PIN 14
+#define BRIGHTNESS_PIN 17
 #define BUTTON_PIN 18
 #define STRIP_LENGTH 67
 
@@ -38,15 +45,49 @@ typedef enum {
     CDDisplayModeMax,
 } CDDisplayMode;
 
-
-// Parameter 1 = number of pixels in strip
-// Parameter 2 = pin number (most are valid)
-// Parameter 3 = pixel type flags, add together as needed:
-//   NEO_KHZ800  800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
-//   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
-//   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
-//   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
+#if USE_ADAFRUIT
 Adafruit_NeoPixel g_strip = Adafruit_NeoPixel(STRIP_LENGTH, STRIP_PIN, NEO_GRB + NEO_KHZ800);
+#else
+
+class CDOctoWS2811 : public OctoWS2811 {
+private:
+    uint8_t brightness;
+public:
+    inline void setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b) {
+        if(brightness) { // See notes in setBrightness()
+            r = (r * brightness) >> 8;
+            g = (g * brightness) >> 8;
+            b = (b * brightness) >> 8;
+        }
+        this->setPixel(STRIP_LENGTH + n, r, g, b); // hack...not using first input length LED.
+    }
+    inline void setPixelColor(uint16_t n, uint32_t c) {
+        uint8_t
+        r = (uint8_t)(c >> 16),
+        g = (uint8_t)(c >>  8),
+        b = (uint8_t)c;
+        this->setPixelColor(n, r, g, b);
+    }
+    inline CDOctoWS2811(uint32_t numPerStrip, void *frameBuf, void *drawBuf, uint8_t config = WS2811_GRB) : OctoWS2811(numPerStrip, frameBuf, drawBuf, config) {
+    }
+    inline uint32_t Color(uint8_t r, uint8_t g, uint8_t b) {
+        return ((uint32_t)r << 16) | ((uint32_t)g <<  8) | b;
+    }
+    inline int numPixels(void) {
+		return stripLen;
+	}
+    inline void setBrightness(uint8_t b) {
+        brightness = b;
+    }
+};
+
+
+int framebuff[STRIP_LENGTH*6];
+int drawingbuff[STRIP_LENGTH*6];
+CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, framebuff, drawingbuff, WS2811_GRB + WS2811_800kHz);
+
+
+#endif
 const int g_LED = LED_BUILTIN;
 
 static char g_displayMode = CDDisplayModeImagePlayback; // Not CDDisplayMode so I can easily do math with it..
@@ -54,8 +95,11 @@ static Button g_button = Button(BUTTON_PIN);
 
 // for my own delay to make button responsive...
 
+
+static void process();
+
 static inline bool shouldExitEarly() {
-    g_button.process();
+    process();
     return g_button.isPressed();
 }
 
@@ -89,7 +133,11 @@ void setup() {
     Serial.println("--- begin serial --- ");
 #endif
     
+    pinMode(BRIGHTNESS_PIN, INPUT);
+    
     g_strip.begin();
+    g_strip.setBrightness(128); // default: half bright..TODO: store/restore the value? or just read it constantly?
+    
     g_strip.show(); // all off.
     
     g_button.pressHandler(buttonClicked);
@@ -199,7 +247,7 @@ void resetState();
 
 void buttonClicked(Button &b){
 #if DEBUG
-	Serial.printf("onPress, mode %d\r\n", g_displayMode);
+//	Serial.printf("onPress, mode %d\r\n", g_displayMode);
 #endif
     g_displayMode = g_displayMode++;
     if (g_displayMode >= CDDisplayModeMax) {
@@ -221,7 +269,7 @@ void showRainbow() {
 }
 
 void showColorWipe() {
-    colorWipe(g_strip.Color(255, 0, 0), 10);
+    colorWipe(g_strip.Color(255, 0, 0), 5);
 }
 
 typedef struct {
@@ -269,8 +317,8 @@ void playbackImageWithHeader(CDPatternDataHeader *imageHeader, CDPlaybackImageSt
         uint8_t r = *imageState->dataOffset++;
         uint8_t g = *imageState->dataOffset++;
         uint8_t b = *imageState->dataOffset++;
-#if 0 // DEBUG
-        Serial.printf("x:%d y:%d, r:%d, g:%d, b:%d, yMax:%d, numPix:%d\r\n", imageState->xOffset, y, r, g, b, yMax, numPix);
+#if DEBUG
+//        Serial.printf("x:%d y:%d, r:%d, g:%d, b:%d, yMax:%d, numPix:%d\r\n", imageState->xOffset, y, r, g, b, yMax, numPix);
 #endif
         g_strip.setPixelColor(y, r, g, b);
         if (shouldExitEarly()) return;
@@ -281,6 +329,9 @@ void playbackImageWithHeader(CDPatternDataHeader *imageHeader, CDPlaybackImageSt
     if (shouldExitEarly()) return;
 
     g_strip.show();
+    
+    busyDelay(200);
+    
     imageState->xOffset++;
 }
 
@@ -288,10 +339,39 @@ static void playbackImage() {
     playbackImageWithHeader(&g_imageData.header, &g_imageState);
 }
 
+static void testGreen() {
+    static bool set = false;
+    if (set) return;
+    set = true;
+    
+    
+    for (int i = 0; i < g_strip.numPixels(); i++) {
+        uint8_t g = 255 * ((float)i / (float)g_strip.numPixels());
+        Serial.println(g);
+        g_strip.setPixelColor(i, 0, g, 0);
+    }
+    g_strip.show();
+}
+
+static void updateBrightness() {
+    int val = analogRead(BRIGHTNESS_PIN);
+    // Map 0 - 1024 to 0-255 brightness
+    float b = (float)val * 255.0 / 1024.0;
+    int v = b;
+    static int priorV  = 0;
+    if (priorV != v) {
+        g_strip.setBrightness(v);
+    }
+}
+
+static void process() {
+    g_button.process();
+    updateBrightness();
+}
 
 void loop() {
-    g_button.process();
-
+    process();
+    
 #if DEBUG
     if (g_button.isPressed()){
         digitalWrite(g_LED, HIGH);
@@ -313,6 +393,7 @@ void loop() {
             break;
         }
         case CDDisplayModeImagePlayback: {
+//            testGreen();
             playbackImage();
             break;
         }

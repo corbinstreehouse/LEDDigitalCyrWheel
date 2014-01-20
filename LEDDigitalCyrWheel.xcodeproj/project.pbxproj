@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9D3A0DA81889BE64001AD553 /* LEDDigitalCyrWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */; };
 		9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DAC188A0EBD001AD553 /* Button.cpp */; };
+		9D3A0DC3188CB0AE001AD553 /* OctoWS2811.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DC1188CB0AE001AD553 /* OctoWS2811.cpp */; };
 		9D5200CE1650691000F3BF4E /* DefaultFonts.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C61650691000F3BF4E /* DefaultFonts.c */; };
 		9D5200CF1650691000F3BF4E /* HW_AVR_defines.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C71650691000F3BF4E /* HW_AVR_defines.h */; };
 		9D5200D01650691000F3BF4E /* HW_AVR.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C81650691000F3BF4E /* HW_AVR.h */; };
@@ -105,6 +106,15 @@
 		9D1234C11889AC3B00A97482 /* CDPatternData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDPatternData.h; sourceTree = "<group>"; };
 		9D3A0DAC188A0EBD001AD553 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Button.cpp; sourceTree = "<group>"; };
 		9D3A0DAD188A0EBD001AD553 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Button.h; sourceTree = "<group>"; };
+		9D3A0DB6188CB0AE001AD553 /* BasicTest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BasicTest.ino; sourceTree = "<group>"; };
+		9D3A0DB8188CB0AE001AD553 /* PlasmaAnimation.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PlasmaAnimation.ino; sourceTree = "<group>"; };
+		9D3A0DBA188CB0AE001AD553 /* makeColor.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makeColor.ino; sourceTree = "<group>"; };
+		9D3A0DBB188CB0AE001AD553 /* Rainbow.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Rainbow.ino; sourceTree = "<group>"; };
+		9D3A0DBE188CB0AE001AD553 /* movie2serial.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = movie2serial.pde; sourceTree = "<group>"; };
+		9D3A0DBF188CB0AE001AD553 /* VideoDisplay.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoDisplay.ino; sourceTree = "<group>"; };
+		9D3A0DC0188CB0AE001AD553 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
+		9D3A0DC1188CB0AE001AD553 /* OctoWS2811.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OctoWS2811.cpp; sourceTree = "<group>"; };
+		9D3A0DC2188CB0AE001AD553 /* OctoWS2811.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OctoWS2811.h; sourceTree = "<group>"; };
 		9D5200C61650691000F3BF4E /* DefaultFonts.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = DefaultFonts.c; path = ../../../Documents/Arduino/Libraries/UTFT/DefaultFonts.c; sourceTree = "<group>"; };
 		9D5200C71650691000F3BF4E /* HW_AVR_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HW_AVR_defines.h; path = ../../../Documents/Arduino/Libraries/UTFT/HW_AVR_defines.h; sourceTree = "<group>"; };
 		9D5200C81650691000F3BF4E /* HW_AVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HW_AVR.h; path = ../../../Documents/Arduino/Libraries/UTFT/HW_AVR.h; sourceTree = "<group>"; };
@@ -567,6 +577,70 @@
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		9D3A0DB3188CB0AE001AD553 /* OctoWS2811 */ = {
+			isa = PBXGroup;
+			children = (
+				9D3A0DB4188CB0AE001AD553 /* examples */,
+				9D3A0DC0188CB0AE001AD553 /* keywords.txt */,
+				9D3A0DC1188CB0AE001AD553 /* OctoWS2811.cpp */,
+				9D3A0DC2188CB0AE001AD553 /* OctoWS2811.h */,
+			);
+			path = OctoWS2811;
+			sourceTree = "<group>";
+		};
+		9D3A0DB4188CB0AE001AD553 /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				9D3A0DB5188CB0AE001AD553 /* BasicTest */,
+				9D3A0DB7188CB0AE001AD553 /* PlasmaAnimation */,
+				9D3A0DB9188CB0AE001AD553 /* Rainbow */,
+				9D3A0DBC188CB0AE001AD553 /* VideoDisplay */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		9D3A0DB5188CB0AE001AD553 /* BasicTest */ = {
+			isa = PBXGroup;
+			children = (
+				9D3A0DB6188CB0AE001AD553 /* BasicTest.ino */,
+			);
+			path = BasicTest;
+			sourceTree = "<group>";
+		};
+		9D3A0DB7188CB0AE001AD553 /* PlasmaAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				9D3A0DB8188CB0AE001AD553 /* PlasmaAnimation.ino */,
+			);
+			path = PlasmaAnimation;
+			sourceTree = "<group>";
+		};
+		9D3A0DB9188CB0AE001AD553 /* Rainbow */ = {
+			isa = PBXGroup;
+			children = (
+				9D3A0DBA188CB0AE001AD553 /* makeColor.ino */,
+				9D3A0DBB188CB0AE001AD553 /* Rainbow.ino */,
+			);
+			path = Rainbow;
+			sourceTree = "<group>";
+		};
+		9D3A0DBC188CB0AE001AD553 /* VideoDisplay */ = {
+			isa = PBXGroup;
+			children = (
+				9D3A0DBD188CB0AE001AD553 /* Processing */,
+				9D3A0DBF188CB0AE001AD553 /* VideoDisplay.ino */,
+			);
+			path = VideoDisplay;
+			sourceTree = "<group>";
+		};
+		9D3A0DBD188CB0AE001AD553 /* Processing */ = {
+			isa = PBXGroup;
+			children = (
+				9D3A0DBE188CB0AE001AD553 /* movie2serial.pde */,
+			);
+			path = Processing;
+			sourceTree = "<group>";
+		};
 		9D5200D61650691D00F3BF4E /* UTFT */ = {
 			isa = PBXGroup;
 			children = (
@@ -1901,6 +1975,7 @@
 		9DCC75F61589A3D300564CB8 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				9D3A0DB3188CB0AE001AD553 /* OctoWS2811 */,
 				9DD818DF1886690A00AD92E2 /* AdaFruit_NeoPixel */,
 				9D5200D61650691D00F3BF4E /* UTFT */,
 				9DCC76461589A3D300564CB8 /* RTClib */,
@@ -2250,6 +2325,7 @@
 				9D5D59461889B1DC00CEBA92 /* IPAddress.cpp in Sources */,
 				9DCC76B61589A40100564CB8 /* SdFatUtil.h in Sources */,
 				9D5D594A1889B1DC00CEBA92 /* math_helper.c in Sources */,
+				9D3A0DC3188CB0AE001AD553 /* OctoWS2811.cpp in Sources */,
 				9D5D59571889B1DC00CEBA92 /* usb_dev.c in Sources */,
 				9D5D59631889B1DC00CEBA92 /* WString.cpp in Sources */,
 				9D5D59401889B1DC00CEBA92 /* avr_emulation.cpp in Sources */,
