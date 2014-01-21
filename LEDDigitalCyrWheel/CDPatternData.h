@@ -9,18 +9,22 @@
 #ifndef CyrWheelPatternEditor_CDPatternData_h
 #define CyrWheelPatternEditor_CDPatternData_h
 
-enum CDPatternEncodingType {
+typedef enum : int16_t {
     CDPatternEncodingTypeRGB24 = 0, // Uncompressed 24-bit data
-    CDPatternEncodingTypeRLE = 1, // RLE encoded (not done yet..)
-};
+//    CDPatternEncodingTypeRLE = 1, // RLE encoded (not done yet..)
+} CDPatternEncodingType;
+
+typedef enum : int16_t {
+    CDPatternTypeFade, // Playsback a fade pattern; the pixels in the image are processed sequentially and "feed" from a single source pixel
+} CDPatternType;
 
 typedef struct  __attribute__((__packed__)) _CDPatternDataHeader {
 //    uint8_t patternEncodingType; // CDPatternEncodingType, but sized specifically
-//    uint16 duration; // TODO: use it..
 //    uint8_t patternSide; // TODO:
-    uint16_t height; // aka: the number of pixels. width is just read in till the end of the data..
-    uint16_t width; // Could be calculated, but easier to do iterations with it.
-    uint16_t dataLength; // how long the data is following
+    CDPatternType patternType;
+    uint32_t duration; // How it is interpreted varies on the pattern type. Value is in ms
+    uint32_t pixels; // May or may not be applicable to the pattern type. The length, or number of pixels that the pattern was designed against. Design for the largest pixels you want to support, and smaller wheels will truncate or drop off the bottom pixels, but still maintain the same duration in order to allow synchronizing of multiple wheels (long term goal)
+    uint32_t dataLength; // how long the data is following
 } CDPatternDataHeader;
 
 

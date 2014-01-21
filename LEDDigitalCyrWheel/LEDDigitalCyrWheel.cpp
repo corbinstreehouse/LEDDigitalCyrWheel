@@ -20,7 +20,7 @@
 #include <stdint.h> // We can compile without this, but it kills xcode completion without it! it took me a while to discover that..
 #include "CDExportedImage.h"
 
-#define USE_ADAFRUIT 0
+#define USE_ADAFRUIT 1
 #if USE_ADAFRUIT
 #include <Adafruit_NeoPixel.h>
 #else
@@ -33,7 +33,8 @@
 #define STRIP_PIN 14
 #define BRIGHTNESS_PIN 17
 #define BUTTON_PIN 18
-#define STRIP_LENGTH 67
+
+#define STRIP_LENGTH (67)
 
 typedef enum {
     CDDisplayModeMin = 0,
@@ -273,15 +274,14 @@ void showColorWipe() {
 }
 
 typedef struct {
-    int xOffset;
     uint8_t *dataOffset;
 } CDPlaybackImageState;
 
 
-static CDPlaybackImageState g_imageState = { 0, 0 };
+static CDPlaybackImageState g_imageState = { 0 };
 
 void resetState() {
-    g_imageState = { 0, 0 };
+    g_imageState = { 0 };
 }
 
 static inline uint8_t *dataEnd(CDPatternDataHeader *imageHeader) {
@@ -289,10 +289,12 @@ static inline uint8_t *dataEnd(CDPatternDataHeader *imageHeader) {
     return (uint8_t *)imageHeader;
 }
 
+static inline uint8_t *dataStart(CDPatternDataHeader *imageHeader) {
+    return dataEnd(imageHeader) - (sizeof(uint8_t)*imageHeader->dataLength);
+}
 
 static void initImageState(CDPatternDataHeader *imageHeader, CDPlaybackImageState *imageState) {
-    imageState->xOffset = 0;
-    imageState->dataOffset = dataEnd(imageHeader) - (sizeof(uint8_t)*imageHeader->dataLength);
+    imageState->dataOffset = dataStart(imageHeader);
 #if 0 // DEBUG
     Serial.println("------------------------------");
     Serial.printf("playing image h: %d, w: %d, len: %d\r\n", imageHeader->height, imageHeader->width, imageHeader->dataLength);
@@ -301,7 +303,64 @@ static void initImageState(CDPatternDataHeader *imageHeader, CDPlaybackImageStat
 #endif
 }
 
+void playbackColorFadeWithHeader(CDPatternDataHeader *imageHeader, CDPlaybackImageState *imageState) {
+    // Fill up each pixel, wrapping as we need, and then sleep the duration specified (if any)
+    uint8_t *currentOffset = imageState->dataOffset;
+    // Check to make sure it is still good!
+    if (currentOffset < dataStart(imageHeader) || currentOffset >= dataEnd(imageHeader)) {
+        currentOffset = dataStart(imageHeader);
+        imageState->dataOffset = currentOffset; // Save it for the next loop
+#if DEBUG
+        Serial.println("+++++++++++++++++ loop ------------------------------");
+#endif
+    }
+    
+    for (int x = 0; x < g_strip.numPixels(); x++) {
+        // First, bounds check each time
+        if (currentOffset < dataStart(imageHeader) || currentOffset >= dataEnd(imageHeader)) {
+            currentOffset = dataStart(imageHeader);
+#if DEBUG
+            Serial.println("----------------- reset ------------------------------");
+#endif
+        }
+        // TODO: decoding switch here...
+        uint8_t r = *currentOffset++;
+        uint8_t g = *currentOffset++;
+        uint8_t b = *currentOffset++;
+#if DEBUG
+        Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
+#endif
+        g_strip.setPixelColor(x, r, g, b);
+        if (shouldExitEarly()) return;
+    }
+    
+    if (shouldExitEarly()) return;
+    
+    g_strip.show();
+    
+    if (imageHeader->duration > 0) {
+        busyDelay(imageHeader->duration);
+    } else {
+        //temp
+        busyDelay(2000);
+    }
+    
+    imageState->dataOffset++; // Go one further the next step (or, it will reset on the next step, if it needs to)
+}
+
 void playbackImageWithHeader(CDPatternDataHeader *imageHeader, CDPlaybackImageState *imageState) {
+//    initImageState(imageHeader, imageState);
+    switch (imageHeader->patternType) {
+        case CDPatternTypeFade: {
+            playbackColorFadeWithHeader(imageHeader, imageState);
+            break;
+        }
+//        default: {
+//// TODO??
+//            break;
+//        }
+    }
+    /*
     // Validate our offsets; assumes the last column is correct...and data isn't truncated
     if (imageState->xOffset >= imageHeader->width || imageState->dataOffset == 0 || imageState->dataOffset >= dataEnd(imageHeader)) {
         initImageState(imageHeader, imageState);
@@ -333,6 +392,7 @@ void playbackImageWithHeader(CDPatternDataHeader *imageHeader, CDPlaybackImageSt
     busyDelay(200);
     
     imageState->xOffset++;
+     */
 }
 
 static void playbackImage() {

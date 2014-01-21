@@ -51,7 +51,8 @@ APP_LIBS_LIST = 0
 
 #USER_LIBS_LIST = UTFT Canbus
 
-USER_LIBS_LIST = Adafruit_NeoPixel OctoWS2811
+#USER_LIBS_LIST = Adafruit_NeoPixel OctoWS2811
+USER_LIBS_LIST = Adafruit_NeoPixel
 #USER_LIBS_LIST =
 
 MAKEFILE_PATH  = $(CURDIR)/Makefiles
