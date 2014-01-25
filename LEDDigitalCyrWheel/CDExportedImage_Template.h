@@ -9,15 +9,12 @@
 
 #include "CDPatternData.h"
 
-#define PATTERN_STRUCT_TYPE_NAME CGPatternDataImage // Rename if you have more than one in a project
-#define PATTERN_NAME g_imageData // change if needed
-
 typedef struct __attribute__((__packed__)) {
-    uint8_t data[%LENGTH%];
-    CDPatternDataHeader header;
-} PATTERN_STRUCT_TYPE_NAME;
+    const uint8_t data[%LENGTH%];
+    const CDPatternDataHeader header;
+} CGPatternDataImage;
 
-static PATTERN_STRUCT_TYPE_NAME PATTERN_NAME = {
+const CGPatternDataImage g_imageData = {
     // Data...how it is organized varies depending on the encoding
     {
         %DATA%

@@ -25,7 +25,7 @@
 #include <Adafruit_NeoPixel.h>
 #else
 #include <OctoWS2811.h>
-#endif
+#endif 
 
 
 #define DEBUG 1
@@ -34,16 +34,14 @@
 #define BRIGHTNESS_PIN 17
 #define BUTTON_PIN 18
 
-#define STRIP_LENGTH 67*2
+#define STRIP_LENGTH 60 // (67*2)
 
 typedef enum {
     CDDisplayModeMin = 0,
     CDDisplayModeShowOn = 0,
     CDDisplayModeRainbow,
-    CDDisplayModeColorWipe,
+    CDDisplayColorWipe,
     CDDisplayModeImagePlayback,
-    CDDisplayModeImageLEDGradient,
-    CDDisplayModeRainbow2,
     
     CDDisplayModeMax,
 } CDDisplayMode;
@@ -93,7 +91,7 @@ CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, framebuff, drawingbuff, WS2811
 #endif
 const int g_LED = LED_BUILTIN;
 
-static char g_displayMode = CDDisplayModeImagePlayback; // Not CDDisplayMode so I can easily do math with it..
+static char g_displayMode = CDDisplayModeShowOn; // CDDisplayModeImagePlayback; // Not CDDisplayMode so I can easily do math with it..
 static Button g_button = Button(BUTTON_PIN);
 
 // for my own delay to make button responsive...
@@ -174,16 +172,31 @@ uint32_t Wheel(byte WheelPos) {
 
 void rainbow(uint8_t wait) {
     uint16_t i, j;
-    
+    Serial.println("rainbow");
+    int count = 0; // hack, corbin
     for(j=0; j<256; j++) {
         for(i=0; i<g_strip.numPixels(); i++) {
-            g_strip.setPixelColor(i, Wheel((i+j) & 255));
+            uint32_t color = Wheel((i+j) & 255);
+            g_strip.setPixelColor(i, color);
+            uint8_t r,g,b;
+            r = (color >> 16) & 255;
+            b = (color >> 8) & 255;
+            g = color & 255;
+            Serial.print(r);
+            Serial.print(",");
+            Serial.print(g);
+            Serial.print(",");
+            Serial.print(b);
+            Serial.print(", ");
+            count++;
         }
         g_strip.show();
         if (busyDelay(wait)) {
-            return;
+     //       return;
         }
     }
+    Serial.println("\r\nend rainbow");
+    Serial.println(count);
 }
 
 //Theatre-style crawling lights.
@@ -306,77 +319,79 @@ static inline uint8_t *dataStart(const CDPatternDataHeader *imageHeader) {
 //}
 
 
-void playbackColorFadeWithHeader(const CDPatternDataHeader *imageHeader, CDPlaybackImageState *imageState, bool sideScrolling = true, bool reverse = false) {
+void playbackColorFadeWithHeader(const CDPatternDataHeader *imageHeader, CDPlaybackImageState *imageState, bool sideScrolling = false) {
+    static bool done = false;
+    if (done) return;
+    
     if (g_button.isPressed()) return;
     
     // Fill up each pixel, wrapping as we need, and then sleep the duration specified (if any)
     uint8_t *currentOffset = imageState->dataOffset;
     // Check to make sure it is still good!
-    
     if (currentOffset < dataStart(imageHeader) || currentOffset >= dataEnd(imageHeader)) {
-        if (reverse) {
-            currentOffset = dataEnd(imageHeader) - 3;
-            imageState->dataOffset = currentOffset; // Save it for the next loop
-        } else {
-            currentOffset = dataStart(imageHeader);
-            imageState->dataOffset = currentOffset; // Save it for the next loop
-        }
-#if 0 // DEBUG
+        currentOffset = dataStart(imageHeader);
+        imageState->dataOffset = currentOffset; // Save it for the next loop
+#if DEBUG
         Serial.println("+++++++++++++++++ reset ------------------------------");
         Serial.print("start:");
         Serial.println((int)dataStart(imageHeader));
         Serial.print("end:");
         Serial.println((int)dataEnd(imageHeader));
+        
 #endif
     }
-
-#if 0
+    
     Serial.println(" start ------------------------ ");
     Serial.println((int)currentOffset);
     Serial.println("------------------------ ");
-#endif
     for (int x = 0; x < g_strip.numPixels(); x++) {
         // First, bounds check each time
         if (currentOffset < dataStart(imageHeader) || currentOffset >= dataEnd(imageHeader)) {
-            if (reverse) {
-                currentOffset = dataEnd(imageHeader) - 3;
-            } else {
-                currentOffset = dataStart(imageHeader);
-            }
+            currentOffset = dataStart(imageHeader);
+#if DEBUG
+            Serial.println("----------------- overflow reset in loop ------------------------------");
+#endif
+            done = true;
+            break; ///////////////// TEMP CORBIN
+
+        
         }
         // TODO: decoding switch here...
-        uint8_t r = currentOffset[0];
-        uint8_t g = currentOffset[1];
-        uint8_t b = currentOffset[2];
-        if (reverse) {
-            currentOffset -= 3;
-        } else {
-            currentOffset += 3;
-        }
-        
-#if 0 // DEBUG
-        Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
+        Serial.println((int)currentOffset);
+        uint8_t r = pgm_read_byte(currentOffset++);
+        Serial.println((int)currentOffset);
+        uint8_t g = pgm_read_byte(currentOffset++);
+        Serial.println((int)currentOffset);
+        uint8_t b = pgm_read_byte(currentOffset++);
+#if DEBUG
+//        Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
+        Serial.printf("                 %d,%d,%d\r\n", r, g, b);
+
 #endif
         g_strip.setPixelColor(x, r, g, b);
-        if (shouldExitEarly()) return;
+        //if (shouldExitEarly()) return; // corbin
+        
     }
     
     if (shouldExitEarly()) return;
     
     g_strip.show();
     
+    Serial.println(" - done");
+    Serial.println((int)currentOffset);
+    Serial.println(" ---------------- ");
+    
     if (imageHeader->duration > 0) {
         busyDelay(imageHeader->duration);
     } else {
-        busyDelay(20); // abitrary
+        //temp, corbin..hardcoded to match
+        busyDelay(10);
+//        delay(10);
     }
+    Serial.println("delay --------- done");
     
     if (sideScrolling) {
-        if (reverse) {
-            imageState->dataOffset -= 3; // Go one pixel further.. // TODO: abstract this...based on encoding
-        } else {
-            imageState->dataOffset += 3;
-        }
+        imageState->dataOffset = imageState->dataOffset + 3; // Go one pixel further.. // TODO: abstract this...based on encoding
     } else {
         // full page of pixels at a time...
         imageState->dataOffset = currentOffset;
@@ -446,7 +461,6 @@ static void testGreen() {
     }
     g_strip.show();
 }
-
 static void updateBrightness() {
     int val = analogRead(BRIGHTNESS_PIN);
     // Map 0 - 1024 to 0-255 brightness
@@ -461,53 +475,6 @@ static void updateBrightness() {
 static void process() {
     g_button.process();
     updateBrightness();
-}
-
-void ledGradient() {
-    // from pololu https://github.com/pololu/pololu-led-strip-arduino/blob/master/PololuLedStrip/examples/LedStripGradient/LedStripGradient.ino
-    byte time = millis() >> 2;
-    for(uint16_t i = 0; i < g_strip.numPixels(); i++)
-    {
-        byte x = time - 8*i;
-//        g_strip.setPixelColor(i, x, 255 - x, x);
-        g_strip.setPixelColor(i, 255 - x, x, x);
-        if (shouldExitEarly()) return;
-    }
-    g_strip.show();
-}
-
-uint32_t hsvToRgb(uint16_t h, uint8_t s, uint8_t v)
-{
-    uint8_t f = (h % 60) * 255 / 60;
-    uint8_t p = v * (255 - s) / 255;
-    uint8_t q = v * (255 - f * s / 255) / 255;
-    uint8_t t = v * (255 - (255 - f) * s / 255) / 255;
-    uint8_t r = 0, g = 0, b = 0;
-    switch((h / 60) % 6){
-        case 0: r = v; g = t; b = p; break;
-        case 1: r = q; g = v; b = p; break;
-        case 2: r = p; g = v; b = t; break;
-        case 3: r = p; g = q; b = v; break;
-        case 4: r = t; g = p; b = v; break;
-        case 5: r = v; g = p; b = q; break;
-    }
-    return g_strip.Color(r, g, b);
-}
-
-//https://github.com/pololu/pololu-led-strip-arduino/blob/master/PololuLedStrip/examples/LedStripRainbow/LedStripRainbow.ino
-void slowRainbow() {
-    // Update the colors.
-    uint16_t time = millis() >> 2;
-    for(uint16_t i = 0; i < g_strip.numPixels(); i++)
-    {
-        byte x = (time >> 2) - (i << 3);
-        g_strip.setPixelColor(i, hsvToRgb((uint32_t)x * 359 / 256, 255, 255));
-    }
-    
-    // Write the colors to the LED strip.
-    g_strip.show();
-    
-    busyDelay(10);
 }
 
 void loop() {
@@ -526,11 +493,15 @@ void loop() {
             break;
         }
         case CDDisplayModeRainbow: {
-            showRainbow();
+            static bool shown = false;
+            if (!shown) { shown = true;
+//                showRainbow();
+            }
+            
             break;
         }
-        case CDDisplayModeColorWipe: {
-            showColorWipe();
+        case CDDisplayColorWipe: {
+    //        showColorWipe();
             break;
         }
         case CDDisplayModeImagePlayback: {
@@ -538,18 +509,8 @@ void loop() {
             playbackImage();
             break;
         }
-        case CDDisplayModeImageLEDGradient: {
-            ledGradient();
-            break;
-        }
-        case CDDisplayModeRainbow2: {
-            slowRainbow();
-            break;
-        }
-            
-            
-            
             
     }
 }
+
 
