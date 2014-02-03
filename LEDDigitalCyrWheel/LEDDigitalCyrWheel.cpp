@@ -18,7 +18,9 @@
 //#include <avr/eeprom.h>
 
 #include <stdint.h> // We can compile without this, but it kills xcode completion without it! it took me a while to discover that..
-#include "CDExportedImage.h"
+#include <SD.h>
+
+#include "CDPatternData.h"
 
 #define USE_ADAFRUIT 1
 #if USE_ADAFRUIT
@@ -129,6 +131,7 @@ CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, framebuff, drawingbuff, WS2811
 
 #endif
 const int g_LED = LED_BUILTIN;
+const int g_SDCardChipSelect = SS;
 
 static char g_displayMode = CDDisplayModeImageLEDGradient; // ImagePlayback; // Not CDDisplayMode so I can easily do math with it..
 static Button g_button = Button(BUTTON_PIN);
@@ -164,6 +167,74 @@ bool busyDelay(uint32_t ms)
 
 void buttonClicked(Button &b);
 
+
+void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
+    for(int i = 0; i < g_strip.numPixels(); i++) {
+        g_strip.setPixelColor(i, r, g, b);
+    }
+    g_strip.show();
+    busyDelay(delay);
+}
+
+void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
+    busyDelay(1); // Initializes/checks things
+    for (int i = 0; i < 3; i++) {
+        flashColor(r, g, b, delay);
+        flashColor(0, 0, 0, delay);
+    }
+}
+
+
+File g_rootDirectory;
+
+char *getExtension(char *filename) {
+    char *ext = strchr(filename, '.');
+    if (ext) {
+        ext++; // go past the dot...
+        return ext;
+    } else {
+        return NULL;
+    }
+}
+
+
+void readSequencesFromSDCard() {
+    // TODO: support more than one sequence...
+    
+    // God the SD library is a mess. I should rewrite it better...but it would take forever for little gain in performance.
+    g_rootDirectory = SD.open("/");
+    char filenameBuffer[PATH_COMPONENT_BUFFER_LEN];
+    while (g_rootDirectory.getNextFilename(filenameBuffer)) {
+        char *ext = getExtension(filenameBuffer);
+        if (ext) {
+            Serial.println(ext);
+            if (strcmp(ext, "PAT") == 0) {
+                // Found a pattern...
+#if DEBUG
+                Serial.print("found pattern: ");
+                Serial.println(filenameBuffer);
+#endif
+                
+                
+            }
+        }
+    }
+}
+
+void setupSDCard() {
+    pinMode(g_SDCardChipSelect, OUTPUT);
+    if (!SD.begin(g_SDCardChipSelect)) {
+#if DEBUG
+        Serial.println("SD Card initialization failed!");
+#endif
+        // Flash the LEDs all red to indicate no card...
+        flashThreeTimes(255, 0, 0, 300);
+    } else {
+        flashThreeTimes(0, 255, 0, 150);
+        readSequencesFromSDCard();
+    }
+}
+
 void setup() {
     pinMode(g_LED, OUTPUT);
     digitalWrite(g_LED, HIGH);
@@ -175,24 +246,25 @@ void setup() {
     
     
     
-    for (int i = 0; i < 8; i++)
-    {
+    for (int i = 0; i < 8; i++) {
         seed += analogRead(i);
     }
 //    seed += EEPROM.read(0);  // get part of the seed from EEPROM
+    
     randomSeed(seed);
-    
-    
     
     
     pinMode(BRIGHTNESS_PIN, INPUT);
     
     g_strip.begin();
     g_strip.setBrightness(128); // default: half bright..TODO: store/restore the value? or just read it constantly?
-    
     g_strip.show(); // all off.
     
     g_button.pressHandler(buttonClicked);
+
+    setupSDCard();
+    
+    
     
     digitalWrite(g_LED, LOW);
 }
@@ -338,16 +410,16 @@ void resetState() {
     g_imageState = { 0 };
 }
 
-static inline uint8_t *dataEnd(const CDPatternDataHeader *imageHeader) {
+static inline uint8_t *dataEnd(const CDPatternItemHeader *imageHeader) {
     // It ends at the start of this header. The actual image data preceeds it
     return (uint8_t *)imageHeader;
 }
 
-static inline uint8_t *dataStart(const CDPatternDataHeader *imageHeader) {
+static inline uint8_t *dataStart(const CDPatternItemHeader *imageHeader) {
     return dataEnd(imageHeader) - (sizeof(uint8_t)*imageHeader->dataLength);
 }
 
-//static void initImageState(CDPatternDataHeader *imageHeader, CDPlaybackImageState *imageState) {
+//static void initImageState(CDPatternItemHeader *imageHeader, CDPlaybackImageState *imageState) {
 //    imageState->dataOffset = dataStart(imageHeader);
 //#if 0 // DEBUG
 //    Serial.println("------------------------------");
@@ -358,7 +430,7 @@ static inline uint8_t *dataStart(const CDPatternDataHeader *imageHeader) {
 //}
 
 
-static inline uint8_t *keepOffsetInBounds(uint8_t *currentOffset, const CDPatternDataHeader *imageHeader) {
+static inline uint8_t *keepOffsetInBounds(uint8_t *currentOffset, const CDPatternItemHeader *imageHeader) {
     if (currentOffset < dataStart(imageHeader) || currentOffset >= dataEnd(imageHeader)) {
         currentOffset = dataStart(imageHeader);
     }
@@ -371,7 +443,7 @@ static inline uint8_t *keepOffsetInBounds(uint8_t *currentOffset, const CDPatter
 //result = ceil(num - 0.5);
 //Note
 
-void playbackColorFadeWithHeader(const CDPatternDataHeader *imageHeader, CDPlaybackImageState *imageState) {
+void playbackColorFadeWithHeader(const CDPatternItemHeader *imageHeader, CDPlaybackImageState *imageState) {
     if (g_button.isPressed()) return;
     
     imageState->dataOffset = keepOffsetInBounds(imageState->dataOffset, imageHeader);
@@ -443,17 +515,17 @@ void playbackColorFadeWithHeader(const CDPatternDataHeader *imageHeader, CDPlayb
     }
 }
 
-void playbackImageWithHeader(const CDPatternDataHeader *imageHeader, CDPlaybackImageState *imageState) {
-    switch (imageHeader->patternType) {
-        case CDDisplayModeImagePlayback: {
-            playbackColorFadeWithHeader(imageHeader, imageState);
-            break;
-        }
+void playbackImageWithHeader(const CDPatternItemHeader *imageHeader, CDPlaybackImageState *imageState) {
+//    switch (imageHeader->patternType) {
+//        case CDDisplayModeImagePlayback: {
+//            playbackColorFadeWithHeader(imageHeader, imageState);
+//            break;
+//        }
 //        default: {
 //// TODO??
 //            break;
 //        }
-    }
+//    }
     /*
     // Validate our offsets; assumes the last column is correct...and data isn't truncated
     if (imageState->xOffset >= imageHeader->width || imageState->dataOffset == 0 || imageState->dataOffset >= dataEnd(imageHeader)) {

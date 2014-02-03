@@ -42,7 +42,7 @@
 #APP_LIBS_LIST = Wire Wire/utility EEPROM  SoftwareSerial
 #APP_LIBS_LIST = Wire Wire/utility
 
-APP_LIBS_LIST = 0
+APP_LIBS_LIST = SPI
 
 #  SoftwareSerial
 
@@ -52,8 +52,8 @@ APP_LIBS_LIST = 0
 #USER_LIBS_LIST = UTFT Canbus
 
 #USER_LIBS_LIST = OctoWS2811
-USER_LIBS_LIST = Adafruit_NeoPixel LSM330_Accelerometer
-#USER_LIBS_LIST =
+USER_LIBS_LIST = Adafruit_NeoPixel SD SD/utility
+
 
 MAKEFILE_PATH  = $(CURDIR)/Makefiles
 UTILITIES_PATH = $(CURDIR)/Utilities

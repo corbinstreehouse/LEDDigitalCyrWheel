@@ -84,25 +84,16 @@
 		9D5D59621889B1DC00CEBA92 /* WMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59391889B1DC00CEBA92 /* WMath.cpp */; };
 		9D5D59631889B1DC00CEBA92 /* WString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D593B1889B1DC00CEBA92 /* WString.cpp */; };
 		9D5D59641889B1DC00CEBA92 /* yield.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D593D1889B1DC00CEBA92 /* yield.c */; };
+		9DBD8101189EB54300A6A067 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD80F1189EB54300A6A067 /* File.cpp */; };
+		9DBD8102189EB54300A6A067 /* SD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD80F4189EB54300A6A067 /* SD.cpp */; };
+		9DBD8103189EB54300A6A067 /* Sd2Card.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD80F8189EB54300A6A067 /* Sd2Card.cpp */; };
+		9DBD8104189EB54300A6A067 /* SdFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD80FE189EB54300A6A067 /* SdFile.cpp */; };
+		9DBD8105189EB54300A6A067 /* SdVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD8100189EB54300A6A067 /* SdVolume.cpp */; };
 		9DCC76A51589A3D300564CB8 /* RTClib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC764F1589A3D300564CB8 /* RTClib.cpp */; };
-		9DCC76A61589A3D300564CB8 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC765D1589A3D300564CB8 /* File.cpp */; };
-		9DCC76A71589A3D300564CB8 /* SD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76601589A3D300564CB8 /* SD.cpp */; };
-		9DCC76A81589A3D300564CB8 /* Sd2Card.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76641589A3D300564CB8 /* Sd2Card.cpp */; };
-		9DCC76A91589A3D300564CB8 /* SdFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC766A1589A3D300564CB8 /* SdFile.cpp */; };
-		9DCC76AA1589A3D300564CB8 /* SdVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC766C1589A3D300564CB8 /* SdVolume.cpp */; };
-		9DCC76B01589A40100564CB8 /* SD.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76611589A3D300564CB8 /* SD.h */; };
-		9DCC76B11589A40100564CB8 /* FatStructs.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76631589A3D300564CB8 /* FatStructs.h */; };
-		9DCC76B21589A40100564CB8 /* Sd2Card.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76651589A3D300564CB8 /* Sd2Card.h */; };
-		9DCC76B31589A40100564CB8 /* Sd2PinMap.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76661589A3D300564CB8 /* Sd2PinMap.h */; };
-		9DCC76B41589A40100564CB8 /* SdFat.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76671589A3D300564CB8 /* SdFat.h */; };
-		9DCC76B51589A40100564CB8 /* SdFatmainpage.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76681589A3D300564CB8 /* SdFatmainpage.h */; };
-		9DCC76B61589A40100564CB8 /* SdFatUtil.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC76691589A3D300564CB8 /* SdFatUtil.h */; };
-		9DCC76B71589A40100564CB8 /* SdInfo.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC766B1589A3D300564CB8 /* SdInfo.h */; };
 		9DD818E91886692900AD92E2 /* Adafruit_NeoPixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD818E01886690A00AD92E2 /* Adafruit_NeoPixel.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9D1234C01889AC2300A97482 /* CDExportedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDExportedImage.h; sourceTree = "<group>"; };
 		9D1234C11889AC3B00A97482 /* CDPatternData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDPatternData.h; sourceTree = "<group>"; };
 		9D3A0DAC188A0EBD001AD553 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Button.cpp; sourceTree = "<group>"; };
 		9D3A0DAD188A0EBD001AD553 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Button.h; sourceTree = "<group>"; };
@@ -539,32 +530,33 @@
 		9D8ED2DD17C01F7F001E1C06 /* Step1.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step1.mk; sourceTree = "<group>"; };
 		9D8ED2DE17C01F7F001E1C06 /* Step2.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step2.mk; sourceTree = "<group>"; usesTabs = 1; };
 		9D922F0C17C711630097A027 /* Arduino micro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino micro.xcconfig"; sourceTree = "<group>"; };
+		9DBD80E6189EB54300A6A067 /* CardInfo.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CardInfo.ino; sourceTree = "<group>"; };
+		9DBD80E8189EB54300A6A067 /* Datalogger.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Datalogger.ino; sourceTree = "<group>"; };
+		9DBD80EA189EB54300A6A067 /* DumpFile.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DumpFile.ino; sourceTree = "<group>"; };
+		9DBD80EC189EB54300A6A067 /* Files.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Files.ino; sourceTree = "<group>"; };
+		9DBD80EE189EB54300A6A067 /* listfiles.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = listfiles.ino; sourceTree = "<group>"; };
+		9DBD80F0189EB54300A6A067 /* ReadWrite.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadWrite.ino; sourceTree = "<group>"; };
+		9DBD80F1189EB54300A6A067 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
+		9DBD80F2189EB54300A6A067 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
+		9DBD80F3189EB54300A6A067 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		9DBD80F4189EB54300A6A067 /* SD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SD.cpp; sourceTree = "<group>"; };
+		9DBD80F5189EB54300A6A067 /* SD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SD.h; sourceTree = "<group>"; };
+		9DBD80F7189EB54300A6A067 /* FatStructs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FatStructs.h; sourceTree = "<group>"; };
+		9DBD80F8189EB54300A6A067 /* Sd2Card.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sd2Card.cpp; sourceTree = "<group>"; };
+		9DBD80F9189EB54300A6A067 /* Sd2Card.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sd2Card.h; sourceTree = "<group>"; };
+		9DBD80FA189EB54300A6A067 /* Sd2PinMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sd2PinMap.h; sourceTree = "<group>"; };
+		9DBD80FB189EB54300A6A067 /* SdFat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdFat.h; sourceTree = "<group>"; };
+		9DBD80FC189EB54300A6A067 /* SdFatmainpage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdFatmainpage.h; sourceTree = "<group>"; };
+		9DBD80FD189EB54300A6A067 /* SdFatUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdFatUtil.h; sourceTree = "<group>"; };
+		9DBD80FE189EB54300A6A067 /* SdFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdFile.cpp; sourceTree = "<group>"; };
+		9DBD80FF189EB54300A6A067 /* SdInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdInfo.h; sourceTree = "<group>"; };
+		9DBD8100189EB54300A6A067 /* SdVolume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdVolume.cpp; sourceTree = "<group>"; };
 		9DCC76491589A3D300564CB8 /* datecalc.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = datecalc.pde; sourceTree = "<group>"; };
 		9DCC764B1589A3D300564CB8 /* ds1307.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ds1307.pde; sourceTree = "<group>"; };
 		9DCC764D1589A3D300564CB8 /* softrtc.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = softrtc.pde; sourceTree = "<group>"; };
 		9DCC764E1589A3D300564CB8 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
 		9DCC764F1589A3D300564CB8 /* RTClib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTClib.cpp; sourceTree = "<group>"; };
 		9DCC76501589A3D300564CB8 /* RTClib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTClib.h; sourceTree = "<group>"; };
-		9DCC76541589A3D300564CB8 /* CardInfo.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CardInfo.pde; sourceTree = "<group>"; };
-		9DCC76561589A3D300564CB8 /* Datalogger.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Datalogger.pde; sourceTree = "<group>"; };
-		9DCC76581589A3D300564CB8 /* Files.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Files.pde; sourceTree = "<group>"; };
-		9DCC765A1589A3D300564CB8 /* listfiles.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = listfiles.pde; sourceTree = "<group>"; };
-		9DCC765C1589A3D300564CB8 /* ReadWrite.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadWrite.pde; sourceTree = "<group>"; };
-		9DCC765D1589A3D300564CB8 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
-		9DCC765E1589A3D300564CB8 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
-		9DCC765F1589A3D300564CB8 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
-		9DCC76601589A3D300564CB8 /* SD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SD.cpp; sourceTree = "<group>"; };
-		9DCC76611589A3D300564CB8 /* SD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SD.h; sourceTree = "<group>"; };
-		9DCC76631589A3D300564CB8 /* FatStructs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FatStructs.h; sourceTree = "<group>"; };
-		9DCC76641589A3D300564CB8 /* Sd2Card.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sd2Card.cpp; sourceTree = "<group>"; };
-		9DCC76651589A3D300564CB8 /* Sd2Card.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sd2Card.h; sourceTree = "<group>"; };
-		9DCC76661589A3D300564CB8 /* Sd2PinMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sd2PinMap.h; sourceTree = "<group>"; };
-		9DCC76671589A3D300564CB8 /* SdFat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdFat.h; sourceTree = "<group>"; };
-		9DCC76681589A3D300564CB8 /* SdFatmainpage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdFatmainpage.h; sourceTree = "<group>"; };
-		9DCC76691589A3D300564CB8 /* SdFatUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdFatUtil.h; sourceTree = "<group>"; };
-		9DCC766A1589A3D300564CB8 /* SdFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdFile.cpp; sourceTree = "<group>"; };
-		9DCC766B1589A3D300564CB8 /* SdInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdInfo.h; sourceTree = "<group>"; };
-		9DCC766C1589A3D300564CB8 /* SdVolume.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdVolume.cpp; sourceTree = "<group>"; };
 		9DD818DA188647B600AD92E2 /* Teensy31.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Teensy31.xcconfig; sourceTree = "<group>"; };
 		9DD818DB18864BD300AD92E2 /* Teensy.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Teensy.mk; sourceTree = "<group>"; };
 		9DD818E01886690A00AD92E2 /* Adafruit_NeoPixel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_NeoPixel.cpp; sourceTree = "<group>"; };
@@ -1928,7 +1920,6 @@
 				9D8ED2C317C01F7F001E1C06 /* Builds */,
 				9D8ED2C417C01F7F001E1C06 /* Config */,
 				9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */,
-				9D1234C01889AC2300A97482 /* CDExportedImage.h */,
 				9D1234C11889AC3B00A97482 /* CDPatternData.h */,
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,
 				9D3A0DAC188A0EBD001AD553 /* Button.cpp */,
@@ -1972,14 +1963,106 @@
 			path = Makefiles;
 			sourceTree = "<group>";
 		};
+		9DBD80E3189EB54300A6A067 /* SD */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD80E4189EB54300A6A067 /* examples */,
+				9DBD80F1189EB54300A6A067 /* File.cpp */,
+				9DBD80F2189EB54300A6A067 /* keywords.txt */,
+				9DBD80F3189EB54300A6A067 /* README.txt */,
+				9DBD80F4189EB54300A6A067 /* SD.cpp */,
+				9DBD80F5189EB54300A6A067 /* SD.h */,
+				9DBD80F6189EB54300A6A067 /* utility */,
+			);
+			path = SD;
+			sourceTree = "<group>";
+		};
+		9DBD80E4189EB54300A6A067 /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD80E5189EB54300A6A067 /* CardInfo */,
+				9DBD80E7189EB54300A6A067 /* Datalogger */,
+				9DBD80E9189EB54300A6A067 /* DumpFile */,
+				9DBD80EB189EB54300A6A067 /* Files */,
+				9DBD80ED189EB54300A6A067 /* listfiles */,
+				9DBD80EF189EB54300A6A067 /* ReadWrite */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		9DBD80E5189EB54300A6A067 /* CardInfo */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD80E6189EB54300A6A067 /* CardInfo.ino */,
+			);
+			path = CardInfo;
+			sourceTree = "<group>";
+		};
+		9DBD80E7189EB54300A6A067 /* Datalogger */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD80E8189EB54300A6A067 /* Datalogger.ino */,
+			);
+			path = Datalogger;
+			sourceTree = "<group>";
+		};
+		9DBD80E9189EB54300A6A067 /* DumpFile */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD80EA189EB54300A6A067 /* DumpFile.ino */,
+			);
+			path = DumpFile;
+			sourceTree = "<group>";
+		};
+		9DBD80EB189EB54300A6A067 /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD80EC189EB54300A6A067 /* Files.ino */,
+			);
+			path = Files;
+			sourceTree = "<group>";
+		};
+		9DBD80ED189EB54300A6A067 /* listfiles */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD80EE189EB54300A6A067 /* listfiles.ino */,
+			);
+			path = listfiles;
+			sourceTree = "<group>";
+		};
+		9DBD80EF189EB54300A6A067 /* ReadWrite */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD80F0189EB54300A6A067 /* ReadWrite.ino */,
+			);
+			path = ReadWrite;
+			sourceTree = "<group>";
+		};
+		9DBD80F6189EB54300A6A067 /* utility */ = {
+			isa = PBXGroup;
+			children = (
+				9DBD80F7189EB54300A6A067 /* FatStructs.h */,
+				9DBD80F8189EB54300A6A067 /* Sd2Card.cpp */,
+				9DBD80F9189EB54300A6A067 /* Sd2Card.h */,
+				9DBD80FA189EB54300A6A067 /* Sd2PinMap.h */,
+				9DBD80FB189EB54300A6A067 /* SdFat.h */,
+				9DBD80FC189EB54300A6A067 /* SdFatmainpage.h */,
+				9DBD80FD189EB54300A6A067 /* SdFatUtil.h */,
+				9DBD80FE189EB54300A6A067 /* SdFile.cpp */,
+				9DBD80FF189EB54300A6A067 /* SdInfo.h */,
+				9DBD8100189EB54300A6A067 /* SdVolume.cpp */,
+			);
+			path = utility;
+			sourceTree = "<group>";
+		};
 		9DCC75F61589A3D300564CB8 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				9DBD80E3189EB54300A6A067 /* SD */,
 				9D3A0DB3188CB0AE001AD553 /* OctoWS2811 */,
 				9DD818DF1886690A00AD92E2 /* AdaFruit_NeoPixel */,
 				9D5200D61650691D00F3BF4E /* UTFT */,
 				9DCC76461589A3D300564CB8 /* RTClib */,
-				9DCC76511589A3D300564CB8 /* SD */,
 			);
 			name = Libraries;
 			path = ../../../Documents/Arduino/Libraries;
@@ -2028,89 +2111,6 @@
 				9DCC764D1589A3D300564CB8 /* softrtc.pde */,
 			);
 			path = softrtc;
-			sourceTree = "<group>";
-		};
-		9DCC76511589A3D300564CB8 /* SD */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76521589A3D300564CB8 /* examples */,
-				9DCC765D1589A3D300564CB8 /* File.cpp */,
-				9DCC765E1589A3D300564CB8 /* keywords.txt */,
-				9DCC765F1589A3D300564CB8 /* README.txt */,
-				9DCC76601589A3D300564CB8 /* SD.cpp */,
-				9DCC76611589A3D300564CB8 /* SD.h */,
-				9DCC76621589A3D300564CB8 /* utility */,
-			);
-			path = SD;
-			sourceTree = "<group>";
-		};
-		9DCC76521589A3D300564CB8 /* examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76531589A3D300564CB8 /* CardInfo */,
-				9DCC76551589A3D300564CB8 /* Datalogger */,
-				9DCC76571589A3D300564CB8 /* Files */,
-				9DCC76591589A3D300564CB8 /* listfiles */,
-				9DCC765B1589A3D300564CB8 /* ReadWrite */,
-			);
-			path = examples;
-			sourceTree = "<group>";
-		};
-		9DCC76531589A3D300564CB8 /* CardInfo */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76541589A3D300564CB8 /* CardInfo.pde */,
-			);
-			path = CardInfo;
-			sourceTree = "<group>";
-		};
-		9DCC76551589A3D300564CB8 /* Datalogger */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76561589A3D300564CB8 /* Datalogger.pde */,
-			);
-			path = Datalogger;
-			sourceTree = "<group>";
-		};
-		9DCC76571589A3D300564CB8 /* Files */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76581589A3D300564CB8 /* Files.pde */,
-			);
-			path = Files;
-			sourceTree = "<group>";
-		};
-		9DCC76591589A3D300564CB8 /* listfiles */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC765A1589A3D300564CB8 /* listfiles.pde */,
-			);
-			path = listfiles;
-			sourceTree = "<group>";
-		};
-		9DCC765B1589A3D300564CB8 /* ReadWrite */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC765C1589A3D300564CB8 /* ReadWrite.pde */,
-			);
-			path = ReadWrite;
-			sourceTree = "<group>";
-		};
-		9DCC76621589A3D300564CB8 /* utility */ = {
-			isa = PBXGroup;
-			children = (
-				9DCC76631589A3D300564CB8 /* FatStructs.h */,
-				9DCC76641589A3D300564CB8 /* Sd2Card.cpp */,
-				9DCC76651589A3D300564CB8 /* Sd2Card.h */,
-				9DCC76661589A3D300564CB8 /* Sd2PinMap.h */,
-				9DCC76671589A3D300564CB8 /* SdFat.h */,
-				9DCC76681589A3D300564CB8 /* SdFatmainpage.h */,
-				9DCC76691589A3D300564CB8 /* SdFatUtil.h */,
-				9DCC766A1589A3D300564CB8 /* SdFile.cpp */,
-				9DCC766B1589A3D300564CB8 /* SdInfo.h */,
-				9DCC766C1589A3D300564CB8 /* SdVolume.cpp */,
-			);
-			path = utility;
 			sourceTree = "<group>";
 		};
 		9DD818DF1886690A00AD92E2 /* AdaFruit_NeoPixel */ = {
@@ -2312,36 +2312,26 @@
 				9D5200D31650691000F3BF4E /* memorysaver.h in Sources */,
 				9D5200D41650691000F3BF4E /* UTFT.cpp in Sources */,
 				9D5D595B1889B1DC00CEBA92 /* usb_keyboard.c in Sources */,
+				9DBD8101189EB54300A6A067 /* File.cpp in Sources */,
 				9D5200D51650691000F3BF4E /* UTFT.h in Sources */,
-				9DCC76B01589A40100564CB8 /* SD.h in Sources */,
-				9DCC76B11589A40100564CB8 /* FatStructs.h in Sources */,
 				9D5D595E1889B1DC00CEBA92 /* usb_mouse.c in Sources */,
-				9DCC76B21589A40100564CB8 /* Sd2Card.h in Sources */,
-				9DCC76B31589A40100564CB8 /* Sd2PinMap.h in Sources */,
-				9DCC76B41589A40100564CB8 /* SdFat.h in Sources */,
 				9D5D59561889B1DC00CEBA92 /* usb_desc.c in Sources */,
 				9D5D593F1889B1DC00CEBA92 /* AudioStream.cpp in Sources */,
-				9DCC76B51589A40100564CB8 /* SdFatmainpage.h in Sources */,
 				9D5D59461889B1DC00CEBA92 /* IPAddress.cpp in Sources */,
-				9DCC76B61589A40100564CB8 /* SdFatUtil.h in Sources */,
 				9D5D594A1889B1DC00CEBA92 /* math_helper.c in Sources */,
+				9DBD8105189EB54300A6A067 /* SdVolume.cpp in Sources */,
 				9D3A0DC3188CB0AE001AD553 /* OctoWS2811.cpp in Sources */,
 				9D5D59571889B1DC00CEBA92 /* usb_dev.c in Sources */,
 				9D5D59631889B1DC00CEBA92 /* WString.cpp in Sources */,
 				9D5D59401889B1DC00CEBA92 /* avr_emulation.cpp in Sources */,
 				9D5D593E1889B1DC00CEBA92 /* analog.c in Sources */,
-				9DCC76B71589A40100564CB8 /* SdInfo.h in Sources */,
 				9D5D59641889B1DC00CEBA92 /* yield.c in Sources */,
 				9D5D59471889B1DC00CEBA92 /* keylayouts.c in Sources */,
 				9DCC76A51589A3D300564CB8 /* RTClib.cpp in Sources */,
-				9DCC76A61589A3D300564CB8 /* File.cpp in Sources */,
-				9DCC76A71589A3D300564CB8 /* SD.cpp in Sources */,
-				9DCC76A81589A3D300564CB8 /* Sd2Card.cpp in Sources */,
-				9DCC76A91589A3D300564CB8 /* SdFile.cpp in Sources */,
-				9DCC76AA1589A3D300564CB8 /* SdVolume.cpp in Sources */,
 				9D5202301656C30E00F3BF4E /* EEPROM.cpp in Sources */,
 				9D5D595F1889B1DC00CEBA92 /* usb_rawhid.c in Sources */,
 				9D5202311656C30E00F3BF4E /* Dhcp.cpp in Sources */,
+				9DBD8103189EB54300A6A067 /* Sd2Card.cpp in Sources */,
 				9D5D594F1889B1DC00CEBA92 /* Print.cpp in Sources */,
 				9D5202321656C30E00F3BF4E /* Dns.cpp in Sources */,
 				9D5202331656C30E00F3BF4E /* Ethernet.cpp in Sources */,
@@ -2386,11 +2376,13 @@
 				9D5D59541889B1DC00CEBA92 /* Tone.cpp in Sources */,
 				9D5D595C1889B1DC00CEBA92 /* usb_mem.c in Sources */,
 				9D5D59591889B1DC00CEBA92 /* usb_inst.cpp in Sources */,
+				9DBD8104189EB54300A6A067 /* SdFile.cpp in Sources */,
 				9D5D59621889B1DC00CEBA92 /* WMath.cpp in Sources */,
 				9D5D59411889B1DC00CEBA92 /* eeprom.c in Sources */,
 				9D5D59441889B1DC00CEBA92 /* HardwareSerial3.cpp in Sources */,
 				9D5D59531889B1DC00CEBA92 /* Stream.cpp in Sources */,
 				9D5D595D1889B1DC00CEBA92 /* usb_midi.c in Sources */,
+				9DBD8102189EB54300A6A067 /* SD.cpp in Sources */,
 				9D5D59511889B1DC00CEBA92 /* serial2.c in Sources */,
 				9D5D594E1889B1DC00CEBA92 /* pins_teensy.c in Sources */,
 				9D5D59481889B1DC00CEBA92 /* main.cpp in Sources */,

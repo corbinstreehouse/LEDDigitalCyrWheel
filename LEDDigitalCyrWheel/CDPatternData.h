@@ -53,7 +53,6 @@ typedef struct  __attribute__((__packed__)) {
     CDPatternType patternType;
     CDDurationType durationType;
     int32_t duration; // Signed...but not really. shouldn't be negative
-    //
     uint32_t dataLength; // how long the data is following
 } CDPatternItemHeader;
 // Data of dataLength follows the header
