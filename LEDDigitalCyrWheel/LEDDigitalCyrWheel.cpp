@@ -18,8 +18,8 @@
 //#include <avr/eeprom.h>
 
 #include <stdint.h> // We can compile without this, but it kills xcode completion without it! it took me a while to discover that..
-#include <SD.h>
 
+#include "CWPatternSequenceManager.h"
 #include "CDPatternData.h"
 
 #define USE_ADAFRUIT 1
@@ -62,7 +62,6 @@ typedef enum {
     
     CDDisplayModeMax,
 } CDDisplayMode;
-
 
 typedef struct {
     uint8_t green, red, blue; // grb format
@@ -131,7 +130,6 @@ CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, framebuff, drawingbuff, WS2811
 
 #endif
 const int g_LED = LED_BUILTIN;
-const int g_SDCardChipSelect = SS;
 
 static char g_displayMode = CDDisplayModeImageLEDGradient; // ImagePlayback; // Not CDDisplayMode so I can easily do math with it..
 static Button g_button = Button(BUTTON_PIN);
@@ -184,56 +182,7 @@ void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
     }
 }
 
-
-File g_rootDirectory;
-
-char *getExtension(char *filename) {
-    char *ext = strchr(filename, '.');
-    if (ext) {
-        ext++; // go past the dot...
-        return ext;
-    } else {
-        return NULL;
-    }
-}
-
-
-void readSequencesFromSDCard() {
-    // TODO: support more than one sequence...
-    
-    // God the SD library is a mess. I should rewrite it better...but it would take forever for little gain in performance.
-    g_rootDirectory = SD.open("/");
-    char filenameBuffer[PATH_COMPONENT_BUFFER_LEN];
-    while (g_rootDirectory.getNextFilename(filenameBuffer)) {
-        char *ext = getExtension(filenameBuffer);
-        if (ext) {
-            Serial.println(ext);
-            if (strcmp(ext, "PAT") == 0) {
-                // Found a pattern...
-#if DEBUG
-                Serial.print("found pattern: ");
-                Serial.println(filenameBuffer);
-#endif
-                
-                
-            }
-        }
-    }
-}
-
-void setupSDCard() {
-    pinMode(g_SDCardChipSelect, OUTPUT);
-    if (!SD.begin(g_SDCardChipSelect)) {
-#if DEBUG
-        Serial.println("SD Card initialization failed!");
-#endif
-        // Flash the LEDs all red to indicate no card...
-        flashThreeTimes(255, 0, 0, 300);
-    } else {
-        flashThreeTimes(0, 255, 0, 150);
-        readSequencesFromSDCard();
-    }
-}
+CWPatternSequenceManager g_sequenceManager;
 
 void setup() {
     pinMode(g_LED, OUTPUT);
@@ -243,8 +192,6 @@ void setup() {
     delay(1000);
     Serial.println("--- begin serial --- ");
 #endif
-    
-    
     
     for (int i = 0; i < 8; i++) {
         seed += analogRead(i);
@@ -262,9 +209,19 @@ void setup() {
     
     g_button.pressHandler(buttonClicked);
 
-    setupSDCard();
-    
-    
+    bool initPassed = g_sequenceManager.init();
+    if (initPassed) {
+        // See if we could read from the SD card
+        if (g_sequenceManager.loadFirstSequence()) {
+            flashThreeTimes(0, 255, 0, 150); // flash green
+        } else {
+            flashThreeTimes(255, 127, 0, 150); // flash orange...couldn't find any data files
+        }
+    } else {
+        // Flash the LEDs all red to indicate no card...
+        flashThreeTimes(255, 0, 0, 300);
+        g_sequenceManager.loadDefaultSequence();
+    }
     
     digitalWrite(g_LED, LOW);
 }

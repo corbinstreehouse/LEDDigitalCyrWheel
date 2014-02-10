@@ -84,6 +84,7 @@
 		9D5D59621889B1DC00CEBA92 /* WMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D59391889B1DC00CEBA92 /* WMath.cpp */; };
 		9D5D59631889B1DC00CEBA92 /* WString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D593B1889B1DC00CEBA92 /* WString.cpp */; };
 		9D5D59641889B1DC00CEBA92 /* yield.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5D593D1889B1DC00CEBA92 /* yield.c */; };
+		9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */; };
 		9DBD8101189EB54300A6A067 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD80F1189EB54300A6A067 /* File.cpp */; };
 		9DBD8102189EB54300A6A067 /* SD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD80F4189EB54300A6A067 /* SD.cpp */; };
 		9DBD8103189EB54300A6A067 /* Sd2Card.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBD80F8189EB54300A6A067 /* Sd2Card.cpp */; };
@@ -530,6 +531,8 @@
 		9D8ED2DD17C01F7F001E1C06 /* Step1.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step1.mk; sourceTree = "<group>"; };
 		9D8ED2DE17C01F7F001E1C06 /* Step2.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step2.mk; sourceTree = "<group>"; usesTabs = 1; };
 		9D922F0C17C711630097A027 /* Arduino micro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino micro.xcconfig"; sourceTree = "<group>"; };
+		9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CWPatternSequenceManager.cpp; sourceTree = "<group>"; };
+		9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWPatternSequenceManager.h; sourceTree = "<group>"; };
 		9DBD80E6189EB54300A6A067 /* CardInfo.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CardInfo.ino; sourceTree = "<group>"; };
 		9DBD80E8189EB54300A6A067 /* Datalogger.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Datalogger.ino; sourceTree = "<group>"; };
 		9DBD80EA189EB54300A6A067 /* DumpFile.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DumpFile.ino; sourceTree = "<group>"; };
@@ -1921,6 +1924,8 @@
 				9D8ED2C417C01F7F001E1C06 /* Config */,
 				9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */,
 				9D1234C11889AC3B00A97482 /* CDPatternData.h */,
+				9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */,
+				9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */,
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,
 				9D3A0DAC188A0EBD001AD553 /* Button.cpp */,
 				9D3A0DAD188A0EBD001AD553 /* Button.h */,
@@ -2371,6 +2376,7 @@
 				9D52024A1656C30E00F3BF4E /* WiFiServer.cpp in Sources */,
 				9D52024B1656C30E00F3BF4E /* twi.c in Sources */,
 				9D5D594B1889B1DC00CEBA92 /* mk20dx128.c in Sources */,
+				9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */,
 				9D52024C1656C30E00F3BF4E /* Wire.cpp in Sources */,
 				9D5D59601889B1DC00CEBA92 /* usb_seremu.c in Sources */,
 				9D5D59541889B1DC00CEBA92 /* Tone.cpp in Sources */,
