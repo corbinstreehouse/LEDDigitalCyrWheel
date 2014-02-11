@@ -34,7 +34,9 @@ CWPatternSequenceManager::CWPatternSequenceManager() {
     _sequenceNames = NULL;
 }
 
+
 void CWPatternSequenceManager::freeSequenceNames() {
+#if PATTERN_EDITOR
     if (_sequenceNames) {
         for (int i = 0; i < _numberOfAvailableSequences; i++) {
             free(_sequenceNames[i]);
@@ -42,24 +44,35 @@ void CWPatternSequenceManager::freeSequenceNames() {
         free(_sequenceNames);
         _sequenceNames = NULL;
     }
+#endif
 }
 
 // not needed if i ever only have one instance
+#if PATTERN_EDITOR
 CWPatternSequenceManager::~CWPatternSequenceManager() {
     freePatternItems();
     freeSequenceNames();
 }
+#endif
 
 void CWPatternSequenceManager::loadDefaultSequence() {
     freeSequenceNames();
     freePatternItems();
 
-    _currentSequenceIndex = 0;
-    _numberOfAvailableSequences = 1;
-//    _sequenceNames = (char**)malloc(sizeof(char *)*1);
-//    _sequenceNames[0]
+    _numberOfAvailableSequences = 0;
     
-    // TODO: corbin code
+    _pixelCount = 0; // Well..whatever
+    _numberOfPatternItems = CDPatternTypeMax;
+    // After the header each item follows
+    _patternItems = (CDPatternItemHeader *)malloc(_numberOfPatternItems * sizeof(CDPatternItemHeader));
+    
+    for (int i = CDPatternTypeMin; i < CDPatternTypeMax; i++) {
+        _patternItems[i].patternType = (CDPatternType)i;
+        _patternItems[i].durationType = CDDurationTypeSeconds;
+        _patternItems[i].duration = 10;
+        _patternItems[i].dataLength = 0;
+        _patternItems[i].data = 0;
+    }
 }
 
 static inline bool verifyHeader(CDPatternSequenceHeader *h) {

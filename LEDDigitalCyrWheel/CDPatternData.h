@@ -55,6 +55,7 @@ typedef enum ENUM_SIZE {
     CDPatternTypeCollision,
     
     CDPatternTypeMax,
+    CDPatternTypeAllOff = CDPatternTypeMax,
 } CDPatternType;
 
 

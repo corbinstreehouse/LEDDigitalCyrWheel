@@ -33,7 +33,9 @@ private:
     void freeSequenceNames();
 public:
     CWPatternSequenceManager();
+#if PATTERN_EDITOR
     ~CWPatternSequenceManager();
+#endif
     bool init();
     
     bool loadFirstSequence(); // Loads the first sequence
@@ -43,11 +45,12 @@ public:
     char *getSequenceNameAtIndex(int index) { return _sequenceNames[index]; }
     int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
     int getCurrentSequenceIndex() { return _currentSequenceIndex; }
-#endif
-    
+
     uint32_t getPixelCount() { return _pixelCount; }
     uint32_t getNumberOfPatternItems() { return _numberOfPatternItems; }
     CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &_patternItems[index]; }
+#endif
+    
     
 };
 
