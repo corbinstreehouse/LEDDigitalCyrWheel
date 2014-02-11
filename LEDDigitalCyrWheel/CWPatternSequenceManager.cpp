@@ -8,7 +8,7 @@
 
 #include "CWPatternSequenceManager.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 #if DEBUG
 #define ASSERT(a) if (!(a)) { \
@@ -16,10 +16,8 @@
     Serial.print(__FILE__); Serial.print(" : "); \
     Serial.print(__LINE__); }
 #else
-#define ASSERT(a)
+#define ASSERT(a) ((void)0)
 #endif
-
-const int g_SDCardChipSelect = SS;
 
 char *getExtension(char *filename) {
     char *ext = strchr(filename, '.');
@@ -31,30 +29,104 @@ char *getExtension(char *filename) {
     }
 }
 
+CWPatternSequenceManager::CWPatternSequenceManager() {
+    _patternItems = NULL;
+    _sequenceNames = NULL;
+}
+
+void CWPatternSequenceManager::freeSequenceNames() {
+    if (_sequenceNames) {
+        for (int i = 0; i < _numberOfAvailableSequences; i++) {
+            free(_sequenceNames[i]);
+        }
+        free(_sequenceNames);
+        _sequenceNames = NULL;
+    }
+}
+
+// not needed if i ever only have one instance
+CWPatternSequenceManager::~CWPatternSequenceManager() {
+    freePatternItems();
+    freeSequenceNames();
+}
+
 void CWPatternSequenceManager::loadDefaultSequence() {
+    freeSequenceNames();
+    freePatternItems();
+
+    _currentSequenceIndex = 0;
+    _numberOfAvailableSequences = 1;
+//    _sequenceNames = (char**)malloc(sizeof(char *)*1);
+//    _sequenceNames[0]
     
     // TODO: corbin code
 }
 
-void CWPatternSequenceManager::loadCurrentSequence() {
+static inline bool verifyHeader(CDPatternSequenceHeader *h) {
+    // header, and version 0
+    return h->marker[0] == 'S' && h->marker[1] == 'Q' && h->marker[2] == 'C' && h->version == 0;
+}
+
+void CWPatternSequenceManager::freePatternItems() {
+    if (_patternItems) {
+        for (int i = 0; i < _numberOfPatternItems; i++) {
+            // If it has data, we have to free it
+            if (_patternItems[i].dataLength && _patternItems[i].data) {
+                free(_patternItems[i].data);
+            }
+        }
+        free(_patternItems);
+        _patternItems = NULL;
+    }
+    
+}
+
+bool CWPatternSequenceManager::loadCurrentSequence() {
+    freePatternItems();
+
+    bool result = true;
     ASSERT(_currentSequenceIndex < _numberOfAvailableSequences);
     const char *filename = _sequenceNames[_currentSequenceIndex];
     File sequenceFile = SD.open(filename);
-//    sequenceFile.re
-    
-    
+
+    // This is reading the file format I created..
+    // Header first
+    CDPatternSequenceHeader patternHeader;
+    sequenceFile.readBytes((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
+
+    // Verify it
+    if (verifyHeader(&patternHeader)) {
+        // Then read in and store the stock info
+        _pixelCount = patternHeader.pixelCount;
+        _numberOfPatternItems = patternHeader.patternCount;
+        // After the header each item follows
+        _patternItems = (CDPatternItemHeader *)malloc(_numberOfPatternItems * sizeof(CDPatternItemHeader));
+        for (int i = 0; i < _numberOfPatternItems; i++ ){
+            sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
+            // After the header, is the (optional) image data
+            uint32_t dataLength = _patternItems[i].dataLength;
+            if (dataLength > 0) {
+                // Read in the data that is following the header, and put it in the data pointer...
+                _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
+                sequenceFile.readBytes((char*)&_patternItems[i].data, dataLength);
+            } else {
+                // data pointer should always be NULL
+                _patternItems[i].data = NULL;
+            }
+        }
+    }
     sequenceFile.close();
+    return result;
 }
 
-
 bool CWPatternSequenceManager::initSDCard() {
-    pinMode(g_SDCardChipSelect, OUTPUT);
-    bool result = SD.begin(g_SDCardChipSelect);
+    pinMode(SS, OUTPUT);
+    bool result = SD.begin(SS);
 #if DEBUG
     if (!result) {
         Serial.println("SD Card initialization failed!");
-#endif
     }
+#endif
     return result;
 }
 
@@ -101,6 +173,7 @@ bool CWPatternSequenceManager::init() {
             }
         }
         _currentSequenceIndex = 0;
+        loadFirstSequence();
         rootDir.close();
     }
     
@@ -111,12 +184,12 @@ bool CWPatternSequenceManager::init() {
 bool CWPatternSequenceManager::loadFirstSequence() {
     if (_numberOfAvailableSequences > 0) {
         _currentSequenceIndex = 0;
-        loadCurrentSequence();
-        return true;
-    } else {
-        loadDefaultSequence();
-        return false;
+        if (loadCurrentSequence()) {
+            return true;
+        }
     }
+    loadDefaultSequence();
+    return false;
 }
 
 void CWPatternSequenceManager::loadNextSequence() {

@@ -24,17 +24,31 @@ private:
     
     // Current sequence information
     CDPatternItemHeader *_patternItems;
-    int _numberOfPatternItems;
+    uint32_t _numberOfPatternItems;
     uint32_t _pixelCount; // What was designed against
     
     bool initSDCard();
-    void loadCurrentSequence();
+    bool loadCurrentSequence();
+    void freePatternItems();
+    void freeSequenceNames();
 public:
+    CWPatternSequenceManager();
+    ~CWPatternSequenceManager();
     bool init();
     
     bool loadFirstSequence(); // Loads the first sequence
     void loadNextSequence(); // returns true if we could advance (or loop to the start)
     void loadDefaultSequence();
+#if PATTERN_EDITOR
+    char *getSequenceNameAtIndex(int index) { return _sequenceNames[index]; }
+    int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
+    int getCurrentSequenceIndex() { return _currentSequenceIndex; }
+#endif
+    
+    uint32_t getPixelCount() { return _pixelCount; }
+    uint32_t getNumberOfPatternItems() { return _numberOfPatternItems; }
+    CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &_patternItems[index]; }
+    
 };
 
 
