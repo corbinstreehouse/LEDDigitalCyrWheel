@@ -204,6 +204,7 @@
 		9DBE92C018A8AA5600154550 /* WiFiUdp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE924218A8AA5600154550 /* WiFiUdp.cpp */; };
 		9DBE92C118A8AA5600154550 /* twi.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE925418A8AA5600154550 /* twi.c */; };
 		9DBE92C218A8AA5600154550 /* Wire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE925618A8AA5600154550 /* Wire.cpp */; };
+		9DBE92CA18AA834D00154550 /* CDLEDStripPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */; };
 		9DCC76A51589A3D300564CB8 /* RTClib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC764F1589A3D300564CB8 /* RTClib.cpp */; };
 		9DD818E91886692900AD92E2 /* Adafruit_NeoPixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD818E01886690A00AD92E2 /* Adafruit_NeoPixel.cpp */; };
 /* End PBXBuildFile section */
@@ -1493,6 +1494,10 @@
 		9DBE925518A8AA5600154550 /* twi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = twi.h; sourceTree = "<group>"; };
 		9DBE925618A8AA5600154550 /* Wire.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Wire.cpp; sourceTree = "<group>"; };
 		9DBE925718A8AA5600154550 /* Wire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Wire.h; sourceTree = "<group>"; };
+		9DBE92C818AA7ED000154550 /* CDOctoWS2811.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDOctoWS2811.h; sourceTree = "<group>"; };
+		9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDLEDStripPatterns.cpp; sourceTree = "<group>"; };
+		9DBE92CB18AA836E00154550 /* CDLEDStripPatterns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDLEDStripPatterns.h; sourceTree = "<group>"; };
+		9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDDigitalCyrWheel.h; sourceTree = "<group>"; };
 		9DCC76491589A3D300564CB8 /* datecalc.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = datecalc.pde; sourceTree = "<group>"; };
 		9DCC764B1589A3D300564CB8 /* ds1307.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ds1307.pde; sourceTree = "<group>"; };
 		9DCC764D1589A3D300564CB8 /* softrtc.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = softrtc.pde; sourceTree = "<group>"; };
@@ -1625,10 +1630,14 @@
 			children = (
 				9D8ED2C317C01F7F001E1C06 /* Builds */,
 				9D8ED2C417C01F7F001E1C06 /* Config */,
+				9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */,
 				9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */,
+				9DBE92C818AA7ED000154550 /* CDOctoWS2811.h */,
 				9D1234C11889AC3B00A97482 /* CDPatternData.h */,
 				9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */,
 				9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */,
+				9DBE92CB18AA836E00154550 /* CDLEDStripPatterns.h */,
+				9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */,
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,
 				9D3A0DAC188A0EBD001AD553 /* Button.cpp */,
 				9D3A0DAD188A0EBD001AD553 /* Button.h */,
@@ -5307,6 +5316,7 @@
 				9DBE8A6318A8A85000154550 /* Makefile in Sources */,
 				9DBE928A18A8AA5600154550 /* GSM3SoftSerial.cpp in Sources */,
 				9DBE8A7A18A8A85000154550 /* usb_seremu.c in Sources */,
+				9DBE92CA18AA834D00154550 /* CDLEDStripPatterns.cpp in Sources */,
 				9DBE8A7E18A8A85000154550 /* yield.c in Sources */,
 				9DBE8DA218A8A9C700154550 /* safe_iterator.tcc in Sources */,
 				9DBE928618A8AA5600154550 /* GSM3ShieldV1ServerProvider.cpp in Sources */,

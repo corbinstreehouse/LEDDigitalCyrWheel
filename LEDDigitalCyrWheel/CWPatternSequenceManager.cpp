@@ -7,8 +7,7 @@
 //
 
 #include "CWPatternSequenceManager.h"
-
-#define DEBUG 0
+#include "CDLEDStripPatterns.h"
 
 #if DEBUG
 #define ASSERT(a) if (!(a)) { \
@@ -18,6 +17,7 @@
 #else
 #define ASSERT(a) ((void)0)
 #endif
+
 
 char *getExtension(char *filename) {
     char *ext = strchr(filename, '.');

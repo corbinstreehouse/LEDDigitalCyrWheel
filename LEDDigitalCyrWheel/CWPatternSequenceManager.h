@@ -15,6 +15,7 @@
 #include "Arduino.h"
 #include "SD.h"
 
+
 class CWPatternSequenceManager {
 private:
     // all available sequences
@@ -50,8 +51,6 @@ public:
     uint32_t getNumberOfPatternItems() { return _numberOfPatternItems; }
     CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &_patternItems[index]; }
 #endif
-    
-    
 };
 
 
