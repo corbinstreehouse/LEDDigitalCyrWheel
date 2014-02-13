@@ -27,6 +27,11 @@ private:
     CDPatternItemHeader *_patternItems;
     uint32_t _numberOfPatternItems;
     uint32_t _pixelCount; // What was designed against
+
+    // Current pattern item information
+    int _currentPatternItemIndex;
+    uint32_t _patternStartTime;
+    
     
     bool initSDCard();
     bool loadCurrentSequence();
@@ -42,6 +47,12 @@ public:
     bool loadFirstSequence(); // Loads the first sequence
     void loadNextSequence(); // returns true if we could advance (or loop to the start)
     void loadDefaultSequence();
+    
+    
+    // Playing back patterns
+    void nextPatternItem();
+    void process(); // Main loop work
+    
 #if PATTERN_EDITOR
     char *getSequenceNameAtIndex(int index) { return _sequenceNames[index]; }
     int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };

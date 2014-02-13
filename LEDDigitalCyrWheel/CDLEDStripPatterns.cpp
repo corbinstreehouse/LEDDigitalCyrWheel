@@ -15,7 +15,7 @@
 #define USE_ADAFRUIT 1
 
 #if USE_ADAFRUIT // Defined in CWPatternSequenceManager.h
-#include <Adafruit_NeoPixel.h>
+#include "Adafruit_NeoPixel.h"
 #define STRIP_CLASS Adafruit_NeoPixel
 #else
 #include "CDOctoWS2811.h"
@@ -38,6 +38,10 @@ int drawingbuff[STRIP_LENGTH*6];
 static CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, framebuff, drawingbuff, WS2811_GRB + WS2811_800kHz);
 #endif
 
+#ifndef byte
+typedef uint8_t byte;
+#endif
+
 
 // TODO: get rid of this hack...
 typedef struct {
@@ -56,7 +60,7 @@ static unsigned int seed = 0;  // used to initialize random number generator
 
 
 static CDPlaybackImageState g_imageState = { 0 };
-
+static int g_brightness = 0;
 
 
 void warmWhiteShimmer(unsigned char dimOnly);
@@ -93,7 +97,7 @@ static bool busyDelay(uint32_t ms)
     
 	if (ms > 0) {
 		while (1) {
-            if (mainShouldExitEarly()) return true;
+            if (mainProcess()) return true;
 			if ((micros() - start) >= 1000) {
 				ms--;
 				if (ms == 0) return false;
@@ -108,7 +112,7 @@ static bool busyDelay(uint32_t ms)
 
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
-uint32_t Wheel(byte WheelPos) {
+uint32_t Wheel(uint8_t WheelPos) {
     if (WheelPos < 85) {
         return g_strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
     } else if(WheelPos < 170) {
@@ -142,7 +146,7 @@ void theaterChase(uint32_t c, uint8_t wait) {
                 g_strip.setPixelColor(i+q, c);    //turn every third pixel on
             }
             g_strip.show();
-            if (mainShouldExitEarly()) return;
+            if (mainProcess()) return;
             
             if (busyDelay(wait)) {
                 return;
@@ -151,7 +155,7 @@ void theaterChase(uint32_t c, uint8_t wait) {
             for (int i=0; i < g_strip.numPixels(); i=i+3) {
                 g_strip.setPixelColor(i+q, 0);        //turn every third pixel off
             }
-            if (mainShouldExitEarly()) return;
+            if (mainProcess()) return;
         }
     }
 }
@@ -162,9 +166,9 @@ void colorWipe(uint32_t c, uint8_t wait) {
     for (uint16_t i=0; i<g_strip.numPixels(); i++) {
         g_strip.setPixelColor(i, 0);
     }
-    if (mainShouldExitEarly()) return;
+    if (mainProcess()) return;
     g_strip.show();
-    if (mainShouldExitEarly()) return;
+    if (mainProcess()) return;
     
     for(uint16_t i=0; i<g_strip.numPixels(); i++) {
         g_strip.setPixelColor(i, c);
@@ -175,7 +179,7 @@ void colorWipe(uint32_t c, uint8_t wait) {
         //                return;
         //            }
         //        } else
-        if (mainShouldExitEarly()) {
+        if (mainProcess()) {
             return ;
         }
     }
@@ -190,7 +194,7 @@ void rainbowCycle(uint8_t wait) {
         for(i=0; i< g_strip.numPixels(); i++) {
             g_strip.setPixelColor(i, Wheel(((i * 256 / g_strip.numPixels()) + j) & 255));
         }
-        if (mainShouldExitEarly()) return;
+        if (mainProcess()) return;
         g_strip.show();
         if (busyDelay(wait)) return;
     }
@@ -220,11 +224,11 @@ void resetState() {
 
 static inline uint8_t *dataEnd(const CDPatternItemHeader *imageHeader) {
     // It ends at the start of this header. The actual image data preceeds it
-    return (uint8_t *)imageHeader;
+    return (uint8_t *)(imageHeader->data + imageHeader->dataLength);
 }
 
 static inline uint8_t *dataStart(const CDPatternItemHeader *imageHeader) {
-    return dataEnd(imageHeader) - (sizeof(uint8_t)*imageHeader->dataLength);
+    return imageHeader->data;
 }
 
 //static void initImageState(CDPatternItemHeader *imageHeader, CDPlaybackImageState *imageState) {
@@ -244,12 +248,6 @@ static inline uint8_t *keepOffsetInBounds(uint8_t *currentOffset, const CDPatter
     }
     return currentOffset;
 }
-
-//if (floatValue  > 0.0)
-//result = floor(floatValue + 0.5);
-//else
-//result = ceil(num - 0.5);
-//Note
 
 void playbackColorFadeWithHeader(const CDPatternItemHeader *imageHeader, CDPlaybackImageState *imageState) {
 //    if (g_button.isPressed()) return;
@@ -308,10 +306,10 @@ void playbackColorFadeWithHeader(const CDPatternItemHeader *imageHeader, CDPlayb
         Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
 #endif
         g_strip.setPixelColor(x, r, g, b);
-        if (mainShouldExitEarly()) return;
+        if (mainProcess()) return;
     }
     
-    if (mainShouldExitEarly()) return;
+    if (mainProcess()) return;
     
     g_strip.show();
     
@@ -325,7 +323,7 @@ void playbackColorFadeWithHeader(const CDPatternItemHeader *imageHeader, CDPlayb
 
 void playbackImageWithHeader(const CDPatternItemHeader *imageHeader, CDPlaybackImageState *imageState) {
     //    switch (imageHeader->patternType) {
-    //        case CDDisplayModeImagePlayback: {
+    //        case CDPatternTypeImagePlayback: {
     //            playbackColorFadeWithHeader(imageHeader, imageState);
     //            break;
     //        }
@@ -354,12 +352,12 @@ void playbackImageWithHeader(const CDPatternItemHeader *imageHeader, CDPlaybackI
      //        Serial.printf("x:%d y:%d, r:%d, g:%d, b:%d, yMax:%d, numPix:%d\r\n", imageState->xOffset, y, r, g, b, yMax, numPix);
      #endif
      g_strip.setPixelColor(y, r, g, b);
-     if (mainShouldExitEarly()) return;
+     if (mainProcess()) return;
      }
      for (int y = yMax; y < numPix; y++) {
      g_strip.setPixelColor(y, 0, 0, 0); // off for any extra pixels we have
      }
-     if (mainShouldExitEarly()) return;
+     if (mainProcess()) return;
      
      g_strip.show();
      
@@ -373,6 +371,7 @@ static void playbackImage() {
     //    playbackImageWithHeader(&g_imageData.header, &g_imageState);
 }
 
+#if DEBUG
 static void testGreen() {
     static bool set = false;
     if (set) return;
@@ -381,13 +380,12 @@ static void testGreen() {
     
     for (int i = 0; i < g_strip.numPixels(); i++) {
         uint8_t g = 255 * ((float)i / (float)g_strip.numPixels());
-        Serial.println(g);
+//        Serial.println(g);
         g_strip.setPixelColor(i, 0, g, 0);
     }
     g_strip.show();
 }
-
-static int g_brightness = 0;
+#endif
 
 void stripUpdateBrightness() {
     int val = analogRead(BRIGHTNESS_PIN);
@@ -403,23 +401,22 @@ void stripUpdateBrightness() {
 void ledGradient2() {
     // from pololu https://github.com/pololu/pololu-led-strip-arduino/blob/master/PololuLedStrip/examples/LedStripGradient/LedStripGradient.ino
     uint32_t m = millis();
-    byte time = m >> 2;
+    uint8_t time = m >> 2;
 //    Serial.print("millis:");
 //    Serial.print(m);
 //    Serial.print(" time:");
 //    Serial.print(time);
-    byte  bb = time - 8*72;
+//    uint8_t  bb = time - 8*72;
 //    Serial.print(" b:");
 //    Serial.print(bb);
 //    
 //    Serial.println();
 //    Serial.println();
-    for(uint16_t i = 0; i < g_strip.numPixels(); i++)
-    {
+    for(uint16_t i = 0; i < g_strip.numPixels(); i++) {
         //        byte x = time - 4*i;
         byte x = time - 8*i;
         g_strip.setPixelColor(i, 255 - x, x, x);
-        if (mainShouldExitEarly()) return;
+        if (mainProcess()) return;
     }
     g_strip.show();
 }
@@ -440,7 +437,7 @@ byte valueForOffset(int currentOffset) {
     // TODO: see if math mod is faster
     int v = currentOffset % totalGradientPixels;
     
-    int currentR = map(v, 0, totalGradientPixels-1, minV, maxV*2);
+    int currentR = (int)map(v, 0, totalGradientPixels-1, minV, maxV*2);
     
     // math mod...
     while (currentR > maxV*2) {
@@ -512,7 +509,7 @@ void pulseGradientEffect() {
         // ramp up, then down, gradientUpPixelCount per half
         int totalGradientPixels = gradientUpPixelCount*2;
         int v = i % totalGradientPixels;
-        int currentR = map(v, 0, totalGradientPixels-1, minV, maxV*2);
+        int currentR = (int)map(v, 0, totalGradientPixels-1, minV, maxV*2);
         
         // math mod...
         while (currentR > maxV*2) {
@@ -684,7 +681,13 @@ void warmWhiteShimmer(unsigned char dimOnly)
         // every odd LED gets set to a quarter the brighness of the preceding even LED
         if (i + 1 < LED_COUNT)
         {
-            colors[i+1] = (rgb_color){colors[i].red >> 2, colors[i].green >> 2, colors[i].blue >> 2};
+            rgb_color c;
+            c.red = colors[i].red >> 2;
+            c.green = colors[i].green >> 2;
+            c.blue = colors[i].blue >> 2;
+            colors[i+1] = c;
+#warning corbin test ....above code is different
+//            colors[i+1] = (rgb_color){colors[i].red >> 2, colors[i].green >> 2, colors[i].blue >> 2};
         }
     }
 }
@@ -752,17 +755,18 @@ void randomColorWalk(unsigned char initializeColors, unsigned char dimOnly)
         else
         {
             // initialize LEDs to a string of random colors
-            colors[i] = (rgb_color){random(maxBrightness), random(maxBrightness), random(maxBrightness)};
+            colors[i] = (rgb_color){(byte)random(maxBrightness), (byte)random(maxBrightness), (byte)random(maxBrightness)};
         }
         
         // set neighboring LEDs to be progressively dimmer versions of the color we just set
         if (i >= 1)
         {
-            colors[i-1] = (rgb_color){colors[i].red >> 2, colors[i].green >> 2, colors[i].blue >> 2};
+#warning corbin - the init may be wrong! not rgb...
+            colors[i-1] = (rgb_color){(byte)(colors[i].red >> 2), (byte)(colors[i].green >> 2), (byte)(colors[i].blue >> 2)};
         }
         if (i >= 2)
         {
-            colors[i-2] = (rgb_color){colors[i].red >> 3, colors[i].green >> 3, colors[i].blue >> 3};
+            colors[i-2] = (rgb_color){(byte)(colors[i].red >> 3), (byte)(colors[i].green >> 3), (byte)(colors[i].blue >> 3)};
         }
         if (i + 1 < LED_COUNT)
         {
@@ -1017,14 +1021,14 @@ void gradient()
         for (int i = 0; i < 8; i++)
         {
             if (j >= LED_COUNT){ break; }
-            colors[(loopCount/2 + j + LED_COUNT)%LED_COUNT] = (rgb_color){160 - 20*i, 20*i, (160 - 20*i)*20*i/160};
+            colors[(loopCount/2 + j + LED_COUNT)%LED_COUNT] = (rgb_color){(byte)(160 - 20*i), (byte)(20*i), (byte)((160 - 20*i)*20*i/160)};
             j++;
         }
         // transition from green to red over 8 LEDs
         for (int i = 0; i < 8; i++)
         {
             if (j >= LED_COUNT){ break; }
-            colors[(loopCount/2 + j + LED_COUNT)%LED_COUNT] = (rgb_color){20*i, 160 - 20*i, (160 - 20*i)*20*i/160};
+            colors[(loopCount/2 + j + LED_COUNT)%LED_COUNT] = (rgb_color){(byte)(20*i), (byte)(160 - 20*i), (byte)((160 - 20*i)*20*i/160)};
             j++;
         }
     }
@@ -1204,7 +1208,7 @@ unsigned char collision()
                 colors[0] = (rgb_color){maxBrightness, maxBrightness*4/5, maxBrightness>>3};
                 break;
             default:  // fifth collision and beyond: random-color streams
-                colors[0] = (rgb_color){random(maxBrightness), random(maxBrightness), random(maxBrightness)};
+                colors[0] = (rgb_color){static_cast<uint8_t>(random(maxBrightness)), static_cast<uint8_t>(random(maxBrightness)), static_cast<uint8_t>(random(maxBrightness))};
         }
         
         // stream is led by two full-white LEDs
@@ -1321,9 +1325,9 @@ unsigned char collision()
 }
 
 
-void stripPatternLoop(CDDisplayMode g_displayMode) {
+void stripPatternLoop(CDPatternType patternType) {
     
-    if (loopCount == 0 && g_displayMode >= CDDisplayModeWarmWhiteShimmer) {
+    if (loopCount == 0 && patternType >= CDPatternTypeWarmWhiteShimmer) {
         //        // whenever timer resets, clear the LED colors array (all off)
         //        for (int i = 0; i < LED_COUNT; i++)
         //        {
@@ -1332,7 +1336,7 @@ void stripPatternLoop(CDDisplayMode g_displayMode) {
     }
     
     
-    if (g_displayMode == CDDisplayModeWarmWhiteShimmer || g_displayMode == CDDisplayModeRandomColorWalk)
+    if (patternType == CDPatternTypeWarmWhiteShimmer || patternType == CDPatternTypeRandomColorWalk)
     {
         // for these two patterns, we want to make sure we get the same
         // random sequence six times in a row (this provides smoother
@@ -1344,44 +1348,40 @@ void stripPatternLoop(CDDisplayMode g_displayMode) {
         randomSeed(seed);
     }
     
-    switch (g_displayMode) {
-        case CDDisplayModeShowOn: {
-            showOn();
-            break;
-        }
-        case CDDisplayModeRainbow: {
+    switch (patternType) {
+        case CDPatternTypeRainbow: {
             showRainbow();
             break;
         }
-        case CDDisplayModeColorWipe: {
+        case CDPatternTypeColorWipe: {
             showColorWipe();
             break;
         }
-        case CDDisplayModeImagePlayback: {
+        case CDPatternTypeImageFade: {
             //            testGreen();
             playbackImage();
             break;
         }
-        case CDDisplayModeImageLEDGradient: {
+        case CDPatternTypeImageLEDGradient: {
             ledGradientForDuration(50);
             break;
         }
-        case CDDisplayModeRainbow2: {
+        case CDPatternTypeRainbow2: {
             slowRainbow();
             break;
         }
-        case CDDisplayPluseGradientEffect: {
+        case CDPatternTypePluseGradientEffect: {
             pulseGradientEffect();
             break;
         }
-        case CDDisplayModeWarmWhiteShimmer:
+        case CDPatternTypeWarmWhiteShimmer:
             // warm white shimmer for 300 loopCounts, fading over last 70
             maxLoops = 300;
             warmWhiteShimmer(loopCount > maxLoops - 70);
             
             break;
             
-        case CDDisplayModeRandomColorWalk:
+        case CDPatternTypeRandomColorWalk:
             // start with alternating red and green colors that randomly walk
             // to other colors for 400 loopCounts, fading over last 80
             maxLoops = 400;
@@ -1389,7 +1389,7 @@ void stripPatternLoop(CDDisplayMode g_displayMode) {
             
             break;
             
-        case CDDisplayModeTraditionalColors:
+        case CDPatternTypeTraditionalColors:
             // repeating pattern of red, green, orange, blue, magenta that
             // slowly moves for 400 loopCounts
             maxLoops = 400;
@@ -1397,7 +1397,7 @@ void stripPatternLoop(CDDisplayMode g_displayMode) {
             
             break;
             
-        case CDDisplayModeColorExplosion:
+        case CDPatternTypeColorExplosion:
             // bursts of random color that radiate outwards from random points
             // for 630 loop counts; no burst generation for the last 70 counts
             // of every 200 count cycle or over the over final 100 counts
@@ -1407,17 +1407,17 @@ void stripPatternLoop(CDDisplayMode g_displayMode) {
             
             break;
             
-        case CDDisplayModeGradient:
+        case CDPatternTypeGradient:
             // red -> white -> green -> white -> red ... gradiant that scrolls
             // across the strips for 250 counts; this pattern is overlaid with
             // waves of dimness that also scroll (at twice the speed)
             maxLoops = 250;
             gradient();
-            delay(6);  // add an extra 6ms delay to slow things down
+            busyDelay(6);  // add an extra 6ms delay to slow things down
             
             break;
             
-        case CDDisplayModeBrightTwinkle:
+        case CDPatternTypeBrightTwinkle:
             // random LEDs light up brightly and fade away; it is a very similar
             // algorithm to colorExplosion (just no radiating outward from the
             // LEDs that light up); as time goes on, allow progressively more
@@ -1443,7 +1443,7 @@ void stripPatternLoop(CDDisplayMode g_displayMode) {
             
             break;
             
-        case CDDisplayModeCollision:
+        case CDPatternTypeCollision:
             // colors grow towards each other from the two ends of the strips,
             // accelerating until they collide and the whole strip flashes
             // white and fades; this repeats until the function indicates it
@@ -1453,14 +1453,19 @@ void stripPatternLoop(CDDisplayMode g_displayMode) {
             {
                 maxLoops = loopCount + 2;
             }
-            
             break;
+        case CDPatternTypeAllOff: {
+#if DEBUG
+            showOn();
+#endif
+            break;
+        }
     }
     
-    if (g_displayMode >= CDDisplayModeWarmWhiteShimmer) {
+    if (patternType >= CDPatternTypeWarmWhiteShimmer) {
         rgb_color *colors = (rgb_color *)g_strip.getPixels();
         // do a bit walk over to fix brightness, then show
-        if (g_displayMode != CDDisplayModeWarmWhiteShimmer && g_displayMode != CDDisplayModeRandomColorWalk && g_displayMode != CDDisplayModeColorExplosion && g_displayMode != CDDisplayModeBrightTwinkle) {
+        if (patternType != CDPatternTypeWarmWhiteShimmer && patternType != CDPatternTypeRandomColorWalk && patternType != CDPatternTypeColorExplosion && patternType != CDPatternTypeBrightTwinkle) {
             for (int i = 0; i < LED_COUNT; i++) {
                 colors[i].red =  (colors[i].red * g_brightness) >> 8;
                 colors[i].green =  (colors[i].green * g_brightness) >> 8;

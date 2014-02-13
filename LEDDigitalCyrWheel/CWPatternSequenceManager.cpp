@@ -19,7 +19,7 @@
 #endif
 
 
-char *getExtension(char *filename) {
+static char *getExtension(char *filename) {
     char *ext = strchr(filename, '.');
     if (ext) {
         ext++; // go past the dot...
@@ -35,8 +35,8 @@ CWPatternSequenceManager::CWPatternSequenceManager() {
 }
 
 
-void CWPatternSequenceManager::freeSequenceNames() {
 #if PATTERN_EDITOR
+void CWPatternSequenceManager::freeSequenceNames() {
     if (_sequenceNames) {
         for (int i = 0; i < _numberOfAvailableSequences; i++) {
             free(_sequenceNames[i]);
@@ -44,8 +44,8 @@ void CWPatternSequenceManager::freeSequenceNames() {
         free(_sequenceNames);
         _sequenceNames = NULL;
     }
-#endif
 }
+#endif
 
 // not needed if i ever only have one instance
 #if PATTERN_EDITOR
@@ -56,10 +56,15 @@ CWPatternSequenceManager::~CWPatternSequenceManager() {
 #endif
 
 void CWPatternSequenceManager::loadDefaultSequence() {
+#if PATTERN_EDITOR
     freeSequenceNames();
+#endif
     freePatternItems();
 
+    _currentSequenceIndex = 0;
     _numberOfAvailableSequences = 0;
+    _currentPatternItemIndex = 0;
+    _patternStartTime = millis();
     
     _pixelCount = 0; // Well..whatever
     _numberOfPatternItems = CDPatternTypeMax;
@@ -96,6 +101,9 @@ void CWPatternSequenceManager::freePatternItems() {
 
 bool CWPatternSequenceManager::loadCurrentSequence() {
     freePatternItems();
+
+    _currentPatternItemIndex = 0;
+    _patternStartTime = millis();
 
     bool result = true;
     ASSERT(_currentSequenceIndex < _numberOfAvailableSequences);
@@ -143,6 +151,16 @@ bool CWPatternSequenceManager::initSDCard() {
     return result;
 }
 
+static inline bool isPatternFile(char *filename) {
+    char *ext = getExtension(filename);
+    if (ext) {
+        if (strcmp(ext, "PAT") == 0 || strcmp(ext, "pat") == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool CWPatternSequenceManager::init() {
     bool result = initSDCard();
 
@@ -153,15 +171,12 @@ bool CWPatternSequenceManager::init() {
         // Loop twice; first time count, second time allocate and store
         char filenameBuffer[PATH_COMPONENT_BUFFER_LEN];
         while (rootDir.getNextFilename(filenameBuffer)) {
-            char *ext = getExtension(filenameBuffer);
-            if (ext) {
-                if (strcmp(ext, "PAT") == 0 || strcmp(ext, "pat") == 0) {
-                    _numberOfAvailableSequences++;
+            if (isPatternFile(filenameBuffer)) {
+                _numberOfAvailableSequences++;
 #if DEBUG
-                    Serial.print("found pattern: ");
-                    Serial.println(filenameBuffer);
+                Serial.print("found pattern: ");
+                Serial.println(filenameBuffer);
 #endif
-                }
             }
         }
 #if DEBUG
@@ -174,8 +189,7 @@ bool CWPatternSequenceManager::init() {
             _currentSequenceIndex = 0;
             rootDir.moveToStartOfDirectory();
             while (rootDir.getNextFilename(filenameBuffer)) {
-                char *ext = getExtension(filenameBuffer);
-                if (ext && (strcmp(ext, "PAT") == 0 || strcmp(ext, "pat") == 0)) {
+                if (isPatternFile(filenameBuffer)) {
                     // allocate and store the name so we can easily load it later. -- I include the "/" so it is the "full path". + 1 is for the null terminator, and the extra +1 is for the "/"
                     _sequenceNames[_currentSequenceIndex] = (char *)malloc(sizeof(char) * strlen(filenameBuffer) + 2);
                     _sequenceNames[_currentSequenceIndex][0] = '/';
@@ -196,7 +210,6 @@ bool CWPatternSequenceManager::init() {
 
 bool CWPatternSequenceManager::loadFirstSequence() {
     if (_numberOfAvailableSequences > 0) {
-        _currentSequenceIndex = 0;
         if (loadCurrentSequence()) {
             return true;
         }
@@ -213,5 +226,43 @@ void CWPatternSequenceManager::loadNextSequence() {
         }
         loadCurrentSequence();
     }
+}
+
+void CWPatternSequenceManager::process() {
+    if (_numberOfPatternItems == 0) {
+#if DEBUG
+        Serial.print("No pattern items to show!");
+        return;
+#endif
+    }
+    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
+
+    uint32_t now = millis();
+    uint32_t timePassed = now - _patternStartTime;
+    // First see if we should go to the next pattern, then start it..
+    if (itemHeader->durationType == CDDurationTypeSeconds) {
+        if (timePassed >= (itemHeader->duration * 1000)) {
+            nextPatternItem();
+        }
+    } else if (itemHeader->durationType == CDDurationTypeMilliSeconds) {
+        if (timePassed >= itemHeader->duration) {
+            nextPatternItem();
+        }
+    } else if (itemHeader->durationType == CDDurationTypeIntervals) {
+        // TODO: figure out how to handle an interval for each item..as it is unique to each run..
+#warning corbin figure this part out for interval support
+    }
+    
+    stripPatternLoop(itemHeader->patternType);
+}
+
+
+void CWPatternSequenceManager::nextPatternItem() {
+    _currentPatternItemIndex++;
+    if (_currentPatternItemIndex >= _numberOfPatternItems) {
+        _currentPatternItemIndex = 0;
+    }
+    // This would be better suited to a common method...
+    _patternStartTime = millis();
 }
 

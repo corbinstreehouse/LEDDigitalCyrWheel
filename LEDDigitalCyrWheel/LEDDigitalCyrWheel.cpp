@@ -29,38 +29,36 @@
 
 const int g_LED = LED_BUILTIN;
 
-static char g_displayMode = CDDisplayModeImageLEDGradient; // ImagePlayback; // Not CDDisplayMode so I can easily do math with it..
 static Button g_button = Button(BUTTON_PIN);
 static CWPatternSequenceManager g_sequenceManager;
 
 
-void mainProcess() {
+bool mainProcess() {
     g_button.process();
+    if (g_button.isPressed()) {
+        return true;
+    }
     stripUpdateBrightness();
+    return false; // Button not pressed
 }
 
-bool mainShouldExitEarly() {
-    mainProcess();
-    return g_button.isPressed();
-}
-
-void buttonClicked(Button &b);
-
-
-void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
+static void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
     for (int i = 0; i < 3; i++) {
         flashColor(r, g, b, delay);
         flashColor(0, 0, 0, delay);
     }
 }
 
+void buttonClicked(Button &b){
+    g_sequenceManager.nextPatternItem();
+}
 
 void setup() {
     pinMode(g_LED, OUTPUT);
     digitalWrite(g_LED, HIGH);
 #if DEBUG
     Serial.begin(9600);
-    delay(1000);
+  //  delay(1000);
     Serial.println("--- begin serial --- ");
 #endif
 
@@ -85,18 +83,6 @@ void setup() {
     digitalWrite(g_LED, LOW);
 }
 
-
-void buttonClicked(Button &b){
-#if DEBUG
-//	Serial.printf("onPress, mode %d\r\n", g_displayMode);
-#endif
-    g_displayMode = g_displayMode++;
-    if (g_displayMode >= CDDisplayModeMax) {
-        g_displayMode = CDDisplayModeMin;
-    }
-//    resetState(); // corbin??
-}
-
 void loop() {
     mainProcess();
     
@@ -107,6 +93,5 @@ void loop() {
         digitalWrite(g_LED, LOW);
     }
 #endif
-    
-    stripPatternLoop((CDDisplayMode)g_displayMode);
+    g_sequenceManager.process();
 }

@@ -49,7 +49,7 @@ extern void brightTwinkle(unsigned char minColor, unsigned char numColors, unsig
 extern unsigned char collision();
 
 
-extern void stripPatternLoop(CDDisplayMode g_displayMode); // Call this on each loop to process things
+extern void stripPatternLoop(CDPatternType patternType); // Call this on each loop to process things
 extern void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t delay);
 extern void stripInit();
 extern void stripUpdateBrightness();

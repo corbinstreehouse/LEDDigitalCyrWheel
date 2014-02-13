@@ -5143,7 +5143,7 @@
 		};
 		9D77CBA51589994A0089EB0A /* Make */ = {
 			isa = PBXLegacyTarget;
-			buildArgumentsString = "";
+			buildArgumentsString = make;
 			buildConfigurationList = 9D77CE021589994B0089EB0A /* Build configuration list for PBXLegacyTarget "Make" */;
 			buildPhases = (
 			);

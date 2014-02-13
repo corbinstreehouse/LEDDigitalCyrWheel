@@ -9,7 +9,6 @@
 #ifndef LEDDigitalCyrWheel_LEDDigitalCyrWheel_h
 #define LEDDigitalCyrWheel_LEDDigitalCyrWheel_h
 
-extern void mainProcess(); // Defined in LEDDigitalCyrWheel.cpp
-extern bool mainShouldExitEarly();
+extern bool mainProcess(); // return true if current processing should stop work
 
 #endif
