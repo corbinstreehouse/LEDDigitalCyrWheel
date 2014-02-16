@@ -12,15 +12,6 @@
 #include "CDLEDStripPatterns.h"
 #include "LEDDigitalCyrWheel.h"
 
-#define USE_ADAFRUIT 1
-
-#if USE_ADAFRUIT // Defined in CWPatternSequenceManager.h
-#include "Adafruit_NeoPixel.h"
-#define STRIP_CLASS Adafruit_NeoPixel
-#else
-#include "CDOctoWS2811.h"
-#define STRIP_CLASS CDOctoWS2811
-#endif
 
 #define BRIGHTNESS_PIN 22
 #define STRIP_PIN 14
@@ -31,11 +22,11 @@
 #define MICROSECONDS_TO_UDPATE_STRIP (uint32_t)(MICROSECONDS_TO_UPDATE_EACH_LED * (float)STRIP_LENGTH)
 
 #if USE_ADAFRUIT
-static Adafruit_NeoPixel g_strip = Adafruit_NeoPixel(STRIP_LENGTH, STRIP_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel g_strip = Adafruit_NeoPixel(STRIP_LENGTH, STRIP_PIN, NEO_GRB + NEO_KHZ800);
 #else
 int framebuff[STRIP_LENGTH*6];
 int drawingbuff[STRIP_LENGTH*6];
-static CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, framebuff, drawingbuff, WS2811_GRB + WS2811_800kHz);
+CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, framebuff, drawingbuff, WS2811_GRB + WS2811_800kHz);
 #endif
 
 #ifndef byte
@@ -412,7 +403,7 @@ void ledGradient2() {
 //    
 //    Serial.println();
 //    Serial.println();
-    for(uint16_t i = 0; i < g_strip.numPixels(); i++) {
+    for (uint16_t i = 0; i < g_strip.numPixels(); i++) {
         //        byte x = time - 4*i;
         byte x = time - 8*i;
         g_strip.setPixelColor(i, 255 - x, x, x);
@@ -422,11 +413,10 @@ void ledGradient2() {
 }
 
 
-byte timeAsByte() {
+static inline byte timeAsByte() {
     // drop the last two bits of precision, giving us number 1-255 incremented each tick of the cycle.
     return millis();
 }
-
 
 byte valueForOffset(int currentOffset) {
     const int gradientUpPixelCount = 8;
