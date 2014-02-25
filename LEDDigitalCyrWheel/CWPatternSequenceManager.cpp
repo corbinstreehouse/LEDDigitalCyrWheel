@@ -251,21 +251,15 @@ void CWPatternSequenceManager::process() {
     // First see if we should go to the next pattern, then start it..
     if (itemHeader->durationType == CDDurationTypeSeconds) {
         if (timePassed >= (itemHeader->duration * 1000)) {
-#if DEBUG
-            Serial.println("next pattern");
-#endif
             nextPatternItem();
+            timePassed = 0;
         }
-//    } else if (itemHeader->durationType == CDDurationTypeMilliSeconds) {
-//        if (timePassed >= itemHeader->duration) {
-//            nextPatternItem();
-//        }
     } else if (itemHeader->durationType == CDDurationTypeIntervals) {
         // TODO: figure out how to handle an interval for each item..as it is unique to each run..
 #warning corbin figure this part out for interval support
     }
     
-    stripPatternLoop(itemHeader->patternType);
+    stripPatternLoop(itemHeader->patternType, timePassed);
 }
 
 void CWPatternSequenceManager::firstPatternItem() {
@@ -285,7 +279,6 @@ void CWPatternSequenceManager::nextPatternItem() {
     CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
     
     NSLog(@"Duration: %d seconds", itemHeader->duration);
-
 #endif
 }
 

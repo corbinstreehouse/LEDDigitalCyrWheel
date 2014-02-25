@@ -51,8 +51,6 @@ static unsigned int seed = 0;  // used to initialize random number generator
 
 
 static CDPlaybackImageState g_imageState = { 0 };
-static int g_brightness = 0;
-
 
 void warmWhiteShimmer(unsigned char dimOnly);
 void randomColorWalk(unsigned char initializeColors, unsigned char dimOnly);
@@ -151,31 +149,22 @@ void theaterChase(uint32_t c, uint8_t wait) {
     }
 }
 
-// Fill the dots one after the other with a color
-void colorWipe(uint32_t c, uint8_t wait) {
+// wipe a color on
+void colorWipe(uint32_t color, uint32_t timePassedInMS, uint32_t timeForTotalColorWipeInMS) {
+    int partialPassedTime = timePassedInMS % timeForTotalColorWipeInMS;
+    int numPixels = g_strip.numPixels();
+    float percentagePassed = (float)partialPassedTime / (float)timeForTotalColorWipeInMS;
+    int swipePosition = round(percentagePassed*numPixels);
     
-    for (uint16_t i=0; i<g_strip.numPixels(); i++) {
-        g_strip.setPixelColor(i, 0);
-    }
-    if (mainProcess()) return;
-    g_strip.show();
-    if (mainProcess()) return;
-    
-    for(uint16_t i=0; i<g_strip.numPixels(); i++) {
-        g_strip.setPixelColor(i, c);
-        g_strip.show();
-        
-        //        if (wait > 0) {
-        //            if (busyDelay(wait)) {
-        //                return;
-        //            }
-        //        } else
-        if (mainProcess()) {
-            return ;
+    for (int i = 0; i < numPixels; i++) {
+        if (i < swipePosition) {
+            g_strip.setPixelColor(i, color);
+        } else {
+            g_strip.setPixelColor(i, 0); // black/off
         }
     }
+    g_strip.show(); // TODO: move this to the caller!
 }
-
 
 // Slightly different, this makes the rainbow equally distributed throughout
 void rainbowCycle(uint8_t wait) {
@@ -203,10 +192,6 @@ void showOn() {
 
 void showRainbow() {
     rainbow(10);
-}
-
-void showColorWipe() {
-    colorWipe(g_strip.Color(255, 0, 0), 5);
 }
 
 void resetState() {
@@ -383,10 +368,7 @@ void stripUpdateBrightness() {
     // Map 0 - 1024 to 0-255 brightness
     float b = (float)val * 255.0 / 1024.0;
     int v = b;
-    if (g_brightness != v) {
-        g_strip.setBrightness(v);
-        g_brightness = v;
-    }
+    g_strip.setBrightness(v);
 }
 
 void ledGradient2() {
@@ -1315,7 +1297,7 @@ unsigned char collision()
 }
 
 
-void stripPatternLoop(CDPatternType patternType) {
+void stripPatternLoop(CDPatternType patternType, uint32_t timePassedInMS) {
     
     if (loopCount == 0 && patternType >= CDPatternTypeWarmWhiteShimmer) {
         //        // whenever timer resets, clear the LED colors array (all off)
@@ -1344,7 +1326,8 @@ void stripPatternLoop(CDPatternType patternType) {
             break;
         }
         case CDPatternTypeColorWipe: {
-            showColorWipe();
+            // 2 seconds to do the full wipe
+            colorWipe(g_strip.Color(255, 0, 0), timePassedInMS, 2*1000);
             break;
         }
         case CDPatternTypeImageFade: {
@@ -1455,11 +1438,15 @@ void stripPatternLoop(CDPatternType patternType) {
     if (patternType >= CDPatternTypeWarmWhiteShimmer) {
         rgb_color *colors = (rgb_color *)g_strip.getPixels();
         // do a bit walk over to fix brightness, then show
-        if (patternType != CDPatternTypeWarmWhiteShimmer && patternType != CDPatternTypeRandomColorWalk && patternType != CDPatternTypeColorExplosion && patternType != CDPatternTypeBrightTwinkle) {
-            for (int i = 0; i < LED_COUNT; i++) {
-                colors[i].red =  (colors[i].red * g_brightness) >> 8;
-                colors[i].green =  (colors[i].green * g_brightness) >> 8;
-                colors[i].blue =  (colors[i].blue * g_brightness) >> 8;
+        if (patternType != CDPatternTypeWarmWhiteShimmer && patternType != CDPatternTypeRandomColorWalk && patternType != CDPatternTypeColorExplosion && patternType != CDPatternTypeBrightTwinkle ) {
+            
+            uint8_t brightness = g_strip.getBrightness();
+            if (brightness > 0) {
+                for (int i = 0; i < LED_COUNT; i++) {
+                    colors[i].red =  (colors[i].red * brightness) >> 8;
+                    colors[i].green =  (colors[i].green * brightness) >> 8;
+                    colors[i].blue =  (colors[i].blue * brightness) >> 8;
+                }
             }
         }
         
@@ -1474,8 +1461,10 @@ void stripPatternLoop(CDPatternType patternType) {
             loopCount = 0;  // reset timer
             //        pattern = ((unsigned char)(pattern+1))%NUM_STATES;  // advance to next pattern
         }
+    } else {
+        // TODO: moving the others to this type of show...
+//        g_strip.show();
     }
-    
 }
 
 void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
