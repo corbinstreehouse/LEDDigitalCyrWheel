@@ -284,39 +284,6 @@ void CWPatternSequenceManager::nextPatternItem() {
     NSLog(@"------ nextPatternItem -------- ");
     CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
     
-    switch (itemHeader->patternType) {
-        case CDPatternTypeRainbow: {
-            NSLog(@"rainbow");
-            break;
-        }
-        case CDPatternTypeRainbow2: {
-            NSLog(@"rainbow2");
-            break;
-        }
-        case CDPatternTypeColorWipe: {
-            NSLog(@"color wipe");
-            break;
-
-        }
-//            CDPatternTypeImageLEDGradient,
-//            CDPatternTypePluseGradientEffect,
-//            
-//            // Patterns defined by an image
-//            CDPatternTypeImageFade,
-//            
-//            // the next set is ordered specifically
-//            CDPatternTypeWarmWhiteShimmer,
-//            CDPatternTypeRandomColorWalk,
-//            CDPatternTypeTraditionalColors,
-//            CDPatternTypeColorExplosion,
-//            CDPatternTypeGradient,
-//            CDPatternTypeBrightTwinkle,
-//            CDPatternTypeCollision,
-
-        default: {
-            break;
-        }
-    }
     NSLog(@"Duration: %d seconds", itemHeader->duration);
 
 #endif

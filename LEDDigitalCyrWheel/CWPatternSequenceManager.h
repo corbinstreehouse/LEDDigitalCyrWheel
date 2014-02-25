@@ -61,7 +61,15 @@ public:
 
     uint32_t getPixelCount() { return _pixelCount; }
     uint32_t getNumberOfPatternItems() { return _numberOfPatternItems; }
+    uint32_t getCurrentPatternItemIndex() { return _currentPatternItemIndex; }
     CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &_patternItems[index]; }
+    CDPatternItemHeader *getCurrentPatternItemHeader() {
+        if (_currentPatternItemIndex >= 0 && _currentPatternItemIndex < _numberOfPatternItems) {
+            return &_patternItems[_currentPatternItemIndex];
+        } else {
+            return NULL;
+        }
+    }
 #endif
 };
 
