@@ -51,6 +51,7 @@ public:
     
     // Playing back patterns
     void nextPatternItem();
+    void firstPatternItem();
     void process(); // Main loop work
     
 #if PATTERN_EDITOR

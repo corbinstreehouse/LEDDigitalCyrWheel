@@ -10,12 +10,17 @@
 #include "CDLEDStripPatterns.h"
 
 #if DEBUG
-#define ASSERT(a) if (!(a)) { \
-    Serial.print("ASSERT ");  \
-    Serial.print(__FILE__); Serial.print(" : "); \
-    Serial.print(__LINE__); }
+#if PATTERN_EDITOR
+    #define ASSERT(a) NSCAssert(a, @"Fail");
 #else
-#define ASSERT(a) ((void)0)
+    #define ASSERT(a) if (!(a)) { \
+        Serial.print("ASSERT ");  \
+        Serial.print(__FILE__); Serial.print(" : "); \
+        Serial.print(__LINE__); }
+#endif
+
+#else
+    #define ASSERT(a) ((void)0)
 #endif
 
 
@@ -63,8 +68,6 @@ void CWPatternSequenceManager::loadDefaultSequence() {
 
     _currentSequenceIndex = 0;
     _numberOfAvailableSequences = 0;
-    _currentPatternItemIndex = 0;
-    _patternStartTime = millis();
     
     _pixelCount = 0; // Well..whatever
     _numberOfPatternItems = CDPatternTypeMax;
@@ -78,6 +81,7 @@ void CWPatternSequenceManager::loadDefaultSequence() {
         _patternItems[i].dataLength = 0;
         _patternItems[i].data = 0;
     }
+    firstPatternItem();
 }
 
 static inline bool verifyHeader(CDPatternSequenceHeader *h) {
@@ -102,11 +106,8 @@ void CWPatternSequenceManager::freePatternItems() {
 bool CWPatternSequenceManager::loadCurrentSequence() {
     freePatternItems();
 
-    _currentPatternItemIndex = 0;
-    _patternStartTime = millis();
-
     bool result = true;
-    ASSERT(_currentSequenceIndex < _numberOfAvailableSequences);
+    ASSERT(_currentSequenceIndex >= 0 && _currentSequenceIndex < _numberOfAvailableSequences);
     const char *filename = _sequenceNames[_currentSequenceIndex];
     File sequenceFile = SD.open(filename);
 
@@ -121,9 +122,15 @@ bool CWPatternSequenceManager::loadCurrentSequence() {
         _pixelCount = patternHeader.pixelCount;
         _numberOfPatternItems = patternHeader.patternCount;
         // After the header each item follows
-        _patternItems = (CDPatternItemHeader *)malloc(_numberOfPatternItems * sizeof(CDPatternItemHeader));
+        int numBytes = _numberOfPatternItems * sizeof(CDPatternItemHeader);
+        _patternItems = (CDPatternItemHeader *)malloc(numBytes);
+#if DEBUG
+        memset(_patternItems, 0, numBytes); // shouldn't be needed
+#endif
         for (int i = 0; i < _numberOfPatternItems; i++ ){
             sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
+            // Verify it
+            ASSERT(_patternItems[i].patternType >= CDPatternTypeMin && _patternItems[i].patternType < CDPatternTypeMax);
             // After the header, is the (optional) image data
             uint32_t dataLength = _patternItems[i].dataLength;
             if (dataLength > 0) {
@@ -137,6 +144,8 @@ bool CWPatternSequenceManager::loadCurrentSequence() {
         }
     }
     sequenceFile.close();
+
+    firstPatternItem();
     return result;
 }
 
@@ -242,12 +251,15 @@ void CWPatternSequenceManager::process() {
     // First see if we should go to the next pattern, then start it..
     if (itemHeader->durationType == CDDurationTypeSeconds) {
         if (timePassed >= (itemHeader->duration * 1000)) {
+#if DEBUG
+            Serial.println("next pattern");
+#endif
             nextPatternItem();
         }
-    } else if (itemHeader->durationType == CDDurationTypeMilliSeconds) {
-        if (timePassed >= itemHeader->duration) {
-            nextPatternItem();
-        }
+//    } else if (itemHeader->durationType == CDDurationTypeMilliSeconds) {
+//        if (timePassed >= itemHeader->duration) {
+//            nextPatternItem();
+//        }
     } else if (itemHeader->durationType == CDDurationTypeIntervals) {
         // TODO: figure out how to handle an interval for each item..as it is unique to each run..
 #warning corbin figure this part out for interval support
@@ -256,6 +268,10 @@ void CWPatternSequenceManager::process() {
     stripPatternLoop(itemHeader->patternType);
 }
 
+void CWPatternSequenceManager::firstPatternItem() {
+    _currentPatternItemIndex = -1;
+    nextPatternItem();
+}
 
 void CWPatternSequenceManager::nextPatternItem() {
     _currentPatternItemIndex++;
@@ -264,5 +280,45 @@ void CWPatternSequenceManager::nextPatternItem() {
     }
     // This would be better suited to a common method...
     _patternStartTime = millis();
+#if DEBUG && PATTERN_EDITOR
+    NSLog(@"------ nextPatternItem -------- ");
+    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
+    
+    switch (itemHeader->patternType) {
+        case CDPatternTypeRainbow: {
+            NSLog(@"rainbow");
+            break;
+        }
+        case CDPatternTypeRainbow2: {
+            NSLog(@"rainbow2");
+            break;
+        }
+        case CDPatternTypeColorWipe: {
+            NSLog(@"color wipe");
+            break;
+
+        }
+//            CDPatternTypeImageLEDGradient,
+//            CDPatternTypePluseGradientEffect,
+//            
+//            // Patterns defined by an image
+//            CDPatternTypeImageFade,
+//            
+//            // the next set is ordered specifically
+//            CDPatternTypeWarmWhiteShimmer,
+//            CDPatternTypeRandomColorWalk,
+//            CDPatternTypeTraditionalColors,
+//            CDPatternTypeColorExplosion,
+//            CDPatternTypeGradient,
+//            CDPatternTypeBrightTwinkle,
+//            CDPatternTypeCollision,
+
+        default: {
+            break;
+        }
+    }
+    NSLog(@"Duration: %d seconds", itemHeader->duration);
+
+#endif
 }
 

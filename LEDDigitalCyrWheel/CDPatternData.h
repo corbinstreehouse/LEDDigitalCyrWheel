@@ -22,7 +22,7 @@
 
 typedef enum ENUM_SIZE {
     CDDurationTypeSeconds,
-    CDDurationTypeMilliSeconds, // yeah, could be in terms of seconds, but easier to represent this way
+//    CDDurationTypeMilliSeconds, // yeah, could be in terms of seconds, but easier to represent this way
     CDDurationTypeIntervals,
     CDDurationTypeUntilButtonClick,
 } CDDurationType;
