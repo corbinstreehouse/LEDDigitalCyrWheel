@@ -31,6 +31,8 @@ private:
     // Current pattern item information
     int _currentPatternItemIndex;
     uint32_t _patternStartTime;
+    uint32_t _intervalCount;
+    bool _doOneMoreTick;
     
     
     bool initSDCard();
@@ -52,7 +54,7 @@ public:
     // Playing back patterns
     void nextPatternItem();
     void firstPatternItem();
-    void process(); // Main loop work
+    void process(bool initialProcess); // Main loop work
     
 #if PATTERN_EDITOR
     char *getSequenceNameAtIndex(int index) { return _sequenceNames[index]; }

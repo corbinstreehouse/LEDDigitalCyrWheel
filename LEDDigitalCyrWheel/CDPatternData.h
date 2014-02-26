@@ -21,25 +21,26 @@
 // TODO: make sure the enum size for the teensy matches
 
 typedef enum ENUM_SIZE {
-    CDDurationTypeSeconds,
-//    CDDurationTypeMilliSeconds, // yeah, could be in terms of seconds, but easier to represent this way
-    CDDurationTypeIntervals,
-    CDDurationTypeUntilButtonClick,
-} CDDurationType;
-
+    CDPatternEndConditionAfterRepeatCount,
+    CDPatternEndConditionOnButtonClick,
+} CDPatternEndCondition;
 
 typedef enum ENUM_SIZE {
     CDPatternEncodingTypeRGB24 = 0, // Uncompressed 24-bit data
 //    CDPatternEncodingTypeRLE = 1, // RLE encoded (not done yet..)
 } CDPatternEncodingType;
 
+
+// NOTE: update g_patternTypeNames when this changes!!
 typedef enum ENUM_SIZE {
     CDPatternTypeMin = 0,
     
     // Standard patterns predifined in code
     CDPatternTypeRainbow = 0,
-    CDPatternTypeRainbow2,
+    CDPatternTypeLotsOfRainbows,
     CDPatternTypeColorWipe,
+    CDPatternTypeFadeOut,
+    
     CDPatternTypeImageLEDGradient,
     CDPatternTypePluseGradientEffect,
 
@@ -62,8 +63,10 @@ typedef enum ENUM_SIZE {
 
 typedef struct  __attribute__((__packed__)) {
     CDPatternType patternType;
-    CDDurationType durationType;
-    int32_t duration; // Signed...but not really. shouldn't be negative
+    uint32_t duration;
+    uint32_t intervalCount;
+    CDPatternEndCondition patternEndCondition;
+    uint32_t color;
     uint32_t dataLength; // how long the data is following
     uint8_t *data; // When loaded, points to the data
 } CDPatternItemHeader;

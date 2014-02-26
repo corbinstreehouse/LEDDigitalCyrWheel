@@ -68,6 +68,7 @@ void CWPatternSequenceManager::loadDefaultSequence() {
 
     _currentSequenceIndex = 0;
     _numberOfAvailableSequences = 0;
+    _doOneMoreTick = false;
     
     _pixelCount = 0; // Well..whatever
     _numberOfPatternItems = CDPatternTypeMax;
@@ -76,9 +77,11 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     
     for (int i = CDPatternTypeMin; i < CDPatternTypeMax; i++) {
         _patternItems[i].patternType = (CDPatternType)i;
-        _patternItems[i].durationType = CDDurationTypeSeconds;
-        _patternItems[i].duration = 10;
+        _patternItems[i].patternEndCondition = CDPatternEndConditionAfterRepeatCount;
+        _patternItems[i].intervalCount = 0;
+        _patternItems[i].duration = 5;
         _patternItems[i].dataLength = 0;
+        _patternItems[i].color = 0xFF0000; // red
         _patternItems[i].data = 0;
     }
     firstPatternItem();
@@ -237,7 +240,7 @@ void CWPatternSequenceManager::loadNextSequence() {
     }
 }
 
-void CWPatternSequenceManager::process() {
+void CWPatternSequenceManager::process(bool initialProcess) {
     if (_numberOfPatternItems == 0) {
 #if DEBUG
         Serial.print("No pattern items to show!");
@@ -247,19 +250,38 @@ void CWPatternSequenceManager::process() {
     CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
 
     uint32_t now = millis();
-    uint32_t timePassed = now - _patternStartTime;
-    // First see if we should go to the next pattern, then start it..
-    if (itemHeader->durationType == CDDurationTypeSeconds) {
-        if (timePassed >= (itemHeader->duration * 1000)) {
-            nextPatternItem();
+    // The inital tick always starts with 0
+    uint32_t timePassed = initialProcess ? 0 : now - _patternStartTime;
+    
+    int timeLeft = itemHeader->duration - timePassed;
+    if (timeLeft == 0) {
+        // Hit it perfect, go to the next one
+        _doOneMoreTick = false;
+        _intervalCount++;
+        timePassed = 0;
+        _patternStartTime = now;
+    } else if (timeLeft < 0) {
+        if (_doOneMoreTick) {
+            // We did one more tick; go to the next one
+            _doOneMoreTick = false;
+            _intervalCount++;
             timePassed = 0;
+            _patternStartTime = now;
+        } else {
+            // Do one more tick at the final duration to run it at 100%
+            _doOneMoreTick = true;
+            timePassed = itemHeader->duration;
         }
-    } else if (itemHeader->durationType == CDDurationTypeIntervals) {
-        // TODO: figure out how to handle an interval for each item..as it is unique to each run..
-#warning corbin figure this part out for interval support
     }
     
-    stripPatternLoop(itemHeader->patternType, timePassed);
+    // See if we should go to the next pattern
+    if (itemHeader->patternEndCondition == CDPatternEndConditionAfterRepeatCount) {
+        if (_intervalCount >= itemHeader->intervalCount) {
+            nextPatternItem();
+        }
+    }
+    
+    stripPatternLoop(itemHeader, _intervalCount, timePassed);
 }
 
 void CWPatternSequenceManager::firstPatternItem() {
@@ -274,11 +296,13 @@ void CWPatternSequenceManager::nextPatternItem() {
     }
     // This would be better suited to a common method...
     _patternStartTime = millis();
+    _intervalCount = 0;
+    process(true); // Initial process at time 0
 #if DEBUG && PATTERN_EDITOR
     NSLog(@"------ nextPatternItem -------- ");
     CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
     
-    NSLog(@"Duration: %d seconds", itemHeader->duration);
+    NSLog(@"Duration: %.3f seconds", itemHeader->duration/1000.0);
 #endif
 }
 
