@@ -100,33 +100,8 @@ static bool busyDelay(uint32_t ms)
     return false;
 }
 
-
-// Input a value 0 to 255 to get a color value.
-// The colours are a transition r - g - b - back to r.
-static inline uint32_t wheelColor(uint8_t WheelPos) {
-    if (WheelPos < 85) {
-        return g_strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
-    } else if(WheelPos < 170) {
-        WheelPos -= 85;
-        return g_strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
-    } else {
-        WheelPos -= 170;
-        return g_strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
-    }
-}
-
-static inline void rainbow(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
-    // Our position is based on how far we are in the interval...
-    int numPixels = g_strip.numPixels();
-    float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
-    byte positionInWheel = round(percentagePassed*numPixels);
-    for (int i = 0; i < numPixels; i++) {
-        g_strip.setPixelColor(i, wheelColor((i+positionInWheel) & 255));
-    }
-    g_strip.show();
-}
-
 //Theatre-style crawling lights.
+#warning theaterChase not used??
 void theaterChase(uint32_t c, uint8_t wait) {
     for (int j=0; j<10; j++) {  //do 10 cycles of chasing
         for (int q=0; q < 3; q++) {
@@ -438,6 +413,7 @@ byte valueForOffset(int currentOffset) {
 }
 
 void ledGradientForDuration(uint32_t durationInMilliseconds) {
+#warning corbin fix this one next..
     static byte tickOffset = -1;
     static uint32_t lastUpdateTimeInMicroSeconds = 0;
     
@@ -536,14 +512,13 @@ uint32_t hsvToRgb(uint16_t h, uint8_t s, uint8_t v)
     return g_strip.Color(r, g, b);
 }
 
-//https://github.com/pololu/pololu-led-strip-arduino/blob/master/PololuLedStrip/examples/LedStripRainbow/LedStripRainbow.ino
-static inline void lotsOfRainbows(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
+static inline void rainbows(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, int count) {
     
     int numPixels = g_strip.numPixels();
     float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
     byte positionInWheel = round(percentagePassed*numPixels);
 
-    int countPerSection = round(numPixels / 4.0);
+    int countPerSection = round(numPixels / count);
     
     for (int i = 0; i < numPixels; i++) {
         uint16_t angle = 360.0 * ((float)((i + positionInWheel) / (float)countPerSection));
@@ -552,12 +527,6 @@ static inline void lotsOfRainbows(CDPatternItemHeader *itemHeader, uint32_t inte
     }
     g_strip.show();
 }
-
-
-
-
-
-
 
 
 
@@ -1332,11 +1301,11 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
     
     switch (patternType) {
         case CDPatternTypeRainbow: {
-            rainbow(itemHeader, intervalCount, timePassedInMS);
+            rainbows(itemHeader, intervalCount, timePassedInMS, 1);
             break;
         }
         case CDPatternTypeLotsOfRainbows: {
-            lotsOfRainbows(itemHeader, intervalCount, timePassedInMS);
+            rainbows(itemHeader, intervalCount, timePassedInMS, 4);
             break;
         }
         case CDPatternTypeColorWipe: {

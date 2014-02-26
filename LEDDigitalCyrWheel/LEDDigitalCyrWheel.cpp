@@ -93,5 +93,5 @@ void loop() {
         digitalWrite(g_LED, LOW);
     }
 #endif
-    g_sequenceManager.process();
+    g_sequenceManager.process(false);
 }
