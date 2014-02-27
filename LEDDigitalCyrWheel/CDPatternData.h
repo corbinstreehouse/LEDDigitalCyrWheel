@@ -40,6 +40,7 @@ typedef enum ENUM_SIZE {
     CDPatternTypeLotsOfRainbows,
     CDPatternTypeColorWipe,
     CDPatternTypeFadeOut,
+    CDPatternTypeTheaterChase,
     
     CDPatternTypeImageLEDGradient,
     CDPatternTypePluseGradientEffect,
@@ -53,7 +54,12 @@ typedef enum ENUM_SIZE {
     CDPatternTypeTraditionalColors,
     CDPatternTypeColorExplosion,
     CDPatternTypeGradient,
-    CDPatternTypeBrightTwinkle,
+    
+    CDPatternTypeWhiteBrightTwinkle,
+    CDPatternTypeWhiteRedBrightTwinkle,
+    CDPatternTypeRedGreenBrightTwinkle,
+    CDPatternTypeColorTwinkle,
+    
     CDPatternTypeCollision,
     
     CDPatternTypeMax,
