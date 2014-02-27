@@ -37,11 +37,6 @@ typedef uint8_t byte;
 // For patterns based on the current state at the start
 uint8_t *g_tempBuffer = NULL;
 
-// TODO: get rid of this hack...
-typedef struct {
-    uint8_t green, red, blue; // grb format
-} rgb_color;
-
 typedef struct {
     uint8_t *dataOffset;
     uint32_t lastTime;
@@ -54,7 +49,6 @@ static unsigned int seed = 0;  // used to initialize random number generator
 
 static CDPlaybackImageState g_imageState = { 0 };
 
-void warmWhiteShimmer(unsigned char dimOnly);
 void randomColorWalk(unsigned char initializeColors, unsigned char dimOnly);
 void traditionalColors();
 void brightTwinkleColorAdjust(unsigned char *color);
@@ -82,26 +76,6 @@ void stripInit() {
     g_strip.show(); // all off.
 }
 
-#warning I almost don't need this anymore
-static bool busyDelay(uint32_t ms)
-{
-	uint32_t start = micros();
-    
-	if (ms > 0) {
-		while (1) {
-            if (mainProcess()) return true;
-			if ((micros() - start) >= 1000) {
-				ms--;
-				if (ms == 0) return false;
-				start += 1000;
-			}
-			yield();
-		}
-	}
-    return false;
-}
-
-//Theatre-style crawling lights.
 void theaterChase(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
     // The duration speeds up or slows down how fast we chase
     int numPixels = g_strip.numPixels();
@@ -132,7 +106,27 @@ void colorWipe(CDPatternItemHeader *itemHeader, uint32_t timePassedInMS) {
     }
 }
 
+void fadeIn(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
+    float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
+    // exponential growth
+    percentagePassed = powf(percentagePassed, 2);
+    // Fade out every other interval
+    if (intervalCount % 2 == 1) {
+        percentagePassed = 1.0 - percentagePassed;
+    }
+    
+    rgb_color *colors = (rgb_color *)g_strip.getPixels();
+    rgb_color targetColor = Adafruit_NeoPixel::ConvertColorToRGBColor(itemHeader->color);
+    
+    for (int i = 0; i < g_strip.numPixels(); i++) {
+        colors[i].red = percentagePassed*targetColor.red;
+        colors[i].green = percentagePassed*targetColor.green;
+        colors[i].blue = percentagePassed*targetColor.blue;
+    }
+}
+
 void fadeOut(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
+    if (intervalCount > 0) return; // fade out exactly once (I think this is what I want..)
     if (intervalCount == 0 && timePassedInMS == 0) {
         // First pass, store off the initial state..
         int size = sizeof(uint8_t) * g_strip.getNumberOfBytes();
@@ -142,7 +136,10 @@ void fadeOut(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t t
         memcpy(g_tempBuffer, g_strip.getPixels(), size);
     }
     
-    float percentagePassed = 1.0 - ((float)timePassedInMS / (float)itemHeader->duration);
+    float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
+    percentagePassed = powf(percentagePassed, 2);
+    // going out..
+    percentagePassed = 1.0 - percentagePassed;
     
     for (int i = 0; i < g_strip.numPixels(); i++) {
         int offset = i*3;
@@ -318,18 +315,18 @@ static void playbackImage() {
 }
 
 #if DEBUG
-static void testGreen() {
-    static bool set = false;
-    if (set) return;
-    set = true;
-    
-    
-    for (int i = 0; i < g_strip.numPixels(); i++) {
-        uint8_t g = 255 * ((float)i / (float)g_strip.numPixels());
-//        Serial.println(g);
-        g_strip.setPixelColor(i, 0, g, 0);
-    }
-}
+//static void testGreen() {
+//    static bool set = false;
+//    if (set) return;
+//    set = true;
+//    
+//    
+//    for (int i = 0; i < g_strip.numPixels(); i++) {
+//        uint8_t g = 255 * ((float)i / (float)g_strip.numPixels());
+////        Serial.println(g);
+//        g_strip.setPixelColor(i, 0, g, 0);
+//    }
+//}
 #endif
 
 void stripUpdateBrightness() {
@@ -1134,24 +1131,38 @@ unsigned char collision()
     
     if (state % 3 == 0)
     {
+        rgb_color firstColor;
         // initialization state
         switch (state/3)
         {
             case 0:  // first collision: red streams
-                colors[0] = (rgb_color){maxBrightness, 0, 0};
+                firstColor.red = maxBrightness;
+                firstColor.green = 0;
+                firstColor.blue = 0;
                 break;
             case 1:  // second collision: green streams
-                colors[0] = (rgb_color){0, maxBrightness, 0};
+                firstColor.red = 0;
+                firstColor.green = maxBrightness;
+                firstColor.blue = 0;
                 break;
             case 2:  // third collision: blue streams
-                colors[0] = (rgb_color){0, 0, maxBrightness};
+                firstColor.red = 0;
+                firstColor.green = 0;
+                firstColor.blue = maxBrightness;
                 break;
             case 3:  // fourth collision: warm white streams
-                colors[0] = (rgb_color){maxBrightness, maxBrightness*4/5, maxBrightness>>3};
+                firstColor.red = maxBrightness;
+                firstColor.green = maxBrightness*4/5;
+                firstColor.blue = maxBrightness >> 3;
                 break;
             default:  // fifth collision and beyond: random-color streams
-                colors[0] = (rgb_color){static_cast<uint8_t>(random(maxBrightness)), static_cast<uint8_t>(random(maxBrightness)), static_cast<uint8_t>(random(maxBrightness))};
+                firstColor.red = static_cast<uint8_t>(random(maxBrightness));
+                firstColor.green = static_cast<uint8_t>(random(maxBrightness));
+                firstColor.blue = static_cast<uint8_t>(random(maxBrightness));
+                break;
+                
         }
+        colors[0] = firstColor;
         
         // stream is led by two full-white LEDs
         colors[1] = colors[2] = (rgb_color){255, 255, 255};
@@ -1304,6 +1315,13 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             fadeOut(itemHeader, intervalCount, timePassedInMS);
             break;
         }
+        case CDPatternTypeFadeIn: {
+            fadeIn(itemHeader, intervalCount, timePassedInMS);
+            break;
+        }
+        case CDPatternTypeDoNothing: {
+            break;
+        }
         case CDPatternTypeTheaterChase: {
             theaterChase(itemHeader, intervalCount, timePassedInMS);
             break;
@@ -1340,9 +1358,7 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             // slowly moves for 400 loopCounts
             maxLoops = 400;
             traditionalColors();
-            
             break;
-            
         case CDPatternTypeColorExplosion:
             // bursts of random color that radiate outwards from random points
             // for 630 loop counts; no burst generation for the last 70 counts
@@ -1359,7 +1375,7 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             // waves of dimness that also scroll (at twice the speed)
             maxLoops = 250;
             gradient();
-            busyDelay(6);  // add an extra 6ms delay to slow things down
+            delay(6);  // add an extra 6ms delay to slow things down
             
             break;
             
@@ -1424,12 +1440,12 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
     g_strip.show();
 }
 
-void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
+void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t d) {
     for(int i = 0; i < g_strip.numPixels(); i++) {
         g_strip.setPixelColor(i, r, g, b);
     }
     g_strip.show();
-    busyDelay(delay);
+    delay(d);
 }
 
 #if DEBUG
@@ -1438,7 +1454,7 @@ void dowhite() {
         g_strip.setPixelColor(i, g_strip.Color(255, 255, 255));
     }
     g_strip.show();
-    busyDelay(10);
+    delay(10);
 }
 #endif
 

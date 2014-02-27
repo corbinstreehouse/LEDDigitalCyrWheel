@@ -40,6 +40,8 @@ typedef enum ENUM_SIZE {
     CDPatternTypeLotsOfRainbows,
     CDPatternTypeColorWipe,
     CDPatternTypeFadeOut,
+    CDPatternTypeFadeIn,
+    CDPatternTypeDoNothing,
     CDPatternTypeTheaterChase,
     
     CDPatternTypeImageLEDGradient,
