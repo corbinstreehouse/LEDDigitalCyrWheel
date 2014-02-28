@@ -61,6 +61,9 @@ CWPatternSequenceManager::~CWPatternSequenceManager() {
 #endif
 
 void CWPatternSequenceManager::loadDefaultSequence() {
+#if DEBUG
+    Serial.println("--- loading default sequence --- ");
+#endif
 #if PATTERN_EDITOR
     freeSequenceNames();
 #endif
@@ -77,9 +80,9 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     
     for (int i = CDPatternTypeMin; i < CDPatternTypeMax; i++) {
         _patternItems[i].patternType = (CDPatternType)i;
-        _patternItems[i].patternEndCondition = CDPatternEndConditionAfterRepeatCount;
-        _patternItems[i].intervalCount = 0;
-        _patternItems[i].duration = 5;
+        _patternItems[i].patternEndCondition = CDPatternEndConditionOnButtonClick;
+        _patternItems[i].intervalCount = 1;
+        _patternItems[i].duration = 2000; //  2 seconds
         _patternItems[i].dataLength = 0;
         _patternItems[i].color = 0xFF0000; // red
         _patternItems[i].data = 0;
