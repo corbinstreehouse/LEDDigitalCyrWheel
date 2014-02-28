@@ -58,7 +58,7 @@ void setup() {
     digitalWrite(g_LED, HIGH);
 #if DEBUG
     Serial.begin(9600);
-  //  delay(1000);
+    delay(1000);
     Serial.println("--- begin serial --- ");
 #endif
 
