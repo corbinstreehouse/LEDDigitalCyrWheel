@@ -3911,8 +3911,8 @@
 		9DBE911C18A8AA5500154550 /* NeoPixel */ = {
 			isa = PBXGroup;
 			children = (
-				9DBE911D18A8AA5500154550 /* Adafruit_NeoPixel.cpp */,
 				9DBE911E18A8AA5500154550 /* Adafruit_NeoPixel.h */,
+				9DBE911D18A8AA5500154550 /* Adafruit_NeoPixel.cpp */,
 				9DBE911F18A8AA5500154550 /* COPYING */,
 				9DBE912018A8AA5500154550 /* examples */,
 			);
@@ -5037,8 +5037,8 @@
 		9DD818DF1886690A00AD92E2 /* AdaFruit_NeoPixel */ = {
 			isa = PBXGroup;
 			children = (
-				9DD818E01886690A00AD92E2 /* Adafruit_NeoPixel.cpp */,
 				9DD818E11886690A00AD92E2 /* Adafruit_NeoPixel.h */,
+				9DD818E01886690A00AD92E2 /* Adafruit_NeoPixel.cpp */,
 				9DD818E21886690A00AD92E2 /* COPYING */,
 				9DD818E31886690A00AD92E2 /* examples */,
 				9DD818E81886690A00AD92E2 /* README.md */,

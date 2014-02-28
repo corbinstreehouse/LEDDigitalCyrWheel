@@ -6,21 +6,14 @@
 //
 //
 
-
-/// UGLY CODE...hacked together from various places, and some written by me.
-
 #include "CDLEDStripPatterns.h"
 #include "LEDDigitalCyrWheel.h"
 
-
 #define BRIGHTNESS_PIN 22
 #define STRIP_PIN 14
-#define STRIP_LENGTH (60*4) // (67*2)
+#define STRIP_LENGTH  (14+60*2)// (60*4) // (67*2)
 
-// about 27.36us/LED. See https://learn.sparkfun.com/tutorials/ws2812-breakout-hookup-guide/ws2812-overview for datatransmission of 24 bits using the specified timing
-#define MICROSECONDS_TO_UPDATE_EACH_LED 27.36
-#define MICROSECONDS_TO_UDPATE_STRIP (uint32_t)(MICROSECONDS_TO_UPDATE_EACH_LED * (float)STRIP_LENGTH)
-#warning corbin use this in the hardware size! modify show to add this to the micros()
+#include <math.h>
 
 #if USE_ADAFRUIT
 Adafruit_NeoPixel g_strip = Adafruit_NeoPixel(STRIP_LENGTH, STRIP_PIN, NEO_GRB + NEO_KHZ800);
@@ -372,47 +365,61 @@ byte valueForOffset(int currentOffset) {
     return finalR;
 }
 
-void ledGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
-    
+#warning new fade function
+
+void fadeInOut(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
     int numPixels = g_strip.numPixels();
     float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
-
-    int numberOfGradients = 8;
-    float pixelsPerGradient = numPixels / numberOfGradients;
-    // Make it even and add one
-    float pixelsPerRamp = pixelsPerGradient / 2.0;
-    float increasePerStep = 1.0 / pixelsPerRamp;
-
-    bool goingDown = false;
-    float step = percentagePassed * pixelsPerGradient * increasePerStep;
-    if (step >= 1) {
-        step -= 1.0;
-        step = 1.0 - step;
-        goingDown = true;
-    }
+    
     for (int i = 0; i < numPixels; i++) {
+        // y = (2x-1)^2
+        // a = 2x-1
+        float a = 2*percentagePassed - 1;
+        float y = a*a;
+        
         byte r = itemHeader->color >> 16;
         byte g = itemHeader->color >> 8;
         byte b = itemHeader->color;
         
-        r *= step;
-        g *= step;
-        b *= step;
+        r *= y;
+        g *= y;
+        b *= y;
         
         g_strip.setPixelColor(i, r, g, b);
-        if (goingDown) {
-            step -= increasePerStep;
-            if (step < 0) {
-                step += increasePerStep;
-                goingDown = false;
-            }
-        } else {
-            step += increasePerStep;
-            if (step >= 1.0) {
-                goingDown = true;
-                step -= increasePerStep;
-            }
-        }
+        
+    }
+}
+
+void ledGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
+    int numPixels = g_strip.numPixels();
+    float t = (float)timePassedInMS / (float)itemHeader->duration;
+
+    float numberOfGradients = 8.0;
+    // See "Pattern Graphs" (Grapher document)
+    float gradCnt = (float)numPixels / numberOfGradients;
+    float gradRmp = gradCnt / 2.0;
+
+    for (int x = 0; x < numPixels; x++) {
+        float q = (float)x - t*gradCnt;
+//        float n = fabs(fmod(q+gradRmp, gradCnt)); // Why isn't there an fmod???.. This turns into a bunch more work below to calculate n:
+        float v = (q+gradRmp) / gradCnt;
+        double t; // not used
+        float fractPart = modf(v, &t);
+        float n = fractPart * gradCnt;
+        n = fabs(n); // Needs to be positive
+        
+        float p = n - gradRmp;
+        float s = p/gradRmp;
+        float y = s*s; // Squared
+        
+        byte r = itemHeader->color >> 16;
+        byte g = itemHeader->color >> 8;
+        byte b = itemHeader->color;
+        
+        r *= y;
+        g *= y;
+        b *= y;
+        g_strip.setPixelColor(x, r, g, b);
     }
 }
 
@@ -1331,7 +1338,7 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             playbackImage();
             break;
         }
-        case CDPatternTypeImageLEDGradient: {
+        case CDPatternTypeGradient: {
             ledGradients(itemHeader, intervalCount, timePassedInMS);
             break;
         }
@@ -1369,7 +1376,7 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             
             break;
             
-        case CDPatternTypeGradient:
+        case CDPatternTypeRWGradient:
             // red -> white -> green -> white -> red ... gradiant that scrolls
             // across the strips for 250 counts; this pattern is overlaid with
             // waves of dimness that also scroll (at twice the speed)

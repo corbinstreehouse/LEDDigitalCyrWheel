@@ -84,7 +84,9 @@ void CWPatternSequenceManager::loadDefaultSequence() {
         _patternItems[i].intervalCount = 1;
         _patternItems[i].duration = 2000; //  2 seconds
         _patternItems[i].dataLength = 0;
-        _patternItems[i].color = 0xFF0000; // red
+//        _patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
+//        _patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
+        switch (random(3)) { case 0: _patternItems[i].color = 0xFF0000; break; case 1: _patternItems[i].color = 0x00FF00; break; case 2: _patternItems[i].color = 0x0000FF; break; }
         _patternItems[i].data = 0;
     }
     firstPatternItem();
