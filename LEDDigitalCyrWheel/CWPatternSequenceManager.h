@@ -59,6 +59,7 @@ public:
 #if PATTERN_EDITOR
     char *getSequenceNameAtIndex(int index) { return _sequenceNames[index]; }
     int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
+    char *getCurrentSequenceName() { return _sequenceNames[_currentSequenceIndex]; };
     int getCurrentSequenceIndex() { return _currentSequenceIndex; }
 
     uint32_t getPixelCount() { return _pixelCount; }

@@ -299,10 +299,10 @@ void CWPatternSequenceManager::nextPatternItem() {
     _intervalCount = 0;
     process(true); // Initial process at time 0
 #if DEBUG && PATTERN_EDITOR
-    NSLog(@"------ nextPatternItem -------- ");
-    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
-    
-    NSLog(@"Duration: %.3f seconds", itemHeader->duration/1000.0);
+//    NSLog(@"------ nextPatternItem -------- ");
+//    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
+//    
+//    NSLog(@"Duration: %.3f seconds", itemHeader->duration/1000.0);
 #endif
 }
 
