@@ -220,6 +220,9 @@ static inline bool isPatternFile(char *filename) {
 
 bool CWPatternSequenceManager::init() {
     _doOneMoreTick = false;
+    
+    initCompass();
+
     bool result = initSDCard();
 
     if (result) {
@@ -273,7 +276,37 @@ bool CWPatternSequenceManager::init() {
     }
     
     return result;
+}
+
+bool CWPatternSequenceManager::initCompass() {
+#if ACCELEROMETER_SUPPORT
     
+#if DEBUG
+    Serial.println("attempting init");
+#endif
+    bool result = _compass.init();
+    int i = 0;
+    while (!result && i < 2) {
+        result = _compass.init(); // keep trying a few times
+        i++;
+    }
+    if (result) {
+        _compass.enableDefault();
+        // min: { -4224,  -3169,  -3952}    max: { +3044,  +3025,  +3810} // Calibration step...
+        // min: { -3041,  -2925,  -2802}    max: { +3239,  +2250,  +3504}
+//        _compass.m_min = { -3041,  -2925,  -2802};
+//        _compass.m_max = { +3239,  +2250,  +3504};
+#if DEBUG
+//        Serial.print("Compass initied type: ");
+//        Serial.println(_compass.getDeviceType());
+#endif
+    } else {
+#if DEBUG
+        Serial.println("Compass FAILED init");
+#endif
+
+    }
+#endif
 }
 
 void CWPatternSequenceManager::loadNextSequence() {
@@ -327,6 +360,19 @@ void CWPatternSequenceManager::process(bool initialProcess) {
             itemHeader = &_patternItems[_currentPatternItemIndex];
         }
     }
+    
+    char report[256];
+    _compass.read();
+    snprintf(report, sizeof(report), "A: %6d %6d %6d    M: %6d %6d %6d  head:%d",
+             _compass.a.x, _compass.a.y, _compass.a.z,
+             _compass.m.x, _compass.m.y, _compass.m.z, _compass.heading());
+  //  Serial.println(report);
+
+    float z  = _compass.heading((LSM303::vector<int>){1, 0, 0});
+    float x  = _compass.heading((LSM303::vector<int>){0, 1, 0});
+    float y  = _compass.heading((LSM303::vector<int>){0, 0, 1});
+    
+    Serial.printf("x: %.3f y: %.3f z: %.3f heading: %.3f deg\r\n", x, y, z, _compass.heading());
     
     stripPatternLoop(itemHeader, _intervalCount, timePassed, initialProcess);
 }

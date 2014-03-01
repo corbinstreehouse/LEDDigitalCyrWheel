@@ -42,9 +42,7 @@
 #APP_LIBS_LIST = Wire Wire/utility EEPROM  SoftwareSerial
 #APP_LIBS_LIST = Wire Wire/utility
 
-APP_LIBS_LIST = SPI
-
-#  SoftwareSerial
+APP_LIBS_LIST = SPI Wire Wire/utility
 
 # List users libraries here 
 
@@ -52,7 +50,7 @@ APP_LIBS_LIST = SPI
 #USER_LIBS_LIST = UTFT Canbus
 
 #USER_LIBS_LIST = OctoWS2811
-USER_LIBS_LIST = Adafruit_NeoPixel SD SD/utility
+USER_LIBS_LIST = Adafruit_NeoPixel SD SD/utility LSM303
 
 
 MAKEFILE_PATH  = $(CURDIR)/Makefiles

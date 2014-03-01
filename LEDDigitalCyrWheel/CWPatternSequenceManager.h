@@ -15,6 +15,13 @@
 #include "Arduino.h"
 #include "SD.h"
 
+#define ACCELEROMETER_SUPPORT 1 // not in the sim..
+
+#if ACCELEROMETER_SUPPORT
+#include "Wire.h"
+#include "LSM303.h"
+#endif
+
 
 class CWPatternSequenceManager {
 private:
@@ -33,8 +40,12 @@ private:
     uint32_t _patternStartTime;
     uint32_t _intervalCount;
     bool _doOneMoreTick;
+#if ACCELEROMETER_SUPPORT
+    LSM303 _compass;
+#endif
     
     bool initSDCard();
+    bool initCompass();
     bool loadCurrentSequence();
     void freePatternItems();
     void freeSequenceNames();

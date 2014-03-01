@@ -205,6 +205,7 @@
 		9DBE92C118A8AA5600154550 /* twi.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE925418A8AA5600154550 /* twi.c */; };
 		9DBE92C218A8AA5600154550 /* Wire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE925618A8AA5600154550 /* Wire.cpp */; };
 		9DBE92CA18AA834D00154550 /* CDLEDStripPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */; };
+		9DC38E9A18C1A4750048C5DB /* LSM303.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DC38E9818C1A4750048C5DB /* LSM303.cpp */; };
 		9DCC76A51589A3D300564CB8 /* RTClib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC764F1589A3D300564CB8 /* RTClib.cpp */; };
 		9DD818E91886692900AD92E2 /* Adafruit_NeoPixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD818E01886690A00AD92E2 /* Adafruit_NeoPixel.cpp */; };
 /* End PBXBuildFile section */
@@ -1498,6 +1499,12 @@
 		9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDLEDStripPatterns.cpp; sourceTree = "<group>"; };
 		9DBE92CB18AA836E00154550 /* CDLEDStripPatterns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDLEDStripPatterns.h; sourceTree = "<group>"; };
 		9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDDigitalCyrWheel.h; sourceTree = "<group>"; };
+		9DC38E9218C1A4750048C5DB /* Calibrate.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Calibrate.ino; sourceTree = "<group>"; };
+		9DC38E9418C1A4750048C5DB /* Heading.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Heading.ino; sourceTree = "<group>"; };
+		9DC38E9618C1A4750048C5DB /* Serial.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Serial.ino; sourceTree = "<group>"; };
+		9DC38E9718C1A4750048C5DB /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
+		9DC38E9818C1A4750048C5DB /* LSM303.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LSM303.cpp; sourceTree = "<group>"; };
+		9DC38E9918C1A4750048C5DB /* LSM303.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSM303.h; sourceTree = "<group>"; };
 		9DCC76491589A3D300564CB8 /* datecalc.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = datecalc.pde; sourceTree = "<group>"; };
 		9DCC764B1589A3D300564CB8 /* ds1307.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ds1307.pde; sourceTree = "<group>"; };
 		9DCC764D1589A3D300564CB8 /* softrtc.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = softrtc.pde; sourceTree = "<group>"; };
@@ -4976,9 +4983,55 @@
 			path = utility;
 			sourceTree = "<group>";
 		};
+		9DC38E8F18C1A4750048C5DB /* LSM303 */ = {
+			isa = PBXGroup;
+			children = (
+				9DC38E9018C1A4750048C5DB /* examples */,
+				9DC38E9718C1A4750048C5DB /* keywords.txt */,
+				9DC38E9918C1A4750048C5DB /* LSM303.h */,
+				9DC38E9818C1A4750048C5DB /* LSM303.cpp */,
+			);
+			path = LSM303;
+			sourceTree = "<group>";
+		};
+		9DC38E9018C1A4750048C5DB /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				9DC38E9118C1A4750048C5DB /* Calibrate */,
+				9DC38E9318C1A4750048C5DB /* Heading */,
+				9DC38E9518C1A4750048C5DB /* Serial */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		9DC38E9118C1A4750048C5DB /* Calibrate */ = {
+			isa = PBXGroup;
+			children = (
+				9DC38E9218C1A4750048C5DB /* Calibrate.ino */,
+			);
+			path = Calibrate;
+			sourceTree = "<group>";
+		};
+		9DC38E9318C1A4750048C5DB /* Heading */ = {
+			isa = PBXGroup;
+			children = (
+				9DC38E9418C1A4750048C5DB /* Heading.ino */,
+			);
+			path = Heading;
+			sourceTree = "<group>";
+		};
+		9DC38E9518C1A4750048C5DB /* Serial */ = {
+			isa = PBXGroup;
+			children = (
+				9DC38E9618C1A4750048C5DB /* Serial.ino */,
+			);
+			path = Serial;
+			sourceTree = "<group>";
+		};
 		9DCC75F61589A3D300564CB8 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				9DC38E8F18C1A4750048C5DB /* LSM303 */,
 				9DBD80E3189EB54300A6A067 /* SD */,
 				9D3A0DB3188CB0AE001AD553 /* OctoWS2811 */,
 				9DD818DF1886690A00AD92E2 /* AdaFruit_NeoPixel */,
@@ -5407,6 +5460,7 @@
 				9DBE8A6818A8A85000154550 /* pins_teensy.c in Sources */,
 				9DBE92AF18A8AA5600154550 /* SdFile.cpp in Sources */,
 				9DBE92B918A8AA5600154550 /* server_drv.cpp in Sources */,
+				9DC38E9A18C1A4750048C5DB /* LSM303.cpp in Sources */,
 				9DBE8DA818A8A9C700154550 /* beta_function.tcc in Sources */,
 				9DBE927218A8AA5600154550 /* GSM3MobileNetworkProvider.cpp in Sources */,
 				9DBE92B318A8AA5600154550 /* SPI.cpp in Sources */,

@@ -12,7 +12,7 @@
 #include  "Arduino.h"
 
 #include "Button.h"
-//#include <Wire.h>
+#include "Wire.h"
 //#include <HardwareSerial.h>
 //#include <EEPROM.h>
 //#include <avr/eeprom.h>
@@ -58,8 +58,9 @@ void buttonHeld(Button &b) {
 }
 
 void setup() {
-    pinMode(g_LED, OUTPUT);
-    digitalWrite(g_LED, HIGH);
+    Wire.begin();
+//    pinMode(g_LED, OUTPUT);
+//    digitalWrite(g_LED, HIGH);
 #if DEBUG
     Serial.begin(9600);
     delay(1000);
@@ -85,7 +86,7 @@ void setup() {
         g_sequenceManager.loadDefaultSequence();
     }
     
-    digitalWrite(g_LED, LOW);
+ //   digitalWrite(g_LED, LOW);
 }
 
 void loop() {

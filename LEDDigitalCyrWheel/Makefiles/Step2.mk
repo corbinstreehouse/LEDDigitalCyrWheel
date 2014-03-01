@@ -195,7 +195,7 @@ endif
 
 CXXFLAGS      = -fno-exceptions
 ASFLAGS       = -$(MCU_FLAG_NAME)=$(MCU) -x assembler-with-cpp
-LDFLAGS       = -$(MCU_FLAG_NAME)=$(MCU) -lm -Wl,-gc-sections,-u,main -Os $(EXTRA_LDFLAGS)
+LDFLAGS       = -$(MCU_FLAG_NAME)=$(MCU) -Wl,-gc-sections,-u,main -Os $(EXTRA_LDFLAGS)
 
 ifndef OBJCOPYFLAGS
 OBJCOPYFLAGS  = -O ihex -R .eeprom
@@ -486,7 +486,7 @@ endif
 #		@echo "23-archive"
 #		$(AR) rcs $(TARGET_A) $(OBJS)
 #		@echo "23-link"
-		$(CC) $(LDFLAGS) -o $@ $(SYS_OBJS) $(TARGET_A) -lc
+		$(CC) $(LDFLAGS) -o $@ $(SYS_OBJS) $(TARGET_A) -lc -lm
 
 
 
@@ -519,7 +519,7 @@ $(OBJDIR):
 $(TARGET_ELF): 	$(OBJS)
 		@echo " --- TARGET_ELF --- "
 		@echo "23-" $<
-		$(CC) $(LDFLAGS) -o $@ $(OBJS) $(SYS_OBJS) -lc
+		$(CC) $(LDFLAGS) -o $@ $(OBJS) $(SYS_OBJS) -lc -lm
 
 $(DEP_FILE):	$(OBJDIR) $(DEPS)
 		@echo "24-" $<
