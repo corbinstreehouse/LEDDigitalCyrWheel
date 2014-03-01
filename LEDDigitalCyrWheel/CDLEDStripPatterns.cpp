@@ -61,7 +61,6 @@ void stripInit() {
     
     randomSeed(seed);
     
-    
     pinMode(BRIGHTNESS_PIN, INPUT);
     
     g_strip.begin();
@@ -371,11 +370,11 @@ void ledGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint3
 
     for (int x = 0; x < numPixels; x++) {
         float q = (float)x - t*gradCnt;
-//        float n = fabs(fmod(q+gradRmp, gradCnt)); // Why isn't there an fmod???.. This turns into a bunch more work below to calculate n:
-        float v = (q+gradRmp) / gradCnt;
-        double t; // not used
-        float fractPart = modf(v, &t);
-        float n = fractPart * gradCnt;
+        float n = fmod(q+gradRmp, gradCnt);
+//        float v = (q+gradRmp) / gradCnt;
+//        double t; // not used
+//        float fractPart = modf(v, &t);
+//        float n = fractPart * gradCnt;
         n = fabs(n); // Needs to be positive
         
         float p = n - gradRmp;
