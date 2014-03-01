@@ -9,6 +9,8 @@
 #include "CWPatternSequenceManager.h"
 #include "CDLEDStripPatterns.h"
 
+#define SD_CARD_CS_PIN 4
+
 #if DEBUG
 #if PATTERN_EDITOR
     #define ASSERT(a) NSCAssert(a, @"Fail");
@@ -112,23 +114,36 @@ void CWPatternSequenceManager::freePatternItems() {
 }
 
 bool CWPatternSequenceManager::loadCurrentSequence() {
+#if DEBUG
+    Serial.println("--- loading current sequence --- ");
+#endif
     freePatternItems();
 
     bool result = true;
     ASSERT(_currentSequenceIndex >= 0 && _currentSequenceIndex < _numberOfAvailableSequences);
     const char *filename = _sequenceNames[_currentSequenceIndex];
+#if DEBUG
+    Serial.print("loading:");
+    Serial.println(filename);
+#endif
     File sequenceFile = SD.open(filename);
 
     // This is reading the file format I created..
     // Header first
     CDPatternSequenceHeader patternHeader;
     sequenceFile.readBytes((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
+#if DEBUG
+    Serial.println("checking header");
+#endif
 
     // Verify it
     if (verifyHeader(&patternHeader)) {
         // Then read in and store the stock info
         _pixelCount = patternHeader.pixelCount;
         _numberOfPatternItems = patternHeader.patternCount;
+#if DEBUG
+        Serial.printf("pixelCount: %d, now reading %d items, headerSize: %d\r\n", _pixelCount, _numberOfPatternItems, sizeof(CDPatternItemHeader));
+#endif
         // After the header each item follows
         int numBytes = _numberOfPatternItems * sizeof(CDPatternItemHeader);
         _patternItems = (CDPatternItemHeader *)malloc(numBytes);
@@ -136,12 +151,21 @@ bool CWPatternSequenceManager::loadCurrentSequence() {
         memset(_patternItems, 0, numBytes); // shouldn't be needed
 #endif
         for (int i = 0; i < _numberOfPatternItems; i++ ){
+#if DEBUG
+            Serial.printf("reading item %d\r\n", i);
+#endif
             sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
+#if DEBUG
+            Serial.printf("Header, type: %d, duration: %d, intervalC: %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].intervalCount);
+#endif
             // Verify it
             ASSERT(_patternItems[i].patternType >= CDPatternTypeMin && _patternItems[i].patternType < CDPatternTypeMax);
             // After the header, is the (optional) image data
             uint32_t dataLength = _patternItems[i].dataLength;
             if (dataLength > 0) {
+#if DEBUG
+                Serial.printf("reading %d data\r\n", dataLength);
+#endif
                 // Read in the data that is following the header, and put it in the data pointer...
                 _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
                 sequenceFile.readBytes((char*)&_patternItems[i].data, dataLength);
@@ -159,11 +183,20 @@ bool CWPatternSequenceManager::loadCurrentSequence() {
 
 bool CWPatternSequenceManager::initSDCard() {
     pinMode(SS, OUTPUT);
-    bool result = SD.begin(SS);
+    bool result = SD.begin(SD_CARD_CS_PIN);
+    int i = 0;
+    while (!result) {
+        result = SD.begin(SD_CARD_CS_PIN);
+        i++;
+        if (i == 5) {
+            break; // give it 5 chances.. (it is slow to init for some reason...)
+        }
+    }
 #if DEBUG
     if (!result) {
         Serial.println("SD Card initialization failed!");
     }
+    
 #endif
     return result;
 }
@@ -267,7 +300,7 @@ void CWPatternSequenceManager::process(bool initialProcess) {
         _patternStartTime = now;
     } else if (timeLeft < 0) {
         if (_doOneMoreTick) {
-            // We did one more tick; go to the next one
+            // We did one more tick; then go to the next one (if necessary)
             _doOneMoreTick = false;
             _intervalCount++;
             timePassed = 0;
@@ -283,10 +316,11 @@ void CWPatternSequenceManager::process(bool initialProcess) {
     if (itemHeader->patternEndCondition == CDPatternEndConditionAfterRepeatCount) {
         if (_intervalCount >= itemHeader->intervalCount) {
             nextPatternItem();
+            itemHeader = &_patternItems[_currentPatternItemIndex];
         }
     }
     
-    stripPatternLoop(itemHeader, _intervalCount, timePassed);
+    stripPatternLoop(itemHeader, _intervalCount, timePassed, initialProcess);
 }
 
 void CWPatternSequenceManager::firstPatternItem() {

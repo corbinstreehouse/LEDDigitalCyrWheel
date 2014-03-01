@@ -69,17 +69,25 @@ typedef enum ENUM_SIZE {
 } CDPatternType;
 
 
+// 28 bytes on device with buffer padding...28 on mac.
 typedef struct  __attribute__((__packed__)) {
-    CDPatternType patternType;
-    uint32_t duration;
-    uint32_t intervalCount;
-    CDPatternEndCondition patternEndCondition;
-    uint32_t color;
-    uint32_t dataLength; // how long the data is following
-    uint8_t *data; // When loaded, points to the data
+    CDPatternType patternType; // 1
+#if !PATTERN_EDITOR
+    char __buffer; // 1
+#endif
+    uint32_t duration; //4
+    uint32_t intervalCount; //4
+    CDPatternEndCondition patternEndCondition; //1
+#if !PATTERN_EDITOR
+    char __buffer2;// 1
+#endif
+    uint32_t color; //4
+    uint32_t dataLength; // how long the data is following // 4
+    union {
+        uint8_t *data; // When loaded, points to the data
+        uint64_t size; // creates 64-bits always so I can use the same struct size in 32-bit and 64-bit // 8
+    };
 } CDPatternItemHeader;
-// Data of dataLength follows the header
-
 
 // A given sequence file starts with this header
 typedef struct  __attribute__((__packed__)) {

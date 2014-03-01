@@ -28,7 +28,7 @@ typedef uint8_t byte;
 #endif
 
 // For patterns based on the current state at the start
-uint8_t *g_tempBuffer = NULL;
+rgb_color *g_tempBuffer = NULL;
 
 typedef struct {
     uint8_t *dataOffset;
@@ -100,51 +100,49 @@ void colorWipe(CDPatternItemHeader *itemHeader, uint32_t timePassedInMS) {
 }
 
 void fadeIn(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
-    float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
-    // exponential growth
-    percentagePassed = powf(percentagePassed, 2);
-    // Fade out every other interval
-    if (intervalCount % 2 == 1) {
-        percentagePassed = 1.0 - percentagePassed;
-    }
+    // slow fade in with:
+    // y = x^2, where x == time
+    int numPixels = g_strip.numPixels();
+    float t = (float)timePassedInMS / (float)itemHeader->duration;
     
-    rgb_color *colors = (rgb_color *)g_strip.getPixels();
-    rgb_color targetColor = Adafruit_NeoPixel::ConvertColorToRGBColor(itemHeader->color);
-    
-    for (int i = 0; i < g_strip.numPixels(); i++) {
-        colors[i].red = percentagePassed*targetColor.red;
-        colors[i].green = percentagePassed*targetColor.green;
-        colors[i].blue = percentagePassed*targetColor.blue;
+    for (int i = 0; i < numPixels; i++) {
+        // y = (2x-1)^2
+        // a = 2x-1
+        float y = t*t;
+        
+        byte r = itemHeader->color >> 16;
+        byte g = itemHeader->color >> 8;
+        byte b = itemHeader->color;
+        
+        r *= y;
+        g *= y;
+        b *= y;
+        
+        g_strip.setPixelColor(i, r, g, b);
     }
 }
 
-void fadeOut(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
-    if (intervalCount > 0) return; // fade out exactly once (I think this is what I want..)
-    if (intervalCount == 0 && timePassedInMS == 0) {
+void fadeOut(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
+    // Opposite of fade in, and we store the inital value on the first pass
+    // y = -x^2 + 1
+    if (firstPass) {
         // First pass, store off the initial state..
         int size = sizeof(uint8_t) * g_strip.getNumberOfBytes();
         if (g_tempBuffer == NULL) {
-            g_tempBuffer = (uint8_t *)malloc(size);
+            g_tempBuffer = (rgb_color *)malloc(size);
         }
-        memcpy(g_tempBuffer, g_strip.getPixels(), size);
+        memcpy(g_tempBuffer, g_strip.getPixels(), size); // copies the value *with* the brightness
     }
     
-    float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
-    percentagePassed = powf(percentagePassed, 2);
-    // going out..
-    percentagePassed = 1.0 - percentagePassed;
-    
+    rgb_color *colors = (rgb_color *)g_strip.getPixels();
+
+    float t = (float)timePassedInMS / (float)itemHeader->duration;
     for (int i = 0; i < g_strip.numPixels(); i++) {
-        int offset = i*3;
-        // GRB hardcoded
-        byte g = g_tempBuffer[offset+0];
-        byte r = g_tempBuffer[offset+1];
-        byte b = g_tempBuffer[offset+2];
-        g = (byte)round((float)g*percentagePassed);
-        r = (byte)round((float)r*percentagePassed);
-        b = (byte)round((float)b*percentagePassed);
-        
-        g_strip.setPixelColor(i, r, g, b);
+        float y = -(t*t)+1;
+        // direct pixel access to avoid issues w/reading the already set brightness
+        colors[i].green = g_tempBuffer[i].green*y;
+        colors[i].red = g_tempBuffer[i].red*y;
+        colors[i].blue = g_tempBuffer[i].blue*y;
     }
 }
 
@@ -363,31 +361,6 @@ byte valueForOffset(int currentOffset) {
     
     byte finalR = currentR; // time - currentR;  // Vary for time and roll over (byte truncation)
     return finalR;
-}
-
-#warning new fade function
-
-void fadeInOut(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
-    int numPixels = g_strip.numPixels();
-    float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
-    
-    for (int i = 0; i < numPixels; i++) {
-        // y = (2x-1)^2
-        // a = 2x-1
-        float a = 2*percentagePassed - 1;
-        float y = a*a;
-        
-        byte r = itemHeader->color >> 16;
-        byte g = itemHeader->color >> 8;
-        byte b = itemHeader->color;
-        
-        r *= y;
-        g *= y;
-        b *= y;
-        
-        g_strip.setPixelColor(i, r, g, b);
-        
-    }
 }
 
 void ledGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
@@ -1285,7 +1258,7 @@ unsigned char collision()
 }
 
 
-void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
+void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
     
     CDPatternType patternType = itemHeader->patternType;
 
@@ -1319,7 +1292,7 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             break;
         }
         case CDPatternTypeFadeOut: {
-            fadeOut(itemHeader, intervalCount, timePassedInMS);
+            fadeOut(itemHeader, intervalCount, timePassedInMS, isFirstPass);
             break;
         }
         case CDPatternTypeFadeIn: {

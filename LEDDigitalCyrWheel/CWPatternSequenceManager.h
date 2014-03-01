@@ -34,7 +34,6 @@ private:
     uint32_t _intervalCount;
     bool _doOneMoreTick;
     
-    
     bool initSDCard();
     bool loadCurrentSequence();
     void freePatternItems();
