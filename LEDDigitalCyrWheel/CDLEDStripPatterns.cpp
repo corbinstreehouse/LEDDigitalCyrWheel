@@ -243,10 +243,7 @@ void playbackColorFadeWithHeader(const CDPatternItemHeader *imageHeader, CDPlayb
         Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
 #endif
         g_strip.setPixelColor(x, r, g, b);
-        if (mainProcess()) return;
     }
-    
-    if (mainProcess()) return;
     
     // Increment..update after we did all the above work
     uint32_t now = millis();

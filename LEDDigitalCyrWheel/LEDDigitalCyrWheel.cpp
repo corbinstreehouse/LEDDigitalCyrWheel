@@ -53,6 +53,10 @@ void buttonClicked(Button &b){
     g_sequenceManager.nextPatternItem();
 }
 
+void buttonHeld(Button &b) {
+    g_sequenceManager.loadNextSequence();
+}
+
 void setup() {
     pinMode(g_LED, OUTPUT);
     digitalWrite(g_LED, HIGH);
@@ -64,12 +68,13 @@ void setup() {
 
     stripInit();
     
-    g_button.pressHandler(buttonClicked);
+    g_button.clickHandler(buttonClicked);
+    g_button.holdHandler(buttonHeld);
 
     bool initPassed = g_sequenceManager.init();
     if (initPassed) {
-        // See if we could read from the SD card
-        if (g_sequenceManager.loadFirstSequence()) {
+        // See if we read more than the default sequence
+        if (g_sequenceManager.getNumberOfSequenceNames() > 1) {
             flashThreeTimes(0, 255, 0, 150); // flash green
         } else {
             flashThreeTimes(255, 127, 0, 150); // flash orange...couldn't find any data files

@@ -38,6 +38,8 @@ Button::Button(uint8_t buttonPin){
     cb_onClick = 0;
     cb_onHold = 0;
     triggeredHoldEvent = false;
+    holdEventThreshold = 500; // half a second
+    pressedStartTime = -1;
 }
 
 void Button::process(void)
@@ -52,27 +54,21 @@ void Button::process(void)
         if (currentState == LOW) {
             if (cb_onPress) { cb_onPress(*this); }   //fire the onPress event
             pressedStartTime = millis();             //start timing
-            triggeredHoldEvent = false;
-        }
-        else //the state changed to RELEASED
-        {
+        } else  {
             if (cb_onRelease) { cb_onRelease(*this); } //fire the onRelease event
-            if (cb_onClick) { cb_onClick(*this); }   //fire the onClick event AFTER the onRelease
+            if (!triggeredHoldEvent) {
+                // only send this if we didn't send a hold (mutually exlusive)
+                if (cb_onClick) { cb_onClick(*this); }   //fire the onClick event AFTER the onRelease
+            }
             //reset states (for timing and for event triggering)
             pressedStartTime = -1;
         }
-    }
-    else
-    {
-        if (pressedStartTime!=-1 && !triggeredHoldEvent)
-        {
-            if (millis()-pressedStartTime > holdEventThreshold)
-            {
-                if (cb_onHold)
-                {
-                    cb_onHold(*this);
-                    triggeredHoldEvent = true;
-                }
+        triggeredHoldEvent = false;
+    } else {
+        if (cb_onHold && pressedStartTime != -1 && !triggeredHoldEvent) {
+            if (millis() - pressedStartTime > holdEventThreshold) {
+                cb_onHold(*this);
+                triggeredHoldEvent = true;
             }
         }
     }

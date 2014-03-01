@@ -38,6 +38,7 @@ private:
     bool loadCurrentSequence();
     void freePatternItems();
     void freeSequenceNames();
+    void loadSequenceNamed(const char *filename);
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
@@ -45,7 +46,6 @@ public:
 #endif
     bool init();
     
-    bool loadFirstSequence(); // Loads the first sequence
     void loadNextSequence(); // returns true if we could advance (or loop to the start)
     void loadDefaultSequence();
     
@@ -55,9 +55,9 @@ public:
     void firstPatternItem();
     void process(bool initialProcess); // Main loop work
     
+    int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
 #if PATTERN_EDITOR
     char *getSequenceNameAtIndex(int index) { return _sequenceNames[index]; }
-    int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
     char *getCurrentSequenceName() { return _sequenceNames[_currentSequenceIndex]; };
     int getCurrentSequenceIndex() { return _currentSequenceIndex; }
 

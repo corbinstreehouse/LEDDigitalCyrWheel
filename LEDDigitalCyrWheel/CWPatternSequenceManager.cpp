@@ -66,22 +66,19 @@ void CWPatternSequenceManager::loadDefaultSequence() {
 #if DEBUG
     Serial.println("--- loading default sequence --- ");
 #endif
-#if PATTERN_EDITOR
-    freeSequenceNames();
-#endif
     freePatternItems();
 
-    _currentSequenceIndex = 0;
-    _numberOfAvailableSequences = 0;
-    _doOneMoreTick = false;
-    
-    _pixelCount = 0; // Well..whatever
+    _pixelCount = 300; // Well..whatever;it is too late at this point, and I don't even use it..
     _numberOfPatternItems = CDPatternTypeMax;
     // After the header each item follows
     _patternItems = (CDPatternItemHeader *)malloc(_numberOfPatternItems * sizeof(CDPatternItemHeader));
     
-    for (int i = CDPatternTypeMin; i < CDPatternTypeMax; i++) {
-        _patternItems[i].patternType = (CDPatternType)i;
+    int i = 0;
+    for (int p = CDPatternTypeMin; p < CDPatternTypeMax; p++) {
+        if (p == CDPatternTypeDoNothing || p == CDPatternTypeFadeIn) {
+            continue; // skip a few
+        }
+        _patternItems[i].patternType = (CDPatternType)p;
         _patternItems[i].patternEndCondition = CDPatternEndConditionOnButtonClick;
         _patternItems[i].intervalCount = 1;
         _patternItems[i].duration = 2000; //  2 seconds
@@ -90,8 +87,9 @@ void CWPatternSequenceManager::loadDefaultSequence() {
 //        _patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
         switch (random(3)) { case 0: _patternItems[i].color = 0xFF0000; break; case 1: _patternItems[i].color = 0x00FF00; break; case 2: _patternItems[i].color = 0x0000FF; break; }
         _patternItems[i].data = 0;
+        i++;
     }
-    firstPatternItem();
+    _numberOfPatternItems = i;
 }
 
 static inline bool verifyHeader(CDPatternSequenceHeader *h) {
@@ -113,21 +111,13 @@ void CWPatternSequenceManager::freePatternItems() {
     
 }
 
-bool CWPatternSequenceManager::loadCurrentSequence() {
-#if DEBUG
-    Serial.println("--- loading current sequence --- ");
-#endif
-    freePatternItems();
-
-    bool result = true;
-    ASSERT(_currentSequenceIndex >= 0 && _currentSequenceIndex < _numberOfAvailableSequences);
-    const char *filename = _sequenceNames[_currentSequenceIndex];
+void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
 #if DEBUG
     Serial.print("loading:");
     Serial.println(filename);
 #endif
     File sequenceFile = SD.open(filename);
-
+    
     // This is reading the file format I created..
     // Header first
     CDPatternSequenceHeader patternHeader;
@@ -135,7 +125,7 @@ bool CWPatternSequenceManager::loadCurrentSequence() {
 #if DEBUG
     Serial.println("checking header");
 #endif
-
+    
     // Verify it
     if (verifyHeader(&patternHeader)) {
         // Then read in and store the stock info
@@ -176,6 +166,23 @@ bool CWPatternSequenceManager::loadCurrentSequence() {
         }
     }
     sequenceFile.close();
+}
+
+bool CWPatternSequenceManager::loadCurrentSequence() {
+#if DEBUG
+    Serial.println("--- loading current sequence --- ");
+#endif
+    freePatternItems();
+
+    bool result = true;
+    ASSERT(_currentSequenceIndex >= 0 && _currentSequenceIndex < _numberOfAvailableSequences);
+    const char *filename = _sequenceNames[_currentSequenceIndex];
+    if (filename == NULL) {
+        // Load the default
+        loadDefaultSequence();
+    } else {
+        loadSequenceNamed(filename);
+    }
 
     firstPatternItem();
     return result;
@@ -212,6 +219,7 @@ static inline bool isPatternFile(char *filename) {
 }
 
 bool CWPatternSequenceManager::init() {
+    _doOneMoreTick = false;
     bool result = initSDCard();
 
     if (result) {
@@ -235,7 +243,8 @@ bool CWPatternSequenceManager::init() {
         
         if (_numberOfAvailableSequences > 0) {
             // Now we can malloc the space to save the names
-            _sequenceNames = (char **)malloc(sizeof(char*) * _numberOfAvailableSequences);
+            // One last name is for the "NULL" / default sequence
+            _sequenceNames = (char **)malloc(sizeof(char*) * (_numberOfAvailableSequences + 1));
             _currentSequenceIndex = 0;
             rootDir.moveToStartOfDirectory();
             while (rootDir.getNextFilename(filenameBuffer)) {
@@ -248,24 +257,23 @@ bool CWPatternSequenceManager::init() {
                     _currentSequenceIndex++;
                 }
             }
+        } else {
+            // NULL default sequence is always there...
+            _sequenceNames = (char **)malloc(sizeof(char*) * 1);
         }
-        _currentSequenceIndex = 0;
-        loadFirstSequence();
+        
         rootDir.close();
+        // Null sequecne last...
+        _sequenceNames[_numberOfAvailableSequences] = NULL;
+        
+        _numberOfAvailableSequences++;
+        
+        _currentSequenceIndex = 0;
+        loadCurrentSequence();
     }
     
     return result;
     
-}
-
-bool CWPatternSequenceManager::loadFirstSequence() {
-    if (_numberOfAvailableSequences > 0) {
-        if (loadCurrentSequence()) {
-            return true;
-        }
-    }
-    loadDefaultSequence();
-    return false;
 }
 
 void CWPatternSequenceManager::loadNextSequence() {

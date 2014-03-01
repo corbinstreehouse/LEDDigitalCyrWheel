@@ -38,9 +38,9 @@ typedef enum ENUM_SIZE {
     // Standard patterns predifined in code
     CDPatternTypeRainbow = 0,
     CDPatternTypeLotsOfRainbows,
-    CDPatternTypeColorWipe,
     CDPatternTypeFadeOut,
     CDPatternTypeFadeIn,
+    CDPatternTypeColorWipe,
     CDPatternTypeDoNothing,
     CDPatternTypeTheaterChase,
     
