@@ -64,18 +64,19 @@ CWPatternSequenceManager::~CWPatternSequenceManager() {
 
 void CWPatternSequenceManager::loadDefaultSequence() {
 #if DEBUG
-    Serial.println("--- loading default sequence --- ");
+    Serial.println("       --- loading default sequence because the name was NULL --- ");
 #endif
     freePatternItems();
 
     _pixelCount = 300; // Well..whatever;it is too late at this point, and I don't even use it..
     _numberOfPatternItems = CDPatternTypeMax;
+    
     // After the header each item follows
     _patternItems = (CDPatternItemHeader *)malloc(_numberOfPatternItems * sizeof(CDPatternItemHeader));
     
     int i = 0;
     for (int p = CDPatternTypeMin; p < CDPatternTypeMax; p++) {
-        if (p == CDPatternTypeDoNothing || p == CDPatternTypeFadeIn) {
+        if (p == CDPatternTypeDoNothing || p == CDPatternTypeFadeIn || p == CDPatternTypeImageFade) {
             continue; // skip a few
         }
         _patternItems[i].patternType = (CDPatternType)p;
@@ -90,6 +91,10 @@ void CWPatternSequenceManager::loadDefaultSequence() {
         i++;
     }
     _numberOfPatternItems = i;
+#if DEBUG
+    Serial.printf(" --- default pattern count _numberOfPatternItems: %d\r\n", _numberOfPatternItems);
+#endif
+    
 }
 
 static inline bool verifyHeader(CDPatternSequenceHeader *h) {
@@ -99,6 +104,9 @@ static inline bool verifyHeader(CDPatternSequenceHeader *h) {
 
 void CWPatternSequenceManager::freePatternItems() {
     if (_patternItems) {
+#if DEBUG
+        Serial.println(" --- free pattern Items");
+#endif
         for (int i = 0; i < _numberOfPatternItems; i++) {
             // If it has data, we have to free it
             if (_patternItems[i].dataLength && _patternItems[i].data) {
@@ -107,14 +115,14 @@ void CWPatternSequenceManager::freePatternItems() {
         }
         free(_patternItems);
         _patternItems = NULL;
+        _numberOfPatternItems = 0; // can be removed
     }
     
 }
 
 void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
 #if DEBUG
-    Serial.print("loading:");
-    Serial.println(filename);
+    Serial.printf("  loading sequence name %s\r\n:", filename);
 #endif
     File sequenceFile = SD.open(filename);
     
@@ -170,7 +178,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
 
 bool CWPatternSequenceManager::loadCurrentSequence() {
 #if DEBUG
-    Serial.println("--- loading current sequence --- ");
+    Serial.printf("--- loading sequence %d of %d --- ", _currentSequenceIndex, _numberOfAvailableSequences);
 #endif
     freePatternItems();
 
@@ -290,15 +298,14 @@ bool CWPatternSequenceManager::initCompass() {
         result = _compass.init(); // keep trying a few times
         i++;
     }
+    Serial.println("did attempt..");
     if (result) {
         _compass.enableDefault();
-        // min: { -4224,  -3169,  -3952}    max: { +3044,  +3025,  +3810} // Calibration step...
-        // min: { -3041,  -2925,  -2802}    max: { +3239,  +2250,  +3504}
-//        _compass.m_min = { -3041,  -2925,  -2802};
-//        _compass.m_max = { +3239,  +2250,  +3504};
+        _compass.m_min = {  -345,   -707,   -115};
+        _compass.m_max = {  +310,   +206,   +463};
 #if DEBUG
-//        Serial.print("Compass initied type: ");
-//        Serial.println(_compass.getDeviceType());
+        Serial.print("Compass initied type: ");
+        Serial.println(_compass.getDeviceType());
 #endif
     } else {
 #if DEBUG
@@ -310,6 +317,7 @@ bool CWPatternSequenceManager::initCompass() {
 }
 
 void CWPatternSequenceManager::loadNextSequence() {
+    Serial.printf("+++ load next sequence (at: %d of %d\r\n", _currentSequenceIndex, _numberOfAvailableSequences);
     if (_numberOfAvailableSequences > 0) {
         _currentSequenceIndex++;
         if (_currentSequenceIndex >= _numberOfAvailableSequences) {
@@ -321,10 +329,12 @@ void CWPatternSequenceManager::loadNextSequence() {
 
 void CWPatternSequenceManager::process(bool initialProcess) {
     if (_numberOfPatternItems == 0) {
-#if DEBUG
-        Serial.print("No pattern items to show!");
-        return;
+#if 1 //DEBUG
+        Serial.println("No pattern items to show!");
 #endif
+        flashThreeTimes(255, 255, 0, 150);
+        delay(1000);
+        return;
     }
     CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
 
@@ -360,19 +370,19 @@ void CWPatternSequenceManager::process(bool initialProcess) {
             itemHeader = &_patternItems[_currentPatternItemIndex];
         }
     }
-    
-    char report[256];
-    _compass.read();
-    snprintf(report, sizeof(report), "A: %6d %6d %6d    M: %6d %6d %6d  head:%d",
-             _compass.a.x, _compass.a.y, _compass.a.z,
-             _compass.m.x, _compass.m.y, _compass.m.z, _compass.heading());
-  //  Serial.println(report);
 
-    float z  = _compass.heading((LSM303::vector<int>){1, 0, 0});
-    float x  = _compass.heading((LSM303::vector<int>){0, 1, 0});
-    float y  = _compass.heading((LSM303::vector<int>){0, 0, 1});
-    
-    Serial.printf("x: %.3f y: %.3f z: %.3f heading: %.3f deg\r\n", x, y, z, _compass.heading());
+//    char report[256];
+//    _compass.read();
+//    snprintf(report, sizeof(report), "A: %6d %6d %6d    M: %6d %6d %6d  head:%d",
+//             _compass.a.x, _compass.a.y, _compass.a.z,
+//             _compass.m.x, _compass.m.y, _compass.m.z, _compass.heading());
+//  //  Serial.println(report);
+//
+//    float z  = _compass.heading((LSM303::vector<int>){1, 0, 0});
+//    float x  = _compass.heading((LSM303::vector<int>){0, 1, 0});
+//    float y  = _compass.heading((LSM303::vector<int>){0, 0, 1});
+//    
+//    Serial.printf("x: %.3f y: %.3f z: %.3f heading: %.3f deg\r\n", x, y, z, _compass.heading());
     
     stripPatternLoop(itemHeader, _intervalCount, timePassed, initialProcess);
 }
@@ -391,8 +401,8 @@ void CWPatternSequenceManager::nextPatternItem() {
     _patternStartTime = millis();
     _intervalCount = 0;
     process(true); // Initial process at time 0
-#if DEBUG && PATTERN_EDITOR
-//    NSLog(@"------ nextPatternItem -------- ");
+#if DEBUG 
+//    Serial.printf("--------- Next pattern Item: %d of %d\r\n", _currentPatternItemIndex, _numberOfPatternItems);
 //    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
 //    
 //    NSLog(@"Duration: %.3f seconds", itemHeader->duration/1000.0);

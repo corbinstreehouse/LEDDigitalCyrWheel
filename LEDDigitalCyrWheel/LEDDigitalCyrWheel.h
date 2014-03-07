@@ -9,4 +9,7 @@
 #ifndef LEDDigitalCyrWheel_LEDDigitalCyrWheel_h
 #define LEDDigitalCyrWheel_LEDDigitalCyrWheel_h
 
+bool busyDelay(uint32_t ms);
+
+
 #endif

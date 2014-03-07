@@ -15,7 +15,7 @@
 #include "Arduino.h"
 #include "SD.h"
 
-#define ACCELEROMETER_SUPPORT 1 // not in the sim..
+#define ACCELEROMETER_SUPPORT 0 // not in the sim..
 
 #if ACCELEROMETER_SUPPORT
 #include "Wire.h"

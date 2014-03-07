@@ -28,6 +28,15 @@
 
 
 const int g_LED = LED_BUILTIN;
+const int g_batteryVoltagePin = A6; // pin 20
+const int g_batteryRefPin = A7; // 3.3v is connected to pin 21
+
+// 2 cell LiPO, 4.2v each: 8.4v max. 3.0v should be the min, 3.0*2=6v min
+#define LOW_VOLTAGE_VALUE 6.0 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
+#define TIME_BETWEEN_VOLTAGE_READS 1000 // read every second..
+#define MAX_INPUT_VOLTAGE 10.0 // max voltage we can read
+#define RESISTOR_Z1_VALUE 10000.0 // 10k resistor
+#define RESISTOR_Z2_VALUE 4680.0 // MESURED value of 4.7k resistor
 
 static Button g_button = Button(BUTTON_PIN);
 static CWPatternSequenceManager g_sequenceManager;
@@ -42,11 +51,23 @@ bool mainProcess() {
     return false; // Button not pressed
 }
 
-static void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
-    for (int i = 0; i < 3; i++) {
-        flashColor(r, g, b, delay);
-        flashColor(0, 0, 0, delay);
-    }
+
+bool busyDelay(uint32_t ms)
+{
+	uint32_t start = micros();
+    
+	if (ms > 0) {
+		while (1) {
+            if (mainProcess()) return true;
+			if ((micros() - start) >= 1000) {
+				ms--;
+				if (ms == 0) return false;
+				start += 1000;
+			}
+			yield();
+		}
+	}
+    return false;
 }
 
 void buttonClicked(Button &b){
@@ -54,7 +75,46 @@ void buttonClicked(Button &b){
 }
 
 void buttonHeld(Button &b) {
+#if DEBUG
+    Serial.println("XX button HELD");
+#endif
+
     g_sequenceManager.loadNextSequence();
+//    delay(1000); // hack test, corbin
+}
+
+#define DEBUG_VOLTAGE 0
+
+static float readBatteryVoltage() {
+    float readValue = analogRead(g_batteryVoltagePin); // returns 0 - 1023; 0 is 0v, and 1023 is 10v (since I use two 10k resistors in a voltage divider). 5v is the max...
+#if DEBUG_VOLTAGE
+    Serial.print("vread: ");
+    Serial.print(readValue);
+    Serial.print(" ");
+#endif
+    float vRef = 3.30; // 3.3v ref
+    float refValue = analogRead(g_batteryRefPin);
+#if DEBUG_VOLTAGE
+    Serial.print("refValue: ");
+    Serial.print(refValue);
+    Serial.print(" ");
+#endif
+    
+    float voltageReadValue = readValue / refValue * vRef; // 16 bit resolution,
+#if DEBUG_VOLTAGE
+    Serial.print("vreadV: ");
+    Serial.print(voltageReadValue);
+    Serial.print(" ");
+#endif
+    
+    // The read value is with regards to the input voltage
+    // See voltage dividor for reference
+    float voltage = voltageReadValue * (RESISTOR_Z1_VALUE + RESISTOR_Z2_VALUE)/RESISTOR_Z2_VALUE;
+#if DEBUG_VOLTAGE
+    Serial.print("voltage: ");
+    Serial.println(voltage);
+#endif
+    return voltage;
 }
 
 void setup() {
@@ -66,6 +126,12 @@ void setup() {
     delay(1000);
     Serial.println("--- begin serial --- ");
 #endif
+    
+    pinMode(g_batteryVoltagePin, INPUT);
+    pinMode(g_batteryRefPin, INPUT);
+
+    analogReadAveraging(16); // longer averaging of reads; drastically stabilizes my battery voltage read compared to the default of 4
+    analogReadRes(16); // 16 bit analog read resolution
 
     stripInit();
     
@@ -89,6 +155,8 @@ void setup() {
  //   digitalWrite(g_LED, LOW);
 }
 
+
+
 void loop() {
     mainProcess();
     
@@ -99,5 +167,16 @@ void loop() {
         digitalWrite(g_LED, LOW);
     }
 #endif
+    
+    // check the voltage; if we are low, flast red 3 times at a low brightness...
+    static uint32_t lastReadVoltageTime = 0;
+    if (millis() - lastReadVoltageTime > TIME_BETWEEN_VOLTAGE_READS) {
+        lastReadVoltageTime = millis();
+        if (readBatteryVoltage() < LOW_VOLTAGE_VALUE) {
+            flashThreeTimes(255, 0, 0, 150); // flash red
+            delay(2000); // delay for 2 seconds to give the user time to react and turn it off
+        }
+    }
+    
     g_sequenceManager.process(false);
 }

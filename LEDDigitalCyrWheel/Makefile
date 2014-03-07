@@ -49,7 +49,7 @@ APP_LIBS_LIST = SPI Wire Wire/utility
 
 #USER_LIBS_LIST = UTFT Canbus
 
-#USER_LIBS_LIST = OctoWS2811
+#USER_LIBS_LIST = OctoWS2811  SD SD/utility LSM303
 USER_LIBS_LIST = Adafruit_NeoPixel SD SD/utility LSM303
 
 

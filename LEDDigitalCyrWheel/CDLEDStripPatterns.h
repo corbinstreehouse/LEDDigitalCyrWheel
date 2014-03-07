@@ -31,7 +31,7 @@ extern STRIP_CLASS g_strip;
 
 extern void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassed, bool isFirstPass); // Call this on each loop to process things
 
-extern void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t delay);
+void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay);
 extern void stripInit();
 extern void stripUpdateBrightness();
 

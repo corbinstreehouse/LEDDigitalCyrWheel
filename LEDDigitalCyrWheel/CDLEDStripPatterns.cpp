@@ -10,8 +10,8 @@
 #include "LEDDigitalCyrWheel.h"
 
 #define BRIGHTNESS_PIN 22
-#define STRIP_PIN 14
-#define STRIP_LENGTH  (14+60*2)// (60*4) // (67*2)
+#define STRIP_PIN 2 // 14 // Use pin 2 so Octo works, and pin 14 for a secondary strip (opposite side) to do patterns
+#define STRIP_LENGTH  300 // (14+60*2)// (60*4) // (67*2)
 
 #include <math.h>
 
@@ -318,6 +318,8 @@ static void playbackImage() {
 
 void stripUpdateBrightness() {
     int val = analogRead(BRIGHTNESS_PIN);
+    Serial.printf("brightness read: %d\r\n", val);
+    sdf
     // Map 0 - 1024 to 0-255 brightness
     float b = (float)val * 255.0 / 1024.0;
     int v = b;
@@ -1421,7 +1423,14 @@ void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t d) {
         g_strip.setPixelColor(i, r, g, b);
     }
     g_strip.show();
-    delay(d);
+    busyDelay(d);
+}
+
+void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
+    for (int i = 0; i < 3; i++) {
+        flashColor(r, g, b, delay);
+        flashColor(0, 0, 0, delay);
+    }
 }
 
 #if DEBUG
