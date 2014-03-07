@@ -12,6 +12,7 @@
 #define BRIGHTNESS_PIN 22
 #define STRIP_PIN 2 // 14 // Use pin 2 so Octo works, and pin 14 for a secondary strip (opposite side) to do patterns
 #define STRIP_LENGTH  300 // (14+60*2)// (60*4) // (67*2)
+#define ANALOG_READ_MAX UINT16_MAX // setup for 16 bit resolution
 
 #include <math.h>
 
@@ -318,10 +319,9 @@ static void playbackImage() {
 
 void stripUpdateBrightness() {
     int val = analogRead(BRIGHTNESS_PIN);
-    Serial.printf("brightness read: %d\r\n", val);
-    sdf
+//    Serial.printf("brightness read: %d\r\n", val);
     // Map 0 - 1024 to 0-255 brightness
-    float b = (float)val * 255.0 / 1024.0;
+    float b = 255.0 * ((float)val / (float)ANALOG_READ_MAX);
     int v = b;
     g_strip.setBrightness(v);
 }
