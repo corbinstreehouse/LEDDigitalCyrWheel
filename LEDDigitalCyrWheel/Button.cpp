@@ -49,12 +49,17 @@ void Button::process(void)
     
     uint8_t currentState = digitalRead(pin);
     if (currentState != _previousState && (millis() - _debounceStartTime) > debounceDuration) {
+//        Serial.println("button - start");
+        
         _previousState = currentState;
         _debounceStartTime = millis();
         if (currentState == LOW) {
+//            Serial.println("button - on press");
             if (cb_onPress) { cb_onPress(*this); }   //fire the onPress event
             pressedStartTime = millis();             //start timing
+            triggeredHoldEvent = false;
         } else  {
+//            Serial.println("button - release");
             if (cb_onRelease) { cb_onRelease(*this); } //fire the onRelease event
             if (!triggeredHoldEvent) {
                 // only send this if we didn't send a hold (mutually exlusive)
@@ -63,12 +68,12 @@ void Button::process(void)
             //reset states (for timing and for event triggering)
             pressedStartTime = -1;
         }
-        triggeredHoldEvent = false;
     } else {
         if (cb_onHold && pressedStartTime != -1 && !triggeredHoldEvent) {
             if (millis() - pressedStartTime > holdEventThreshold) {
+//                Serial.println("button - HOLD");
+                triggeredHoldEvent = true; // set before calling the method in case it re-enters
                 cb_onHold(*this);
-                triggeredHoldEvent = true;
             }
         }
     }
