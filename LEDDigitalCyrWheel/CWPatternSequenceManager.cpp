@@ -8,8 +8,7 @@
 
 #include "CWPatternSequenceManager.h"
 #include "CDLEDStripPatterns.h"
-
-#define SD_CARD_CS_PIN 4
+#include "LEDDigitalCyrWheel.h"
 
 #if DEBUG
 #if PATTERN_EDITOR
@@ -105,7 +104,7 @@ static inline bool verifyHeader(CDPatternSequenceHeader *h) {
 void CWPatternSequenceManager::freePatternItems() {
     if (_patternItems) {
 #if DEBUG
-        Serial.println(" --- free pattern Items");
+      //  Serial.println(" --- free pattern Items");
 #endif
         for (int i = 0; i < _numberOfPatternItems; i++) {
             // If it has data, we have to free it
@@ -122,7 +121,7 @@ void CWPatternSequenceManager::freePatternItems() {
 
 void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
 #if DEBUG
-    Serial.printf("  loading sequence name %s\r\n:", filename);
+   // Serial.printf("  loading sequence name %s\r\n:", filename);
 #endif
     File sequenceFile = SD.open(filename);
     
@@ -131,7 +130,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
     CDPatternSequenceHeader patternHeader;
     sequenceFile.readBytes((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
 #if DEBUG
-    Serial.println("checking header");
+//    Serial.println("checking header");
 #endif
     
     // Verify it
@@ -203,8 +202,8 @@ bool CWPatternSequenceManager::initSDCard() {
     while (!result) {
         result = SD.begin(SD_CARD_CS_PIN);
         i++;
-        if (i == 5) {
-            break; // give it 5 chances.. (it is slow to init for some reason...)
+        if (i == 1) {
+            break; // give it 1 more chance.. (it is slow to init for some reason...)
         }
     }
 #if DEBUG
@@ -227,7 +226,7 @@ static inline bool isPatternFile(char *filename) {
 }
 
 bool CWPatternSequenceManager::init() {
-    _doOneMoreTick = false;
+//    _doOneMoreTick = false;
     
     initCompass();
 
@@ -290,7 +289,7 @@ bool CWPatternSequenceManager::initCompass() {
 #if ACCELEROMETER_SUPPORT
     
 #if DEBUG
-    Serial.println("attempting init");
+    Serial.println("attempting initCompass");
 #endif
     bool result = _compass.init();
     int i = 0;
@@ -298,7 +297,7 @@ bool CWPatternSequenceManager::initCompass() {
         result = _compass.init(); // keep trying a few times
         i++;
     }
-    Serial.println("did attempt..");
+    Serial.println("initCompass DONE");
     if (result) {
         _compass.enableDefault();
         _compass.m_min = {  -345,   -707,   -115};
@@ -313,6 +312,8 @@ bool CWPatternSequenceManager::initCompass() {
 #endif
 
     }
+#else
+    return false;
 #endif
 }
 
@@ -327,9 +328,44 @@ void CWPatternSequenceManager::loadNextSequence() {
     }
 }
 
+static inline bool PatternIsContinuous(CDPatternType p) {
+    switch (p) {
+        case CDPatternTypeRainbow:
+        case CDPatternTypeLotsOfRainbows:
+        case CDPatternTypeTheaterChase:
+        case CDPatternTypeGradient:
+        case CDPatternTypePluseGradientEffect:
+            return true;
+        case CDPatternTypeWarmWhiteShimmer:
+        case CDPatternTypeRandomColorWalk:
+        case CDPatternTypeTraditionalColors:
+        case CDPatternTypeColorExplosion:
+        case CDPatternTypeRWGradient:
+        case CDPatternTypeWhiteBrightTwinkle:
+        case CDPatternTypeWhiteRedBrightTwinkle:
+        case CDPatternTypeRedGreenBrightTwinkle:
+        case CDPatternTypeColorTwinkle:
+            return false; // i think
+        case CDPatternTypeCollision:
+            return false;
+        case CDPatternTypeFadeOut:
+        case CDPatternTypeFadeIn:
+        case CDPatternTypeColorWipe:
+            return false;
+            
+        case CDPatternTypeDoNothing:
+            return true;
+        case CDPatternTypeImageFade:
+            return true;
+            
+        case CDPatternTypeMax:
+            return false;
+    }
+}
+
 void CWPatternSequenceManager::process(bool initialProcess) {
     if (_numberOfPatternItems == 0) {
-#if 1 //DEBUG
+#if DEBUG
         Serial.println("No pattern items to show!");
 #endif
         flashThreeTimes(255, 255, 0, 150);
@@ -342,49 +378,40 @@ void CWPatternSequenceManager::process(bool initialProcess) {
     // The inital tick always starts with 0
     uint32_t timePassed = initialProcess ? 0 : now - _patternStartTime;
     
-    int timeLeft = itemHeader->duration - timePassed;
-    if (timeLeft == 0) {
-        // Hit it perfect, go to the next one
-        _doOneMoreTick = false;
-        _intervalCount++;
-        timePassed = 0;
-        _patternStartTime = now;
-    } else if (timeLeft < 0) {
-        if (_doOneMoreTick) {
-            // We did one more tick; then go to the next one (if necessary)
-            _doOneMoreTick = false;
-            _intervalCount++;
-            timePassed = 0;
-            _patternStartTime = now;
-        } else {
-            // Do one more tick at the final duration to run it at 100%
-            _doOneMoreTick = true;
-            timePassed = itemHeader->duration;
-        }
-    }
-    
-    // See if we should go to the next pattern
-    if (itemHeader->patternEndCondition == CDPatternEndConditionAfterRepeatCount) {
-        if (_intervalCount >= itemHeader->intervalCount) {
-            nextPatternItem();
-            itemHeader = &_patternItems[_currentPatternItemIndex];
+    // How many intervals have passed?
+    int intervalCount = timePassed / itemHeader->duration;
+    if (!PatternIsContinuous(itemHeader->patternType)) {
+        // Since it isn't continuous, modify the timePassed here
+        if (intervalCount > 0) {
+            timePassed = timePassed - intervalCount*itemHeader->duration;
         }
     }
 
-//    char report[256];
-//    _compass.read();
-//    snprintf(report, sizeof(report), "A: %6d %6d %6d    M: %6d %6d %6d  head:%d",
-//             _compass.a.x, _compass.a.y, _compass.a.z,
-//             _compass.m.x, _compass.m.y, _compass.m.z, _compass.heading());
-//  //  Serial.println(report);
-//
-//    float z  = _compass.heading((LSM303::vector<int>){1, 0, 0});
-//    float x  = _compass.heading((LSM303::vector<int>){0, 1, 0});
-//    float y  = _compass.heading((LSM303::vector<int>){0, 0, 1});
-//    
-//    Serial.printf("x: %.3f y: %.3f z: %.3f heading: %.3f deg\r\n", x, y, z, _compass.heading());
+    // See if we should go to the next pattern
+    if (itemHeader->patternEndCondition == CDPatternEndConditionAfterRepeatCount) {
+        if (intervalCount >= itemHeader->intervalCount) {
+            nextPatternItem();
+            itemHeader = &_patternItems[_currentPatternItemIndex];
+            timePassed = 0;
+            intervalCount = 0;
+        }
+    }
+
+#if 0
+    char report[256];
+    _compass.read();
+    snprintf(report, sizeof(report), "A: %6d %6d %6d    M: %6d %6d %6d  head:%d",
+             _compass.a.x, _compass.a.y, _compass.a.z,
+             _compass.m.x, _compass.m.y, _compass.m.z, _compass.heading());
+  //  Serial.println(report);
+
+    float z  = _compass.heading((LSM303::vector<int>){1, 0, 0});
+    float x  = _compass.heading((LSM303::vector<int>){0, 1, 0});
+    float y  = _compass.heading((LSM303::vector<int>){0, 0, 1});
     
-    stripPatternLoop(itemHeader, _intervalCount, timePassed, initialProcess);
+    Serial.printf("x: %.3f y: %.3f z: %.3f heading: %.3f deg\r\n", x, y, z, _compass.heading());
+#endif
+    stripPatternLoop(itemHeader, intervalCount, timePassed, initialProcess);
 }
 
 void CWPatternSequenceManager::firstPatternItem() {
@@ -399,7 +426,7 @@ void CWPatternSequenceManager::nextPatternItem() {
     }
     // This would be better suited to a common method...
     _patternStartTime = millis();
-    _intervalCount = 0;
+//    _intervalCount = 0;
     process(true); // Initial process at time 0
 #if DEBUG 
 //    Serial.printf("--------- Next pattern Item: %d of %d\r\n", _currentPatternItemIndex, _numberOfPatternItems);

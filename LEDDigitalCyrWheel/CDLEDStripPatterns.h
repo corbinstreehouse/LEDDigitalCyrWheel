@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include "CDPatternData.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 #define USE_ADAFRUIT 1
 
@@ -32,6 +32,7 @@ extern STRIP_CLASS g_strip;
 extern void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassed, bool isFirstPass); // Call this on each loop to process things
 
 void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay);
+void flashNTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t n, uint32_t delay);
 extern void stripInit();
 extern void stripUpdateBrightness();
 

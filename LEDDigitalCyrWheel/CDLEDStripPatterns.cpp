@@ -9,9 +9,7 @@
 #include "CDLEDStripPatterns.h"
 #include "LEDDigitalCyrWheel.h"
 
-#define BRIGHTNESS_PIN 22
-#define STRIP_PIN 2 // 14 // Use pin 2 so Octo works, and pin 14 for a secondary strip (opposite side) to do patterns
-#define STRIP_LENGTH  300 // (14+60*2)// (60*4) // (67*2)
+#define STRIP_LENGTH  331 // my actual count // (14+60*2)// (60*4) // (67*2)
 #define ANALOG_READ_MAX UINT16_MAX // setup for 16 bit resolution
 
 #include <math.h>
@@ -456,7 +454,9 @@ static inline void rainbows(CDPatternItemHeader *itemHeader, uint32_t intervalCo
     
     int numPixels = g_strip.numPixels();
     float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
-    byte positionInWheel = round(percentagePassed*numPixels);
+    int positionInWheel = round(percentagePassed*numPixels);
+    
+//    NSLog(@"%f, time: %ld, pos: %ld", percentagePassed, (long)timePassedInMS, (long)positionInWheel);
 
     int countPerSection = round(numPixels / count);
     
@@ -1426,11 +1426,15 @@ void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t d) {
     busyDelay(d);
 }
 
-void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
-    for (int i = 0; i < 3; i++) {
+void flashNTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t n, uint32_t delay) {
+    for (int i = 0; i < n; i++) {
         flashColor(r, g, b, delay);
         flashColor(0, 0, 0, delay);
     }
+}
+
+void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
+    flashNTimes(r, g, b, 3, delay);
 }
 
 #if DEBUG

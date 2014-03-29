@@ -24,15 +24,8 @@
 #include "CDLEDStripPatterns.h"
 #include "LEDDigitalCyrWheel.h"
 
-#define BUTTON_PIN 23
-
-
-const int g_LED = LED_BUILTIN;
-const int g_batteryVoltagePin = A6; // pin 20
-const int g_batteryRefPin = A7; // 3.3v is connected to pin 21
-
 // 2 cell LiPO, 4.2v each: 8.4v max. 3.0v should be the min, 3.0*2=6v min
-#define LOW_VOLTAGE_VALUE 6.0 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
+#define LOW_VOLTAGE_VALUE 6.4 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
 #define TIME_BETWEEN_VOLTAGE_READS 1000 // read every second..
 #define MAX_INPUT_VOLTAGE 10.0 // max voltage we can read
 #define RESISTOR_Z1_VALUE 10000.0 // 10k resistor
@@ -118,7 +111,6 @@ static float readBatteryVoltage() {
 }
 
 void setup() {
-    Wire.begin();
 //    pinMode(g_LED, OUTPUT);
 //    digitalWrite(g_LED, HIGH);
 #if DEBUG
@@ -133,6 +125,8 @@ void setup() {
     analogReadAveraging(16); // longer averaging of reads; drastically stabilizes my battery voltage read compared to the default of 4
     analogReadRes(16); // 16 bit analog read resolution
 
+    Wire.begin();
+
     stripInit();
     
     g_button.clickHandler(buttonClicked);
@@ -142,7 +136,7 @@ void setup() {
     if (initPassed) {
         // See if we read more than the default sequence
         if (g_sequenceManager.getNumberOfSequenceNames() > 1) {
-            flashThreeTimes(0, 255, 0, 150); // flash green
+            flashNTimes(0, 255, 0, 1, 150); // flash green, once
         } else {
             flashThreeTimes(255, 127, 0, 150); // flash orange...couldn't find any data files
         }
@@ -156,6 +150,23 @@ void setup() {
 }
 
 
+bool checkVoltage() {
+    // check the voltage; if we are low, flast red 3 times at a low brightness...
+    static uint32_t lastReadVoltageTime = 0;
+    if (millis() - lastReadVoltageTime > TIME_BETWEEN_VOLTAGE_READS) {
+        lastReadVoltageTime = millis();
+        float voltage = readBatteryVoltage();
+        if (voltage < LOW_VOLTAGE_VALUE) {
+#if DEBUG
+            Serial.printf("---------------------- LOW BATTERY VOLTAGE: %f", voltage);
+#endif
+            flashThreeTimes(255, 0, 0, 150); // flash red
+            delay(2000); // delay for 2 seconds to give the user time to react and turn it off
+            return false;
+        }
+    }
+    return true;
+}
 
 void loop() {
     mainProcess();
@@ -168,15 +179,7 @@ void loop() {
     }
 #endif
     
-    // check the voltage; if we are low, flast red 3 times at a low brightness...
-    static uint32_t lastReadVoltageTime = 0;
-    if (millis() - lastReadVoltageTime > TIME_BETWEEN_VOLTAGE_READS) {
-        lastReadVoltageTime = millis();
-        if (readBatteryVoltage() < LOW_VOLTAGE_VALUE) {
-            flashThreeTimes(255, 0, 0, 150); // flash red
-            delay(2000); // delay for 2 seconds to give the user time to react and turn it off
-        }
+    if (checkVoltage()) {
+        g_sequenceManager.process(false);
     }
-    
-    g_sequenceManager.process(false);
 }

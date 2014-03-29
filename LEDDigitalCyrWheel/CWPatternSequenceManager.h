@@ -15,7 +15,9 @@
 #include "Arduino.h"
 #include "SD.h"
 
-#define ACCELEROMETER_SUPPORT 0 // not in the sim..
+#if !PATTERN_EDITOR
+#define ACCELEROMETER_SUPPORT 1 // not in the sim..
+#endif
 
 #if ACCELEROMETER_SUPPORT
 #include "Wire.h"
@@ -38,8 +40,8 @@ private:
     // Current pattern item information
     int _currentPatternItemIndex;
     uint32_t _patternStartTime;
-    uint32_t _intervalCount;
-    bool _doOneMoreTick;
+//    uint32_t _intervalCount;
+//    bool _doOneMoreTick;
 #if ACCELEROMETER_SUPPORT
     LSM303 _compass;
 #endif
