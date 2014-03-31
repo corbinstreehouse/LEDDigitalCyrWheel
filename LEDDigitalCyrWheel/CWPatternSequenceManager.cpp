@@ -358,6 +358,8 @@ static inline bool PatternIsContinuous(CDPatternType p) {
         case CDPatternTypeImageFade:
         case CDPatternTypeWave:
             return false;
+        case CDPatternTypeBottomGlow:
+            return true; // Doesn't do anything
             
         case CDPatternTypeMax:
             return false;

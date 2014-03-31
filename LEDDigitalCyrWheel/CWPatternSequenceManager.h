@@ -40,8 +40,6 @@ private:
     // Current pattern item information
     int _currentPatternItemIndex;
     uint32_t _patternStartTime;
-//    uint32_t _intervalCount;
-//    bool _doOneMoreTick;
 #if ACCELEROMETER_SUPPORT
     LSM303 _compass;
 #endif

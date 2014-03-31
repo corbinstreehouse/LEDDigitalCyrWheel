@@ -64,19 +64,18 @@ typedef enum ENUM_SIZE {
     
     CDPatternTypeCollision,
     
-    CDPatternTypeWave,
+    CDPatternTypeWave, // 4 wave
+    CDPatternTypeBottomGlow,
     
     CDPatternTypeMax,
     CDPatternTypeAllOff = CDPatternTypeMax,
 } CDPatternType;
 
-typedef struct  __attribute__((__packed__))  {
-    /// TODO: GRB format for perf... but RGB matches Adafruit packing
-    uint8_t blue, green, red, _buff;
-} AdaFruitColor;
-
 typedef union {
-    AdaFruitColor adaColor;
+    struct {
+        /// TODO: GRB format for perf... but RGB matches Adafruit packing little indian style  (hence BGR)
+        uint8_t blue, green, red, _buff;
+    };
     uint32_t color;
 } PackedColorUnion;
 
@@ -92,10 +91,7 @@ typedef struct  __attribute__((__packed__)) {
 #if !PATTERN_EDITOR
     char __buffer2;// 1
 #endif
-    union {
-        uint32_t color; //4
-//        AdaFruitColor adaColor; // corbin would be nice to figure this out..
-    };
+    uint32_t color; //4
     uint32_t dataLength; // how long the data is following // 4
     union {
         uint8_t *data; // When loaded, points to the data

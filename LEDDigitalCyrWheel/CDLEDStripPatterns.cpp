@@ -126,41 +126,24 @@ float waveValueForTime(float ledCount, float time, float duration, int initialPi
     return y;
 }
 
-void wavePattern(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
-    static int initialPixel = 0;
-    int numPixels = g_strip.numPixels();
-    // Reset on 0 time..
-    if (timePassedInMS == 0) {
-        initialPixel = random(numPixels);
-    }
-    
-    // reset to black
-    for (int i = 0; i < numPixels; i++) {
-        g_strip.setPixelColor(i, 0);
-    }
+#define WRAP_AROUND(pixel, count) if (pixel < 0) pixel += count; if (pixel >= count) pixel -= count;
 
-    // Set the main pixel
-    uint32_t c = itemHeader->color;
-    
-    int mainPixel = waveValueForTime(numPixels, timePassedInMS, itemHeader->duration, initialPixel);
+void wavePatternWithColor(uint32_t c, uint32_t timePassedInMS, int numPixels, uint32_t duration, int initialPixel) {
+    int mainPixel = waveValueForTime(numPixels, timePassedInMS, duration, initialPixel);
     // consider the offset
     int tmp = mainPixel + initialPixel;
-    if (tmp >= numPixels) {
-        tmp -= numPixels;
-    }
+    WRAP_AROUND(tmp, numPixels);
     
     g_strip.setPixelColor(tmp/*mainPixel*/, c);
     
-    
     // Calculate the time a bit ago
-    float step = itemHeader->duration * .04; // x% ago
+    float step = duration * .043; // x% ago -- this determines the "tail length" 0.04 is good
     float timePassed = timePassedInMS - step;
     if (timePassed < 0) {
         timePassed = 0;
     }
-
-
-    int pixel = waveValueForTime(numPixels, timePassed, itemHeader->duration, initialPixel);
+    
+    int pixel = waveValueForTime(numPixels, timePassed, duration, initialPixel);
     float pixelsToFadeOver = mainPixel - pixel;
     // fade to that one..
     if (pixelsToFadeOver != 0) {
@@ -176,9 +159,7 @@ void wavePattern(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32
             b *= intensity;
             
             int tmp = pixel + initialPixel;
-            if (tmp >= numPixels) {
-                tmp -= numPixels;
-            }
+            WRAP_AROUND(tmp, numPixels);
             
             g_strip.setPixelColor(tmp /*pixel*/, r, g, b);
             if (pixel < mainPixel) {
@@ -189,6 +170,119 @@ void wavePattern(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32
         }
     }
 }
+
+uint32_t hsvToRgb(uint16_t h, uint8_t s, uint8_t v);
+
+void wavePattern(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
+    static int initialPixel = 0;
+    static int initialPixel1 = 0;
+    static int initialPixel2 = 0;
+    static int initialPixel3 = 0;
+
+    static uint32_t randColor1 = 0;
+    static uint32_t randColor2 = 0;
+    static uint32_t randColor3 = 0;
+
+    int numPixels = g_strip.numPixels();
+    // Reset on 0 time..
+    if (timePassedInMS == 0) {
+        initialPixel = random(numPixels);
+        
+        float inc = numPixels / 4.0;
+        
+        initialPixel1 = initialPixel + inc;
+        while (initialPixel1 > numPixels) initialPixel1 -= numPixels;
+
+        initialPixel2 = initialPixel1 + inc;
+        while (initialPixel2 > numPixels) initialPixel2 -= numPixels;
+        
+        initialPixel3 = initialPixel2 + inc;
+        while (initialPixel3 > numPixels) initialPixel3 -= numPixels;
+//        initialPixel1 = random(numPixels);
+//        initialPixel2 = random(numPixels);
+//        initialPixel3 = random(numPixels);
+        
+//        randColor1 = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
+//        randColor2 = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
+//        randColor3 = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
+        if (intervalCount > 0) {
+            // replace the original color
+            itemHeader->color = hsvToRgb(random(360), 255, 255);
+        }
+        randColor1 = hsvToRgb(random(360), 255, 255);
+        randColor2 = hsvToRgb(random(360), 255, 255);
+        randColor3 = hsvToRgb(random(360), 255, 255);
+        
+    }
+    
+    // reset to black
+    for (int i = 0; i < numPixels; i++) {
+        g_strip.setPixelColor(i, 0);
+    }
+
+    wavePatternWithColor(itemHeader->color, timePassedInMS, numPixels, itemHeader->duration, initialPixel);
+    wavePatternWithColor(randColor1, timePassedInMS, numPixels, itemHeader->duration, initialPixel1);
+    wavePatternWithColor(randColor2, timePassedInMS, numPixels, itemHeader->duration, initialPixel2);
+    wavePatternWithColor(randColor3, timePassedInMS, numPixels, itemHeader->duration, initialPixel3);
+}
+
+void bottomGlow(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
+    // Set once, and done. A cheap pattern.
+    if (isFirstPass) {
+        int numPixels = g_strip.numPixels();
+        int topPixel = 0; // Could vary..
+
+        // 60 degress of fading in and out
+        int fadeCount = (float)numPixels * (60.0/360.0);
+        // x degress of full on
+        int fullCount = (float)numPixels * (90.0/360.0);
+        // What is left is black
+        int offCount = numPixels - fullCount - 2*fadeCount;
+        // Start in the middle of the offCount from topPixel
+        int halfOffCount = floor((float)offCount / 2.0);
+        int pixel = topPixel - halfOffCount;
+
+        // off top portion
+        for (int i = 0; i < offCount; i++) {
+            WRAP_AROUND(pixel, numPixels);
+            g_strip.setPixelColor(pixel, 0);
+            pixel++;
+        }
+        // Fade on
+        for (int i = 0; i < fadeCount; i++) {
+            WRAP_AROUND(pixel, numPixels);
+            float percentage = (float)(i + 1) / (float)fadeCount;
+            PackedColorUnion c;
+            c.color = itemHeader->color;
+            c.red *= percentage;
+            c.green *= percentage;
+            c.blue *= percentage;
+            g_strip.setPixelColor(pixel, c.red, c.green, c.blue);
+            pixel++;
+        }
+        
+        // Full on
+        for (int i = 0; i < fullCount; i++) {
+            WRAP_AROUND(pixel, numPixels);
+            g_strip.setPixelColor(pixel, itemHeader->color);
+            pixel++;
+        }
+        
+        // Fade off
+        for (int i = 0; i < fadeCount; i++) {
+            WRAP_AROUND(pixel, numPixels);
+            float percentage = 1.0 - ((float)i / (float)fadeCount);
+            PackedColorUnion c;
+            c.color = itemHeader->color;
+            c.red *= percentage;
+            c.green *= percentage;
+            c.blue *= percentage;;
+            g_strip.setPixelColor(pixel, c.red, c.green, c.blue);
+            pixel++;
+        }
+    }
+}
+
 
 void fadeIn(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
     // slow fade in with:
@@ -1476,6 +1570,9 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             break;
         case CDPatternTypeWave:
             wavePattern(itemHeader, intervalCount, timePassedInMS, isFirstPass);
+            break;
+        case CDPatternTypeBottomGlow:
+            bottomGlow(itemHeader, intervalCount, timePassedInMS, isFirstPass);
             break;
         case CDPatternTypeAllOff: {
 #if DEBUG
