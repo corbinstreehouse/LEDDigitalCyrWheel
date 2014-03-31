@@ -356,7 +356,8 @@ static inline bool PatternIsContinuous(CDPatternType p) {
         case CDPatternTypeDoNothing:
             return true;
         case CDPatternTypeImageFade:
-            return true;
+        case CDPatternTypeWave:
+            return false;
             
         case CDPatternTypeMax:
             return false;
@@ -392,11 +393,14 @@ void CWPatternSequenceManager::process(bool initialProcess) {
         if (intervalCount >= itemHeader->intervalCount) {
             nextPatternItem();
             itemHeader = &_patternItems[_currentPatternItemIndex];
+            // reset the state I pass to the loop pattern
             timePassed = 0;
             intervalCount = 0;
+            initialProcess = true;
         }
     }
 
+    
 #if 0
     char report[256];
     _compass.read();
@@ -411,6 +415,7 @@ void CWPatternSequenceManager::process(bool initialProcess) {
     
     Serial.printf("x: %.3f y: %.3f z: %.3f heading: %.3f deg\r\n", x, y, z, _compass.heading());
 #endif
+    
     stripPatternLoop(itemHeader, intervalCount, timePassed, initialProcess);
 }
 

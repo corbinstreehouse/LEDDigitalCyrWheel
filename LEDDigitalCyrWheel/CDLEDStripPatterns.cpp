@@ -97,6 +97,99 @@ void colorWipe(CDPatternItemHeader *itemHeader, uint32_t timePassedInMS) {
     }
 }
 
+float waveValueForTime(float ledCount, float time, float duration, int initialPixel) {
+    float numberOfWaves = 2;
+    float A = ledCount / 2.0;
+    float x = time;
+    float totalTime = duration;
+    float waveLength = totalTime / numberOfWaves;
+    float k = (2*M_PI)/waveLength;
+    //    float a = (numberOfWaves/totalTime)*1.8;  // a is the rate of decay
+    
+    //    float y = A * exp(-a*x) *sin(k*x) + A;
+    
+    // direct fade with negative sloping line; linear drop off
+    // y = (m*x+b)*sin(k*x)+A
+    
+    float b = ledCount / 2.0; // A
+    float m = -b/totalTime;
+    float y = (m*x+b)*sin(k*x)+A;
+    
+    // Offset randomly each iteration
+    y = round(y); // round..floor, what should i do?
+    
+//    y += initialPixel;
+//    if (y >= ledCount) {
+//        // wrap
+//        y -= ledCount;
+//    }
+    return y;
+}
+
+void wavePattern(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
+    static int initialPixel = 0;
+    int numPixels = g_strip.numPixels();
+    // Reset on 0 time..
+    if (timePassedInMS == 0) {
+        initialPixel = random(numPixels);
+    }
+    
+    // reset to black
+    for (int i = 0; i < numPixels; i++) {
+        g_strip.setPixelColor(i, 0);
+    }
+
+    // Set the main pixel
+    uint32_t c = itemHeader->color;
+    
+    int mainPixel = waveValueForTime(numPixels, timePassedInMS, itemHeader->duration, initialPixel);
+    // consider the offset
+    int tmp = mainPixel + initialPixel;
+    if (tmp >= numPixels) {
+        tmp -= numPixels;
+    }
+    
+    g_strip.setPixelColor(tmp/*mainPixel*/, c);
+    
+    
+    // Calculate the time a bit ago
+    float step = itemHeader->duration * .04; // x% ago
+    float timePassed = timePassedInMS - step;
+    if (timePassed < 0) {
+        timePassed = 0;
+    }
+
+
+    int pixel = waveValueForTime(numPixels, timePassed, itemHeader->duration, initialPixel);
+    float pixelsToFadeOver = mainPixel - pixel;
+    // fade to that one..
+    if (pixelsToFadeOver != 0) {
+        // going up
+        while (pixel != mainPixel) {
+            float dist = mainPixel - pixel;
+            float intensity = 1 - (dist / pixelsToFadeOver);
+            byte r = c >> 16;
+            byte g = c >> 8;
+            byte b = c;
+            r *= intensity;
+            g *= intensity;
+            b *= intensity;
+            
+            int tmp = pixel + initialPixel;
+            if (tmp >= numPixels) {
+                tmp -= numPixels;
+            }
+            
+            g_strip.setPixelColor(tmp /*pixel*/, r, g, b);
+            if (pixel < mainPixel) {
+                pixel++;
+            } else {
+                pixel--;
+            }
+        }
+    }
+}
+
 void fadeIn(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
     // slow fade in with:
     // y = x^2, where x == time
@@ -135,8 +228,8 @@ void fadeOut(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t t
     rgb_color *colors = (rgb_color *)g_strip.getPixels();
 
     float t = (float)timePassedInMS / (float)itemHeader->duration;
+    float y = -(t*t)+1;
     for (int i = 0; i < g_strip.numPixels(); i++) {
-        float y = -(t*t)+1;
         // direct pixel access to avoid issues w/reading the already set brightness
         colors[i].green = g_tempBuffer[i].green*y;
         colors[i].red = g_tempBuffer[i].red*y;
@@ -1380,6 +1473,9 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             {
                 maxLoops = loopCount + 2;
             }
+            break;
+        case CDPatternTypeWave:
+            wavePattern(itemHeader, intervalCount, timePassedInMS, isFirstPass);
             break;
         case CDPatternTypeAllOff: {
 #if DEBUG
