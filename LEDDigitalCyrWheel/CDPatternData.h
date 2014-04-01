@@ -66,6 +66,7 @@ typedef enum ENUM_SIZE {
     
     CDPatternTypeWave, // 4 wave
     CDPatternTypeBottomGlow,
+    CDPatternTypeRotatingBottomGlow,
     
     CDPatternTypeMax,
     CDPatternTypeAllOff = CDPatternTypeMax,

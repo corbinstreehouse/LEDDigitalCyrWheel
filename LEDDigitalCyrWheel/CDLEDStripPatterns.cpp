@@ -226,61 +226,73 @@ void wavePattern(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32
     wavePatternWithColor(randColor3, timePassedInMS, numPixels, itemHeader->duration, initialPixel3);
 }
 
+void bottomGlowFromTopPixel(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, float topPixel) {
+    // Set once, and done. A cheap pattern.
+    int numPixels = g_strip.numPixels();
+//    int topPixel = 0; // Could vary..
+    
+    // 60 degress of fading in and out
+    int fadeCount = (float)numPixels * (60.0/360.0);
+    // x degress of full on
+    int fullCount = (float)numPixels * (90.0/360.0);
+    // What is left is black
+    int offCount = numPixels - fullCount - 2*fadeCount;
+    // Start in the middle of the offCount from topPixel
+    int halfOffCount = floor((float)offCount / 2.0);
+    int pixel = topPixel - halfOffCount;
+    
+    // off top portion
+    for (int i = 0; i < offCount; i++) {
+        WRAP_AROUND(pixel, numPixels);
+        g_strip.setPixelColor(pixel, 0);
+        pixel++;
+    }
+    // Fade on
+    for (int i = 0; i < fadeCount; i++) {
+        WRAP_AROUND(pixel, numPixels);
+        float percentage = (float)(i + 1) / (float)fadeCount;
+        PackedColorUnion c;
+        c.color = itemHeader->color;
+        c.red *= percentage;
+        c.green *= percentage;
+        c.blue *= percentage;
+        g_strip.setPixelColor(pixel, c.red, c.green, c.blue);
+        pixel++;
+    }
+    
+    // Full on
+    for (int i = 0; i < fullCount; i++) {
+        WRAP_AROUND(pixel, numPixels);
+        g_strip.setPixelColor(pixel, itemHeader->color);
+        pixel++;
+    }
+    
+    // Fade off
+    for (int i = 0; i < fadeCount; i++) {
+        WRAP_AROUND(pixel, numPixels);
+        float percentage = 1.0 - ((float)i / (float)fadeCount);
+        PackedColorUnion c;
+        c.color = itemHeader->color;
+        c.red *= percentage;
+        c.green *= percentage;
+        c.blue *= percentage;;
+        g_strip.setPixelColor(pixel, c.red, c.green, c.blue);
+        pixel++;
+    }
+}
+
 void bottomGlow(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
     // Set once, and done. A cheap pattern.
     if (isFirstPass) {
-        int numPixels = g_strip.numPixels();
-        int topPixel = 0; // Could vary..
-
-        // 60 degress of fading in and out
-        int fadeCount = (float)numPixels * (60.0/360.0);
-        // x degress of full on
-        int fullCount = (float)numPixels * (90.0/360.0);
-        // What is left is black
-        int offCount = numPixels - fullCount - 2*fadeCount;
-        // Start in the middle of the offCount from topPixel
-        int halfOffCount = floor((float)offCount / 2.0);
-        int pixel = topPixel - halfOffCount;
-
-        // off top portion
-        for (int i = 0; i < offCount; i++) {
-            WRAP_AROUND(pixel, numPixels);
-            g_strip.setPixelColor(pixel, 0);
-            pixel++;
-        }
-        // Fade on
-        for (int i = 0; i < fadeCount; i++) {
-            WRAP_AROUND(pixel, numPixels);
-            float percentage = (float)(i + 1) / (float)fadeCount;
-            PackedColorUnion c;
-            c.color = itemHeader->color;
-            c.red *= percentage;
-            c.green *= percentage;
-            c.blue *= percentage;
-            g_strip.setPixelColor(pixel, c.red, c.green, c.blue);
-            pixel++;
-        }
-        
-        // Full on
-        for (int i = 0; i < fullCount; i++) {
-            WRAP_AROUND(pixel, numPixels);
-            g_strip.setPixelColor(pixel, itemHeader->color);
-            pixel++;
-        }
-        
-        // Fade off
-        for (int i = 0; i < fadeCount; i++) {
-            WRAP_AROUND(pixel, numPixels);
-            float percentage = 1.0 - ((float)i / (float)fadeCount);
-            PackedColorUnion c;
-            c.color = itemHeader->color;
-            c.red *= percentage;
-            c.green *= percentage;
-            c.blue *= percentage;;
-            g_strip.setPixelColor(pixel, c.red, c.green, c.blue);
-            pixel++;
-        }
+        bottomGlowFromTopPixel(itemHeader, intervalCount, timePassedInMS, 0); // glow from pixel 0..
     }
+}
+
+void rotatingBottomGlow(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
+    float numPixels = g_strip.numPixels();
+    float t = (float)timePassedInMS / (float)itemHeader->duration;
+    float topPixel = t*numPixels;
+    bottomGlowFromTopPixel(itemHeader, intervalCount, timePassedInMS, topPixel);
 }
 
 
@@ -1573,6 +1585,9 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             break;
         case CDPatternTypeBottomGlow:
             bottomGlow(itemHeader, intervalCount, timePassedInMS, isFirstPass);
+            break;
+        case CDPatternTypeRotatingBottomGlow:
+            rotatingBottomGlow(itemHeader, intervalCount, timePassedInMS);
             break;
         case CDPatternTypeAllOff: {
 #if DEBUG

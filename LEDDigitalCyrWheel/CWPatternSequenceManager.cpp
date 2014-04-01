@@ -360,6 +360,8 @@ static inline bool PatternIsContinuous(CDPatternType p) {
             return false;
         case CDPatternTypeBottomGlow:
             return true; // Doesn't do anything
+        case CDPatternTypeRotatingBottomGlow:
+            return false; // repeats after a rotation
             
         case CDPatternTypeMax:
             return false;
