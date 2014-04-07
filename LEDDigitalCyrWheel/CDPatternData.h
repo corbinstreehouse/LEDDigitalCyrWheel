@@ -35,9 +35,9 @@ typedef enum ENUM_SIZE {
 typedef enum ENUM_SIZE {
     CDPatternTypeMin = 0,
     
-    // Standard patterns predifined in code
-    CDPatternTypeRainbow = 0,
-    CDPatternTypeLotsOfRainbows,
+    CDPatternTypeRotatingRainbow = 0,
+    CDPatternTypeRotatingMiniRainbows,
+    
     CDPatternTypeFadeOut,
     CDPatternTypeFadeIn,
     CDPatternTypeColorWipe,
@@ -46,6 +46,7 @@ typedef enum ENUM_SIZE {
     
     CDPatternTypeGradient,
     CDPatternTypePluseGradientEffect,
+    CDPatternTypeRandomGradients,
 
     // Patterns defined by an image
     CDPatternTypeImageFade,
@@ -67,6 +68,10 @@ typedef enum ENUM_SIZE {
     CDPatternTypeWave, // 4 wave
     CDPatternTypeBottomGlow,
     CDPatternTypeRotatingBottomGlow,
+    
+    CDPatternTypeSolidColor,
+    CDPatternTypeSolidRainbow,
+    CDPatternTypeRainbowWithSpaces,
     
     CDPatternTypeMax,
     CDPatternTypeAllOff = CDPatternTypeMax,

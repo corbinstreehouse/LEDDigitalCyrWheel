@@ -35,5 +35,6 @@ void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay);
 void flashNTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t n, uint32_t delay);
 extern void stripInit();
 extern void stripUpdateBrightness();
+extern void stripSetLowBatteryBrightness();
 
 #endif

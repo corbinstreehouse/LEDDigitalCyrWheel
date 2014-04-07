@@ -40,7 +40,7 @@ bool mainProcess() {
     if (g_button.isPressed()) {
         return true;
     }
-    stripUpdateBrightness();
+//    stripUpdateBrightness();
     return false; // Button not pressed
 }
 
@@ -160,7 +160,11 @@ bool checkVoltage() {
 #if DEBUG
             Serial.printf("---------------------- LOW BATTERY VOLTAGE: %f", voltage);
 #endif
+            // half the max brightness...
+            stripSetLowBatteryBrightness();
+            
             flashThreeTimes(255, 0, 0, 150); // flash red
+            
             delay(2000); // delay for 2 seconds to give the user time to react and turn it off
             return false;
         }

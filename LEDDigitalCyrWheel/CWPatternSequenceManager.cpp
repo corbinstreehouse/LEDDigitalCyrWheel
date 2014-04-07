@@ -330,11 +330,13 @@ void CWPatternSequenceManager::loadNextSequence() {
 
 static inline bool PatternIsContinuous(CDPatternType p) {
     switch (p) {
-        case CDPatternTypeRainbow:
-        case CDPatternTypeLotsOfRainbows:
+        case CDPatternTypeRotatingRainbow:
+        case CDPatternTypeRotatingMiniRainbows:
         case CDPatternTypeTheaterChase:
         case CDPatternTypeGradient:
         case CDPatternTypePluseGradientEffect:
+        case CDPatternTypeSolidRainbow:
+        case CDPatternTypeRainbowWithSpaces:
             return true;
         case CDPatternTypeWarmWhiteShimmer:
         case CDPatternTypeRandomColorWalk:
@@ -361,8 +363,8 @@ static inline bool PatternIsContinuous(CDPatternType p) {
         case CDPatternTypeBottomGlow:
             return true; // Doesn't do anything
         case CDPatternTypeRotatingBottomGlow:
+        case CDPatternTypeSolidColor:
             return false; // repeats after a rotation
-            
         case CDPatternTypeMax:
             return false;
     }

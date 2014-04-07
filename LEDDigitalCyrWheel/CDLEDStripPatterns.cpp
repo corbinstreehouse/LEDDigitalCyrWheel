@@ -46,7 +46,7 @@ void traditionalColors();
 void brightTwinkleColorAdjust(unsigned char *color);
 void colorExplosionColorAdjust(unsigned char *color, unsigned char propChance,
                                unsigned char *leftColor, unsigned char *rightColor);
-void colorExplosion(unsigned char noNewBursts);
+void colorExplosion(bool noNewBursts);
 void gradient();
 void brightTwinkle(unsigned char minColor, unsigned char numColors, unsigned char noNewBursts);
 unsigned char collision();
@@ -96,6 +96,13 @@ void colorWipe(CDPatternItemHeader *itemHeader, uint32_t timePassedInMS) {
         }
     }
 }
+
+void setAllPixelsToColor(uint32_t color) {
+    for (int i = 0; i < g_strip.numPixels(); i++) {
+        g_strip.setPixelColor(i, color);
+    }
+}
+
 
 float waveValueForTime(float ledCount, float time, float duration, int initialPixel) {
     float numberOfWaves = 2;
@@ -229,7 +236,6 @@ void wavePattern(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32
 void bottomGlowFromTopPixel(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, float topPixel) {
     // Set once, and done. A cheap pattern.
     int numPixels = g_strip.numPixels();
-//    int topPixel = 0; // Could vary..
     
     // 60 degress of fading in and out
     int fadeCount = (float)numPixels * (60.0/360.0);
@@ -237,16 +243,14 @@ void bottomGlowFromTopPixel(CDPatternItemHeader *itemHeader, uint32_t intervalCo
     int fullCount = (float)numPixels * (90.0/360.0);
     // What is left is black
     int offCount = numPixels - fullCount - 2*fadeCount;
-    // Start in the middle of the offCount from topPixel
+    // Start past the off count
     int halfOffCount = floor((float)offCount / 2.0);
-    int pixel = topPixel - halfOffCount;
     
-    // off top portion
-    for (int i = 0; i < offCount; i++) {
-        WRAP_AROUND(pixel, numPixels);
-        g_strip.setPixelColor(pixel, 0);
-        pixel++;
-    }
+    int wholeTopPixel = floor(topPixel);
+//    float fractionalToTheNextPixel = topPixel - (float)wholeTopPixel;
+    
+    int pixel = wholeTopPixel + halfOffCount;
+    
     // Fade on
     for (int i = 0; i < fadeCount; i++) {
         WRAP_AROUND(pixel, numPixels);
@@ -279,6 +283,14 @@ void bottomGlowFromTopPixel(CDPatternItemHeader *itemHeader, uint32_t intervalCo
         g_strip.setPixelColor(pixel, c.red, c.green, c.blue);
         pixel++;
     }
+    
+    // off top portion
+    for (int i = 0; i < offCount; i++) {
+        WRAP_AROUND(pixel, numPixels);
+        g_strip.setPixelColor(pixel, 0);
+        pixel++;
+    }
+
 }
 
 void bottomGlow(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
@@ -295,6 +307,13 @@ void rotatingBottomGlow(CDPatternItemHeader *itemHeader, uint32_t intervalCount,
     bottomGlowFromTopPixel(itemHeader, intervalCount, timePassedInMS, topPixel);
 }
 
+static inline void fadePixel(int i, PackedColorUnion color, float amount) {
+    color.red *= amount;
+    color.green *= amount;
+    color.blue *= amount;
+    g_strip.setPixelColor(i, color.red, color.green, color.blue);
+    
+}
 
 void fadeIn(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
     // slow fade in with:
@@ -306,16 +325,20 @@ void fadeIn(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t ti
         // y = (2x-1)^2
         // a = 2x-1
         float y = t*t;
+
+        PackedColorUnion color;
+        color.color = itemHeader->color;
+        fadePixel(i, color, y);
         
-        byte r = itemHeader->color >> 16;
-        byte g = itemHeader->color >> 8;
-        byte b = itemHeader->color;
-        
-        r *= y;
-        g *= y;
-        b *= y;
-        
-        g_strip.setPixelColor(i, r, g, b);
+//        byte r = itemHeader->color >> 16;
+//        byte g = itemHeader->color >> 8;
+//        byte b = itemHeader->color;
+//        
+//        r *= y;
+//        g *= y;
+//        b *= y;
+//        
+//        g_strip.setPixelColor(i, r, g, b);
     }
 }
 
@@ -523,39 +546,47 @@ void stripUpdateBrightness() {
     g_strip.setBrightness(v);
 }
 
+void stripSetLowBatteryBrightness() {
+    g_strip.setBrightness(128);
+}
+
 static inline byte timeAsByte() {
     // drop the last two bits of precision, giving us number 1-255 incremented each tick of the cycle.
     return millis();
 }
 
-byte valueForOffset(int currentOffset) {
-    const int gradientUpPixelCount = 8;
-    const int totalGradientPixels = gradientUpPixelCount*2;
-    const int minV = 0;
-    const int maxV = 255;
+// TODO: i copy and paste too much code...
+void randomGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
+    int numPixels = g_strip.numPixels();
+    float t = (float)timePassedInMS / (float)itemHeader->duration;
     
-    // TODO: see if math mod is faster
-    int v = currentOffset % totalGradientPixels;
+    float numberOfGradients = 8.0;
+    // See "Pattern Graphs" (Grapher document)
+    float gradCnt = (float)numPixels / numberOfGradients;
+    float gradRmp = gradCnt / 2.0;
     
-    int currentR = (int)map(v, 0, totalGradientPixels-1, minV, maxV*2);
-    
-    // math mod...
-    while (currentR > maxV*2) {
-        currentR -= maxV*2;
+    for (int x = 0; x < numPixels; x++) {
+        float q = (float)x - t*gradCnt;
+        float n = fmod(q+gradRmp, gradCnt);
+        //        float v = (q+gradRmp) / gradCnt;
+        //        double t; // not used
+        //        float fractPart = modf(v, &t);
+        //        float n = fractPart * gradCnt;
+        n = fabs(n); // Needs to be positive
+        
+        float p = n - gradRmp;
+        float s = p/gradRmp;
+        float y = s*s; // Squared
+        
+        byte r = itemHeader->color >> 16;
+        byte g = itemHeader->color >> 8;
+        byte b = itemHeader->color;
+        
+        r *= y;
+        g *= y;
+        b *= y;
+        g_strip.setPixelColor(x, r, g, b);
     }
-    
-    //    Serial.print(" currentR:");
-    //    Serial.print(currentR);
-    if (currentR > maxV) {
-        // Ramp down the value
-        currentR = currentR - (maxV - minV); // This would give a small value..we want a big vaul going down to the minV
-        currentR = maxV - currentR; // This gives the ramp down
-        //            Serial.print(" ramped: ");
-        //            Serial.print(currentR);
-    }
-    
-    byte finalR = currentR; // time - currentR;  // Vary for time and roll over (byte truncation)
-    return finalR;
 }
 
 void ledGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
@@ -590,6 +621,8 @@ void ledGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint3
         g_strip.setPixelColor(x, r, g, b);
     }
 }
+
+
 
 void pulseGradientEffect() {
     
@@ -649,16 +682,11 @@ uint32_t hsvToRgb(uint16_t h, uint8_t s, uint8_t v)
     return g_strip.Color(r, g, b);
 }
 
-static inline void rainbows(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, int count) {
-    
-    int numPixels = g_strip.numPixels();
-    float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
-    int positionInWheel = round(percentagePassed*numPixels);
-    
-//    NSLog(@"%f, time: %ld, pos: %ld", percentagePassed, (long)timePassedInMS, (long)positionInWheel);
 
+
+static inline void solidRainbow(int positionInWheel, int count) {
+    int numPixels = g_strip.numPixels();
     int countPerSection = round(numPixels / count);
-    
     for (int i = 0; i < numPixels; i++) {
         uint16_t angle = 360.0 * ((float)((i + positionInWheel) / (float)countPerSection));
         uint32_t color = hsvToRgb(angle, 255, 255);
@@ -668,8 +696,63 @@ static inline void rainbows(CDPatternItemHeader *itemHeader, uint32_t intervalCo
 
 
 
+static inline void rainbows(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, int count) {
+    int numPixels = g_strip.numPixels();
+    float percentagePassed = (float)timePassedInMS / (float)itemHeader->duration;
+    int positionInWheel = round(percentagePassed*numPixels);
+    solidRainbow(positionInWheel, count);
+}
 
 
+static inline void rainbowWithSpaces(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, int count) {
+    int numPixels = g_strip.numPixels();
+    float percentagePassed = (float)timePassedInMS / ((float)itemHeader->duration*3);
+
+    int positionInWheel = round(percentagePassed*numPixels);
+    
+    // 8 sections; 4 on, 4 off.
+    int pixelsPerGlow = round((float)numPixels / 8.0) + 10;
+    int pixelsOff = (numPixels - (pixelsPerGlow * 4)) / 4.0;
+    
+    
+    int countPerSection = round(pixelsPerGlow / count);
+    
+    static const float rampCount = 7;
+    
+    int pixel = 0;
+    for (int i = 0; i < 8; i++) {
+        if (pixel == numPixels) break;
+        for (int j = 0; j < pixelsPerGlow; j++) {
+            uint16_t angle = 360.0 * ((float)((pixel + positionInWheel) / (float)countPerSection));
+            uint32_t color = hsvToRgb(angle, 255, 255);
+            if (j < rampCount) {
+                float rampUp = (float)(j+1) / rampCount;
+                PackedColorUnion packedColor;
+                packedColor.color = color;
+                fadePixel(pixel, packedColor, rampUp);
+            } else {
+                // close to the end?
+                int howFarToEnd = pixelsPerGlow - j;
+                if (howFarToEnd < rampCount) {
+                    float rampUp = (float)(howFarToEnd+1) / rampCount;
+                    PackedColorUnion packedColor;
+                    packedColor.color = color;
+                    fadePixel(pixel, packedColor, rampUp);
+                } else {
+                    g_strip.setPixelColor(pixel, color);
+                }
+            }
+            pixel++;
+            if (pixel == numPixels) break;
+        }
+        if (pixel == numPixels) break;
+        for (int j = 0; j < pixelsOff; j++) {
+            g_strip.setPixelColor(pixel, 0); // off
+            pixel++;
+            if (pixel == numPixels) break;
+        }
+    }
+}
 
 
 
@@ -1022,7 +1105,7 @@ void colorExplosionColorAdjust(unsigned char *color, unsigned char propChance,
 // This function uses a very similar algorithm to the BrightTwinkle
 // pattern.  The main difference is that the random twinkling LEDs of
 // the BrightTwinkle pattern do not propagate to neighboring LEDs.
-void colorExplosion(unsigned char noNewBursts)
+void colorExplosion(bool noNewBursts)
 {
     rgb_color *colors = (rgb_color *)g_strip.getPixels();
     // adjust the colors of the first LED
@@ -1476,11 +1559,11 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
     }
     
     switch (patternType) {
-        case CDPatternTypeRainbow: {
+        case CDPatternTypeRotatingRainbow: {
             rainbows(itemHeader, intervalCount, timePassedInMS, 1);
             break;
         }
-        case CDPatternTypeLotsOfRainbows: {
+        case CDPatternTypeRotatingMiniRainbows: {
             rainbows(itemHeader, intervalCount, timePassedInMS, 4);
             break;
         }
@@ -1589,6 +1672,26 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
         case CDPatternTypeRotatingBottomGlow:
             rotatingBottomGlow(itemHeader, intervalCount, timePassedInMS);
             break;
+        case CDPatternTypeSolidColor:
+            if (isFirstPass) {
+                setAllPixelsToColor(itemHeader->color);
+            }
+            break;
+        case CDPatternTypeSolidRainbow: {
+            if (isFirstPass) {
+                solidRainbow(0, 1);
+            }
+            break;
+        }
+        case CDPatternTypeRainbowWithSpaces: {
+            rainbowWithSpaces(itemHeader, intervalCount, timePassedInMS, 1);
+            
+            break;
+        }
+        case CDPatternTypeRandomGradients: {
+            randomGradients(itemHeader, intervalCount, timePassedInMS);
+            break;
+        }
         case CDPatternTypeAllOff: {
 #if DEBUG
             showOn();
