@@ -49,7 +49,7 @@ typedef enum ENUM_SIZE {
     CDPatternTypeRandomGradients,
 
     // Patterns defined by an image
-    CDPatternTypeImageFade,
+    CDPatternTypeImageLinearFade, // smooth traverse over pixels
     
     // the next set is ordered specifically
     CDPatternTypeWarmWhiteShimmer,
@@ -72,7 +72,7 @@ typedef enum ENUM_SIZE {
     CDPatternTypeSolidColor,
     CDPatternTypeSolidRainbow,
     CDPatternTypeRainbowWithSpaces,
-    
+
     CDPatternTypeMax,
     CDPatternTypeAllOff = CDPatternTypeMax,
 } CDPatternType;

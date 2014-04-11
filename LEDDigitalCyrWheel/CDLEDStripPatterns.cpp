@@ -26,8 +26,18 @@ CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, framebuff, drawingbuff, WS2811
 typedef uint8_t byte;
 #endif
 
-// For patterns based on the current state at the start
-rgb_color *g_tempBuffer = NULL;
+
+rgb_color *getTempBuffer() {
+    // For patterns based on the current state at the start
+    static rgb_color *g_tempBuffer = NULL;
+    if (g_tempBuffer == NULL) {
+        if (g_tempBuffer == NULL) {
+            int size = sizeof(uint8_t) * g_strip.getNumberOfBytes();
+            g_tempBuffer = (rgb_color *)malloc(size);
+        }
+    }
+    return g_tempBuffer;
+}
 
 typedef struct {
     uint8_t *dataOffset;
@@ -44,13 +54,11 @@ static CDPlaybackImageState g_imageState = { 0 };
 void randomColorWalk(unsigned char initializeColors, unsigned char dimOnly);
 void traditionalColors();
 void brightTwinkleColorAdjust(unsigned char *color);
-void colorExplosionColorAdjust(unsigned char *color, unsigned char propChance,
-                               unsigned char *leftColor, unsigned char *rightColor);
+void colorExplosionColorAdjust(unsigned char *color, unsigned char propChance, unsigned char *leftColor, unsigned char *rightColor);
 void colorExplosion(bool noNewBursts);
 void gradient();
 void brightTwinkle(unsigned char minColor, unsigned char numColors, unsigned char noNewBursts);
 unsigned char collision();
-
 
 void stripInit() {
     for (int i = 0; i < 8; i++) {
@@ -342,16 +350,16 @@ void fadeIn(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t ti
     }
 }
 
+
+
 void fadeOut(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
     // Opposite of fade in, and we store the inital value on the first pass
     // y = -x^2 + 1
+    rgb_color *tempBuffer = getTempBuffer();
     if (firstPass) {
         // First pass, store off the initial state..
         int size = sizeof(uint8_t) * g_strip.getNumberOfBytes();
-        if (g_tempBuffer == NULL) {
-            g_tempBuffer = (rgb_color *)malloc(size);
-        }
-        memcpy(g_tempBuffer, g_strip.getPixels(), size); // copies the value *with* the brightness
+        memcpy(tempBuffer, g_strip.getPixels(), size); // copies the value *with* the brightness
     }
     
     rgb_color *colors = (rgb_color *)g_strip.getPixels();
@@ -360,9 +368,9 @@ void fadeOut(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t t
     float y = -(t*t)+1;
     for (int i = 0; i < g_strip.numPixels(); i++) {
         // direct pixel access to avoid issues w/reading the already set brightness
-        colors[i].green = g_tempBuffer[i].green*y;
-        colors[i].red = g_tempBuffer[i].red*y;
-        colors[i].blue = g_tempBuffer[i].blue*y;
+        colors[i].green = tempBuffer[i].green*y;
+        colors[i].red = tempBuffer[i].red*y;
+        colors[i].blue = tempBuffer[i].blue*y;
     }
 }
 
@@ -473,17 +481,7 @@ void playbackColorFadeWithHeader(const CDPatternItemHeader *imageHeader, CDPlayb
     }
 }
 
-void playbackImageWithHeader(const CDPatternItemHeader *imageHeader, CDPlaybackImageState *imageState) {
-    //    switch (imageHeader->patternType) {
-    //        case CDPatternTypeImagePlayback: {
-    //            playbackColorFadeWithHeader(imageHeader, imageState);
-    //            break;
-    //        }
-    //        default: {
-    //// TODO??
-    //            break;
-    //        }
-    //    }
+static void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
     /*
      // Validate our offsets; assumes the last column is correct...and data isn't truncated
      if (imageState->xOffset >= imageHeader->width || imageState->dataOffset == 0 || imageState->dataOffset >= dataEnd(imageHeader)) {
@@ -516,33 +514,16 @@ void playbackImageWithHeader(const CDPatternItemHeader *imageHeader, CDPlaybackI
      
      imageState->xOffset++;
      */
+    
 }
 
-static void playbackImage() {
-    //    playbackImageWithHeader(&g_imageData.header, &g_imageState);
-}
-
-#if DEBUG
-//static void testGreen() {
-//    static bool set = false;
-//    if (set) return;
-//    set = true;
-//    
-//    
-//    for (int i = 0; i < g_strip.numPixels(); i++) {
-//        uint8_t g = 255 * ((float)i / (float)g_strip.numPixels());
-////        Serial.println(g);
-//        g_strip.setPixelColor(i, 0, g, 0);
-//    }
-//}
-#endif
 
 void stripUpdateBrightness() {
     int val = analogRead(BRIGHTNESS_PIN);
 //    Serial.printf("brightness read: %d\r\n", val);
     // Map 0 - 1024 to 0-255 brightness
     float b = 255.0 * ((float)val / (float)ANALOG_READ_MAX);
-    int v = b;
+    int v = b; // =what the flip was this setting it to??
     g_strip.setBrightness(v);
 }
 
@@ -555,38 +536,96 @@ static inline byte timeAsByte() {
     return millis();
 }
 
-// TODO: i copy and paste too much code...
-void randomGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
+
+int gradientOverXPixels(int pixel, int fullCount, int offCount, int fadeCount, uint32_t color) {
     int numPixels = g_strip.numPixels();
-    float t = (float)timePassedInMS / (float)itemHeader->duration;
-    
-    float numberOfGradients = 8.0;
-    // See "Pattern Graphs" (Grapher document)
-    float gradCnt = (float)numPixels / numberOfGradients;
-    float gradRmp = gradCnt / 2.0;
-    
-    for (int x = 0; x < numPixels; x++) {
-        float q = (float)x - t*gradCnt;
-        float n = fmod(q+gradRmp, gradCnt);
-        //        float v = (q+gradRmp) / gradCnt;
-        //        double t; // not used
-        //        float fractPart = modf(v, &t);
-        //        float n = fractPart * gradCnt;
-        n = fabs(n); // Needs to be positive
-        
-        float p = n - gradRmp;
-        float s = p/gradRmp;
-        float y = s*s; // Squared
-        
-        byte r = itemHeader->color >> 16;
-        byte g = itemHeader->color >> 8;
-        byte b = itemHeader->color;
-        
-        r *= y;
-        g *= y;
-        b *= y;
-        g_strip.setPixelColor(x, r, g, b);
+    for (int i = 0; i < offCount; i++) {
+        WRAP_AROUND(pixel, numPixels);
+        g_strip.setPixelColor(pixel, 0);
+        pixel++;
     }
+    
+    // Fade on
+    for (int i = 0; i < fadeCount; i++) {
+        WRAP_AROUND(pixel, numPixels);
+        float percentage = (float)(i + 1) / (float)fadeCount;
+        PackedColorUnion c;
+        c.color = color;
+        c.red *= percentage;
+        c.green *= percentage;
+        c.blue *= percentage;
+        g_strip.setPixelColor(pixel, c.red, c.green, c.blue);
+        pixel++;
+    }
+    
+    // Full on
+    for (int i = 0; i < fullCount; i++) {
+        WRAP_AROUND(pixel, numPixels);
+        g_strip.setPixelColor(pixel, color);
+        pixel++;
+    }
+    
+    // Fade off
+    for (int i = 0; i < fadeCount; i++) {
+        WRAP_AROUND(pixel, numPixels);
+        float percentage = 1.0 - ((float)i / (float)fadeCount);
+        PackedColorUnion c;
+        c.color = color;
+        c.red *= percentage;
+        c.green *= percentage;
+        c.blue *= percentage;;
+        g_strip.setPixelColor(pixel, c.red, c.green, c.blue);
+        pixel++;
+    }
+   
+    for (int i = 0; i < offCount; i++) {
+        WRAP_AROUND(pixel, numPixels);
+        g_strip.setPixelColor(pixel, 0);
+        pixel++;
+    }
+    return pixel;
+}
+
+
+void randomGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
+    int numPixels = g_strip.numPixels();
+    float d = itemHeader->duration +4000; // slow it down.?
+    float percentagePassed = (float)timePassedInMS / d;
+    
+    rgb_color *tmpBuffer = getTempBuffer();
+
+    float numberOfGradients = 8.0;
+    
+    if (isFirstPass) {
+        // generate an initial random color for each gradient
+        for (int i = 0; i < numberOfGradients; i++) {
+            int angle = random(360);
+            PackedColorUnion packedColor;
+            packedColor.color = hsvToRgb(angle, 255, 255);
+            tmpBuffer[i].red = packedColor.red;
+            tmpBuffer[i].green = packedColor.green;
+            tmpBuffer[i].blue = packedColor.blue;
+        }
+    }
+
+    int offPixels = 6;
+    
+    float rampPixels = numPixels - (offPixels * numberOfGradients * 2);
+    float rampCount = floor((float)rampPixels / numberOfGradients / 2.0);
+    
+    int pixel = round(percentagePassed*numPixels);
+    pixel = pixel % numPixels;
+    
+    for (int i = 0; i < numberOfGradients; i++) {
+        // stupid color stuff..
+        uint32_t color = g_strip.Color(tmpBuffer[i].red, tmpBuffer[i].green, tmpBuffer[i].blue);
+        pixel = gradientOverXPixels(pixel, 0, offPixels, rampCount, color);
+    }
+//    // black on extras
+//    while (pixel < numPixels) {
+//        g_strip.setPixelColor(pixel, 0, 0, 0);
+//        pixel++;
+//    }
 }
 
 void ledGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
@@ -1586,9 +1625,8 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             theaterChase(itemHeader, intervalCount, timePassedInMS);
             break;
         }
-        case CDPatternTypeImageFade: {
-            //            testGreen();
-            playbackImage();
+        case CDPatternTypeImageLinearFade: {
+            linearImageFade(itemHeader, intervalCount, timePassedInMS, isFirstPass);
             break;
         }
         case CDPatternTypeGradient: {
@@ -1689,7 +1727,7 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             break;
         }
         case CDPatternTypeRandomGradients: {
-            randomGradients(itemHeader, intervalCount, timePassedInMS);
+            randomGradients(itemHeader, intervalCount, timePassedInMS, isFirstPass);
             break;
         }
         case CDPatternTypeAllOff: {
