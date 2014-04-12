@@ -398,38 +398,36 @@ static uint32_t g_dataOffsetReadIntoBuffer1 = 0;
 static uint32_t g_dataOffsetReadIntoBuffer2 = 0;
 
 void readDataIntoBufferStartingAtPosition(uint32_t position, const CDPatternItemHeader *imageHeader, uint8_t *buffer) {
-    DEBUG_PRINTF("buffer load at: %d\r\n", position);
+//    DEBUG_PRINTF("buffer load at: %d, of max: %d\r\n", position, imageHeader->dataLength);
     // Mark where we are in the file (relative)
     int bufferSize = getPixelBufferSize();
 
     File f = SD.open(imageHeader->dataFilename);
-    if (!f.available()) {
-        DEBUG_PRINTLN("  _-----------------------what???");
-        delay(1000);
-        return; 
-    }
+//    if (!f.available()) {
+//        DEBUG_PRINTLN("  _-----------------------what???");
+//        delay(1000);
+//        return; 
+//    }
     
     uint32_t filePositionToReadFrom = imageHeader->dataOffset + position;
-    DEBUG_PRINTLN("  seek");
+//    DEBUG_PRINTLN("  seek");
     f.seek(filePositionToReadFrom);
     
     // We can read up to the end based on our current position
     int amountWeWantToRead = imageHeader->dataLength - position;
     if (amountWeWantToRead <= bufferSize) {
         // Easy, read all the rest in
-        DEBUG_PRINTF("  read %d", amountWeWantToRead);
+//        DEBUG_PRINTF("  read %d", amountWeWantToRead);
         f.readBytes((char*)buffer, amountWeWantToRead);
     } else {
         // Read up to the buffer size
-        DEBUG_PRINTF("  read full %d", bufferSize);
+//        DEBUG_PRINTF("  read full %d", bufferSize);
         f.readBytes((char*)buffer, bufferSize);
     }
-    DEBUG_PRINTLN("  read done");
     f.close();
-    DEBUG_PRINTLN("  closed");
 }
 
-#define USE_TWO_BUFFERS 0
+#define USE_TWO_BUFFERS 1
 
 void initImageDataForHeader(const CDPatternItemHeader *imageHeader) {
     DEBUG_PRINTLN("------------------------------");
@@ -546,6 +544,7 @@ void patternImageEntireStrip(CDPatternItemHeader *itemHeader, uint32_t intervalC
         uint8_t g = data[1];
         uint8_t b = data[2];
         
+#if USE_TWO_BUFFERS
         if (currentOffset != nextOffsetForBlending && percentageThrough > 0) {
             // Grab the next color and mix it...
             uint8_t *nextDataForBlending = dataForOffset(nextOffsetForBlending, itemHeader);
@@ -567,6 +566,7 @@ void patternImageEntireStrip(CDPatternItemHeader *itemHeader, uint32_t intervalC
             b = b + round(percentageThrough * (float)(b2 - b));
             //            Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n\r\n", x, r, g, b);
         }
+#endif
         
 #if 0 // DEBUG
         Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
@@ -596,7 +596,7 @@ void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, ui
         percentageThrough = pixelsThrough - wholePixelsThrough;
         
     }
-    DEBUG_PRINTF("LINEAR IMAGE: %.3f\r\n", percentageThrough);
+//    DEBUG_PRINTF("LINEAR IMAGE: %.3f\r\n", percentageThrough);
     
     int numPixels = g_strip.numPixels();
     rgb_color *colors = (rgb_color *)g_strip.getPixels();
@@ -611,8 +611,9 @@ void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, ui
         uint8_t b = data[2];
         
         currentOffset += 3;
+#if 0 // USE_TWO_BUFFERS
         if (percentageThrough > 0) {
-            /* // TOO SLOW!!
+            // TOO SLOW ?? this does a nice fade to the next
             // Grab the next color and mix it...
             uint32_t nextColorOffset = keepOffsetInDataBounds(currentOffset, itemHeader);
             uint8_t *nextColorData = dataForOffset(nextColorOffset, itemHeader);
@@ -634,8 +635,8 @@ void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, ui
             g = g + round(percentageThrough * (float)(g2 - g));
             b = b + round(percentageThrough * (float)(b2 - b));
             //            Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n\r\n", x, r, g, b);
-             */
         }
+#endif
         
 #if 0 // DEBUG
         Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);

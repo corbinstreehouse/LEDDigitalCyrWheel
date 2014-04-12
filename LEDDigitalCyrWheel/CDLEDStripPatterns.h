@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include "CDPatternData.h"
 
-#define DEBUG 1
+#define DEBUG 0
 #define IGNORE_VOLTAGE 1 //for hardware testing w/out a battery
 
 #define USE_ADAFRUIT 1
