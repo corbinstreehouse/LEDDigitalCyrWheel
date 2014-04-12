@@ -16,7 +16,7 @@
 #include "SD.h"
 
 #if !PATTERN_EDITOR
-#define ACCELEROMETER_SUPPORT 1 // not in the sim..
+#define ACCELEROMETER_SUPPORT 0 // not in the sim..
 #endif
 
 #if ACCELEROMETER_SUPPORT

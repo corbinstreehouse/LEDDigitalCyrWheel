@@ -8,11 +8,11 @@
 
 #include "CDLEDStripPatterns.h"
 #include "LEDDigitalCyrWheel.h"
+#include "SD.h"
+#include <math.h>
 
 #define STRIP_LENGTH  331 // my actual count // (14+60*2)// (60*4) // (67*2)
 #define ANALOG_READ_MAX UINT16_MAX // setup for 16 bit resolution
-
-#include <math.h>
 
 #if USE_ADAFRUIT
 Adafruit_NeoPixel g_strip = Adafruit_NeoPixel(STRIP_LENGTH, STRIP_PIN, NEO_GRB + NEO_KHZ800);
@@ -27,16 +27,34 @@ typedef uint8_t byte;
 #endif
 
 
-rgb_color *getTempBuffer() {
-    // For patterns based on the current state at the start
-    static rgb_color *g_tempBuffer = NULL;
+// A single buffer is shared for lots of reading operations, fading, etc
+int getPixelBufferSize() {
+    return g_strip.getNumberOfBytes();
+}
+
+uint8_t *getPixelBuffer1() {
+    static uint8_t *g_tempBuffer = NULL;
     if (g_tempBuffer == NULL) {
         if (g_tempBuffer == NULL) {
-            int size = sizeof(uint8_t) * g_strip.getNumberOfBytes();
-            g_tempBuffer = (rgb_color *)malloc(size);
+            g_tempBuffer = (uint8_t *)malloc(getPixelBufferSize());
         }
     }
     return g_tempBuffer;
+}
+
+uint8_t *getPixelBuffer2() {
+    static uint8_t *g_tempBuffer = NULL;
+    if (g_tempBuffer == NULL) {
+        if (g_tempBuffer == NULL) {
+            g_tempBuffer = (uint8_t *)malloc(getPixelBufferSize());
+        }
+    }
+    return g_tempBuffer;
+}
+
+
+rgb_color *getTempRGBColorBuffer() {
+    return (rgb_color *)getPixelBuffer1();
 }
 
 
@@ -348,7 +366,7 @@ void fadeIn(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t ti
 void fadeOut(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
     // Opposite of fade in, and we store the inital value on the first pass
     // y = -x^2 + 1
-    rgb_color *tempBuffer = getTempBuffer();
+    rgb_color *tempBuffer = getTempRGBColorBuffer();
     if (firstPass) {
         // First pass, store off the initial state..
         int size = sizeof(uint8_t) * g_strip.getNumberOfBytes();
@@ -376,46 +394,84 @@ void showOn() {
 }
 #endif
 
-static inline uint8_t *dataEnd(const CDPatternItemHeader *imageHeader) {
-    // It ends at the start of this header. The actual image data preceeds it
-    return (uint8_t *)(imageHeader->data + imageHeader->dataLength);
+static uint32_t g_dataOffsetReadIntoBuffer1 = 0;
+
+void readDataIntoBufferStartingAtPosition(uint32_t position, const CDPatternItemHeader *imageHeader) {
+    // Mark where we are in the file (relative)
+    g_dataOffsetReadIntoBuffer1 = position;
+    uint8_t *buffer = getPixelBuffer1();
+    int bufferSize = getPixelBufferSize();
+
+    File f = SD.open(imageHeader->dataFilename);
+    
+    uint32_t filePositionToReadFrom = imageHeader->dataOffset + position;
+    f.seek(filePositionToReadFrom);
+    
+    // We can read up to the end based on our current position
+    int amountWeWantToRead = imageHeader->dataLength - position;
+    if (amountWeWantToRead <= bufferSize) {
+        // Easy, read all the rest in
+        f.readBytes((char*)buffer, amountWeWantToRead);
+    } else {
+        // Read up to the buffer size
+        f.readBytes((char*)buffer, bufferSize);
+    }
+    f.close();
 }
 
-static inline uint8_t *dataStart(const CDPatternItemHeader *imageHeader) {
-    return imageHeader->data;
-}
-
-static inline uint8_t *getInitialDataStart(CDPatternItemHeader *imageHeader) {
-#if 0 // DEBUG
+void initImageDataForHeader(const CDPatternItemHeader *imageHeader) {
+#if DEBUG
     Serial.println("------------------------------");
-    Serial.printf("playing image h: %d, w: %d, len: %d\r\n", imageHeader->height, imageHeader->width, imageHeader->dataLength);
-    Serial.printf("init image state; header: %x, data:%x, datavalue:%x\r\n", imageHeader, imageState->dataOffset, dataStart(imageHeader));
+    Serial.printf("playing image len: %d\r\n", imageHeader->dataLength);
+    //    Serial.printf("init image state; header: %x, data:%x, datavalue:%x\r\n", imageHeader, imageState->dataOffset, dataStart(imageHeader));
     Serial.println("");
 #endif
-    return dataStart(imageHeader);
+    g_dataOffsetReadIntoBuffer1 = 0;
+    readDataIntoBufferStartingAtPosition(g_dataOffsetReadIntoBuffer1, imageHeader);
 }
 
-static inline uint8_t *keepOffsetInDataBounds(uint8_t *currentOffset, const CDPatternItemHeader *imageHeader) {
-    if (currentOffset < dataStart(imageHeader)) {
-        currentOffset = dataStart(imageHeader);
-    } else if (currentOffset >= dataEnd(imageHeader)) {
-//        currentOffset = dataStart(imageHeader);
-        int amountOver = (int)(currentOffset - dataEnd(imageHeader));
-        currentOffset = dataStart(imageHeader) + amountOver;
-        if (currentOffset >= dataEnd(imageHeader)) {
-            currentOffset = dataStart(imageHeader); // way too far past; something badd
+static uint8_t *dataForOffset(uint32_t offset, const CDPatternItemHeader *imageHeader) {
+    // If the offset is within our buffer size, then just return it directly from the buffer
+    int bufferSize = getPixelBufferSize();
+    // In the first buffer?
+    int maxBuffer1Offset = g_dataOffsetReadIntoBuffer1 + bufferSize;
+    if (offset >= g_dataOffsetReadIntoBuffer1 && offset < maxBuffer1Offset) {
+        uint8_t *buffer = getPixelBuffer1();
+        int offsetInBuffer = offset - g_dataOffsetReadIntoBuffer1;
+        return &buffer[offsetInBuffer];
+    }
+    
+    // Nope...have to do more work.
+    readDataIntoBufferStartingAtPosition(offset, imageHeader);
+    // now the buffer is full..
+    uint8_t *buffer = getPixelBuffer1();
+    int offsetInBuffer = offset - g_dataOffsetReadIntoBuffer1;
+    return &buffer[offsetInBuffer];
+}
+
+
+static inline uint32_t keepOffsetInDataBounds(uint32_t offset, const CDPatternItemHeader *imageHeader) {
+    int amountOver = offset - imageHeader->dataLength;
+    // wrap
+    if (amountOver > 0) {
+        offset = amountOver;
+        if (offset > imageHeader->dataLength) {
+            offset = 0; // way too far..i could mod or something..
         }
     }
-    return currentOffset;
+    return offset;
 }
 
 void patternImageEntireStrip(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
     int numPixels = g_strip.numPixels();
-
     int totalPixelsInImage = itemHeader->dataLength / 3; // Assumes RGB encoding, 3 bytes per pixel...this should divide evenly..
     
-    uint8_t *currentOffset = getInitialDataStart(itemHeader);
-    uint8_t *nextOffsetForBlending = currentOffset;
+    if (firstPass) {
+        initImageDataForHeader(itemHeader);
+    }
+    
+    uint32_t currentOffset = 0;
+    uint32_t nextOffsetForBlending = 0;
     float percentageThrough = (float)timePassedInMS / (float)itemHeader->duration;
     if (!firstPass) {
         // Increase the offset by whole amounts once we have enough time passed
@@ -447,18 +503,20 @@ void patternImageEntireStrip(CDPatternItemHeader *itemHeader, uint32_t intervalC
     for (int x = 0; x < numPixels; x++) {
         // First, bounds check each time... shouldn't be needed unless the size of the image isn't an integral value for the number of pixels.
         currentOffset = keepOffsetInDataBounds(currentOffset, itemHeader);
+        nextOffsetForBlending = keepOffsetInDataBounds(nextOffsetForBlending, itemHeader);
         
-        // TODO: decoding switch here...??
-        uint8_t r = currentOffset[0];
-        uint8_t g = currentOffset[1];
-        uint8_t b = currentOffset[2];
+        uint8_t *data = dataForOffset(currentOffset, itemHeader);
+        uint8_t r = data[0];
+        uint8_t g = data[1];
+        uint8_t b = data[2];
         
         if (currentOffset != nextOffsetForBlending && percentageThrough > 0) {
             // Grab the next color and mix it...
-            
-            uint8_t r2 = nextOffsetForBlending[0];
-            uint8_t g2 = nextOffsetForBlending[1];
-            uint8_t b2 = nextOffsetForBlending[2];
+            uint8_t *nextDataForBlending = dataForOffset(nextOffsetForBlending, itemHeader);
+
+            uint8_t r2 = nextDataForBlending[0];
+            uint8_t g2 = nextDataForBlending[1];
+            uint8_t b2 = nextDataForBlending[2];
             
             //            Serial.print("percentage through");
             //            Serial.println(percentageThrough);
@@ -485,44 +543,44 @@ void patternImageEntireStrip(CDPatternItemHeader *itemHeader, uint32_t intervalC
 }
 
 void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
-    static uint8_t *g_dataOffset = NULL; // where we are
-    
     if (firstPass) {
-        g_dataOffset = getInitialDataStart(itemHeader);
-    } else {
-        g_dataOffset = keepOffsetInDataBounds(g_dataOffset, itemHeader);
+        initImageDataForHeader(itemHeader);
     }
-    
-    uint8_t *currentOffset = g_dataOffset;
-    
-    uint32_t duration = itemHeader->duration;
-    if (duration == 0) {
-        duration = 3000; // milliseconds
+
+    uint32_t currentOffset = 0;
+    float percentageThrough = 0;
+    if (!firstPass) {
+        int totalPixelsInImage = itemHeader->dataLength / 3; // Assumes RGB encoding, 3 bytes per pixel...this should divide evenly..
+        percentageThrough = (float)timePassedInMS / (float)itemHeader->duration;
+        float pixelsThrough = percentageThrough * totalPixelsInImage;
+        int wholePixelsThrough = floor(pixelsThrough);
+        currentOffset = currentOffset + 3*wholePixelsThrough;
+        
+        // Fixup percentageThrough to figure out how much to the next we are...
+        percentageThrough = pixelsThrough - wholePixelsThrough;
+        
     }
     
     int numPixels = g_strip.numPixels();
-    float percentageThrough = (float)timePassedInMS / (float)itemHeader->duration;
-    
-    //    Serial.print("percentage through");
-    //    Serial.println(percentageThrough);
-    
     for (int x = 0; x < numPixels; x++) {
         // First, bounds check each time
         currentOffset = keepOffsetInDataBounds(currentOffset, itemHeader);
         
-        // TODO: decoding switch here...??
-        uint8_t r = currentOffset[0];
-        uint8_t g = currentOffset[1];
-        uint8_t b = currentOffset[2];
+        uint8_t *data = dataForOffset(currentOffset, itemHeader);
+        uint8_t r = data[0];
+        uint8_t g = data[1];
+        uint8_t b = data[2];
         
         currentOffset += 3;
         if (percentageThrough > 0) {
             // Grab the next color and mix it...
-            uint8_t *nextColorOffset = keepOffsetInDataBounds(currentOffset, itemHeader);
+            uint32_t nextColorOffset = keepOffsetInDataBounds(currentOffset, itemHeader);
+            uint8_t *nextColorData = dataForOffset(nextColorOffset, itemHeader);
             
-            uint8_t r2 = nextColorOffset[0];
-            uint8_t g2 = nextColorOffset[1];
-            uint8_t b2 = nextColorOffset[2];
+            
+            uint8_t r2 = nextColorData[0];
+            uint8_t g2 = nextColorData[1];
+            uint8_t b2 = nextColorData[2];
             
             //            Serial.print("percentage through");
             //            Serial.println(percentageThrough);
@@ -543,10 +601,6 @@ void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, ui
 #endif
         g_strip.setPixelColor(x, r, g, b);
     }
-    
-    // Increment our global offset.....
-    // wait..this runs the pattern too fast, no??
-    g_dataOffset += 3;
 }
 
 
@@ -624,7 +678,7 @@ void randomGradients(CDPatternItemHeader *itemHeader, uint32_t intervalCount, ui
     float d = itemHeader->duration +4000; // slow it down.?
     float percentagePassed = (float)timePassedInMS / d;
     
-    rgb_color *tmpBuffer = getTempBuffer();
+    rgb_color *tmpBuffer = getTempRGBColorBuffer();
 
     float numberOfGradients = 8.0;
     
