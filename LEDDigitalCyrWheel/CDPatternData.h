@@ -50,7 +50,7 @@ typedef enum ENUM_SIZE {
 
     // Patterns defined by an image
     CDPatternTypeImageLinearFade, // smooth traverse over pixels
-//    CDPatternTypeImageLinearFade,
+    CDPatternTypeImageEntireStrip, // one strip piece at a time defined
     
     // the next set is ordered specifically
     CDPatternTypeWarmWhiteShimmer,

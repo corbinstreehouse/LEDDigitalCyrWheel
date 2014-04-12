@@ -396,10 +396,92 @@ static inline uint8_t *getInitialDataStart(CDPatternItemHeader *imageHeader) {
 }
 
 static inline uint8_t *keepOffsetInDataBounds(uint8_t *currentOffset, const CDPatternItemHeader *imageHeader) {
-    if (currentOffset < dataStart(imageHeader) || currentOffset >= dataEnd(imageHeader)) {
+    if (currentOffset < dataStart(imageHeader)) {
         currentOffset = dataStart(imageHeader);
+    } else if (currentOffset >= dataEnd(imageHeader)) {
+//        currentOffset = dataStart(imageHeader);
+        int amountOver = (int)(currentOffset - dataEnd(imageHeader));
+        currentOffset = dataStart(imageHeader) + amountOver;
+        if (currentOffset >= dataEnd(imageHeader)) {
+            currentOffset = dataStart(imageHeader); // way too far past; something badd
+        }
     }
     return currentOffset;
+}
+
+void patternImageEntireStrip(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
+    int numPixels = g_strip.numPixels();
+
+    int totalPixelsInImage = itemHeader->dataLength / 3; // Assumes RGB encoding, 3 bytes per pixel...this should divide evenly..
+    
+    uint8_t *currentOffset = getInitialDataStart(itemHeader);
+    uint8_t *nextOffsetForBlending = currentOffset;
+    float percentageThrough = (float)timePassedInMS / (float)itemHeader->duration;
+    if (!firstPass) {
+        // Increase the offset by whole amounts once we have enough time passed
+        if (totalPixelsInImage > numPixels) {
+            int numOfCompleteImages = totalPixelsInImage / numPixels;
+            float percentageThroughOfCompleteImagesThrough = percentageThrough * (float)numOfCompleteImages;
+            // Floor it; we always go up from the previous to the next
+            int totalWholeCompleteImagesThrough = floor(percentageThroughOfCompleteImagesThrough);
+            int wholeCompleteImagesThrough = totalWholeCompleteImagesThrough;
+            // wrap
+            if (wholeCompleteImagesThrough > numOfCompleteImages) {
+                wholeCompleteImagesThrough = wholeCompleteImagesThrough % numOfCompleteImages;
+            }
+            
+            // again...3 bytes per pixel hardcoding!! I think I'd have to decode to this format.
+            if (wholeCompleteImagesThrough > 0) {
+                currentOffset = currentOffset + (3*numPixels*wholeCompleteImagesThrough);
+                currentOffset = keepOffsetInDataBounds(currentOffset, itemHeader); /// Shouldn't happen unless the image length/size is messed up
+            }
+            // Figure out the blending offset by adding one cycle through
+            nextOffsetForBlending = currentOffset + (3*numPixels);
+            nextOffsetForBlending = keepOffsetInDataBounds(nextOffsetForBlending, itemHeader);
+            // Adjust the percentageThrough to the amount we are through based on this current offset....
+//            percentageThrough = percentageThroughOfCompleteImagesThrough - wholeCompleteImagesThrough;
+            percentageThrough = percentageThroughOfCompleteImagesThrough - totalWholeCompleteImagesThrough;
+        }
+    }
+    
+    for (int x = 0; x < numPixels; x++) {
+        // First, bounds check each time... shouldn't be needed unless the size of the image isn't an integral value for the number of pixels.
+        currentOffset = keepOffsetInDataBounds(currentOffset, itemHeader);
+        
+        // TODO: decoding switch here...??
+        uint8_t r = currentOffset[0];
+        uint8_t g = currentOffset[1];
+        uint8_t b = currentOffset[2];
+        
+        if (currentOffset != nextOffsetForBlending && percentageThrough > 0) {
+            // Grab the next color and mix it...
+            
+            uint8_t r2 = nextOffsetForBlending[0];
+            uint8_t g2 = nextOffsetForBlending[1];
+            uint8_t b2 = nextOffsetForBlending[2];
+            
+            //            Serial.print("percentage through");
+            //            Serial.println(percentageThrough);
+            //            Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
+            //            Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r2, g2, b2);
+            //
+            //            Serial.println();
+            
+            // TODO: non floating point math.. ??
+            r = r + round(percentageThrough * (float)(r2 - r));
+            g = g + round(percentageThrough * (float)(g2 - g));
+            b = b + round(percentageThrough * (float)(b2 - b));
+            //            Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n\r\n", x, r, g, b);
+        }
+        
+#if 0 // DEBUG
+        Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
+#endif
+        g_strip.setPixelColor(x, r, g, b);
+        // Again..assumes 3 bytes per pixel
+        currentOffset += 3;
+        nextOffsetForBlending += 3;
+    }
 }
 
 void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
@@ -462,45 +544,10 @@ void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, ui
         g_strip.setPixelColor(x, r, g, b);
     }
     
-    // Increment our global offset
+    // Increment our global offset.....
+    // wait..this runs the pattern too fast, no??
     g_dataOffset += 3;
 }
-
-//static void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
-//    static uint8_t *g_dataOffset = 0;
-//
-//    
-//    // Validate our offsets; assumes the last column is correct...and data isn't truncated
-//    if (imageState->xOffset >= imageHeader->width || imageState->dataOffset == 0 || imageState->dataOffset >= dataEnd(imageHeader)) {
-//        initImageState(imageHeader, imageState);
-//    }
-//    
-//    // Use whatever is smaller...the pixels we got, or the image
-//    int numPix = g_strip.numPixels();
-//    int yMax = numPix > imageHeader->height ? imageHeader->height : numPix;
-//    
-//    for (int y = 0; y < yMax; y++) {
-//        // switch on encoding here..
-//        // RGB..
-//        uint8_t r = *imageState->dataOffset++;
-//        uint8_t g = *imageState->dataOffset++;
-//        uint8_t b = *imageState->dataOffset++;
-//#if DEBUG
-//        //        Serial.printf("x:%d y:%d, r:%d, g:%d, b:%d, yMax:%d, numPix:%d\r\n", imageState->xOffset, y, r, g, b, yMax, numPix);
-//#endif
-//        g_strip.setPixelColor(y, r, g, b);
-//        if (mainProcess()) return;
-//    }
-//    for (int y = yMax; y < numPix; y++) {
-//        g_strip.setPixelColor(y, 0, 0, 0); // off for any extra pixels we have
-//    }
-//    if (mainProcess()) return;
-//    
-//    
-//    
-//    imageState->xOffset++;
-//    
-//}
 
 
 void stripUpdateBrightness() {
@@ -1612,6 +1659,10 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
         }
         case CDPatternTypeImageLinearFade: {
             linearImageFade(itemHeader, intervalCount, timePassedInMS, isFirstPass);
+            break;
+        }
+        case CDPatternTypeImageEntireStrip: {
+            patternImageEntireStrip(itemHeader, intervalCount, timePassedInMS, isFirstPass);
             break;
         }
         case CDPatternTypeGradient: {

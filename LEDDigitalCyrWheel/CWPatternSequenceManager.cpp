@@ -75,7 +75,7 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     
     int i = 0;
     for (int p = CDPatternTypeMin; p < CDPatternTypeMax; p++) {
-        if (p == CDPatternTypeDoNothing || p == CDPatternTypeFadeIn || p == CDPatternTypeImageLinearFade) {
+        if (p == CDPatternTypeDoNothing || p == CDPatternTypeFadeIn || p == CDPatternTypeImageLinearFade || p == CDPatternTypeImageEntireStrip) {
             continue; // skip a few
         }
         _patternItems[i].patternType = (CDPatternType)p;
@@ -361,6 +361,8 @@ static inline bool PatternIsContinuous(CDPatternType p) {
         case CDPatternTypeImageLinearFade:
         case CDPatternTypeWave:
             return false;
+        case CDPatternTypeImageEntireStrip:
+            return true;
         case CDPatternTypeBottomGlow:
             return true; // Doesn't do anything
         case CDPatternTypeRotatingBottomGlow:
