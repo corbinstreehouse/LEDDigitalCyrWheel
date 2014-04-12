@@ -151,6 +151,9 @@ void setup() {
 
 
 bool checkVoltage() {
+#if DEBUG
+    if (IGNORE_VOLTAGE) return true;
+#endif
     // check the voltage; if we are low, flast red 3 times at a low brightness...
     static uint32_t lastReadVoltageTime = 0;
     if (millis() - lastReadVoltageTime > TIME_BETWEEN_VOLTAGE_READS) {

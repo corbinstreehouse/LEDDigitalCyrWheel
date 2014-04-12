@@ -62,9 +62,7 @@ CWPatternSequenceManager::~CWPatternSequenceManager() {
 #endif
 
 void CWPatternSequenceManager::loadDefaultSequence() {
-#if DEBUG
-    Serial.println("       --- loading default sequence because the name was NULL --- ");
-#endif
+    DEBUG_PRINTLN("       --- loading default sequence because the name was NULL --- ");
     freePatternItems();
 
     _pixelCount = 300; // Well..whatever;it is too late at this point, and I don't even use it..
@@ -90,22 +88,19 @@ void CWPatternSequenceManager::loadDefaultSequence() {
         i++;
     }
     _numberOfPatternItems = i;
-#if DEBUG
-    Serial.printf(" --- default pattern count _numberOfPatternItems: %d\r\n", _numberOfPatternItems);
-#endif
+    DEBUG_PRINTF(" --- default pattern count _numberOfPatternItems: %d\r\n", _numberOfPatternItems);
     
 }
 
 static inline bool verifyHeader(CDPatternSequenceHeader *h) {
     // header, and version 0
+    DEBUG_PRINTF("checking header, v: %d , expected :%d\r\n", h->version, SEQUENCE_VERSION);
     return h->marker[0] == 'S' && h->marker[1] == 'Q' && h->marker[2] == 'C' && h->version == SEQUENCE_VERSION;
 }
 
 void CWPatternSequenceManager::freePatternItems() {
     if (_patternItems) {
-#if DEBUG
-        Serial.println(" --- free pattern Items");
-#endif
+        DEBUG_PRINTLN(" --- free pattern Items");
 //        for (int i = 0; i < _numberOfPatternItems; i++) {
 //            // If it has data, we have to free it
 //            if (_patternItems[i].dataLength && _patternItems[i].data) {
@@ -120,58 +115,51 @@ void CWPatternSequenceManager::freePatternItems() {
 }
 
 void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
-#if DEBUG
-   Serial.printf("  loading sequence name %s\r\n:", filename);
-#endif
+    DEBUG_PRINTF("  loading sequence name: %s\r\n", filename);
     File sequenceFile = SD.open(filename);
+    DEBUG_PRINTF(" OPENED file: %s\r\n", sequenceFile.name());
+    if (!sequenceFile.available()) {
+        // Try again???
+        sequenceFile = SD.open(filename);
+        DEBUG_PRINTF(" try again... file: %s\r\n", sequenceFile.name());
+    }
     
     // This is reading the file format I created..
     // Header first
     CDPatternSequenceHeader patternHeader;
-    sequenceFile.readBytes((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
-#if DEBUG
-    Serial.println("checking header");
-#endif
+    if (sequenceFile.available()) {
+        sequenceFile.readBytes((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
+    } else {
+        patternHeader.version = 0; // Fail
+    }
     
     // Verify it
     if (verifyHeader(&patternHeader)) {
         // Free existing stuff
         if (_patternItems) {
-            Serial.printf("ERROR: PATTERN ITEMS SHOULD BE FREE!!!!");
+            DEBUG_PRINTLN("ERROR: PATTERN ITEMS SHOULD BE FREE!!!!");
         }
-
-            
             // Then read in and store the stock info
         _pixelCount = patternHeader.pixelCount;
         _numberOfPatternItems = patternHeader.patternCount;
-#if DEBUG
-        Serial.printf("pixelCount: %d, now reading %d items, headerSize: %d\r\n", _pixelCount, _numberOfPatternItems, sizeof(CDPatternItemHeader));
-#endif
-        
+        DEBUG_PRINTF("pixelCount: %d, now reading %d items, headerSize: %d\r\n", _pixelCount, _numberOfPatternItems, sizeof(CDPatternItemHeader));
         
         // After the header each item follows
         int numBytes = _numberOfPatternItems * sizeof(CDPatternItemHeader);
         _patternItems = (CDPatternItemHeader *)malloc(numBytes);
-#if DEBUG
-        memset(_patternItems, 0, numBytes); // shouldn't be needed
-#endif
+        memset(_patternItems, 0, numBytes); // shouldn't be needed, but do it anyways
+        
         for (int i = 0; i < _numberOfPatternItems; i++ ){
-#if DEBUG
-            Serial.printf("reading item %d\r\n", i);
-#endif
+            DEBUG_PRINTF("reading item %d\r\n", i);
             sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
-#if DEBUG
-            Serial.printf("Header, type: %d, duration: %d, intervalC: %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].intervalCount);
-#endif
+            DEBUG_PRINTF("Header, type: %d, duration: %d, intervalC: %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].intervalCount);
             // Verify it
             ASSERT(_patternItems[i].patternType >= CDPatternTypeMin && _patternItems[i].patternType < CDPatternTypeMax);
             ASSERT(_patternItems[i].duration > 0);
             // After the header, is the (optional) image data
             uint32_t dataLength = _patternItems[i].dataLength;
             if (dataLength > 0) {
-#if DEBUG
-                Serial.printf("we have %d data\r\n", dataLength);
-#endif
+                DEBUG_PRINTF("we have %d data\r\n", dataLength);
                 // Read in the data that is following the header, and put it in the data pointer...
                 // 65536 kb of ram..more than 20,000 pixels would overflow...which i'm now hitting w/larger images. darn it..i have to chunk these and dynamically load each one ;(
                 _patternItems[i].dataOffset = sequenceFile.position();
@@ -186,9 +174,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
                 _patternItems[i].dataFilename = NULL;
             }
         }
-#if DEBUG
-        Serial.printf("DONE");
-#endif
+        DEBUG_PRINTLN("DONE");
     } else {
         // Bad data...flash yellow
         _numberOfPatternItems = 2;
@@ -209,9 +195,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
 }
 
 bool CWPatternSequenceManager::loadCurrentSequence() {
-#if DEBUG
-    Serial.printf("--- loading sequence %d of %d --- ", _currentSequenceIndex, _numberOfAvailableSequences);
-#endif
+    DEBUG_PRINTF("--- loading sequence %d of %d --- \r\n", _currentSequenceIndex, _numberOfAvailableSequences);
     freePatternItems();
 
     bool result = true;
@@ -235,15 +219,15 @@ bool CWPatternSequenceManager::initSDCard() {
     while (!result) {
         result = SD.begin(SD_CARD_CS_PIN);
         i++;
-        if (i == 1) {
-            break; // give it 1 more chance.. (it is slow to init for some reason...)
+        if (i == 3) {
+            break; // give it 3 more chances??.. (it is slow to init for some reason...)
         }
     }
 #if DEBUG
     if (result) {
-        Serial.println("SD Card Initialized");
+        DEBUG_PRINTLN("SD Card Initialized");
     } else {
-        Serial.println("SD Card initialization failed!");
+        DEBUG_PRINTLN("SD Card initialization failed!");
     }
     
 #endif
@@ -264,10 +248,8 @@ bool CWPatternSequenceManager::init() {
 //    _doOneMoreTick = false;
     
     initCompass();
-#if DEBUG
-    Serial.println("initing sd card");
+    DEBUG_PRINTLN("initing sd card");
     delay(2);
-#endif
     
     bool result = initSDCard();
 
@@ -280,15 +262,10 @@ bool CWPatternSequenceManager::init() {
         while (rootDir.getNextFilename(filenameBuffer)) {
             if (isPatternFile(filenameBuffer)) {
                 _numberOfAvailableSequences++;
-#if DEBUG
-                Serial.print("found pattern: ");
-                Serial.println(filenameBuffer);
-#endif
+                DEBUG_PRINTF("found pattern: %s\r\n", filenameBuffer);
             }
         }
-#if DEBUG
-        Serial.printf("Found %d sequences\r\n", _numberOfAvailableSequences);
-#endif
+        DEBUG_PRINTF("Found %d sequences\r\n", _numberOfAvailableSequences);
         
         if (_numberOfAvailableSequences > 0) {
             // Now we can malloc the space to save the names
@@ -299,10 +276,14 @@ bool CWPatternSequenceManager::init() {
             while (rootDir.getNextFilename(filenameBuffer)) {
                 if (isPatternFile(filenameBuffer)) {
                     // allocate and store the name so we can easily load it later. -- I include the "/" so it is the "full path". + 1 is for the null terminator, and the extra +1 is for the "/"
-                    _sequenceNames[_currentSequenceIndex] = (char *)malloc(sizeof(char) * strlen(filenameBuffer) + 2);
-                    _sequenceNames[_currentSequenceIndex][0] = '/';
-                    char *restFilename = &_sequenceNames[_currentSequenceIndex][1];
-                    strcpy(restFilename, filenameBuffer);
+                    char *mallocedName = (char *)malloc(sizeof(char) * strlen(filenameBuffer) + 2);
+                    _sequenceNames[_currentSequenceIndex] = mallocedName;
+
+                    mallocedName[0] = '/';
+                    mallocedName++;
+                    strcpy(mallocedName, filenameBuffer);
+                    DEBUG_PRINTF("copied name: %s len: %d\r\n", _sequenceNames[_currentSequenceIndex], strlen(_sequenceNames[_currentSequenceIndex]));
+                    
                     _currentSequenceIndex++;
                 }
             }
@@ -331,27 +312,25 @@ bool CWPatternSequenceManager::init() {
 bool CWPatternSequenceManager::initCompass() {
 #if ACCELEROMETER_SUPPORT
     
-#if DEBUG
-    Serial.println("attempting initCompass");
-#endif
+    DEBUG_PRINTLN("attempting initCompass");
     bool result = _compass.init();
     int i = 0;
     while (!result && i < 2) {
         result = _compass.init(); // keep trying a few times
         i++;
     }
-    Serial.println("initCompass DONE");
+    DEBUG_PRINTLN("initCompass DONE");
     if (result) {
         _compass.enableDefault();
         _compass.m_min = {  -345,   -707,   -115};
         _compass.m_max = {  +310,   +206,   +463};
 #if DEBUG
         Serial.print("Compass initied type: ");
-        Serial.println(_compass.getDeviceType());
+        DEBUG_PRINTLN(_compass.getDeviceType());
 #endif
     } else {
 #if DEBUG
-        Serial.println("Compass FAILED init");
+        DEBUG_PRINTLN("Compass FAILED init");
 #endif
 
     }
@@ -361,9 +340,7 @@ bool CWPatternSequenceManager::initCompass() {
 }
 
 void CWPatternSequenceManager::loadNextSequence() {
-#if DEBUG
-    Serial.printf("+++ load next sequence (at: %d of %d\r\n", _currentSequenceIndex, _numberOfAvailableSequences);
-#endif
+    DEBUG_PRINTF("+++ load next sequence (at: %d of %d\r\n", _currentSequenceIndex, _numberOfAvailableSequences);
     
     if (_numberOfAvailableSequences > 0) {
         _currentSequenceIndex++;
@@ -421,9 +398,7 @@ static inline bool PatternIsContinuous(CDPatternType p) {
 
 void CWPatternSequenceManager::process(bool initialProcess) {
     if (_numberOfPatternItems == 0) {
-#if 1 // DEBUG
-        Serial.println("No pattern items to show!");
-#endif
+        DEBUG_PRINTLN("No pattern items to show!");
         flashThreeTimes(255, 255, 0, 150);
         delay(1000);
         return;
@@ -462,13 +437,13 @@ void CWPatternSequenceManager::process(bool initialProcess) {
     snprintf(report, sizeof(report), "A: %6d %6d %6d    M: %6d %6d %6d  head:%d",
              _compass.a.x, _compass.a.y, _compass.a.z,
              _compass.m.x, _compass.m.y, _compass.m.z, _compass.heading());
-  //  Serial.println(report);
+  //  DEBUG_PRINTLN(report);
 
     float z  = _compass.heading((LSM303::vector<int>){1, 0, 0});
     float x  = _compass.heading((LSM303::vector<int>){0, 1, 0});
     float y  = _compass.heading((LSM303::vector<int>){0, 0, 1});
     
-    Serial.printf("x: %.3f y: %.3f z: %.3f heading: %.3f deg\r\n", x, y, z, _compass.heading());
+    DEBUG_PRINTF("x: %.3f y: %.3f z: %.3f heading: %.3f deg\r\n", x, y, z, _compass.heading());
 #endif
     
     stripPatternLoop(itemHeader, intervalCount, timePassed, initialProcess);
@@ -489,7 +464,7 @@ void CWPatternSequenceManager::nextPatternItem() {
 //    _intervalCount = 0;
     process(true); // Initial process at time 0
 #if DEBUG 
-//    Serial.printf("--------- Next pattern Item: %d of %d\r\n", _currentPatternItemIndex, _numberOfPatternItems);
+//    DEBUG_PRINTF("--------- Next pattern Item: %d of %d\r\n", _currentPatternItemIndex, _numberOfPatternItems);
 //    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
 //    
 //    NSLog(@"Duration: %.3f seconds", itemHeader->duration/1000.0);

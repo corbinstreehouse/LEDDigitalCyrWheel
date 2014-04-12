@@ -12,9 +12,19 @@
 #include <stdint.h>
 #include "CDPatternData.h"
 
-#define DEBUG 0
+#define DEBUG 1
+#define IGNORE_VOLTAGE 1 //for hardware testing w/out a battery
 
 #define USE_ADAFRUIT 1
+
+#if DEBUG
+    #define DEBUG_PRINTLN(a) Serial.println(a)
+    #define DEBUG_PRINTF(a, ...) Serial.printf(a, ##__VA_ARGS__)
+#else
+    #define DEBUG_PRINTLN(a)
+    #define DEBUG_PRINTF(a, ...)
+#endif
+
 
 #if USE_ADAFRUIT
 #include "Adafruit_NeoPixel.h"
