@@ -214,12 +214,12 @@ bool CWPatternSequenceManager::loadCurrentSequence() {
 
 bool CWPatternSequenceManager::initSDCard() {
     pinMode(SS, OUTPUT);
-    bool result = SD.begin(SD_CARD_CS_PIN);
+    bool result = SD.begin(SPI_FULL_SPEED, SD_CARD_CS_PIN);
     int i = 0;
     while (!result) {
-        result = SD.begin(SD_CARD_CS_PIN);
+        result = SD.begin(SPI_HALF_SPEED, SD_CARD_CS_PIN);
         i++;
-        if (i == 3) {
+        if (i == 1) {
             break; // give it 3 more chances??.. (it is slow to init for some reason...)
         }
     }
