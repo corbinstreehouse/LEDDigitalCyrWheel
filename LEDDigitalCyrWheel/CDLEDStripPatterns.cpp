@@ -39,17 +39,10 @@ rgb_color *getTempBuffer() {
     return g_tempBuffer;
 }
 
-typedef struct {
-    uint8_t *dataOffset;
-    uint32_t lastTime;
-} CDPlaybackImageState;
 
 //pololu demo stuff
 static unsigned int loopCount = 0;
 static unsigned int seed = 0;  // used to initialize random number generator
-
-
-static CDPlaybackImageState g_imageState = { 0 };
 
 void randomColorWalk(unsigned char initializeColors, unsigned char dimOnly);
 void traditionalColors();
@@ -383,10 +376,6 @@ void showOn() {
 }
 #endif
 
-void resetState() {
-    g_imageState = { 0 };
-}
-
 static inline uint8_t *dataEnd(const CDPatternItemHeader *imageHeader) {
     // It ends at the start of this header. The actual image data preceeds it
     return (uint8_t *)(imageHeader->data + imageHeader->dataLength);
@@ -396,46 +385,48 @@ static inline uint8_t *dataStart(const CDPatternItemHeader *imageHeader) {
     return imageHeader->data;
 }
 
-//static void initImageState(CDPatternItemHeader *imageHeader, CDPlaybackImageState *imageState) {
-//    imageState->dataOffset = dataStart(imageHeader);
-//#if 0 // DEBUG
-//    Serial.println("------------------------------");
-//    Serial.printf("playing image h: %d, w: %d, len: %d\r\n", imageHeader->height, imageHeader->width, imageHeader->dataLength);
-//    Serial.printf("init image state; header: %x, data:%x, datavalue:%x\r\n", imageHeader, imageState->dataOffset, *imageState->dataOffset);
-//    Serial.println("");
-//#endif
-//}
+static inline uint8_t *getInitialDataStart(CDPatternItemHeader *imageHeader) {
+#if 0 // DEBUG
+    Serial.println("------------------------------");
+    Serial.printf("playing image h: %d, w: %d, len: %d\r\n", imageHeader->height, imageHeader->width, imageHeader->dataLength);
+    Serial.printf("init image state; header: %x, data:%x, datavalue:%x\r\n", imageHeader, imageState->dataOffset, dataStart(imageHeader));
+    Serial.println("");
+#endif
+    return dataStart(imageHeader);
+}
 
-
-static inline uint8_t *keepOffsetInBounds(uint8_t *currentOffset, const CDPatternItemHeader *imageHeader) {
+static inline uint8_t *keepOffsetInDataBounds(uint8_t *currentOffset, const CDPatternItemHeader *imageHeader) {
     if (currentOffset < dataStart(imageHeader) || currentOffset >= dataEnd(imageHeader)) {
         currentOffset = dataStart(imageHeader);
     }
     return currentOffset;
 }
 
-void playbackColorFadeWithHeader(const CDPatternItemHeader *imageHeader, CDPlaybackImageState *imageState) {
-//    if (g_button.isPressed()) return;
+void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
+    static uint8_t *g_dataOffset = NULL; // where we are
     
-    imageState->dataOffset = keepOffsetInBounds(imageState->dataOffset, imageHeader);
-    uint8_t *currentOffset = imageState->dataOffset;
+    if (firstPass) {
+        g_dataOffset = getInitialDataStart(itemHeader);
+    } else {
+        g_dataOffset = keepOffsetInDataBounds(g_dataOffset, itemHeader);
+    }
     
-    uint32_t duration = imageHeader->duration;
+    uint8_t *currentOffset = g_dataOffset;
+    
+    uint32_t duration = itemHeader->duration;
     if (duration == 0) {
-        duration = 40;
+        duration = 3000; // milliseconds
     }
     
-    float percentageThrough = 0;
-    int amountOfPassedTime = millis() - imageState->lastTime;
-    if (amountOfPassedTime < duration) {
-        percentageThrough = (float)amountOfPassedTime / (float)duration;
-    }
+    int numPixels = g_strip.numPixels();
+    float percentageThrough = (float)timePassedInMS / (float)itemHeader->duration;
+    
     //    Serial.print("percentage through");
     //    Serial.println(percentageThrough);
     
-    for (int x = 0; x < g_strip.numPixels(); x++) {
+    for (int x = 0; x < numPixels; x++) {
         // First, bounds check each time
-        currentOffset = keepOffsetInBounds(currentOffset, imageHeader);
+        currentOffset = keepOffsetInDataBounds(currentOffset, itemHeader);
         
         // TODO: decoding switch here...??
         uint8_t r = currentOffset[0];
@@ -445,7 +436,7 @@ void playbackColorFadeWithHeader(const CDPatternItemHeader *imageHeader, CDPlayb
         currentOffset += 3;
         if (percentageThrough > 0) {
             // Grab the next color and mix it...
-            uint8_t *nextColorOffset = keepOffsetInBounds(currentOffset, imageHeader);
+            uint8_t *nextColorOffset = keepOffsetInDataBounds(currentOffset, itemHeader);
             
             uint8_t r2 = nextColorOffset[0];
             uint8_t g2 = nextColorOffset[1];
@@ -458,13 +449,11 @@ void playbackColorFadeWithHeader(const CDPatternItemHeader *imageHeader, CDPlayb
             //
             //            Serial.println();
             
-            // TODO: non floating point math..
+            // TODO: non floating point math.. ??
             r = r + round(percentageThrough * (float)(r2 - r));
             g = g + round(percentageThrough * (float)(g2 - g));
             b = b + round(percentageThrough * (float)(b2 - b));
-            //            Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
-            Serial.println();
-            Serial.println();
+            //            Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n\r\n", x, r, g, b);
         }
         
 #if 0 // DEBUG
@@ -473,49 +462,45 @@ void playbackColorFadeWithHeader(const CDPatternItemHeader *imageHeader, CDPlayb
         g_strip.setPixelColor(x, r, g, b);
     }
     
-    // Increment..update after we did all the above work
-    uint32_t now = millis();
-    if (now - imageState->lastTime > duration) {
-        imageState->lastTime = millis();
-        imageState->dataOffset += 3;
-    }
+    // Increment our global offset
+    g_dataOffset += 3;
 }
 
-static void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
-    /*
-     // Validate our offsets; assumes the last column is correct...and data isn't truncated
-     if (imageState->xOffset >= imageHeader->width || imageState->dataOffset == 0 || imageState->dataOffset >= dataEnd(imageHeader)) {
-     initImageState(imageHeader, imageState);
-     }
-     
-     // Use whatever is smaller...the pixels we got, or the image
-     int numPix = g_strip.numPixels();
-     int yMax = numPix > imageHeader->height ? imageHeader->height : numPix;
-     
-     for (int y = 0; y < yMax; y++) {
-     // switch on encoding here..
-     // RGB..
-     uint8_t r = *imageState->dataOffset++;
-     uint8_t g = *imageState->dataOffset++;
-     uint8_t b = *imageState->dataOffset++;
-     #if DEBUG
-     //        Serial.printf("x:%d y:%d, r:%d, g:%d, b:%d, yMax:%d, numPix:%d\r\n", imageState->xOffset, y, r, g, b, yMax, numPix);
-     #endif
-     g_strip.setPixelColor(y, r, g, b);
-     if (mainProcess()) return;
-     }
-     for (int y = yMax; y < numPix; y++) {
-     g_strip.setPixelColor(y, 0, 0, 0); // off for any extra pixels we have
-     }
-     if (mainProcess()) return;
-     
-     
-     busyDelay(200);
-     
-     imageState->xOffset++;
-     */
-    
-}
+//static void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool firstPass) {
+//    static uint8_t *g_dataOffset = 0;
+//
+//    
+//    // Validate our offsets; assumes the last column is correct...and data isn't truncated
+//    if (imageState->xOffset >= imageHeader->width || imageState->dataOffset == 0 || imageState->dataOffset >= dataEnd(imageHeader)) {
+//        initImageState(imageHeader, imageState);
+//    }
+//    
+//    // Use whatever is smaller...the pixels we got, or the image
+//    int numPix = g_strip.numPixels();
+//    int yMax = numPix > imageHeader->height ? imageHeader->height : numPix;
+//    
+//    for (int y = 0; y < yMax; y++) {
+//        // switch on encoding here..
+//        // RGB..
+//        uint8_t r = *imageState->dataOffset++;
+//        uint8_t g = *imageState->dataOffset++;
+//        uint8_t b = *imageState->dataOffset++;
+//#if DEBUG
+//        //        Serial.printf("x:%d y:%d, r:%d, g:%d, b:%d, yMax:%d, numPix:%d\r\n", imageState->xOffset, y, r, g, b, yMax, numPix);
+//#endif
+//        g_strip.setPixelColor(y, r, g, b);
+//        if (mainProcess()) return;
+//    }
+//    for (int y = yMax; y < numPix; y++) {
+//        g_strip.setPixelColor(y, 0, 0, 0); // off for any extra pixels we have
+//    }
+//    if (mainProcess()) return;
+//    
+//    
+//    
+//    imageState->xOffset++;
+//    
+//}
 
 
 void stripUpdateBrightness() {

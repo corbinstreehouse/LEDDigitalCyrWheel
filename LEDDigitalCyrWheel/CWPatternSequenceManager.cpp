@@ -165,7 +165,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
 #endif
                 // Read in the data that is following the header, and put it in the data pointer...
                 _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
-                sequenceFile.readBytes((char*)&_patternItems[i].data, dataLength);
+                sequenceFile.readBytes((char*)_patternItems[i].data, dataLength);
             } else {
                 // data pointer should always be NULL
                 _patternItems[i].data = NULL;

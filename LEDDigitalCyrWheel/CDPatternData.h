@@ -50,6 +50,7 @@ typedef enum ENUM_SIZE {
 
     // Patterns defined by an image
     CDPatternTypeImageLinearFade, // smooth traverse over pixels
+//    CDPatternTypeImageLinearFade,
     
     // the next set is ordered specifically
     CDPatternTypeWarmWhiteShimmer,
@@ -101,7 +102,7 @@ typedef struct  __attribute__((__packed__)) {
     uint32_t dataLength; // how long the data is following // 4
     union {
         uint8_t *data; // When loaded, points to the data
-        uint64_t size; // creates 64-bits always so I can use the same struct size in 32-bit and 64-bit // 8
+        uint64_t __unused_size; // creates 64-bits pointer size; so I can use the same struct size in 32-bit and 64-bit // 8
     };
 } CDPatternItemHeader;
 
