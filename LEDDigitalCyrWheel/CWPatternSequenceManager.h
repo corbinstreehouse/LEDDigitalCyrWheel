@@ -16,12 +16,11 @@
 #include "SD.h"
 
 #if !PATTERN_EDITOR
-#define ACCELEROMETER_SUPPORT 0 // not in the sim..
+#define ACCELEROMETER_SUPPORT 1 // not in the sim..
 #endif
 
 #if ACCELEROMETER_SUPPORT
-#include "Wire.h"
-#include "LSM303.h"
+#include "CDOrientation.h"
 #endif
 
 
@@ -41,11 +40,11 @@ private:
     int _currentPatternItemIndex;
     uint32_t _patternStartTime;
 #if ACCELEROMETER_SUPPORT
-    LSM303 _compass;
+    CDOrientation _orientation;
 #endif
     
     bool initSDCard();
-    bool initCompass();
+    bool initOrientation();
     bool loadCurrentSequence();
     void freePatternItems();
     void freeSequenceNames();

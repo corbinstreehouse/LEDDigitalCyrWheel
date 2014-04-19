@@ -26,6 +26,7 @@
 		9D3A0DA81889BE64001AD553 /* LEDDigitalCyrWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */; };
 		9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DAC188A0EBD001AD553 /* Button.cpp */; };
 		9D3A0DC3188CB0AE001AD553 /* OctoWS2811.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DC1188CB0AE001AD553 /* OctoWS2811.cpp */; };
+		9D472E1D1902F1590076281A /* CDOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D472E1B1902F1590076281A /* CDOrientation.cpp */; };
 		9D5200CE1650691000F3BF4E /* DefaultFonts.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C61650691000F3BF4E /* DefaultFonts.c */; };
 		9D5200CF1650691000F3BF4E /* HW_AVR_defines.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C71650691000F3BF4E /* HW_AVR_defines.h */; };
 		9D5200D01650691000F3BF4E /* HW_AVR.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D5200C81650691000F3BF4E /* HW_AVR.h */; };
@@ -297,6 +298,8 @@
 		9D3A0DC0188CB0AE001AD553 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
 		9D3A0DC1188CB0AE001AD553 /* OctoWS2811.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OctoWS2811.cpp; sourceTree = "<group>"; };
 		9D3A0DC2188CB0AE001AD553 /* OctoWS2811.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OctoWS2811.h; sourceTree = "<group>"; };
+		9D472E1B1902F1590076281A /* CDOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDOrientation.cpp; sourceTree = "<group>"; };
+		9D472E1C1902F1590076281A /* CDOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDOrientation.h; sourceTree = "<group>"; };
 		9D5200C61650691000F3BF4E /* DefaultFonts.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = DefaultFonts.c; path = ../../../Documents/Arduino/Libraries/UTFT/DefaultFonts.c; sourceTree = "<group>"; };
 		9D5200C71650691000F3BF4E /* HW_AVR_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HW_AVR_defines.h; path = ../../../Documents/Arduino/Libraries/UTFT/HW_AVR_defines.h; sourceTree = "<group>"; };
 		9D5200C81650691000F3BF4E /* HW_AVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HW_AVR.h; path = ../../../Documents/Arduino/Libraries/UTFT/HW_AVR.h; sourceTree = "<group>"; };
@@ -2009,6 +2012,8 @@
 				9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */,
 				9DBE92CB18AA836E00154550 /* CDLEDStripPatterns.h */,
 				9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */,
+				9D472E1C1902F1590076281A /* CDOrientation.h */,
+				9D472E1B1902F1590076281A /* CDOrientation.cpp */,
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,
 				9D3A0DAC188A0EBD001AD553 /* Button.cpp */,
 				9D3A0DAD188A0EBD001AD553 /* Button.h */,
@@ -5537,6 +5542,7 @@
 				9DBE8A7D18A8A85000154550 /* WString.cpp in Sources */,
 				9DBE928018A8AA5600154550 /* GSM3ShieldV1ModemCore.cpp in Sources */,
 				9D1C676C18F9E26A008765EA /* SdFile.cpp in Sources */,
+				9D472E1D1902F1590076281A /* CDOrientation.cpp in Sources */,
 				9DBE92BD18A8AA5600154550 /* WiFi.cpp in Sources */,
 				9D1C676418F9E26A008765EA /* MinimumSerial.cpp in Sources */,
 				9DBE8A7318A8A85000154550 /* usb_inst.cpp in Sources */,

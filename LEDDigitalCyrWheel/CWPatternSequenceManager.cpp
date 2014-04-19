@@ -245,11 +245,11 @@ static inline bool isPatternFile(char *filename) {
 }
 
 bool CWPatternSequenceManager::init() {
-//    _doOneMoreTick = false;
-    
-    initCompass();
-    DEBUG_PRINTLN("initing sd card");
-    delay(2);
+    DEBUG_PRINTLN("::init");
+
+    initOrientation();
+
+    delay(2); // why do I have this delay in here?
     
     bool result = initSDCard();
 
@@ -309,33 +309,20 @@ bool CWPatternSequenceManager::init() {
     return result;
 }
 
-bool CWPatternSequenceManager::initCompass() {
-#if ACCELEROMETER_SUPPORT
+bool CWPatternSequenceManager::initOrientation() {
+#if DEBUG
+    delay(1000); // give me a time to start the log
+#endif
     
-    DEBUG_PRINTLN("attempting initCompass");
-    bool result = _compass.init();
-    int i = 0;
-    while (!result && i < 2) {
-        result = _compass.init(); // keep trying a few times
-        i++;
-    }
-    DEBUG_PRINTLN("initCompass DONE");
-    if (result) {
-        _compass.enableDefault();
-        _compass.m_min = {  -345,   -707,   -115};
-        _compass.m_max = {  +310,   +206,   +463};
-#if DEBUG
-        Serial.print("Compass initied type: ");
-        DEBUG_PRINTLN(_compass.getDeviceType());
-#endif
-    } else {
-#if DEBUG
-        DEBUG_PRINTLN("Compass FAILED init");
-#endif
+#if ACCELEROMETER_SUPPORT
 
-    }
+    DEBUG_PRINTLN("init orientation");
+    bool result = _orientation.init(); // TODO: return if it failed???
+    DEBUG_PRINTLN("DONE init orientation");
+    
+    return result;
 #else
-    return false;
+    return true;
 #endif
 }
 
@@ -431,19 +418,13 @@ void CWPatternSequenceManager::process(bool initialProcess) {
     }
 
     
-#if 0
-    char report[256];
-    _compass.read();
-    snprintf(report, sizeof(report), "A: %6d %6d %6d    M: %6d %6d %6d  head:%d",
-             _compass.a.x, _compass.a.y, _compass.a.z,
-             _compass.m.x, _compass.m.y, _compass.m.z, _compass.heading());
-  //  DEBUG_PRINTLN(report);
+#if ACCELEROMETER_SUPPORT
+    _orientation.process();
 
-    float z  = _compass.heading((LSM303::vector<int>){1, 0, 0});
-    float x  = _compass.heading((LSM303::vector<int>){0, 1, 0});
-    float y  = _compass.heading((LSM303::vector<int>){0, 0, 1});
+#if DEBUG
+    _orientation.print();
+#endif
     
-    DEBUG_PRINTF("x: %.3f y: %.3f z: %.3f heading: %.3f deg\r\n", x, y, z, _compass.heading());
 #endif
     
     stripPatternLoop(itemHeader, intervalCount, timePassed, initialProcess);

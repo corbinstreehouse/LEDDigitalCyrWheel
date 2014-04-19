@@ -58,6 +58,13 @@ const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm 
  Teensy MISO (pin 12) -> SD MISO
  Teensy SCLK (pin 13) -> SD SCLK
  
+ Gyro/Accel: See http://www.pjrc.com/teensy/td_libs_Wire.html and http://www.pololu.com/product/1268 and https://github.com/pololu/minimu-9-ahrs-arduino
+ ----------------
+ +5v -> Vin (NOT VDD)
+ Gnd -> Gnd
+ Teensy 18 -> SDA
+ Teensy 19 -> SCL
+ Then, these two need a pull up. Add +5v to a 4.7k resistor to the break between Teensy 18/SDA. Same goes for 19/SCL.
  
  
 */

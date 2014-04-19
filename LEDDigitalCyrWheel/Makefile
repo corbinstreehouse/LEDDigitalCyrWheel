@@ -44,15 +44,8 @@
 
 APP_LIBS_LIST = SPI Wire Wire/utility
 
-# List users libraries here 
-
-
-#USER_LIBS_LIST = UTFT Canbus
-
-#USER_LIBS_LIST = OctoWS2811  SD SD/utility LSM303
-#USER_LIBS_LIST = Adafruit_NeoPixel SD SD/utility LSM303
-USER_LIBS_LIST = Adafruit_NeoPixel SDFat SDFat/utility SD  LSM303
-
+# List users libraries here -- edit this list for what i'm using in my user lisbs...
+USER_LIBS_LIST = Adafruit_NeoPixel SDFat SDFat/utility SD L3G LSM303
 
 MAKEFILE_PATH  = $(CURDIR)/Makefiles
 UTILITIES_PATH = $(CURDIR)/Utilities

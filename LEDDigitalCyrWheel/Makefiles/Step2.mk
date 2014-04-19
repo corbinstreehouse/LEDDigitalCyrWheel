@@ -619,6 +619,7 @@ clean:
 
 changed:
 ifeq ($(CHANGE_FLAG),1)
+	@echo "---- tag changed, so cleaning everything in: " $(OBJDIR)
 	-$(REMOVE) $(OBJDIR)/* # */
 endif
 
