@@ -268,8 +268,6 @@ static inline long convert_to_dec(float x)
 
 void CDOrientation::print()
 {
-    return; // corbin
-    
     Serial.print("!");
     
 #if PRINT_EULER == 1
@@ -300,7 +298,7 @@ void CDOrientation::print()
     Serial.print (",");
     Serial.print(c_magnetom_z);
 #endif
-    /*#if PRINT_DCM == 1
+    #if PRINT_DCM == 1
      Serial.print (",DCM:");
      Serial.print(convert_to_dec(DCM_Matrix[0][0]));
      Serial.print (",");
@@ -319,14 +317,79 @@ void CDOrientation::print()
      Serial.print(convert_to_dec(DCM_Matrix[2][1]));
      Serial.print (",");
      Serial.print(convert_to_dec(DCM_Matrix[2][2]));
-     #endif*/
+     #endif
     Serial.println();
     
 }
 
 bool CDOrientation::init() {
+    SENSOR_SIGN[0] = SENSOR_SIGN[1] = SENSOR_SIGN[2] = 1;
+    SENSOR_SIGN[3] = SENSOR_SIGN[4] = SENSOR_SIGN[5] = -1;
+    SENSOR_SIGN[6] = SENSOR_SIGN[7] = SENSOR_SIGN[8] = 1;
+    G_Dt=0.02;
+    timer = 0;   //general purpuse timer
+    timer_old = 0;
+    timer24=0; //Second timer used to print values
+    bzero(&AN_OFFSET, sizeof(AN_OFFSET));
+//    AN_OFFSET={0,0,0,0,0,0}; //Array that stores the Offset of the sensors
+    
+    bzero(&DCM_Matrix, sizeof(DCM_Matrix));
+//    DCM_Matrix[0] = { 1, 0, 0};
+    DCM_Matrix[0][0] = 1;
+//    DCM_Matrix[1] = { 0, 1, 0};
+    DCM_Matrix[1][1] = 1;
+//    DCM_Matrix[2] = { 0, 0, 1};
+    DCM_Matrix[2][2] = 1;
+    
+//    Update_Matrix = {{0,1,2},{3,4,5},{6,7,8}}; //Gyros here
+    int tmp = 0;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            Update_Matrix[i][j] = tmp;
+            tmp++;
+        }
+    }
+    
+
+    bzero(&Temporary_Matrix, sizeof(Temporary_Matrix));
+    bzero(&Accel_Vector, sizeof(Accel_Vector));
+    bzero(&Omega_Vector, sizeof(Omega_Vector));
+    bzero(&Omega_P, sizeof(Omega_P));
+    bzero(&Omega_I, sizeof(Omega_I));
+    bzero(&Omega, sizeof(Omega));
+    
+    roll, pitch, yaw = 0;
+    
+    bzero(&errorRollPitch, sizeof(errorRollPitch));
+    bzero(&errorYaw, sizeof(errorYaw));
+    
+    counter=0;
+    gyro_sat=0;
+    
     Wire.begin();
     bool result = initGyro() && initAccel();
+    if (result) {
+        // NOTE: not so sure why we do this... is it needed??
+        for(int i=0;i<32;i++)    // We take some readings...
+        {
+            readGyro();
+            readAccel();
+            for(int y=0; y<6; y++)   // Cumulate values
+                AN_OFFSET[y] += AN[y];
+            delay(20);
+        }
+        
+        for(int y=0; y<6; y++)
+            AN_OFFSET[y] = AN_OFFSET[y]/32;
+        
+        AN_OFFSET[5]-=GRAVITY*SENSOR_SIGN[5];
+        
+#if DEBUG
+        DEBUG_PRINTLN("Offset:");
+        for(int y=0; y<6; y++)
+            DEBUG_PRINTLN(AN_OFFSET[y]);
+#endif
+    }
     return result;
 }
 
@@ -358,7 +421,7 @@ bool CDOrientation::initAccel() {
                 _compass.writeReg(LSM303::CTRL_REG4_A, 0x30); // 8 g full scale: FS = 11
         }
     } else {
-        DEBUG_PRINTLN("FAILED TO INIT accel/compas");
+        DEBUG_PRINTLN("FAILED TO INIT accel/compass ");
     }
     return result;
 }
@@ -404,11 +467,12 @@ void CDOrientation::process() {
 //        DEBUG_PRINTLN("process");
         counter++;
         timer_old = timer;
-        timer=millis();
-        if (timer>timer_old)
-        G_Dt = (timer-timer_old)/1000.0;    // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
-        else
-        G_Dt = 0;
+        timer = millis();
+        if (timer>timer_old) {
+            G_Dt = (timer-timer_old)/1000.0;    // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
+        } else {
+            G_Dt = 0;
+        }
         
         // *** DCM algorithm
         // Data adquisition

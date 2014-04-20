@@ -36,9 +36,30 @@
 #define M_Z_MAX 593 //472
 
 
-//#define PRINT_DCM 0     //Will print the whole direction cosine matrix
+#define PRINT_DCM 0     //Will print the whole direction cosine matrix
 #define PRINT_ANALOGS 0 //Will print the analog raw data
 #define PRINT_EULER 1   //Will print the Euler angles Roll, Pitch and Yaw
+
+
+// Uncomment the below line to use this axis definition:
+// X axis pointing forward
+// Y axis pointing to the right
+// and Z axis pointing down.
+// Positive pitch : nose up
+// Positive roll : right wing down
+// Positive yaw : clockwise
+#define SENSOR_SIGN_INIT {1,1,1, -1,-1,-1, 1,1,1} //Correct directions x,y,z - gyro, accelerometer, magnetometer
+
+// Uncomment the below line to use this axis definition:
+// X axis pointing forward
+// Y axis pointing to the left
+// and Z axis pointing up.
+// Positive pitch : nose down
+// Positive roll : right wing down
+// Positive yaw : counterclockwise
+//SENSOR_SIGN_INIT {1,-1,-1, -1,1,1, 1,-1,-1}; //Correct directions x,y,z - gyro, accelerometer, magnetometer
+
+
 
 class CDOrientation {
 private:
@@ -46,22 +67,7 @@ private:
     LSM303 _compass;
     
     // TODO: cleanup variables
-    // Uncomment the below line to use this axis definition:
-    // X axis pointing forward
-    // Y axis pointing to the right
-    // and Z axis pointing down.
-    // Positive pitch : nose up
-    // Positive roll : right wing down
-    // Positive yaw : clockwise
-    int SENSOR_SIGN[9] = {1,1,1,-1,-1,-1,1,1,1}; //Correct directions x,y,z - gyro, accelerometer, magnetometer
-    // Uncomment the below line to use this axis definition:
-    // X axis pointing forward
-    // Y axis pointing to the left
-    // and Z axis pointing up.
-    // Positive pitch : nose down
-    // Positive roll : right wing down
-    // Positive yaw : counterclockwise
-    //int SENSOR_SIGN[9] = {1,-1,-1,-1,1,1,1,-1,-1}; //Correct directions x,y,z - gyro, accelerometer, magnetometer
+    int SENSOR_SIGN[9] = SENSOR_SIGN_INIT;
 
     float G_Dt=0.02;    // Integration time (DCM algorithm)  We will run the integration loop at 50Hz if possible
     long timer=0;   //general purpuse timer
