@@ -5,6 +5,7 @@
 //  Created by Corbin Dunn on 4/19/14 .
 //
 //
+// http://www.pololu.com/file/download/LSM303DLH-compass-app-note.pdf?file_id=0J434
 
 #include "CDOrientation.h"
 
@@ -38,6 +39,7 @@
 #define OUTPUTMODE 1
 
 //Computes the dot product of two vectors
+//http://www.mathsisfun.com/algebra/vectors-dot-product.html
 float Vector_Dot_Product(float vector1[3],float vector2[3])
 {
     float op=0;
@@ -92,7 +94,7 @@ void Matrix_Multiply(float a[3][3], float b[3][3],float mat[3][3])
             mat[x][y]=0;
             mat[x][y]=op[0]+op[1]+op[2];
             
-            float test=mat[x][y];
+            float test = mat[x][y];
         }
     }
 }
@@ -101,28 +103,42 @@ void Matrix_Multiply(float a[3][3], float b[3][3],float mat[3][3])
 /**************************************************/
 void CDOrientation::normalize()
 {
-    float error=0;
-    float temporary[3][3];
-    float renorm=0;
+//    float error=0;
+//    float temporary[3][3];
+//    float renorm=0;
+//    
+//    error= -Vector_Dot_Product(&DCM_Matrix[0][0],&DCM_Matrix[1][0])*.5; //eq.19
+//    
+//    Vector_Scale(&temporary[0][0], &DCM_Matrix[1][0], error); //eq.19
+//    Vector_Scale(&temporary[1][0], &DCM_Matrix[0][0], error); //eq.19
+//    
+//    Vector_Add(&temporary[0][0], &temporary[0][0], &DCM_Matrix[0][0]);//eq.19
+//    Vector_Add(&temporary[1][0], &temporary[1][0], &DCM_Matrix[1][0]);//eq.19
+//    
+//    Vector_Cross_Product(&temporary[2][0],&temporary[0][0],&temporary[1][0]); // c= a x b //eq.20
+//    
+//    renorm= .5 *(3 - Vector_Dot_Product(&temporary[0][0],&temporary[0][0])); //eq.21
+//    Vector_Scale(&DCM_Matrix[0][0], &temporary[0][0], renorm);
+//    
+//    renorm= .5 *(3 - Vector_Dot_Product(&temporary[1][0],&temporary[1][0])); //eq.21
+//    Vector_Scale(&DCM_Matrix[1][0], &temporary[1][0], renorm);
+//    
+//    renorm= .5 *(3 - Vector_Dot_Product(&temporary[2][0],&temporary[2][0])); //eq.21
+//    Vector_Scale(&DCM_Matrix[2][0], &temporary[2][0], renorm);
+//   
+
+
+    // corbin technique:
+    // http://www.ditutor.com/vec/normalizing_vector.html
+    // http://www.ditutor.com/vec/vector_magnitude.html
+    for (int i = 0; i < 3; i++) {
+        float dcmMagnitude = sqrt(sq(DCM_Matrix[i][0]) +  sq(DCM_Matrix[i][1]) + sq(DCM_Matrix[i][2]));
+        for (int j = 0; j < 3; j++) {
+            DCM_Matrix[i][j] = DCM_Matrix[i][j] / dcmMagnitude;
+        }
+    }
     
-    error= -Vector_Dot_Product(&DCM_Matrix[0][0],&DCM_Matrix[1][0])*.5; //eq.19
     
-    Vector_Scale(&temporary[0][0], &DCM_Matrix[1][0], error); //eq.19
-    Vector_Scale(&temporary[1][0], &DCM_Matrix[0][0], error); //eq.19
-    
-    Vector_Add(&temporary[0][0], &temporary[0][0], &DCM_Matrix[0][0]);//eq.19
-    Vector_Add(&temporary[1][0], &temporary[1][0], &DCM_Matrix[1][0]);//eq.19
-    
-    Vector_Cross_Product(&temporary[2][0],&temporary[0][0],&temporary[1][0]); // c= a x b //eq.20
-    
-    renorm= .5 *(3 - Vector_Dot_Product(&temporary[0][0],&temporary[0][0])); //eq.21
-    Vector_Scale(&DCM_Matrix[0][0], &temporary[0][0], renorm);
-    
-    renorm= .5 *(3 - Vector_Dot_Product(&temporary[1][0],&temporary[1][0])); //eq.21
-    Vector_Scale(&DCM_Matrix[1][0], &temporary[1][0], renorm);
-    
-    renorm= .5 *(3 - Vector_Dot_Product(&temporary[2][0],&temporary[2][0])); //eq.21
-    Vector_Scale(&DCM_Matrix[2][0], &temporary[2][0], renorm);
 }
 
 /**************************************************/
@@ -261,65 +277,9 @@ void CDOrientation::Compass_Heading()
     MAG_Heading = atan2(-MAG_Y,MAG_X);
 }
 
-static inline long convert_to_dec(float x)
+static inline float convert_to_dec(float x)
 {
-    return x*10000000;
-}
-
-void CDOrientation::print()
-{
-    Serial.print("!");
-    
-#if PRINT_EULER == 1
-    Serial.print("ANG:");
-    Serial.print(ToDeg(roll));
-    Serial.print(",");
-    Serial.print(ToDeg(pitch));
-    Serial.print(",");
-    Serial.print(ToDeg(yaw));
-#endif
-#if PRINT_ANALOGS==1
-    Serial.print(",AN:");
-    Serial.print(AN[0]);  //(int)read_adc(0)
-    Serial.print(",");
-    Serial.print(AN[1]);
-    Serial.print(",");
-    Serial.print(AN[2]);
-    Serial.print(",");
-    Serial.print(AN[3]);
-    Serial.print (",");
-    Serial.print(AN[4]);
-    Serial.print (",");
-    Serial.print(AN[5]);
-    Serial.print(",");
-    Serial.print(c_magnetom_x);
-    Serial.print (",");
-    Serial.print(c_magnetom_y);
-    Serial.print (",");
-    Serial.print(c_magnetom_z);
-#endif
-    #if PRINT_DCM == 1
-     Serial.print (",DCM:");
-     Serial.print(convert_to_dec(DCM_Matrix[0][0]));
-     Serial.print (",");
-     Serial.print(convert_to_dec(DCM_Matrix[0][1]));
-     Serial.print (",");
-     Serial.print(convert_to_dec(DCM_Matrix[0][2]));
-     Serial.print (",");
-     Serial.print(convert_to_dec(DCM_Matrix[1][0]));
-     Serial.print (",");
-     Serial.print(convert_to_dec(DCM_Matrix[1][1]));
-     Serial.print (",");
-     Serial.print(convert_to_dec(DCM_Matrix[1][2]));
-     Serial.print (",");
-     Serial.print(convert_to_dec(DCM_Matrix[2][0]));
-     Serial.print (",");
-     Serial.print(convert_to_dec(DCM_Matrix[2][1]));
-     Serial.print (",");
-     Serial.print(convert_to_dec(DCM_Matrix[2][2]));
-     #endif
-    Serial.println();
-    
+    return x; // *10000000;
 }
 
 bool CDOrientation::init() {
@@ -389,7 +349,15 @@ bool CDOrientation::init() {
         for(int y=0; y<6; y++)
             DEBUG_PRINTLN(AN_OFFSET[y]);
 #endif
+
+        // init the compass right now; we utilize it!
+        readCompass();    // Read I2C magnetometer
+        Compass_Heading(); // Calculate magnetic heading
+        
+        _internalProcess();
+#warning corbin i can probably remove the aboe line
     }
+    
     return result;
 }
 
@@ -461,36 +429,141 @@ void CDOrientation::readCompass()
     magnetom_z = SENSOR_SIGN[8] * _compass.m.z;
 }
 
+
+int _test = 0;
+
+void CDOrientation::_internalProcess() {
+#warning corbin
+    _test++;
+    if (_test > 4) {
+//        return;
+    }
+    
+//    DEBUG_PRINTLN("++++++++++++++++++++++++++++++");
+    counter++;
+    timer_old = timer;
+    timer = millis();
+    if (timer>timer_old) {
+        G_Dt = (timer-timer_old)/1000.0;    // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
+    } else {
+        G_Dt = 0;
+    }
+//    DEBUG_PRINTF("G_Dt: %.3f\r\n--", G_Dt);
+    
+    // *** DCM algorithm
+    // Data adquisition
+    readGyro();   // This read gyro data
+    readAccel();     // Read I2C accelerometer
+    
+    if (counter > 5)  // Read compass data at 10Hz... (5 loop runs)
+    {
+        counter = 0;
+        readCompass();    // Read I2C magnetometer
+        Compass_Heading(); // Calculate magnetic heading
+    }
+//    print();
+//
+//    DEBUG_PRINTF("START: DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
+//    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
+//    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
+//    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
+//    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n---\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
+//    print();
+
+    // Calculations...
+    Matrix_update();
+
+//    DEBUG_PRINTF("AFTER MATRIX_UPDATE DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
+//    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
+//    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
+//    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
+//    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n++++\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
+//    print();
+
+    normalize();
+
+//    DEBUG_PRINTF("AFTER NORM: DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
+//    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
+//    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
+//    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
+//    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n++++\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
+//    print();
+
+    driftCorrection();
+
+//    DEBUG_PRINTF("AFTER DRIFT: DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
+//    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
+//    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
+//    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
+//    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n++++\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
+//    print();
+
+    Euler_angles();
+    
+//    DEBUG_PRINTLN("--DONE");
+    print();
+}
+
 void CDOrientation::process() {
     if((millis()-timer)>=20)  // Main loop runs at 50Hz
     {
-//        DEBUG_PRINTLN("process");
-        counter++;
-        timer_old = timer;
-        timer = millis();
-        if (timer>timer_old) {
-            G_Dt = (timer-timer_old)/1000.0;    // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
-        } else {
-            G_Dt = 0;
-        }
-        
-        // *** DCM algorithm
-        // Data adquisition
-        readGyro();   // This read gyro data
-        readAccel();     // Read I2C accelerometer
-        
-        if (counter > 5)  // Read compass data at 10Hz... (5 loop runs)
-        {
-            counter=0;
-            readCompass();    // Read I2C magnetometer
-            Compass_Heading(); // Calculate magnetic heading
-        }
-        
-        // Calculations...
-        Matrix_update();
-        normalize();
-        driftCorrection();
-        Euler_angles();
+        _internalProcess();
     }
+}
+
+void CDOrientation::print()
+{
+    Serial.print("!");
+    
+#if PRINT_EULER == 1
+    Serial.print("ANG:");
+    Serial.print(ToDeg(roll));
+    Serial.print(",");
+    Serial.print(ToDeg(pitch));
+    Serial.print(",");
+    Serial.print(ToDeg(yaw));
+#endif
+#if PRINT_ANALOGS==1
+    Serial.print(",AN:");
+    Serial.print(AN[0]);  //(int)read_adc(0)
+    Serial.print(",");
+    Serial.print(AN[1]);
+    Serial.print(",");
+    Serial.print(AN[2]);
+    Serial.print(",");
+    Serial.print(AN[3]);
+    Serial.print (",");
+    Serial.print(AN[4]);
+    Serial.print (",");
+    Serial.print(AN[5]);
+    Serial.print(",");
+    Serial.print(c_magnetom_x);
+    Serial.print (",");
+    Serial.print(c_magnetom_y);
+    Serial.print (",");
+    Serial.print(c_magnetom_z);
+#endif
+#if PRINT_DCM == 1
+    Serial.print (",DCM:");
+    Serial.print(convert_to_dec(DCM_Matrix[0][0]));
+    Serial.print (",");
+    Serial.print(convert_to_dec(DCM_Matrix[0][1]));
+    Serial.print (",");
+    Serial.print(convert_to_dec(DCM_Matrix[0][2]));
+    Serial.print (",");
+    Serial.print(convert_to_dec(DCM_Matrix[1][0]));
+    Serial.print (",");
+    Serial.print(convert_to_dec(DCM_Matrix[1][1]));
+    Serial.print (",");
+    Serial.print(convert_to_dec(DCM_Matrix[1][2]));
+    Serial.print (",");
+    Serial.print(convert_to_dec(DCM_Matrix[2][0]));
+    Serial.print (",");
+    Serial.print(convert_to_dec(DCM_Matrix[2][1]));
+    Serial.print (",");
+    Serial.print(convert_to_dec(DCM_Matrix[2][2]));
+#endif
+    Serial.println();
     
 }
+

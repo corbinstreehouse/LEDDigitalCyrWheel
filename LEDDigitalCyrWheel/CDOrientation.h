@@ -141,6 +141,7 @@ private:
     void readGyro();
     void readAccel();
     void readCompass();
+    void _internalProcess();
 public:
     bool init(); // returns false on failure to init. turn on debug for more info
     void process();
