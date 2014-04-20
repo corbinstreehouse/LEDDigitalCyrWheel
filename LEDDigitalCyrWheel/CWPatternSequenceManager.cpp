@@ -310,10 +310,6 @@ bool CWPatternSequenceManager::init() {
 }
 
 bool CWPatternSequenceManager::initOrientation() {
-#if DEBUG
-    delay(1000); // give me a time to start the log
-#endif
-    
 #if ACCELEROMETER_SUPPORT
 
     DEBUG_PRINTLN("init orientation");
@@ -416,7 +412,6 @@ void CWPatternSequenceManager::process(bool initialProcess) {
             initialProcess = true;
         }
     }
-
     
 #if ACCELEROMETER_SUPPORT
     _orientation.process();

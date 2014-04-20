@@ -73,7 +73,6 @@ void buttonHeld(Button &b) {
 #endif
 
     g_sequenceManager.loadNextSequence();
-//    delay(1000); // hack test, corbin
 }
 
 #define DEBUG_VOLTAGE 0
@@ -146,7 +145,7 @@ void setup() {
         g_sequenceManager.loadDefaultSequence();
     }
     
- //   digitalWrite(g_LED, LOW);
+    //   digitalWrite(g_LED, LOW);
 }
 
 
