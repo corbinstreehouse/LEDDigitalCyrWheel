@@ -182,8 +182,9 @@ SYS_OBJS      = $(wildcard $(patsubst %,%/*.o,$(APP_LIBS))) # */
 SYS_OBJS     += $(wildcard $(patsubst %,%/*.o,$(BUILD_APP_LIBS))) # */
 SYS_OBJS     += $(wildcard $(patsubst %,%/*.o,$(USER_LIBS))) # */
 
-CPPFLAGS      = -$(MCU_FLAG_NAME)=$(MCU) -DF_CPU=$(F_CPU) -I$(CORE_LIB_PATH) \
-			$(SYS_INCLUDES) -g -Os -w -Wall -fno-exceptions -ffunction-sections -fdata-sections -felide-constructors -fno-rtti -nostdlib -std=gnu++0x $(EXTRA_CPPFLAGS)
+CPPFLAGS      = -g -Os -w -Wall -fno-exceptions -ffunction-sections -fdata-sections -felide-constructors -fno-rtti -nostdlib -std=gnu++0x \
+					-$(MCU_FLAG_NAME)=$(MCU) -DF_CPU=$(F_CPU) -I$(CORE_LIB_PATH) \
+					$(SYS_INCLUDES) $(EXTRA_CPPFLAGS)
 
 ifdef USB_FLAGS
     CPPFLAGS += $(USB_FLAGS)
