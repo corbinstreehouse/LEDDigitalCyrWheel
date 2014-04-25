@@ -131,13 +131,123 @@ void CDOrientation::normalize()
     // corbin technique:
     // http://www.ditutor.com/vec/normalizing_vector.html
     // http://www.ditutor.com/vec/vector_magnitude.html
-    for (int i = 0; i < 3; i++) {
-        float dcmMagnitude = sqrt(sq(DCM_Matrix[i][0]) +  sq(DCM_Matrix[i][1]) + sq(DCM_Matrix[i][2]));
-        for (int j = 0; j < 3; j++) {
-            DCM_Matrix[i][j] = DCM_Matrix[i][j] / dcmMagnitude;
-        }
-    }
+//    for (int i = 0; i < 3; i++) {
+//        float dcmMagnitude = sqrt(sq(DCM_Matrix[i][0]) +  sq(DCM_Matrix[i][1]) + sq(DCM_Matrix[i][2]));
+//        for (int j = 0; j < 3; j++) {
+//            DCM_Matrix[i][j] = DCM_Matrix[i][j] / dcmMagnitude;
+//        }
+//    }
+
+    float error=0;
+    float temporary[3][3];
+    float renorm=0;
+    bool problem=false;
     
+    error= -Vector_Dot_Product(&DCM_Matrix[0][0],&DCM_Matrix[1][0])*.5; //eq.19
+    
+    Vector_Scale(&temporary[0][0], &DCM_Matrix[1][0], error); //eq.19
+    Vector_Scale(&temporary[1][0], &DCM_Matrix[0][0], error); //eq.19
+    
+    Vector_Add(&temporary[0][0], &temporary[0][0], &DCM_Matrix[0][0]);//eq.19
+    Vector_Add(&temporary[1][0], &temporary[1][0], &DCM_Matrix[1][0]);//eq.19
+    
+    Vector_Cross_Product(&temporary[2][0],&temporary[0][0],&temporary[1][0]); // c= a x b //eq.20
+    
+    renorm= Vector_Dot_Product(&temporary[0][0],&temporary[0][0]);
+    if (renorm < 1.5625f && renorm > 0.64f) {
+        renorm= .5 * (3-renorm);                                                 //eq.21
+    } else if (renorm < 100.0f && renorm > 0.01f) {
+        renorm= 1. / sqrt(renorm);
+#if PERFORMANCE_REPORTING == 1
+        renorm_sqrt_count++;
+#endif
+        
+#define PRINT_DEBUG 0
+        
+#if PRINT_DEBUG != 0
+        Serial.print("???SQT:1,RNM:");
+        Serial.print (renorm);
+        Serial.print (",ERR:");
+        Serial.print (error);
+        Serial.println("***");
+#endif
+    } else {
+        problem = true;
+#if PERFORMANCE_REPORTING == 1
+        renorm_blowup_count++;
+#endif
+#if PRINT_DEBUG != 0
+        Serial.print("???PRB:1,RNM:");
+        Serial.print (renorm);
+        Serial.print (",ERR:");
+        Serial.print (error);
+        Serial.println("***");
+#endif
+    }
+    Vector_Scale(&DCM_Matrix[0][0], &temporary[0][0], renorm);
+    
+    renorm= Vector_Dot_Product(&temporary[1][0],&temporary[1][0]);
+    if (renorm < 1.5625f && renorm > 0.64f) {
+        renorm= .5 * (3-renorm);                                                 //eq.21
+    } else if (renorm < 100.0f && renorm > 0.01f) {
+        renorm= 1. / sqrt(renorm);
+#if PERFORMANCE_REPORTING == 1
+        renorm_sqrt_count++;
+#endif
+#if PRINT_DEBUG != 0
+        Serial.print("???SQT:2,RNM:");
+        Serial.print (renorm);
+        Serial.print (",ERR:");
+        Serial.print (error);
+        Serial.println("***");
+#endif
+    } else {
+        problem = true;
+#if PERFORMANCE_REPORTING == 1
+        renorm_blowup_count++;
+#endif
+#if PRINT_DEBUG != 0
+        Serial.print("???PRB:2,RNM:");
+        Serial.print (renorm);
+        Serial.print (",ERR:");
+        Serial.print (error);
+        Serial.println("***");
+#endif
+    }
+    Vector_Scale(&DCM_Matrix[1][0], &temporary[1][0], renorm);
+    
+    renorm= Vector_Dot_Product(&temporary[2][0],&temporary[2][0]);
+    if (renorm < 1.5625f && renorm > 0.64f) {
+        renorm= .5 * (3-renorm);                                                 //eq.21
+    } else if (renorm < 100.0f && renorm > 0.01f) {
+        renorm= 1. / sqrt(renorm);
+#if PERFORMANCE_REPORTING == 1
+        renorm_sqrt_count++;
+#endif
+#if PRINT_DEBUG != 0
+        Serial.print("???SQT:3,RNM:");
+        Serial.print (renorm);
+        Serial.print (",ERR:");
+        Serial.print (error);
+        Serial.println("***");
+#endif
+    } else {
+        problem = true;
+#if PERFORMANCE_REPORTING == 1
+        renorm_blowup_count++;
+#endif
+#if PRINT_DEBUG != 0
+        Serial.print("???PRB:3,RNM:");
+        Serial.print (renorm);
+        Serial.println("***");
+#endif
+    }
+    Vector_Scale(&DCM_Matrix[2][0], &temporary[2][0], renorm);
+    
+    if (problem) {                // Our solution is blowing up and we will force back to initial condition.  Hope we are not upside down!
+        _initDCMMatrix();
+        problem = false;
+    }
     
 }
 
@@ -243,9 +353,15 @@ void CDOrientation::Matrix_update()
 
 void CDOrientation::Euler_angles(void)
 {
-    pitch = -asin(DCM_Matrix[2][0]);
-    roll = atan2(DCM_Matrix[2][1],DCM_Matrix[2][2]);
+#if (OUTPUTMODE==2)         // Only accelerometer info (debugging purposes)
+    roll = 1.9*atan2(Accel_Vector[1],Accel_Vector[2]);    // atan2(acc_y,acc_z)
+    pitch = -1.9*asin((Accel_Vector[0])/(double)GRAVITY); // asin(acc_x)
+    yaw = 0;
+#else
+    pitch = -1.9*asin(DCM_Matrix[2][0]);
+    roll = 1.9*atan2(DCM_Matrix[2][1],DCM_Matrix[2][2]);
     yaw = atan2(DCM_Matrix[1][0],DCM_Matrix[0][0]);
+#endif
 }
 
 
@@ -282,6 +398,16 @@ static inline float convert_to_dec(float x)
     return x; // *10000000;
 }
 
+void CDOrientation::_initDCMMatrix() {
+    bzero(&DCM_Matrix, sizeof(DCM_Matrix));
+    //    DCM_Matrix[0] = { 1, 0, 0};
+    DCM_Matrix[0][0] = 1;
+    //    DCM_Matrix[1] = { 0, 1, 0};
+    DCM_Matrix[1][1] = 1;
+    //    DCM_Matrix[2] = { 0, 0, 1};
+    DCM_Matrix[2][2] = 1;
+}
+
 bool CDOrientation::init() {
     SENSOR_SIGN[0] = SENSOR_SIGN[1] = SENSOR_SIGN[2] = 1;
     SENSOR_SIGN[3] = SENSOR_SIGN[4] = SENSOR_SIGN[5] = -1;
@@ -293,13 +419,7 @@ bool CDOrientation::init() {
     bzero(&AN_OFFSET, sizeof(AN_OFFSET));
 //    AN_OFFSET={0,0,0,0,0,0}; //Array that stores the Offset of the sensors
     
-    bzero(&DCM_Matrix, sizeof(DCM_Matrix));
-//    DCM_Matrix[0] = { 1, 0, 0};
-    DCM_Matrix[0][0] = 1;
-//    DCM_Matrix[1] = { 0, 1, 0};
-    DCM_Matrix[1][1] = 1;
-//    DCM_Matrix[2] = { 0, 0, 1};
-    DCM_Matrix[2][2] = 1;
+    _initDCMMatrix();
     
 //    Update_Matrix = {{0,1,2},{3,4,5},{6,7,8}}; //Gyros here
     int tmp = 0;
@@ -382,8 +502,10 @@ bool CDOrientation::initAccel() {
             case LSM303::device_D:
                 _compass.writeReg(LSM303::CTRL2, 0x18); // 8 g full scale: AFS = 011
                 break;
-            case LSM303::device_DLHC:
+            case LSM303::device_DLHC: /// corbin: NOTE: what i'm using.
+                // 0x28 == 0010 1000
                 _compass.writeReg(LSM303::CTRL_REG4_A, 0x28); // 8 g full scale: FS = 10; high resolution output mode
+                
                 break;
             default: // DLM, DLH
                 _compass.writeReg(LSM303::CTRL_REG4_A, 0x30); // 8 g full scale: FS = 11
@@ -445,6 +567,9 @@ void CDOrientation::_internalProcess() {
     timer = millis();
     if (timer>timer_old) {
         G_Dt = (timer-timer_old)/1000.0;    // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
+        if (G_Dt > 1) {
+            G_Dt = 0;  //Something is wrong - keeps dt from blowing up, goes to zero to keep gyros from departing
+        }
     } else {
         G_Dt = 0;
     }

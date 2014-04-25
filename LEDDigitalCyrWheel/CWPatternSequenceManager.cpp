@@ -417,7 +417,7 @@ void CWPatternSequenceManager::process(bool initialProcess) {
     _orientation.process();
 
 #if DEBUG
-    _orientation.print();
+//    _orientation.print();
 #endif
     
 #endif

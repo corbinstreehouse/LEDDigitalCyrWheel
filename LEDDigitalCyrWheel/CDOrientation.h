@@ -28,13 +28,13 @@
 
 // LSM303 magnetometer calibration constants; use the Calibrate example from  the Pololu LSM303 library to find the right values for your board
 // TODO: make these per-class constants
-#define M_X_MIN -865 //-421
-#define M_Y_MIN -1293 //-639
-#define M_Z_MIN -370 //-238
-#define M_X_MAX 602 //424
-#define M_Y_MAX 409 // 295
-#define M_Z_MAX 593 //472
-
+// latest calibrate: min: {  -571,   -657,   -341}    max: {  +394,   +166,   +542}
+#define M_X_MIN -571 // -865 //-421
+#define M_Y_MIN -657 //-1293 //-639
+#define M_Z_MIN -341 //-370 //-238
+#define M_X_MAX 394 //602 //424
+#define M_Y_MAX 166//409 // 295
+#define M_Z_MAX 542 // 593 //472
 
 #define PRINT_DCM 0     //Will print the whole direction cosine matrix
 #define PRINT_ANALOGS 0 //Will print the analog raw data
@@ -142,6 +142,7 @@ private:
     void readAccel();
     void readCompass();
     void _internalProcess();
+    void _initDCMMatrix();
 public:
     bool init(); // returns false on failure to init. turn on debug for more info
     void process();
