@@ -10,6 +10,9 @@
 #include "CDOrientation.h"
 
 #include "CDLEDStripPatterns.h" // for debug-print
+#include "LEDDigitalCyrWheel.h" // For EEPROM_ADDRESS....i could make this settable.
+#include "EEPROM.h"
+#include "EEPROM2.h"
 
 // LSM303 accelerometer: 8 g sensitivity
 // 3.9 mg/digit; 1 g = 256
@@ -381,9 +384,9 @@ void CDOrientation::Compass_Heading()
     sin_pitch = sin(pitch);
     
     // adjust for LSM303 compass axis offsets/sensitivity differences by scaling to +/-0.5 range
-    c_magnetom_x = (float)(magnetom_x - SENSOR_SIGN[6]*M_X_MIN) / (M_X_MAX - M_X_MIN) - SENSOR_SIGN[6]*0.5;
-    c_magnetom_y = (float)(magnetom_y - SENSOR_SIGN[7]*M_Y_MIN) / (M_Y_MAX - M_Y_MIN) - SENSOR_SIGN[7]*0.5;
-    c_magnetom_z = (float)(magnetom_z - SENSOR_SIGN[8]*M_Z_MIN) / (M_Z_MAX - M_Z_MIN) - SENSOR_SIGN[8]*0.5;
+    c_magnetom_x = (float)(magnetom_x - SENSOR_SIGN[6]*_compass.m_min.x) / (_compass.m_max.x - _compass.m_min.x) - SENSOR_SIGN[6]*0.5;
+    c_magnetom_y = (float)(magnetom_y - SENSOR_SIGN[7]*_compass.m_min.y) / (_compass.m_max.y - _compass.m_min.y) - SENSOR_SIGN[7]*0.5;
+    c_magnetom_z = (float)(magnetom_z - SENSOR_SIGN[8]*_compass.m_min.z) / (_compass.m_max.z - _compass.m_min.z) - SENSOR_SIGN[8]*0.5;
     
     // Tilt compensated Magnetic filed X:
     MAG_X = c_magnetom_x*cos_pitch+c_magnetom_y*sin_roll*sin_pitch+c_magnetom_z*cos_roll*sin_pitch;
@@ -493,6 +496,10 @@ bool CDOrientation::initGyro() {
     
 }
 
+// reather abitrary...
+#define IS_VALID_MIN_COMPASS_VALUE(x) ((x > -4000 && x <= 0) ? true : false)
+#define IS_VALID_MAX_COMPASS_VALUE(x) ((x > 0 && x < 4000) ? true : false)
+
 bool CDOrientation::initAccel() {
     bool result = _compass.init();
     if (result) {
@@ -505,10 +512,38 @@ bool CDOrientation::initAccel() {
             case LSM303::device_DLHC: /// corbin: NOTE: what i'm using.
                 // 0x28 == 0010 1000
                 _compass.writeReg(LSM303::CTRL_REG4_A, 0x28); // 8 g full scale: FS = 10; high resolution output mode
+                _compass.writeMagReg(LSM303::CRB_REG_M, 0b10000000); // gain: ±4.0 Gauss (see datasheet)
                 
                 break;
             default: // DLM, DLH
                 _compass.writeReg(LSM303::CTRL_REG4_A, 0x30); // 8 g full scale: FS = 11
+        }
+        // values I read from Calibrate for the given gain setting; I could have a program/mode to read/write these
+//        EEPROM.write(MIN_MAX_IS_SAVED_EEPROM_ADDRESS, false); // corbin: flash the chip with this once
+        
+        bool isMinMaxSaved = EEPROM.read(MIN_MAX_IS_SAVED_EEPROM_ADDRESS) != 0;
+        if (isMinMaxSaved) {
+            DEBUG_PRINTLN("loading saved compass calibration values");
+            LSM303::vector<int16_t> savedMin;
+            LSM303::vector<int16_t> savedMax;
+            EEPROM_Read(MIN_EEPROM_ADDRESS, savedMin);
+            EEPROM_Read(MAX_EEPROM_ADDRESS, savedMax);
+            // Validate them before using them
+            if (IS_VALID_MIN_COMPASS_VALUE(savedMin.x) && IS_VALID_MIN_COMPASS_VALUE(savedMin.y) && IS_VALID_MIN_COMPASS_VALUE(savedMin.z)) {
+                _compass.m_min = savedMin;
+                DEBUG_PRINTF("SAVED calibration MIN: %d, %d, %d\r\n", savedMin.x, savedMin.y, savedMin.z);
+            } else {
+                DEBUG_PRINTLN("---------------- INVALID SAVED MIN VALUE IN EEPROM");
+                // hardcode!!
+                _compass.m_min = (LSM303::vector<int16_t>){ -64, -114, 0 };
+            }
+            if (IS_VALID_MAX_COMPASS_VALUE(savedMax.x) && IS_VALID_MAX_COMPASS_VALUE(savedMax.y) && IS_VALID_MAX_COMPASS_VALUE(savedMax.z)) {
+                _compass.m_max = savedMax;
+                DEBUG_PRINTF("SAVED calibration MAX: %d, %d, %d\r\n", savedMax.x, savedMax.y, savedMax.z);
+            } else {
+                DEBUG_PRINTLN("---------------- INVALID SAVED max VALUE IN EEPROM");
+                _compass.m_max = (LSM303::vector<int16_t>){ 0, 0, 102 };
+            }
         }
     } else {
         DEBUG_PRINTLN("FAILED TO INIT accel/compass ");
@@ -629,11 +664,60 @@ void CDOrientation::_internalProcess() {
     print();
 }
 
+
+
 void CDOrientation::process() {
-    if((millis()-timer)>=20)  // Main loop runs at 50Hz
-    {
+    if (_calibrating) {
+        _calibrate();
+    } else if ((millis()-timer)>=20) {   // Main loop runs at 50Hz
         _internalProcess();
     }
+}
+
+void CDOrientation::beginCalibration() {
+    _calibrationMin = {INT16_MAX, INT16_MAX, INT16_MAX};
+    _calibrationMax = {INT16_MIN, INT16_MIN, INT16_MIN};
+    _compass.m_min = _calibrationMin;
+    _compass.m_max = _calibrationMax;
+    _calibrating = true;
+}
+
+void CDOrientation::_calibrate() {
+    _compass.read();
+    
+    if (_compass.m.x == -4096) {
+        DEBUG_PRINTLN("error X");
+    } else {
+        _calibrationMin.x = min(_calibrationMin.x, _compass.m.x);
+        _calibrationMax.x = max(_calibrationMax.x, _compass.m.x);
+    }
+    
+    if (_compass.m.y == -4096) {
+        DEBUG_PRINTLN("error Y");
+    } else {
+        _calibrationMin.y = min(_calibrationMin.y, _compass.m.y);
+        _calibrationMax.y = max(_calibrationMax.y, _compass.m.y);
+    }
+    
+    if (_compass.m.z == -4096) {
+        DEBUG_PRINTLN("error Z");
+    } else {
+        _calibrationMin.z = min(_calibrationMin.z, _compass.m.z);
+        _calibrationMax.z = max(_calibrationMax.z, _compass.m.z);
+    }
+
+    DEBUG_PRINTF("  compass.m_min.x = %+6d; compass.m_min.y = %+6d; compass.m_min.z = %+6d; \r\n  compass.m_max.x = %+6d; compass.m_max.y = %+6d; compass.m_max.z = %+6d;\r\n\r\n", _calibrationMin.x, _calibrationMin.y, _calibrationMin.z, _calibrationMax.x, _calibrationMax.y, _calibrationMax.z);
+}
+
+void CDOrientation::endCalibration() {
+    _calibrating = false;
+    // TODO: maybe average it with the last calibration I did???
+    
+    _compass.m_min = _calibrationMin;
+    _compass.m_max = _calibrationMax;
+    EEPROM.write(MIN_MAX_IS_SAVED_EEPROM_ADDRESS, true);
+    EEPROM_Write(MIN_EEPROM_ADDRESS, _calibrationMin);
+    EEPROM_Write(MAX_EEPROM_ADDRESS, _calibrationMax);
 }
 
 void CDOrientation::print()
@@ -647,6 +731,7 @@ void CDOrientation::print()
     Serial.print(ToDeg(pitch));
     Serial.print(",");
     Serial.print(ToDeg(yaw));
+//    Serial.print(_compass.heading());
 #endif
 #if PRINT_ANALOGS==1
     Serial.print(",AN:");

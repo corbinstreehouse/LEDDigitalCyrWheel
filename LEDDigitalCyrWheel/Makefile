@@ -42,7 +42,7 @@
 #APP_LIBS_LIST = Wire Wire/utility EEPROM  SoftwareSerial
 #APP_LIBS_LIST = Wire Wire/utility
 
-APP_LIBS_LIST = SPI Wire Wire/utility
+APP_LIBS_LIST = SPI Wire Wire/utility EEPROM
 
 # List users libraries here -- edit this list for what i'm using in my user lisbs...
 USER_LIBS_LIST = Adafruit_NeoPixel SDFat SDFat/utility SD L3G LSM303

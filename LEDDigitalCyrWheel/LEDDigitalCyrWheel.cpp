@@ -34,7 +34,6 @@
 static Button g_button = Button(BUTTON_PIN);
 static CWPatternSequenceManager g_sequenceManager;
 
-
 bool mainProcess() {
     g_button.process();
     if (g_button.isPressed()) {
@@ -64,14 +63,13 @@ bool busyDelay(uint32_t ms)
 }
 
 void buttonClicked(Button &b){
-    g_sequenceManager.nextPatternItem();
+    g_sequenceManager.buttonClick();
 }
 
 void buttonHeld(Button &b) {
 #if DEBUG
     Serial.println("XX button HELD");
 #endif
-
     g_sequenceManager.loadNextSequence();
 }
 
@@ -131,7 +129,8 @@ void setup() {
     g_button.clickHandler(buttonClicked);
     g_button.holdHandler(buttonHeld);
 
-    bool initPassed = g_sequenceManager.init();
+    g_button.process();
+    bool initPassed = g_sequenceManager.init(g_button.isPressed());
     if (initPassed) {
         // See if we read more than the default sequence
         if (g_sequenceManager.getNumberOfSequenceNames() > 1) {
@@ -159,9 +158,7 @@ bool checkVoltage() {
         lastReadVoltageTime = millis();
         float voltage = readBatteryVoltage();
         if (voltage < LOW_VOLTAGE_VALUE) {
-#if DEBUG
-            Serial.printf("---------------------- LOW BATTERY VOLTAGE: %f", voltage);
-#endif
+            DEBUG_PRINTF("---------------------- LOW BATTERY VOLTAGE: %f", voltage);
             // half the max brightness...
             stripSetLowBatteryBrightness();
             
@@ -184,7 +181,6 @@ void loop() {
         digitalWrite(g_LED, LOW);
     }
 #endif
-    
     if (checkVoltage()) {
         g_sequenceManager.process(false);
     }

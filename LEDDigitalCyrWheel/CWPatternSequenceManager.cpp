@@ -244,7 +244,7 @@ static inline bool isPatternFile(char *filename) {
     return false;
 }
 
-bool CWPatternSequenceManager::init() {
+bool CWPatternSequenceManager::init(bool buttonIsDown) {
     DEBUG_PRINTLN("::init");
 
     initOrientation();
@@ -305,6 +305,13 @@ bool CWPatternSequenceManager::init() {
     }
     _currentSequenceIndex = 0;
     loadCurrentSequence();
+    
+    if (buttonIsDown) {
+        // Go into calibration mode for the accell
+#if ACCELEROMETER_SUPPORT
+        _orientation.beginCalibration();
+#endif
+    }
     
     return result;
 }
@@ -379,7 +386,46 @@ static inline bool PatternIsContinuous(CDPatternType p) {
     }
 }
 
+void CWPatternSequenceManager::buttonClick() {
+#if ACCELEROMETER_SUPPORT
+    if (_orientation.isCalibrating()) {
+        _orientation.endCalibration();
+    } else
+#endif
+    {
+        nextPatternItem();
+    }
+}
+
+bool CWPatternSequenceManager::orientationProcess(uint32_t now, uint32_t timePassed) {
+#if ACCELEROMETER_SUPPORT
+    _orientation.process();
+    if (_orientation.isCalibrating()) {
+        // Flash the color  blue when in calibration mode..
+        // How many half seconds have passed?
+        int halfSecondsPassed = timePassed / 500;
+        if (halfSecondsPassed % 2 == 0) {
+            setEntireStripAsColor(0, 0, 255);
+        } else {
+            // off
+            setEntireStripAsColor(0, 0, 0);
+        }
+        return true; // don't do anything else
+    } else {
+        return false;
+    }
+#endif
+}
+
 void CWPatternSequenceManager::process(bool initialProcess) {
+    uint32_t now = millis();
+    // The inital tick always starts with 0
+    uint32_t timePassed = initialProcess ? 0 : now - _patternStartTime;
+
+    if (orientationProcess(now, timePassed)) {
+        return; // don't do anything else
+    }
+
     if (_numberOfPatternItems == 0) {
         DEBUG_PRINTLN("No pattern items to show!");
         flashThreeTimes(255, 255, 0, 150);
@@ -387,10 +433,6 @@ void CWPatternSequenceManager::process(bool initialProcess) {
         return;
     }
     CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
-    
-    uint32_t now = millis();
-    // The inital tick always starts with 0
-    uint32_t timePassed = initialProcess ? 0 : now - _patternStartTime;
     
     // How many intervals have passed?
     int intervalCount = timePassed / itemHeader->duration;
@@ -412,15 +454,6 @@ void CWPatternSequenceManager::process(bool initialProcess) {
             initialProcess = true;
         }
     }
-    
-#if ACCELEROMETER_SUPPORT
-    _orientation.process();
-
-#if DEBUG
-//    _orientation.print();
-#endif
-    
-#endif
     
     stripPatternLoop(itemHeader, intervalCount, timePassed, initialProcess);
 }

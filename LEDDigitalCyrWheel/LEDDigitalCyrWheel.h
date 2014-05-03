@@ -22,6 +22,9 @@ const int g_LED = LED_BUILTIN;
 const int g_batteryVoltagePin = A3; // pin 17
 const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm not sure i need this)
 
+#define MIN_MAX_IS_SAVED_EEPROM_ADDRESS 22 // rather abitrary
+#define MIN_EEPROM_ADDRESS 24 // rather abitrary
+#define MAX_EEPROM_ADDRESS (24+2*3)    // min value has a vector of 3 16-bit values; 16-bits is 2 bytes. 3*2 = 6 bytes for the prior read
 
 /* Teensy 3.1 wiring diagram 
 

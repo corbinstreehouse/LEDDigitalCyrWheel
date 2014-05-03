@@ -27,15 +27,6 @@
 
 
 // LSM303 magnetometer calibration constants; use the Calibrate example from  the Pololu LSM303 library to find the right values for your board
-// TODO: make these per-class constants
-// latest calibrate: min: {  -571,   -657,   -341}    max: {  +394,   +166,   +542}
-#define M_X_MIN -571 // -865 //-421
-#define M_Y_MIN -657 //-1293 //-639
-#define M_Z_MIN -341 //-370 //-238
-#define M_X_MAX 394 //602 //424
-#define M_Y_MAX 166//409 // 295
-#define M_Z_MAX 542 // 593 //472
-
 #define PRINT_DCM 0     //Will print the whole direction cosine matrix
 #define PRINT_ANALOGS 0 //Will print the analog raw data
 #define PRINT_EULER 1   //Will print the Euler angles Roll, Pitch and Yaw
@@ -127,13 +118,17 @@ private:
     
     unsigned int counter=0;
     byte gyro_sat=0;
+
+    bool _calibrating;
+    LSM303::vector<int16_t> _calibrationMin;
+    LSM303::vector<int16_t> _calibrationMax;
+    void _calibrate();
     
     void normalize();
     void driftCorrection();
     void Matrix_update();
     void Euler_angles();
     void Compass_Heading();
-
     
     bool initGyro();
     bool initAccel();
@@ -147,6 +142,11 @@ public:
     bool init(); // returns false on failure to init. turn on debug for more info
     void process();
     void print();
+    
+    bool isCalibrating() { return _calibrating; }
+    void beginCalibration();
+    void endCalibration();
+    
 };
 
 

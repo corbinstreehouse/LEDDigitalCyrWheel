@@ -300,6 +300,7 @@
 		9D3A0DC2188CB0AE001AD553 /* OctoWS2811.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OctoWS2811.h; sourceTree = "<group>"; };
 		9D472E1B1902F1590076281A /* CDOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDOrientation.cpp; sourceTree = "<group>"; };
 		9D472E1C1902F1590076281A /* CDOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDOrientation.h; sourceTree = "<group>"; };
+		9D472E1E19140BC10076281A /* EEPROM2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EEPROM2.h; sourceTree = "<group>"; };
 		9D5200C61650691000F3BF4E /* DefaultFonts.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = DefaultFonts.c; path = ../../../Documents/Arduino/Libraries/UTFT/DefaultFonts.c; sourceTree = "<group>"; };
 		9D5200C71650691000F3BF4E /* HW_AVR_defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HW_AVR_defines.h; path = ../../../Documents/Arduino/Libraries/UTFT/HW_AVR_defines.h; sourceTree = "<group>"; };
 		9D5200C81650691000F3BF4E /* HW_AVR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = HW_AVR.h; path = ../../../Documents/Arduino/Libraries/UTFT/HW_AVR.h; sourceTree = "<group>"; };
@@ -2012,6 +2013,7 @@
 				9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */,
 				9DBE92CB18AA836E00154550 /* CDLEDStripPatterns.h */,
 				9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */,
+				9D472E1E19140BC10076281A /* EEPROM2.h */,
 				9D472E1C1902F1590076281A /* CDOrientation.h */,
 				9D472E1B1902F1590076281A /* CDOrientation.cpp */,
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,

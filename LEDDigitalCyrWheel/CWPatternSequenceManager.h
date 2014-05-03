@@ -54,8 +54,9 @@ public:
 #if PATTERN_EDITOR
     ~CWPatternSequenceManager();
 #endif
-    bool init();
+    bool init(bool buttonIsDown);
     
+    void buttonClick();
     void loadNextSequence(); // returns true if we could advance (or loop to the start)
     void loadDefaultSequence();
     
@@ -64,6 +65,8 @@ public:
     void nextPatternItem();
     void firstPatternItem();
     void process(bool initialProcess); // Main loop work
+    bool orientationProcess(uint32_t now, uint32_t timePassed);
+    
     
     int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
 #if PATTERN_EDITOR

@@ -1902,11 +1902,15 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
     g_strip.show();
 }
 
-void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t d) {
+void setEntireStripAsColor(uint8_t r, uint8_t g, uint8_t b) {
     for(int i = 0; i < g_strip.numPixels(); i++) {
         g_strip.setPixelColor(i, r, g, b);
     }
     g_strip.show();
+}
+
+void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t d) {
+    setEntireStripAsColor(r, g, b);
     busyDelay(d);
 }
 
@@ -1923,11 +1927,7 @@ void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
 
 #if DEBUG
 void dowhite() {
-    for (int i = 0; i < g_strip.numPixels(); i++) {
-        g_strip.setPixelColor(i, g_strip.Color(255, 255, 255));
-    }
-    g_strip.show();
-    delay(10);
+    flashColor(255, 255, 255, 10);
 }
 #endif
 
