@@ -11,6 +11,7 @@
 
 #include <stdint.h>
 #include "CDPatternData.h"
+#include "CDOrientation.h"
 
 #define DEBUG 0
 #define IGNORE_VOLTAGE 1 //for hardware testing w/out a battery
@@ -42,10 +43,46 @@ extern STRIP_CLASS g_strip;
 extern void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassed, bool isFirstPass); // Call this on each loop to process things
 
 void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay);
+void flashThreeTimesNoProcess(uint8_t r, uint8_t g, uint8_t b, uint32_t delay);
 void flashNTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t n, uint32_t delay);
 void setEntireStripAsColor(uint8_t r, uint8_t g, uint8_t b);
-extern void stripInit();
-extern void stripUpdateBrightness();
-extern void stripSetLowBatteryBrightness();
+extern void stripInit(CDOrientation *orientation);
 
 #endif
+
+
+class CDLEDPatternManager {
+private:
+    STRIP_CLASS *m_strip;
+    CDPatternItemHeader *m_itemHeader;
+    uint32_t m_intervalCount;
+    uint32_t m_timePassedInMS; // In MS
+    bool m_isFirstPass;
+    
+    // velocity based state
+    double m_maxVelocity;
+    uint8_t m_targetBrightness;
+    uint8_t m_startBrightness;
+    uint32_t m_brightnessStartTime;
+
+    uint8_t m_savedBrightness;
+    
+    CDOrientation *m_orientation;
+    
+    void resetState();
+    
+    
+    void updateBrightnessBasedOnVelocity();
+    void updateBrightness();
+
+    
+    // Pattern implementations
+public:
+    CDLEDPatternManager() : m_maxVelocity(0), m_brightnessStartTime(0) {  }
+    void init(STRIP_CLASS *strip, CDOrientation *orientation);
+    
+    void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass);
+    void setSavedBrightness(uint8_t b) { m_savedBrightness = b; };
+};
+
+extern CDLEDPatternManager g_patternManager;

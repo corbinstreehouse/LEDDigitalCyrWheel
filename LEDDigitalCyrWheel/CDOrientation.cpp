@@ -9,26 +9,111 @@
 
 #include "CDOrientation.h"
 
+#if PATTERN_EDITOR
+
+CDOrientation::CDOrientation() {
+}
+
+bool CDOrientation::init() {
+    return true;
+}
+
+void CDOrientation::process() {
+}
+
+void CDOrientation::beginCalibration() {
+}
+
+void CDOrientation::endCalibration() {
+}
+
+double CDOrientation::getAccelX() {
+    return 0;
+}
+
+double CDOrientation::getAccelY() {
+    return 0;
+}
+
+double CDOrientation::getAccelZ() {
+    return 0;
+}
+
+double CDOrientation::getRotationalVelocity() {
+    return 0;
+}
+
+void CDOrientation::beginSavingData() {
+}
+
+void CDOrientation::endSavingData() {
+}
+
+
+
+#else
+
 #include "CDLEDStripPatterns.h" // for debug-print
 #include "LEDDigitalCyrWheel.h" // For EEPROM_ADDRESS....i could make this settable.
 #include "EEPROM.h"
 #include "EEPROM2.h"
 
+
+// LSM303 magnetometer calibration constants; use the Calibrate example from  the Pololu LSM303 library to find the right values for your board
+#define PRINT_DCM 0     //Will print the whole direction cosine matrix
+#define PRINT_ANALOGS 0 //Will print the analog raw data
+#define PRINT_EULER 1   //Will print the Euler angles Roll, Pitch and Yaw
+
+// Uncomment the below line to use this axis definition:
+// X axis pointing forward
+// Y axis pointing to the right
+// and Z axis pointing down.
+// Positive pitch : nose up
+// Positive roll : right wing down
+// Positive yaw : clockwise
+#define SENSOR_SIGN_INIT {1,1,1, -1,-1,-1, 1,1,1} //Correct directions x,y,z - gyro, accelerometer, magnetometer
+
+// Uncomment the below line to use this axis definition:
+// X axis pointing forward
+// Y axis pointing to the left
+// and Z axis pointing up.
+// Positive pitch : nose down
+// Positive roll : right wing down
+// Positive yaw : counterclockwise
+//SENSOR_SIGN_INIT {1,-1,-1, -1,1,1, 1,-1,-1}; //Correct directions x,y,z - gyro, accelerometer, magnetometer
+
+
+
+
+
+
+
+
+
+
+
 // LSM303 accelerometer: 8 g sensitivity
 // 3.9 mg/digit; 1 g = 256
-#define GRAVITY 256  //this equivalent to 1G in the raw data coming from the accelerometer
+#define MG_PER_LSB 4 // based on +/-8g for the DHLC, according to the datasheet LA_So
+#define GRAVITY (1000/MG_PER_LSB)  //this equivalent to 1G in the raw data coming from the accelerometer /// was 256..which isn't right for my chip!
 
 #define ToRad(x) ((x)*0.01745329252)  // *pi/180
 #define ToDeg(x) ((x)*57.2957795131)  // *180/pi
 
 // L3G4200D gyro: 2000 dps full scale
 // 70 mdps/digit; 1 dps = 0.07
+// corbin: I'm using a L3GD20 gyro http://www.pololu.com/product/2124. Datasheet: http://www.pololu.com/file/download/L3GD20.pdf?file_id=0J563
+// 200dps full scale
+
 #define Gyro_Gain_X 0.07 //X axis Gyro gain
 #define Gyro_Gain_Y 0.07 //Y axis Gyro gain
 #define Gyro_Gain_Z 0.07 //Z axis Gyro gain
 #define Gyro_Scaled_X(x) ((x)*ToRad(Gyro_Gain_X)) //Return the scaled ADC raw data of the gyro in radians for second
 #define Gyro_Scaled_Y(x) ((x)*ToRad(Gyro_Gain_Y)) //Return the scaled ADC raw data of the gyro in radians for second
 #define Gyro_Scaled_Z(x) ((x)*ToRad(Gyro_Gain_Z)) //Return the scaled ADC raw data of the gyro in radians for second
+
+#define GYRO_RAW_VALUE_TO_DEG_PER_SEC(x) (x * Gyro_Gain_X) //
+
 
 // I have no idea why or what these come from..
 #define Kp_ROLLPITCH 0.02
@@ -102,6 +187,10 @@ void Matrix_Multiply(float a[3][3], float b[3][3],float mat[3][3])
     }
 }
 
+
+CDOrientation::CDOrientation() {
+    _shouldSaveDataToFile = false;
+}
 
 /**************************************************/
 void CDOrientation::normalize()
@@ -452,20 +541,34 @@ bool CDOrientation::init() {
     Wire.begin();
     bool result = initGyro() && initAccel();
     if (result) {
-        // NOTE: not so sure why we do this... is it needed??
-        for(int i=0;i<32;i++)    // We take some readings...
-        {
-            readGyro();
-            readAccel();
-            for(int y=0; y<6; y++)   // Cumulate values
-                AN_OFFSET[y] += AN[y];
-            delay(20);
-        }
+        // Don't do this calibration! we want the same position always....
+//        
+//        // NOTE: not so sure why we do this... is it needed?? (I think it figured out the current orientation as default
+//        for(int i=0;i<32;i++)    // We take some readings...
+//        {
+//            readGyro();
+//            readAccel();
+//            for(int y=0; y<6; y++)   // Cumulate values
+//                AN_OFFSET[y] += AN[y];
+//            delay(20);
+//        }
+//        
+//        for(int y=0; y<6; y++) {
+//            AN_OFFSET[y] = AN_OFFSET[y]/32;
+//        }
+//        
+//
+//        // corbin, evaluate...
+//        AN_OFFSET[5] -= GRAVITY*SENSOR_SIGN[5];
+//        
+//        
+//        
+//        
+//        
         
-        for(int y=0; y<6; y++)
-            AN_OFFSET[y] = AN_OFFSET[y]/32;
         
-        AN_OFFSET[5]-=GRAVITY*SENSOR_SIGN[5];
+        
+        
         
 #if DEBUG
         DEBUG_PRINTLN("Offset:");
@@ -478,20 +581,25 @@ bool CDOrientation::init() {
         Compass_Heading(); // Calculate magnetic heading
         
         _internalProcess();
-#warning corbin i can probably remove the aboe line
+#warning corbin i can probably remove the above line
     }
     
     return result;
 }
 
 bool CDOrientation::initGyro() {
-    bool result = _gyro.init();
-    if (result) {
-        _gyro.writeReg(L3G_CTRL_REG4, 0x20); // 2000 dps full scale
-        _gyro.writeReg(L3G_CTRL_REG1, 0x0F); // normal power mode, all axes enabled, 100 Hz
-    } else {
-        DEBUG_PRINTLN("FAILED TO init gyro");
+    bool result = false;
+    for (int i = 0; i < 10; i++) {
+        result = _gyro.init();
+        if (result) {
+            _gyro.writeReg(L3G_CTRL_REG4, 0x20); // 2000 dps full scale. See http://www.pololu.com/file/download/L3GD20.pdf?file_id=0J563
+            _gyro.writeReg(L3G_CTRL_REG1, 0x0F); // normal power mode, all axes enabled, 100 Hz
+            break;
+        } else {
+        }
     }
+    if (!result) DEBUG_PRINTLN("FAILED TO init gyro");
+    
     return result;
     
 }
@@ -501,7 +609,13 @@ bool CDOrientation::initGyro() {
 #define IS_VALID_MAX_COMPASS_VALUE(x) ((x > 0 && x < 4000) ? true : false)
 
 bool CDOrientation::initAccel() {
-    bool result = _compass.init();
+    bool result = false;
+    for (int i = 0; i < 10; i++) {
+        result = _compass.init();
+        if (result) {
+            break;
+        }
+    }
     if (result) {
         _compass.enableDefault();
         switch (_compass.getDeviceType())
@@ -511,7 +625,9 @@ bool CDOrientation::initAccel() {
                 break;
             case LSM303::device_DLHC: /// corbin: NOTE: what i'm using.
                 // 0x28 == 0010 1000
-                _compass.writeReg(LSM303::CTRL_REG4_A, 0x28); // 8 g full scale: FS = 10; high resolution output mode
+                _compass.writeReg(LSM303::CTRL_REG4_A, 0x28); // 8 g full scale: FS = 10; high resolution output mode. Setting the LA_FS from the datasheet
+                // That causes the LA_So to be: 4 mg/LSB
+                
                 _compass.writeMagReg(LSM303::CRB_REG_M, 0b10000000); // gain: ±4.0 Gauss (see datasheet)
                 
                 break;
@@ -544,6 +660,8 @@ bool CDOrientation::initAccel() {
                 DEBUG_PRINTLN("---------------- INVALID SAVED max VALUE IN EEPROM");
                 _compass.m_max = (LSM303::vector<int16_t>){ 0, 0, 102 };
             }
+        } else {
+            // Default??
         }
     } else {
         DEBUG_PRINTLN("FAILED TO INIT accel/compass ");
@@ -568,9 +686,15 @@ void CDOrientation::readAccel()
 {
     _compass.readAcc();
     
-    AN[3] = _compass.a.x >> 4; // shift left 4 bits to use 12-bit representation (1 g = 256)
+    
+    // corbin, the DLHC has 12-bit rep, and we have to drop the last 4 bits.
+    
+    AN[3] = _compass.a.x >> 4; // shift right 4 bits to use 12-bit representation (1 g = 256)
     AN[4] = _compass.a.y >> 4;
     AN[5] = _compass.a.z >> 4;
+    
+    
+    
     accel_x = SENSOR_SIGN[3] * (AN[3] - AN_OFFSET[3]);
     accel_y = SENSOR_SIGN[4] * (AN[4] - AN_OFFSET[4]);
     accel_z = SENSOR_SIGN[5] * (AN[5] - AN_OFFSET[5]);
@@ -587,16 +711,8 @@ void CDOrientation::readCompass()
 }
 
 
-int _test = 0;
 
 void CDOrientation::_internalProcess() {
-#warning corbin
-    _test++;
-    if (_test > 4) {
-//        return;
-    }
-    
-//    DEBUG_PRINTLN("++++++++++++++++++++++++++++++");
     counter++;
     timer_old = timer;
     timer = millis();
@@ -661,9 +777,14 @@ void CDOrientation::_internalProcess() {
     Euler_angles();
     
 //    DEBUG_PRINTLN("--DONE");
-    print();
+#if DEBUG
+//    print();
+#endif
+    
+    if (_shouldSaveDataToFile) {
+        writeStatusToFile();
+    }
 }
-
 
 
 void CDOrientation::process() {
@@ -720,17 +841,90 @@ void CDOrientation::endCalibration() {
     EEPROM_Write(MAX_EEPROM_ADDRESS, _calibrationMax);
 }
 
+double rawAccelToG(int16_t a) {
+    // 12-bit preciscion; last 4 bits are 0.
+    a = a >> 4;
+    // According to the datasheet, the DHLC has a measurement of 4 mg/LSB. This means I take the raw value, multiply it by 4 and that gives me the mg's. Divide by 1000 and that is the g value. If I change the range i have to change this value!!
+    double result = (a*MG_PER_LSB) / 1000.0;
+    return result;
+}
+
+double CDOrientation::getAccelX() {
+    return rawAccelToG(_compass.a.x);
+}
+
+double CDOrientation::getAccelY() {
+    return rawAccelToG(_compass.a.y);
+}
+
+double CDOrientation::getAccelZ() {
+    return rawAccelToG(_compass.a.z);
+}
+
+double CDOrientation::getRotationalVelocity() {
+    // Get the length of the gyro vector
+    double temp = sqrt(sq(_gyro.g.x) + sq(_gyro.g.y) + sq(_gyro.g.z));
+    return GYRO_RAW_VALUE_TO_DEG_PER_SEC(temp);
+}
+
+void CDOrientation::beginSavingData() {
+    _shouldSaveDataToFile = true;
+    // figure out a new filename to try
+    int v = 0;
+    sprintf(_filenameBuffer, "/Gyro%d.txt", v);
+    while (SD.exists(_filenameBuffer)) {
+        v++;
+        sprintf(_filenameBuffer, "/Gyro%d.txt", v);
+        if (v > 1024) {
+            // something's wrong..
+            break;
+        }
+    }
+}
+
+void CDOrientation::endSavingData() {
+    _shouldSaveDataToFile = false;
+}
+
+void CDOrientation::writeStatusToFile() {
+    
+    File file = SD.open(_filenameBuffer, FILE_WRITE/*|O_APPEND*/); // O_APPEND is implied..
+    file.printf("GyroDPS: %.0f\t%.0f\t%.0f\t\tRotationalVelocityDPS: %.1f\r\n",   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z), getRotationalVelocity());
+    file.close();
+}
+
+
 void CDOrientation::print()
 {
-    Serial.print("!");
+//    if (abs(_compass.m.x) < 350 && abs(_compass.m.y) < 350 && abs(_compass.m.z) < 350) {
+//        Serial.printf("x %5d,   y %5d,    z %5d    a.x %5d %5d,   a.y %5d %4d,    a.z %5d %5d\r        ", _compass.m.x, _compass.m.y, _compass.m.z,      _compass.a.x, _compass.a.y, _compass.a.z, _compass.a.x >> 4, _compass.a.y >> 4, _compass.a.z >> 4);
+    // 4 mg/LSB
+    
+       //     Serial.printf("a.x %5d %.3fg,   a.y %5d %.3fg,    a.z %5d  %.3fg\r        ",   _compass.a.x, rawAccelToG(_compass.a.x), _compass.a.y, rawAccelToG(_compass.a.y), _compass.a.z, rawAccelToG(_compass.a.z));
+
+    
+    Serial.printf("Gyro: %.3f     %.3f      %.3f\r        ",   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z));
+    
+    //    }
+    return;
+//    Serial.print("!");
     
 #if PRINT_EULER == 1
-    Serial.print("ANG:");
-    Serial.print(ToDeg(roll));
-    Serial.print(",");
-    Serial.print(ToDeg(pitch));
-    Serial.print(",");
-    Serial.print(ToDeg(yaw));
+//    Serial.printf("ANG:% 3.1f,% 3.1f,% 3.1f\r", ToDeg(roll), ToDeg(pitch), ToDeg(yaw));
+    
+    Serial.printf("pitch% 3.1f,  x mag: % 5d   x acc: % 5d\r", ToDeg(pitch), _compass.m.x, _compass.a.x);
+
+    // _compass.m.y really seems to be the physical x!!
+    
+//    Serial.print("ANG:");
+//    Serial.print(ToDeg(roll));
+//    Serial.print(",");
+//    Serial.print(ToDeg(pitch));
+//    Serial.print(",");
+//    Serial.print(ToDeg(yaw));
+    
+    
+    
 //    Serial.print(_compass.heading());
 #endif
 #if PRINT_ANALOGS==1
@@ -773,7 +967,9 @@ void CDOrientation::print()
     Serial.print (",");
     Serial.print(convert_to_dec(DCM_Matrix[2][2]));
 #endif
-    Serial.println();
+// Serial.println();
     
 }
+
+#endif
 

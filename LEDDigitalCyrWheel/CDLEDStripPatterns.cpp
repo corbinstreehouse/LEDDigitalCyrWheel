@@ -26,6 +26,7 @@ CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, framebuff, drawingbuff, WS2811
 typedef uint8_t byte;
 #endif
 
+CDLEDPatternManager g_patternManager;
 
 // A single buffer is shared for lots of reading operations, fading, etc
 int getPixelBufferSize() {
@@ -71,19 +72,18 @@ void gradient();
 void brightTwinkle(unsigned char minColor, unsigned char numColors, unsigned char noNewBursts);
 unsigned char collision();
 
-void stripInit() {
+void stripInit(CDOrientation *orientation) {
     for (int i = 0; i < 8; i++) {
         seed += analogRead(i);
     }
     //    seed += EEPROM.read(0);  // get part of the seed from EEPROM
     
     randomSeed(seed);
-    
-    pinMode(BRIGHTNESS_PIN, INPUT);
-    
-    g_strip.begin();
-    g_strip.setBrightness(128); // default: half bright..TODO: store/restore the value? or just read it constantly?
-    g_strip.show(); // all off.
+
+    pinMode(BRIGHTNESS_PIN, INPUT); // not reading this..
+
+    // TODO: the strip should be contained by the pattern manaager, and everything else needs to reference it via a pointer!
+    g_patternManager.init(&g_strip, orientation);
 }
 
 void theaterChase(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
@@ -648,19 +648,6 @@ void linearImageFade(CDPatternItemHeader *itemHeader, uint32_t intervalCount, ui
     }
 }
 
-
-void stripUpdateBrightness() {
-    int val = analogRead(BRIGHTNESS_PIN);
-//    Serial.printf("brightness read: %d\r\n", val);
-    // Map 0 - 1024 to 0-255 brightness
-    float b = 255.0 * ((float)val / (float)ANALOG_READ_MAX);
-    int v = b; // =what the flip was this setting it to??
-    g_strip.setBrightness(v);
-}
-
-void stripSetLowBatteryBrightness() {
-    g_strip.setBrightness(128);
-}
 
 static inline byte timeAsByte() {
     // drop the last two bits of precision, giving us number 1-255 incremented each tick of the cycle.
@@ -1707,14 +1694,138 @@ unsigned char collision()
     return 0;
 }
 
+void setEntireStripAsColor(uint8_t r, uint8_t g, uint8_t b) {
+    for(int i = 0; i < g_strip.numPixels(); i++) {
+        g_strip.setPixelColor(i, r, g, b);
+    }
+    g_strip.show();
+}
+
+bool g_noProcess = false;
+
+void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t d) {
+    setEntireStripAsColor(r, g, b);
+    if (g_noProcess) {
+        delay(d);
+    } else {
+        busyDelay(d);
+    }
+}
+
+void flashNTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t n, uint32_t delay) {
+    for (int i = 0; i < n; i++) {
+        flashColor(r, g, b, delay);
+        flashColor(0, 0, 0, delay);
+    }
+}
+
+void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
+    flashNTimes(r, g, b, 3, delay);
+}
+
+void flashThreeTimesNoProcess(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
+    g_noProcess = true;
+    flashThreeTimes(r, g, b, delay);
+    g_noProcess = false;
+}
+
+#if DEBUG
+void dowhite() {
+    flashColor(255, 255, 255, 10);
+}
+#endif
+
+
+void CDLEDPatternManager::init(STRIP_CLASS *strip, CDOrientation *orientation) {
+    m_savedBrightness = 128; // Default value?? this is still super bright. maybe the algorithm is wrong..
+    
+    m_strip = strip;
+    m_orientation = orientation;
+    
+    m_strip->begin();
+    m_strip->setBrightness(m_savedBrightness); // default: half bright..TODO: store/restore the value? or just read it constantly?
+    m_strip->show(); // all off.
+}
+
+void CDLEDPatternManager::updateBrightnessBasedOnVelocity() {
+#define MIN_BRIGHTNESS 1
+#define MAX_BRIGHTNESS 255 // Oh boy...bright!
+    
+    uint8_t targetBrightness = 0;
+#define MAX_ROTATIONAL_VELOCITY 1000 // at this value, we hit max brightness
+    double velocity = m_orientation->getRotationalVelocity();
+    if (velocity > m_maxVelocity) {
+        m_maxVelocity = velocity;
+//        DEBUG_PRINTF("new max velocity: %.3f\r\n", m_maxVelocity);
+    }
+    if (velocity >= MAX_ROTATIONAL_VELOCITY) {
+        targetBrightness = MAX_BRIGHTNESS;
+    } else {
+        float percentage = velocity / (float)MAX_ROTATIONAL_VELOCITY;
+        float diffBetweenMinMax = MAX_BRIGHTNESS - MIN_BRIGHTNESS;
+        targetBrightness = MIN_BRIGHTNESS + round(percentage * diffBetweenMinMax);
+    }
+
+    if (m_isFirstPass) {
+        m_targetBrightness = targetBrightness;
+        m_strip->setBrightness(targetBrightness);
+    }
+    uint8_t currentBrightness = m_strip->getBrightness();
+    
+    if (m_targetBrightness != targetBrightness) {
+        m_targetBrightness = targetBrightness;
+        
+        if (m_startBrightness != currentBrightness) {
+            m_startBrightness = currentBrightness;
+            m_brightnessStartTime = millis();
+            DEBUG_PRINTF("START Brightness changed: current: %d target: %d\r\n", currentBrightness, targetBrightness);
+        } else {
+            DEBUG_PRINTF("TARGET Brightness changed: current: %d target: %d\r\n", currentBrightness, targetBrightness);
+        }
+    }
+    
+    if (currentBrightness != m_targetBrightness) {
+#define BRIGHTNESS_RAMPUP_TIME 200.0 // ms  -- this smooths things out
+        float timePassed = millis() - m_brightnessStartTime;
+        if (timePassed > BRIGHTNESS_RAMPUP_TIME || timePassed < 0) {
+            m_strip->setBrightness(m_targetBrightness); // Done..
+        } else {
+            float percentagePassed = timePassed / BRIGHTNESS_RAMPUP_TIME;
+            //y =x^2  exponential ramp up (desired?)
+//            percentagePassed = sq(percentagePassed);
+            float targetDiff = m_targetBrightness - m_startBrightness;
+            uint8_t brightness = m_startBrightness + round(percentagePassed * targetDiff);
+//            DEBUG_PRINTF("    Changing brightness: %d,  time passed: %.3f   targetDiff: %.3f,    newB: %d\r\n", currentBrightness, timePassed, targetDiff, brightness);
+            m_strip->setBrightness(brightness);
+        }
+    }
+}
+
+void CDLEDPatternManager::updateBrightness() {
+    if (m_itemHeader->shouldSetBrightnessByRotationalVelocity) {
+        updateBrightnessBasedOnVelocity();
+    } else {
+        m_strip->setBrightness(m_savedBrightness);
+    }
+}
 
 void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
+    g_patternManager.stripPatternLoop(itemHeader, intervalCount, timePassedInMS, isFirstPass);
+}
+
+void CDLEDPatternManager::stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
+    m_itemHeader = itemHeader;
+    m_intervalCount = intervalCount;
+    m_timePassedInMS = timePassedInMS;
+    m_isFirstPass = isFirstPass;
+
+    updateBrightness();
     
     CDPatternType patternType = itemHeader->patternType;
-
+    
     // for polulu
     unsigned int maxLoops = 0;  // go to next state when loopCount >= maxLoops
-
+    
     
     if (patternType == CDPatternTypeWarmWhiteShimmer || patternType == CDPatternTypeRandomColorWalk)
     {
@@ -1846,12 +1957,12 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
             rotatingBottomGlow(itemHeader, intervalCount, timePassedInMS);
             break;
         case CDPatternTypeSolidColor:
-            if (isFirstPass) {
+            if (isFirstPass || itemHeader->shouldSetBrightnessByRotationalVelocity) {
                 setAllPixelsToColor(itemHeader->color);
             }
             break;
         case CDPatternTypeSolidRainbow: {
-            if (isFirstPass) {
+            if (isFirstPass || itemHeader->shouldSetBrightnessByRotationalVelocity) {
                 solidRainbow(0, 1);
             }
             break;
@@ -1874,19 +1985,19 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
     }
     
     if (patternType >= CDPatternTypeWarmWhiteShimmer) {
-//        rgb_color *colors = (rgb_color *)g_strip.getPixels();
+        //        rgb_color *colors = (rgb_color *)m_strip.getPixels();
         // do a bit walk over to fix brightness, then show
-//        if (patternType != CDPatternTypeWarmWhiteShimmer && patternType != CDPatternTypeRandomColorWalk && patternType != CDPatternTypeColorExplosion && patternType != CDPatternTypeBrightTwinkle ) {
-//            
-//            uint8_t brightness = g_strip.getBrightness();
-//            if (brightness > 0) {
-//                for (int i = 0; i < LED_COUNT; i++) {
-//                    colors[i].red =  (colors[i].red * brightness) >> 8;
-//                    colors[i].green =  (colors[i].green * brightness) >> 8;
-//                    colors[i].blue =  (colors[i].blue * brightness) >> 8;
-//                }
-//            }
-//        }
+        //        if (patternType != CDPatternTypeWarmWhiteShimmer && patternType != CDPatternTypeRandomColorWalk && patternType != CDPatternTypeColorExplosion && patternType != CDPatternTypeBrightTwinkle ) {
+        //
+        //            uint8_t brightness = g_strip.getBrightness();
+        //            if (brightness > 0) {
+        //                for (int i = 0; i < LED_COUNT; i++) {
+        //                    colors[i].red =  (colors[i].red * brightness) >> 8;
+        //                    colors[i].green =  (colors[i].green * brightness) >> 8;
+        //                    colors[i].blue =  (colors[i].blue * brightness) >> 8;
+        //                }
+        //            }
+        //        }
         
         
         loopCount++;  // increment our loop counter/timer.
@@ -1899,36 +2010,7 @@ void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, u
         }
     }
     
-    g_strip.show();
+    m_strip->show();
 }
-
-void setEntireStripAsColor(uint8_t r, uint8_t g, uint8_t b) {
-    for(int i = 0; i < g_strip.numPixels(); i++) {
-        g_strip.setPixelColor(i, r, g, b);
-    }
-    g_strip.show();
-}
-
-void flashColor(uint8_t r, uint8_t g, uint8_t b, uint32_t d) {
-    setEntireStripAsColor(r, g, b);
-    busyDelay(d);
-}
-
-void flashNTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t n, uint32_t delay) {
-    for (int i = 0; i < n; i++) {
-        flashColor(r, g, b, delay);
-        flashColor(0, 0, 0, delay);
-    }
-}
-
-void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay) {
-    flashNTimes(r, g, b, 3, delay);
-}
-
-#if DEBUG
-void dowhite() {
-    flashColor(255, 255, 255, 10);
-}
-#endif
 
 

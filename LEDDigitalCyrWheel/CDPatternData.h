@@ -31,7 +31,7 @@ typedef enum ENUM_SIZE {
 } CDPatternEncodingType;
 
 
-#define SEQUENCE_VERSION 1
+#define SEQUENCE_VERSION 2
 
 // NOTE: update g_patternTypeNames when this changes!!
 typedef enum ENUM_SIZE {
@@ -103,6 +103,9 @@ typedef struct  __attribute__((__packed__)) {
     uint32_t color; //4
     uint32_t dataLength; // how long the data is following // 4
     uint32_t dataOffset; // When loaded, points to the offset in the file where we should load from.
+    int32_t shouldSetBrightnessByRotationalVelocity:1;
+    int32_t _unused:31;
+    
     union {
         const char *dataFilename;  // A reference to the string....we don't own it!
         uint64_t __unused_size; // creates 64-bits pointer size; so I can use the same struct size in 32-bit and 64-bit // 8

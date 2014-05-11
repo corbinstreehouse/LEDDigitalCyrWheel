@@ -67,10 +67,7 @@ void buttonClicked(Button &b){
 }
 
 void buttonHeld(Button &b) {
-#if DEBUG
-    Serial.println("XX button HELD");
-#endif
-    g_sequenceManager.loadNextSequence();
+    g_sequenceManager.buttonLongClick();
 }
 
 #define DEBUG_VOLTAGE 0
@@ -124,8 +121,6 @@ void setup() {
 
     Wire.begin();
 
-    stripInit();
-    
     g_button.clickHandler(buttonClicked);
     g_button.holdHandler(buttonHeld);
 
@@ -134,7 +129,7 @@ void setup() {
     if (initPassed) {
         // See if we read more than the default sequence
         if (g_sequenceManager.getNumberOfSequenceNames() > 1) {
-            flashNTimes(0, 255, 0, 1, 150); // flash green, once
+            //flashNTimes(0, 255, 0, 1, 150); // Don't do anything..
         } else {
             flashThreeTimes(255, 127, 0, 150); // flash orange...couldn't find any data files
         }
@@ -160,7 +155,7 @@ bool checkVoltage() {
         if (voltage < LOW_VOLTAGE_VALUE) {
             DEBUG_PRINTF("---------------------- LOW BATTERY VOLTAGE: %f", voltage);
             // half the max brightness...
-            stripSetLowBatteryBrightness();
+            g_sequenceManager.setLowBatteryWarning();
             
             flashThreeTimes(255, 0, 0, 150); // flash red
             

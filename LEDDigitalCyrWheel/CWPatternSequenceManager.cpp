@@ -24,6 +24,7 @@
     #define ASSERT(a) ((void)0)
 #endif
 
+#define RECORD_INDICATOR_FILENAME "RECORD.TXT" // If this file exists, we record data in other files.
 
 static char *getExtension(char *filename) {
     char *ext = strchr(filename, '.');
@@ -81,6 +82,7 @@ void CWPatternSequenceManager::loadDefaultSequence() {
         _patternItems[i].intervalCount = 1;
         _patternItems[i].duration = 2000; //  2 seconds
         _patternItems[i].dataLength = 0;
+        _patternItems[i].shouldSetBrightnessByRotationalVelocity = 0; // for testing..
 //        _patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
 //        _patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
         switch (random(3)) { case 0: _patternItems[i].color = 0xFF0000; break; case 1: _patternItems[i].color = 0x00FF00; break; case 2: _patternItems[i].color = 0x0000FF; break; }
@@ -95,7 +97,7 @@ void CWPatternSequenceManager::loadDefaultSequence() {
 static inline bool verifyHeader(CDPatternSequenceHeader *h) {
     // header, and version 0
     DEBUG_PRINTF("checking header, v: %d , expected :%d\r\n", h->version, SEQUENCE_VERSION);
-    return h->marker[0] == 'S' && h->marker[1] == 'Q' && h->marker[2] == 'C' && h->version == SEQUENCE_VERSION;
+    return h->marker[0] == 'S' && h->marker[1] == 'Q' && h->marker[2] == 'C';
 }
 
 void CWPatternSequenceManager::freePatternItems() {
@@ -112,6 +114,22 @@ void CWPatternSequenceManager::freePatternItems() {
         _numberOfPatternItems = 0; // can be removed
     }
     
+}
+
+void CWPatternSequenceManager::makeSequenceFlashColor(uint32_t color) {
+    _numberOfPatternItems = 2;
+    _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
+    _patternItems[0].patternType = CDPatternTypeSolidColor;
+    _patternItems[0].duration = 500;
+    _patternItems[0].color = color; // TODO: better representation of colors.. this is yellow..
+    _patternItems[0].intervalCount = 1;
+    _patternItems[0].patternEndCondition = CDPatternEndConditionAfterRepeatCount;
+    
+    _patternItems[1].patternType = CDPatternTypeSolidColor;
+    _patternItems[1].duration = 500;
+    _patternItems[1].color = 0x000000; // TODO: better representation of colors..
+    _patternItems[1].intervalCount = 1;
+    _patternItems[1].patternEndCondition = CDPatternEndConditionAfterRepeatCount;
 }
 
 void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
@@ -135,61 +153,55 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
     
     // Verify it
     if (verifyHeader(&patternHeader)) {
-        // Free existing stuff
-        if (_patternItems) {
-            DEBUG_PRINTLN("ERROR: PATTERN ITEMS SHOULD BE FREE!!!!");
-        }
-            // Then read in and store the stock info
-        _pixelCount = patternHeader.pixelCount;
-        _numberOfPatternItems = patternHeader.patternCount;
-        DEBUG_PRINTF("pixelCount: %d, now reading %d items, headerSize: %d\r\n", _pixelCount, _numberOfPatternItems, sizeof(CDPatternItemHeader));
-        
-        // After the header each item follows
-        int numBytes = _numberOfPatternItems * sizeof(CDPatternItemHeader);
-        _patternItems = (CDPatternItemHeader *)malloc(numBytes);
-        memset(_patternItems, 0, numBytes); // shouldn't be needed, but do it anyways
-        
-        for (int i = 0; i < _numberOfPatternItems; i++ ){
-            DEBUG_PRINTF("reading item %d\r\n", i);
-            sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
-            DEBUG_PRINTF("Header, type: %d, duration: %d, intervalC: %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].intervalCount);
-            // Verify it
-            ASSERT(_patternItems[i].patternType >= CDPatternTypeMin && _patternItems[i].patternType < CDPatternTypeMax);
-            ASSERT(_patternItems[i].duration > 0);
-            // After the header, is the (optional) image data
-            uint32_t dataLength = _patternItems[i].dataLength;
-            if (dataLength > 0) {
-                DEBUG_PRINTF("we have %d data\r\n", dataLength);
-                // Read in the data that is following the header, and put it in the data pointer...
-                // 65536 kb of ram..more than 20,000 pixels would overflow...which i'm now hitting w/larger images. darn it..i have to chunk these and dynamically load each one ;(
-                _patternItems[i].dataOffset = sequenceFile.position();
-                _patternItems[i].dataFilename = filename;
-//                _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
-//                sequenceFile.readBytes((char*)_patternItems[i].data, dataLength);
-                // seek past the data
-                sequenceFile.seek(sequenceFile.position() + dataLength);
-            } else {
-                // data pointer should always be NULL
-                _patternItems[i].dataOffset = 0;
-                _patternItems[i].dataFilename = NULL;
+        // Verify the version
+        if (patternHeader.version == SEQUENCE_VERSION) {
+            // Free existing stuff
+            if (_patternItems) {
+                DEBUG_PRINTLN("ERROR: PATTERN ITEMS SHOULD BE FREE!!!!");
             }
+                // Then read in and store the stock info
+            _pixelCount = patternHeader.pixelCount;
+            _numberOfPatternItems = patternHeader.patternCount;
+            DEBUG_PRINTF("pixelCount: %d, now reading %d items, headerSize: %d\r\n", _pixelCount, _numberOfPatternItems, sizeof(CDPatternItemHeader));
+            
+            // After the header each item follows
+            int numBytes = _numberOfPatternItems * sizeof(CDPatternItemHeader);
+            _patternItems = (CDPatternItemHeader *)malloc(numBytes);
+            memset(_patternItems, 0, numBytes); // shouldn't be needed, but do it anyways
+
+            for (int i = 0; i < _numberOfPatternItems; i++ ){
+                DEBUG_PRINTF("reading item %d\r\n", i);
+                sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
+                DEBUG_PRINTF("Header, type: %d, duration: %d, intervalC: %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].intervalCount);
+                // Verify it
+                ASSERT(_patternItems[i].patternType >= CDPatternTypeMin && _patternItems[i].patternType < CDPatternTypeMax);
+                ASSERT(_patternItems[i].duration > 0);
+                // After the header, is the (optional) image data
+                uint32_t dataLength = _patternItems[i].dataLength;
+                if (dataLength > 0) {
+                    DEBUG_PRINTF("we have %d data\r\n", dataLength);
+                    // Read in the data that is following the header, and put it in the data pointer...
+                    // 65536 kb of ram..more than 20,000 pixels would overflow...which i'm now hitting w/larger images. darn it..i have to chunk these and dynamically load each one ;(
+                    _patternItems[i].dataOffset = sequenceFile.position();
+                    _patternItems[i].dataFilename = filename;
+    //                _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
+    //                sequenceFile.readBytes((char*)_patternItems[i].data, dataLength);
+                    // seek past the data
+                    sequenceFile.seek(sequenceFile.position() + dataLength);
+                } else {
+                    // data pointer should always be NULL
+                    _patternItems[i].dataOffset = 0;
+                    _patternItems[i].dataFilename = NULL;
+                }
+            }
+            DEBUG_PRINTLN("DONE");
+        } else {
+            // We don't support this version... flash purple
+            makeSequenceFlashColor(0xFF00FF);
         }
-        DEBUG_PRINTLN("DONE");
     } else {
         // Bad data...flash yellow
-        _numberOfPatternItems = 2;
-        _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
-        _patternItems[0].patternType = CDPatternTypeSolidColor;
-        _patternItems[0].duration = 500;
-        _patternItems[0].color = 0xFFFF00; // TODO: better representation of colors.. this is yellow..
-        _patternItems[0].intervalCount = 1;
-        _patternItems[0].patternEndCondition = CDPatternEndConditionAfterRepeatCount;
-        
-        _patternItems[1].patternType = CDPatternTypeSolidColor;
-        _patternItems[1].duration = 500;
-        _patternItems[1].color = 0x000000; // TODO: better representation of colors..
-        _patternItems[1].intervalCount = 1;
-        _patternItems[1].patternEndCondition = CDPatternEndConditionAfterRepeatCount;
+        makeSequenceFlashColor(0xFFFF00);
     }
     sequenceFile.close();
 }
@@ -246,10 +258,14 @@ static inline bool isPatternFile(char *filename) {
 
 bool CWPatternSequenceManager::init(bool buttonIsDown) {
     DEBUG_PRINTLN("::init");
+    _shouldRecordData = false;
+
+    delay(2); // without this, things don't always init....
 
     initOrientation();
+    
+    stripInit(&_orientation);
 
-    delay(2); // why do I have this delay in here?
     
     bool result = initSDCard();
 
@@ -263,6 +279,8 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
             if (isPatternFile(filenameBuffer)) {
                 _numberOfAvailableSequences++;
                 DEBUG_PRINTF("found pattern: %s\r\n", filenameBuffer);
+            } else if (strcmp(filenameBuffer, RECORD_INDICATOR_FILENAME) == 0) {
+                _shouldRecordData = true;
             }
         }
         DEBUG_PRINTF("Found %d sequences\r\n", _numberOfAvailableSequences);
@@ -297,6 +315,9 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
         _sequenceNames[_numberOfAvailableSequences] = NULL;
         
         _numberOfAvailableSequences++;
+        
+        // TODO: Read the last sequence we were on to start from there again...but make this optional...
+        
     } else {
         _numberOfAvailableSequences = 1;
         _sequenceNames = (char **)malloc(sizeof(char*) * 1);
@@ -321,6 +342,7 @@ bool CWPatternSequenceManager::initOrientation() {
 
     DEBUG_PRINTLN("init orientation");
     bool result = _orientation.init(); // TODO: return if it failed???
+    
     DEBUG_PRINTLN("DONE init orientation");
     
     return result;
@@ -380,7 +402,7 @@ static inline bool PatternIsContinuous(CDPatternType p) {
             return true; // Doesn't do anything
         case CDPatternTypeRotatingBottomGlow:
         case CDPatternTypeSolidColor:
-            return false; // repeats after a rotation
+            return false; // repeats after a rotati
         case CDPatternTypeMax:
             return false;
     }
@@ -396,6 +418,24 @@ void CWPatternSequenceManager::buttonClick() {
         nextPatternItem();
     }
 }
+
+void CWPatternSequenceManager::buttonLongClick() {
+    if (_shouldRecordData) {
+#if ACCELEROMETER_SUPPORT
+        if (_orientation.isSavingData()) {
+            flashThreeTimesNoProcess(0, 0, 255, 150);
+            _orientation.endSavingData();
+        } else {
+            // Flash green to let me know
+            flashThreeTimesNoProcess(0, 255, 0, 150);
+            _orientation.beginSavingData();
+        }
+#endif
+    } else {
+        loadNextSequence();
+    }
+}
+
 
 bool CWPatternSequenceManager::orientationProcess(uint32_t now, uint32_t timePassed) {
 #if ACCELEROMETER_SUPPORT
@@ -456,6 +496,10 @@ void CWPatternSequenceManager::process(bool initialProcess) {
     }
     
     stripPatternLoop(itemHeader, intervalCount, timePassed, initialProcess);
+}
+
+void CWPatternSequenceManager::setLowBatteryWarning() {
+    g_patternManager.setSavedBrightness(64); // Low brightness warning!
 }
 
 void CWPatternSequenceManager::firstPatternItem() {

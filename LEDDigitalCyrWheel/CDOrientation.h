@@ -19,46 +19,29 @@
 #ifndef __LEDDigitalCyrWheel__CDOrientation__
 #define __LEDDigitalCyrWheel__CDOrientation__
 
-#include  "Arduino.h"
-#include <Wire.h>
 
+#include  "Arduino.h"
+
+#if !PATTERN_EDITOR
+#include <Wire.h>
 #include <L3G.h>
 #include <LSM303.h>
+#endif
 
-
-// LSM303 magnetometer calibration constants; use the Calibrate example from  the Pololu LSM303 library to find the right values for your board
-#define PRINT_DCM 0     //Will print the whole direction cosine matrix
-#define PRINT_ANALOGS 0 //Will print the analog raw data
-#define PRINT_EULER 1   //Will print the Euler angles Roll, Pitch and Yaw
-
-
-// Uncomment the below line to use this axis definition:
-// X axis pointing forward
-// Y axis pointing to the right
-// and Z axis pointing down.
-// Positive pitch : nose up
-// Positive roll : right wing down
-// Positive yaw : clockwise
-#define SENSOR_SIGN_INIT {1,1,1, -1,-1,-1, 1,1,1} //Correct directions x,y,z - gyro, accelerometer, magnetometer
-
-// Uncomment the below line to use this axis definition:
-// X axis pointing forward
-// Y axis pointing to the left
-// and Z axis pointing up.
-// Positive pitch : nose down
-// Positive roll : right wing down
-// Positive yaw : counterclockwise
-//SENSOR_SIGN_INIT {1,-1,-1, -1,1,1, 1,-1,-1}; //Correct directions x,y,z - gyro, accelerometer, magnetometer
-
-
+#include "SD.h"
 
 class CDOrientation {
 private:
+    bool _shouldSaveDataToFile;
+    bool _calibrating;
+    char _filenameBuffer[PATH_COMPONENT_BUFFER_LEN+1];
+
+#if !PATTERN_EDITOR
     L3G _gyro;
     LSM303 _compass;
     
     // TODO: cleanup variables
-    int SENSOR_SIGN[9] = SENSOR_SIGN_INIT;
+    int SENSOR_SIGN[9];
 
     float G_Dt=0.02;    // Integration time (DCM algorithm)  We will run the integration loop at 50Hz if possible
     long timer=0;   //general purpuse timer
@@ -119,7 +102,6 @@ private:
     unsigned int counter=0;
     byte gyro_sat=0;
 
-    bool _calibrating;
     LSM303::vector<int16_t> _calibrationMin;
     LSM303::vector<int16_t> _calibrationMax;
     void _calibrate();
@@ -138,7 +120,12 @@ private:
     void readCompass();
     void _internalProcess();
     void _initDCMMatrix();
+    
+    void writeStatusToFile();
+#endif
+    
 public:
+    CDOrientation();
     bool init(); // returns false on failure to init. turn on debug for more info
     void process();
     void print();
@@ -147,6 +134,16 @@ public:
     void beginCalibration();
     void endCalibration();
     
+    bool isSavingData() { return _shouldSaveDataToFile; }
+    void beginSavingData();
+    void endSavingData();
+    
+    double getAccelX(); // in g's
+    double getAccelY();
+    double getAccelZ();
+    
+
+    double getRotationalVelocity(); // In degress per second
 };
 
 
