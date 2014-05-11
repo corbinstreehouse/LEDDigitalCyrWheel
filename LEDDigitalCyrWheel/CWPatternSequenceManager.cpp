@@ -329,26 +329,19 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
     
     if (buttonIsDown) {
         // Go into calibration mode for the accell
-#if ACCELEROMETER_SUPPORT
         _orientation.beginCalibration();
-#endif
     }
     
     return result;
 }
 
 bool CWPatternSequenceManager::initOrientation() {
-#if ACCELEROMETER_SUPPORT
-
     DEBUG_PRINTLN("init orientation");
     bool result = _orientation.init(); // TODO: return if it failed???
     
     DEBUG_PRINTLN("DONE init orientation");
     
     return result;
-#else
-    return true;
-#endif
 }
 
 void CWPatternSequenceManager::loadNextSequence() {
@@ -409,19 +402,15 @@ static inline bool PatternIsContinuous(CDPatternType p) {
 }
 
 void CWPatternSequenceManager::buttonClick() {
-#if ACCELEROMETER_SUPPORT
     if (_orientation.isCalibrating()) {
         _orientation.endCalibration();
-    } else
-#endif
-    {
+    } else {
         nextPatternItem();
     }
 }
 
 void CWPatternSequenceManager::buttonLongClick() {
     if (_shouldRecordData) {
-#if ACCELEROMETER_SUPPORT
         if (_orientation.isSavingData()) {
             flashThreeTimesNoProcess(0, 0, 255, 150);
             _orientation.endSavingData();
@@ -430,7 +419,6 @@ void CWPatternSequenceManager::buttonLongClick() {
             flashThreeTimesNoProcess(0, 255, 0, 150);
             _orientation.beginSavingData();
         }
-#endif
     } else {
         loadNextSequence();
     }
@@ -438,7 +426,6 @@ void CWPatternSequenceManager::buttonLongClick() {
 
 
 bool CWPatternSequenceManager::orientationProcess(uint32_t now, uint32_t timePassed) {
-#if ACCELEROMETER_SUPPORT
     _orientation.process();
     if (_orientation.isCalibrating()) {
         // Flash the color  blue when in calibration mode..
@@ -454,7 +441,6 @@ bool CWPatternSequenceManager::orientationProcess(uint32_t now, uint32_t timePas
     } else {
         return false;
     }
-#endif
 }
 
 void CWPatternSequenceManager::process(bool initialProcess) {

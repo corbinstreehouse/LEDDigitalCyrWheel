@@ -15,11 +15,7 @@
 #include "Arduino.h"
 #include "SD.h"
 
-#define ACCELEROMETER_SUPPORT 1 // not in the sim..
-
-#if ACCELEROMETER_SUPPORT
 #include "CDOrientation.h"
-#endif
 
 
 class CWPatternSequenceManager {
@@ -40,9 +36,7 @@ private:
     
     bool _shouldRecordData;
     
-#if ACCELEROMETER_SUPPORT
     CDOrientation _orientation;
-#endif
     
     bool initSDCard();
     bool initOrientation();
