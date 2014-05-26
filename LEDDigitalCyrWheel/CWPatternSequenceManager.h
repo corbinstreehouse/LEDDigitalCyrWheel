@@ -17,7 +17,6 @@
 
 #include "CDOrientation.h"
 
-
 class CWPatternSequenceManager {
 private:
     // all available sequences

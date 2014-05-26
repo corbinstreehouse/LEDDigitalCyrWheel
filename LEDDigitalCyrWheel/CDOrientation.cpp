@@ -889,7 +889,7 @@ void CDOrientation::endSavingData() {
 void CDOrientation::writeStatusToFile() {
     
     File file = SD.open(_filenameBuffer, FILE_WRITE/*|O_APPEND*/); // O_APPEND is implied..
-    file.printf("GyroDPS: %.0f\t%.0f\t%.0f\t\tRotationalVelocityDPS: %.1f\r\n",   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z), getRotationalVelocity());
+    file.printf("%.0f,\t%.0f,\t%.0f,\t  RotationalVelocityDPS:%.1f\r\n",   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z), getRotationalVelocity());
     file.close();
 }
 

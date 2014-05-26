@@ -1749,10 +1749,10 @@ void CDLEDPatternManager::init(STRIP_CLASS *strip, CDOrientation *orientation) {
 
 void CDLEDPatternManager::updateBrightnessBasedOnVelocity() {
 #define MIN_BRIGHTNESS 1
-#define MAX_BRIGHTNESS 255 // Oh boy...bright!
+#define MAX_BRIGHTNESS 255 // Not too bright....but seems bright
     
     uint8_t targetBrightness = 0;
-#define MAX_ROTATIONAL_VELOCITY 1000 // at this value, we hit max brightness
+#define MAX_ROTATIONAL_VELOCITY 800 // at this value, we hit max brightness, but it is hard to hit..usually I hit half
     double velocity = m_orientation->getRotationalVelocity();
     if (velocity > m_maxVelocity) {
         m_maxVelocity = velocity;
@@ -1762,6 +1762,10 @@ void CDLEDPatternManager::updateBrightnessBasedOnVelocity() {
         targetBrightness = MAX_BRIGHTNESS;
     } else {
         float percentage = velocity / (float)MAX_ROTATIONAL_VELOCITY;
+        // quadric growth slows it down at the start
+        percentage = percentage*percentage*percentage;
+        
+        
         float diffBetweenMinMax = MAX_BRIGHTNESS - MIN_BRIGHTNESS;
         targetBrightness = MIN_BRIGHTNESS + round(percentage * diffBetweenMinMax);
     }
@@ -1956,12 +1960,29 @@ void CDLEDPatternManager::stripPatternLoop(CDPatternItemHeader *itemHeader, uint
         case CDPatternTypeRotatingBottomGlow:
             rotatingBottomGlow(itemHeader, intervalCount, timePassedInMS);
             break;
-        case CDPatternTypeSolidColor:
+        case CDPatternTypeSolidColor: {
             if (isFirstPass || itemHeader->shouldSetBrightnessByRotationalVelocity) {
                 setAllPixelsToColor(itemHeader->color);
             }
             break;
+        }
         case CDPatternTypeSolidRainbow: {
+//            m_strip->setBrightness(255);
+//            float percentageThrough = (float)timePassedInMS / 3000; //(float)itemHeader->duration;
+//            while (percentageThrough > 1.0) {
+//                percentageThrough -= 1.0;
+//            }
+//            
+//            percentageThrough = percentageThrough*percentageThrough*percentageThrough*percentageThrough; // cubic?
+//
+//            m_strip->setBrightness(round(.5*255.0*percentageThrough));
+//            uint32_t c = m_strip->Color(255, 0, 0);
+//            
+////            uint32_t c = m_strip->Color(round(percentageThrough*.5*255), 0, 0);
+//            setAllPixelsToColor(c);
+//            
+//
+//            break;
             if (isFirstPass || itemHeader->shouldSetBrightnessByRotationalVelocity) {
                 solidRainbow(0, 1);
             }

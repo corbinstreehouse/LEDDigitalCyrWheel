@@ -316,6 +316,10 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
         
         _numberOfAvailableSequences++;
         
+        if (_shouldRecordData) {
+            flashThreeTimes(30, 30, 30, 150); // flash to let me know..
+        }
+        
         // TODO: Read the last sequence we were on to start from there again...but make this optional...
         
     } else {
