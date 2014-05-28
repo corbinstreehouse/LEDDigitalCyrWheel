@@ -17,9 +17,7 @@
 #if USE_ADAFRUIT
 Adafruit_NeoPixel g_strip = Adafruit_NeoPixel(STRIP_LENGTH, STRIP_PIN, NEO_GRB + NEO_KHZ800);
 #else
-int framebuff[STRIP_LENGTH*6];
-int drawingbuff[STRIP_LENGTH*6];
-CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, framebuff, drawingbuff, WS2811_GRB + WS2811_800kHz);
+CDOctoWS2811 g_strip = CDOctoWS2811(STRIP_LENGTH, WS2811_GRB + WS2811_800kHz);
 #endif
 
 #ifndef byte
@@ -1745,6 +1743,21 @@ void CDLEDPatternManager::init(STRIP_CLASS *strip, CDOrientation *orientation) {
     m_strip->begin();
     m_strip->setBrightness(m_savedBrightness); // default: half bright..TODO: store/restore the value? or just read it constantly?
     m_strip->show(); // all off.
+    
+//#define PINK   0xFF1088
+//    // test...
+//    int microsec = 2000000 / m_strip->numPixels();  // change them all in 2 seconds
+//    for (int i=0; i < m_strip->numPixels(); i++) {
+//        m_strip->setPixel(i, PINK);
+//        m_strip->show();
+//        delayMicroseconds(microsec);
+//    }
+//
+//    for (int i=0; i < m_strip->numPixels(); i++) {
+//        m_strip->setPixel(i, 0);
+//        m_strip->show();
+//        delayMicroseconds(microsec);
+//    }
 }
 
 void CDLEDPatternManager::updateBrightnessBasedOnVelocity() {
@@ -1813,11 +1826,8 @@ void CDLEDPatternManager::updateBrightness() {
     }
 }
 
-void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
-    g_patternManager.stripPatternLoop(itemHeader, intervalCount, timePassedInMS, isFirstPass);
-}
-
 void CDLEDPatternManager::stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS, bool isFirstPass) {
+
     m_itemHeader = itemHeader;
     m_intervalCount = intervalCount;
     m_timePassedInMS = timePassedInMS;
@@ -1826,7 +1836,7 @@ void CDLEDPatternManager::stripPatternLoop(CDPatternItemHeader *itemHeader, uint
     updateBrightness();
     
     CDPatternType patternType = itemHeader->patternType;
-    
+
     // for polulu
     unsigned int maxLoops = 0;  // go to next state when loopCount >= maxLoops
     
@@ -2030,8 +2040,9 @@ void CDLEDPatternManager::stripPatternLoop(CDPatternItemHeader *itemHeader, uint
             loopCount = 0;  // reset timer
         }
     }
-    
+
     m_strip->show();
+
 }
 
 

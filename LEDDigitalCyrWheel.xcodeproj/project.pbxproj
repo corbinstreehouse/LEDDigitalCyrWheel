@@ -216,6 +216,7 @@
 		9DBE92CA18AA834D00154550 /* CDLEDStripPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */; };
 		9DC38E9A18C1A4750048C5DB /* LSM303.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DC38E9818C1A4750048C5DB /* LSM303.cpp */; };
 		9DCC76A51589A3D300564CB8 /* RTClib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DCC764F1589A3D300564CB8 /* RTClib.cpp */; };
+		9DD655D3193582100017BDAA /* CDOctoWS2811.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD655D2193582100017BDAA /* CDOctoWS2811.cpp */; };
 		9DD818E91886692900AD92E2 /* Adafruit_NeoPixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD818E01886690A00AD92E2 /* Adafruit_NeoPixel.cpp */; };
 /* End PBXBuildFile section */
 
@@ -1558,6 +1559,7 @@
 		9DCC764E1589A3D300564CB8 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
 		9DCC764F1589A3D300564CB8 /* RTClib.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTClib.cpp; sourceTree = "<group>"; };
 		9DCC76501589A3D300564CB8 /* RTClib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTClib.h; sourceTree = "<group>"; };
+		9DD655D2193582100017BDAA /* CDOctoWS2811.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDOctoWS2811.cpp; sourceTree = "<group>"; };
 		9DD818DA188647B600AD92E2 /* Teensy31.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Teensy31.xcconfig; sourceTree = "<group>"; };
 		9DD818DB18864BD300AD92E2 /* Teensy.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Teensy.mk; sourceTree = "<group>"; };
 		9DD818E01886690A00AD92E2 /* Adafruit_NeoPixel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_NeoPixel.cpp; sourceTree = "<group>"; };
@@ -2008,6 +2010,7 @@
 				9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */,
 				9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */,
 				9DBE92C818AA7ED000154550 /* CDOctoWS2811.h */,
+				9DD655D2193582100017BDAA /* CDOctoWS2811.cpp */,
 				9D1234C11889AC3B00A97482 /* CDPatternData.h */,
 				9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */,
 				9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */,
@@ -5562,6 +5565,7 @@
 				9DD818E91886692900AD92E2 /* Adafruit_NeoPixel.cpp in Sources */,
 				9DBE8A5A18A8A84F00154550 /* avr_emulation.cpp in Sources */,
 				9D5200D31650691000F3BF4E /* memorysaver.h in Sources */,
+				9DD655D3193582100017BDAA /* CDOctoWS2811.cpp in Sources */,
 				9DBE92A818A8AA5600154550 /* ArduinoRobotMotorBoard.cpp in Sources */,
 				9DBE926518A8AA5600154550 /* Makefile in Sources */,
 				9DBE8D9C18A8A9C700154550 /* regex_grep_matcher.tcc in Sources */,

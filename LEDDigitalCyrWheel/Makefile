@@ -44,8 +44,9 @@
 
 APP_LIBS_LIST = SPI Wire Wire/utility EEPROM
 
-# List users libraries here -- edit this list for what i'm using in my user lisbs...
+# List users libraries here -- edit this list for what i'm using in my user libs...
 USER_LIBS_LIST = Adafruit_NeoPixel SDFat SDFat/utility SD L3G LSM303
+#USER_LIBS_LIST = OctoWS2811 SDFat SDFat/utility SD L3G LSM303
 
 MAKEFILE_PATH  = $(CURDIR)/Makefiles
 UTILITIES_PATH = $(CURDIR)/Utilities

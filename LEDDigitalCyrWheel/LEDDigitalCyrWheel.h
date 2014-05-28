@@ -12,7 +12,7 @@
 bool busyDelay(uint32_t ms);
 
 // All my defined pins
-#define SD_CARD_CS_PIN 4
+#define SD_CARD_CS_PIN 4         ///////////// AGGG!!! I shouldn't have used pin 4. It prevents working with OctoWS2811.
 #define BUTTON_PIN 23
 
 #define BRIGHTNESS_PIN 22

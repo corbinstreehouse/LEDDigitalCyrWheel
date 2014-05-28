@@ -485,7 +485,7 @@ void CWPatternSequenceManager::process(bool initialProcess) {
         }
     }
     
-    stripPatternLoop(itemHeader, intervalCount, timePassed, initialProcess);
+    g_patternManager.stripPatternLoop(itemHeader, intervalCount, timePassed, initialProcess);
 }
 
 void CWPatternSequenceManager::setLowBatteryWarning() {

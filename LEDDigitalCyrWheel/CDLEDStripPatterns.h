@@ -14,7 +14,7 @@
 #include "CDOrientation.h"
 
 #define DEBUG 0
-#define IGNORE_VOLTAGE 1 //for hardware testing w/out a battery
+#define IGNORE_VOLTAGE 0 //for hardware testing w/out a battery
 
 #define USE_ADAFRUIT 1
 
@@ -39,8 +39,6 @@
 #if PATTERN_EDITOR
 extern STRIP_CLASS g_strip;
 #endif
-
-extern void stripPatternLoop(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassed, bool isFirstPass); // Call this on each loop to process things
 
 void flashThreeTimes(uint8_t r, uint8_t g, uint8_t b, uint32_t delay);
 void flashThreeTimesNoProcess(uint8_t r, uint8_t g, uint8_t b, uint32_t delay);

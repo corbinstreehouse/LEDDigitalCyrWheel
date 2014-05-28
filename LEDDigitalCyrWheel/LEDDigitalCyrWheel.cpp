@@ -127,6 +127,12 @@ void setup() {
     g_button.process();
     bool initPassed = g_sequenceManager.init(g_button.isPressed());
     if (initPassed) {
+#if DEBUG
+#if IGNORE_VOLTAGE
+      // Having this on could be bad..flash red
+        flashThreeTimes(255, 0, 0, 150); //
+#endif
+#endif
         // See if we read more than the default sequence
         if (g_sequenceManager.getNumberOfSequenceNames() > 1) {
             //flashNTimes(0, 255, 0, 1, 150); // Don't do anything..
