@@ -15,7 +15,7 @@
 # ----------------------------------
 #
 PLATFORM         := Arduino 
-PLATFORM_TAG     := ARDUINO=101
+PLATFORM_TAG     := ARDUINO=105
 APPLICATION_PATH := /Applications/Arduino.app/Contents/Resources/Java
 
 # avr for other chips.. #corbin

@@ -6,6 +6,9 @@
 //
 //
 
+#include "CDLEDStripPatterns.h"
+#if !USE_ADAFRUIT
+
 #include "CDOctoWS2811.h"
 
 CDOctoWS2811::~CDOctoWS2811() {
@@ -13,3 +16,5 @@ CDOctoWS2811::~CDOctoWS2811() {
     free(frameBuffer);
 }
 
+
+#endif

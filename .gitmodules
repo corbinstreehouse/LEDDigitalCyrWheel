@@ -1,0 +1,15 @@
+[submodule "Libraries/L3G_Pololu"]
+	path = Libraries/L3G_Pololu
+	url = https://github.com/pololu/l3g-arduino.git
+[submodule "Libraries/LSM303_Pololu"]
+	path = Libraries/LSM303_Pololu
+	url = https://github.com/pololu/lsm303-arduino.git
+[submodule "Libraries/AdaFruit_NeoPixel"]
+	path = Libraries/AdaFruit_NeoPixel
+	url = git@github.com:corbinstreehouse/Adafruit_NeoPixel.git
+[submodule "Libraries/SdFat"]
+	path = Libraries/SdFat
+	url = git@github.com:corbinstreehouse/SdFat.git
+[submodule "Libraries/SD"]
+	path = Libraries/SD
+	url = git@github.com:corbinstreehouse/SD.git
