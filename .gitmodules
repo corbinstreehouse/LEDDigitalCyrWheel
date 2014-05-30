@@ -13,3 +13,6 @@
 [submodule "Libraries/SD"]
 	path = Libraries/SD
 	url = git@github.com:corbinstreehouse/SD.git
+[submodule "Libraries/FastLED"]
+	path = Libraries/FastLED
+	url = https://github.com/FastLED/FastLED.git
