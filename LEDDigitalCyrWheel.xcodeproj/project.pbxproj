@@ -10,6 +10,10 @@
 		9D3A0DA81889BE64001AD553 /* LEDDigitalCyrWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */; };
 		9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DAC188A0EBD001AD553 /* Button.cpp */; };
 		9D472E1D1902F1590076281A /* CDOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D472E1B1902F1590076281A /* CDOrientation.cpp */; };
+		9D6BC86E1938CBC400E21E1C /* colorutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8301938CBC400E21E1C /* colorutils.cpp */; };
+		9D6BC86F1938CBC400E21E1C /* FastLED.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8541938CBC400E21E1C /* FastLED.cpp */; };
+		9D6BC8701938CBC400E21E1C /* hsv2rgb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8631938CBC400E21E1C /* hsv2rgb.cpp */; };
+		9D6BC8711938CBC400E21E1C /* lib8tion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8671938CBC400E21E1C /* lib8tion.cpp */; };
 		9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */; };
 		9DBE8A5818A8A84F00154550 /* analog.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE89F918A8A84F00154550 /* analog.c */; };
 		9DBE8A5918A8A84F00154550 /* AudioStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE89FD18A8A84F00154550 /* AudioStream.cpp */; };
@@ -97,7 +101,6 @@
 		9DBE926018A8AA5600154550 /* EthernetUdp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE904E18A8AA5500154550 /* EthernetUdp.cpp */; };
 		9DBE926118A8AA5600154550 /* socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE906E18A8AA5500154550 /* socket.cpp */; };
 		9DBE926218A8AA5600154550 /* w5100.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE907018A8AA5500154550 /* w5100.cpp */; };
-		9DBE926318A8AA5600154550 /* FastSPI_LED.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE907718A8AA5500154550 /* FastSPI_LED.cpp */; };
 		9DBE926418A8AA5600154550 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE908118A8AA5500154550 /* Makefile */; };
 		9DBE926518A8AA5600154550 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE908418A8AA5500154550 /* Makefile */; };
 		9DBE926618A8AA5600154550 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE908B18A8AA5500154550 /* Makefile */; };
@@ -139,33 +142,6 @@
 		9DBE928A18A8AA5600154550 /* GSM3SoftSerial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE90FD18A8AA5500154550 /* GSM3SoftSerial.cpp */; };
 		9DBE928B18A8AA5600154550 /* GSM3VoiceCallService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE90FF18A8AA5500154550 /* GSM3VoiceCallService.cpp */; };
 		9DBE928C18A8AA5600154550 /* LiquidCrystal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE911A18A8AA5500154550 /* LiquidCrystal.cpp */; };
-		9DBE928D18A8AA5600154550 /* Adafruit_NeoPixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE911D18A8AA5500154550 /* Adafruit_NeoPixel.cpp */; };
-		9DBE928E18A8AA5600154550 /* Adafruit_GFX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE912418A8AA5500154550 /* Adafruit_GFX.cpp */; };
-		9DBE928F18A8AA5600154550 /* Arduino_LCD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE912618A8AA5500154550 /* Arduino_LCD.cpp */; };
-		9DBE929018A8AA5600154550 /* ArduinoRobot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE912818A8AA5500154550 /* ArduinoRobot.cpp */; };
-		9DBE929118A8AA5600154550 /* communication.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE912A18A8AA5500154550 /* communication.cpp */; };
-		9DBE929218A8AA5600154550 /* Compass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE912B18A8AA5500154550 /* Compass.cpp */; };
-		9DBE929318A8AA5600154550 /* EasyTransfer2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE912D18A8AA5500154550 /* EasyTransfer2.cpp */; };
-		9DBE929418A8AA5600154550 /* EEPROM_I2C.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE912F18A8AA5500154550 /* EEPROM_I2C.cpp */; };
-		9DBE929518A8AA5600154550 /* Fat16.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE916818A8AA5600154550 /* Fat16.cpp */; };
-		9DBE929618A8AA5600154550 /* glcdfont.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE916E18A8AA5600154550 /* glcdfont.c */; };
-		9DBE929718A8AA5600154550 /* helper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE916F18A8AA5600154550 /* helper.cpp */; };
-		9DBE929818A8AA5600154550 /* information.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917018A8AA5600154550 /* information.cpp */; };
-		9DBE929918A8AA5600154550 /* keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917118A8AA5600154550 /* keyboard.cpp */; };
-		9DBE929A18A8AA5600154550 /* lcd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917218A8AA5600154550 /* lcd.cpp */; };
-		9DBE929B18A8AA5600154550 /* Melody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917318A8AA5600154550 /* Melody.cpp */; };
-		9DBE929C18A8AA5600154550 /* Motors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917418A8AA5600154550 /* Motors.cpp */; };
-		9DBE929D18A8AA5600154550 /* Multiplexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917518A8AA5600154550 /* Multiplexer.cpp */; };
-		9DBE929E18A8AA5600154550 /* RobotSdCard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917718A8AA5600154550 /* RobotSdCard.cpp */; };
-		9DBE929F18A8AA5600154550 /* SdCard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917818A8AA5600154550 /* SdCard.cpp */; };
-		9DBE92A018A8AA5600154550 /* Sensors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917B18A8AA5600154550 /* Sensors.cpp */; };
-		9DBE92A118A8AA5600154550 /* SPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917C18A8AA5600154550 /* SPI.cpp */; };
-		9DBE92A218A8AA5600154550 /* Squawk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE917E18A8AA5600154550 /* Squawk.cpp */; };
-		9DBE92A318A8AA5600154550 /* SquawkSD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE918018A8AA5600154550 /* SquawkSD.cpp */; };
-		9DBE92A418A8AA5600154550 /* RobotTextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE918318A8AA5600154550 /* RobotTextManager.cpp */; };
-		9DBE92A518A8AA5600154550 /* twi.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE918618A8AA5600154550 /* twi.c */; };
-		9DBE92A618A8AA5600154550 /* VirtualKeyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE918818A8AA5600154550 /* VirtualKeyboard.cpp */; };
-		9DBE92A718A8AA5600154550 /* Wire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE918A18A8AA5600154550 /* Wire.cpp */; };
 		9DBE92A818A8AA5600154550 /* ArduinoRobotMotorBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE918D18A8AA5600154550 /* ArduinoRobotMotorBoard.cpp */; };
 		9DBE92A918A8AA5600154550 /* EasyTransfer2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE918F18A8AA5600154550 /* EasyTransfer2.cpp */; };
 		9DBE92AA18A8AA5600154550 /* lineFollow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE919618A8AA5600154550 /* lineFollow.cpp */; };
@@ -222,6 +198,60 @@
 		9D472E1B1902F1590076281A /* CDOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDOrientation.cpp; sourceTree = "<group>"; };
 		9D472E1C1902F1590076281A /* CDOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDOrientation.h; sourceTree = "<group>"; };
 		9D472E1E19140BC10076281A /* EEPROM2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EEPROM2.h; sourceTree = "<group>"; };
+		9D6BC8281938CBC400E21E1C /* block_clockless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = block_clockless.h; sourceTree = "<group>"; };
+		9D6BC8291938CBC400E21E1C /* chipsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chipsets.h; sourceTree = "<group>"; };
+		9D6BC82A1938CBC400E21E1C /* clockless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clockless.h; sourceTree = "<group>"; };
+		9D6BC82B1938CBC400E21E1C /* clockless2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clockless2.h; sourceTree = "<group>"; };
+		9D6BC82C1938CBC400E21E1C /* clockless_arm_k20.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clockless_arm_k20.h; sourceTree = "<group>"; };
+		9D6BC82D1938CBC400E21E1C /* clockless_arm_sam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clockless_arm_sam.h; sourceTree = "<group>"; };
+		9D6BC82E1938CBC400E21E1C /* clockless_trinket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clockless_trinket.h; sourceTree = "<group>"; };
+		9D6BC82F1938CBC400E21E1C /* color.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = color.h; sourceTree = "<group>"; };
+		9D6BC8301938CBC400E21E1C /* colorutils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = colorutils.cpp; sourceTree = "<group>"; };
+		9D6BC8311938CBC400E21E1C /* colorutils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = colorutils.h; sourceTree = "<group>"; };
+		9D6BC8321938CBC400E21E1C /* controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = controller.h; sourceTree = "<group>"; };
+		9D6BC8331938CBC400E21E1C /* delay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = delay.h; sourceTree = "<group>"; };
+		9D6BC8341938CBC400E21E1C /* dithertodo.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dithertodo.txt; sourceTree = "<group>"; };
+		9D6BC8351938CBC400E21E1C /* dmx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dmx.h; sourceTree = "<group>"; };
+		9D6BC8381938CBC400E21E1C /* AnalogOutput.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalogOutput.ino; sourceTree = "<group>"; };
+		9D6BC83A1938CBC400E21E1C /* Blink.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Blink.ino; sourceTree = "<group>"; };
+		9D6BC83C1938CBC400E21E1C /* ColorTemperature.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ColorTemperature.ino; sourceTree = "<group>"; };
+		9D6BC83E1938CBC400E21E1C /* Cylon.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cylon.ino; sourceTree = "<group>"; };
+		9D6BC8401938CBC400E21E1C /* Fast2Dev.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Fast2Dev.ino; sourceTree = "<group>"; };
+		9D6BC8421938CBC400E21E1C /* Fire2012.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Fire2012.ino; sourceTree = "<group>"; };
+		9D6BC8441938CBC400E21E1C /* FirstLight.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FirstLight.ino; sourceTree = "<group>"; };
+		9D6BC8471938CBC400E21E1C /* ArrayOfLedArrays.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ArrayOfLedArrays.ino; sourceTree = "<group>"; };
+		9D6BC8491938CBC400E21E1C /* MirroringSample.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MirroringSample.ino; sourceTree = "<group>"; };
+		9D6BC84B1938CBC400E21E1C /* MultiArrays.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MultiArrays.ino; sourceTree = "<group>"; };
+		9D6BC84D1938CBC400E21E1C /* MultipleStripsInOneArray.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MultipleStripsInOneArray.ino; sourceTree = "<group>"; };
+		9D6BC84F1938CBC400E21E1C /* Pintest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Pintest.ino; sourceTree = "<group>"; };
+		9D6BC8511938CBC400E21E1C /* RGBCalibrate.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RGBCalibrate.ino; sourceTree = "<group>"; };
+		9D6BC8531938CBC400E21E1C /* XYMatrix.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XYMatrix.ino; sourceTree = "<group>"; };
+		9D6BC8541938CBC400E21E1C /* FastLED.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastLED.cpp; sourceTree = "<group>"; };
+		9D6BC8551938CBC400E21E1C /* FastLED.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastLED.h; sourceTree = "<group>"; };
+		9D6BC8561938CBC400E21E1C /* fastpin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastpin.h; sourceTree = "<group>"; };
+		9D6BC8571938CBC400E21E1C /* fastpin_arm_k20.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastpin_arm_k20.h; sourceTree = "<group>"; };
+		9D6BC8581938CBC400E21E1C /* fastpin_arm_sam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastpin_arm_sam.h; sourceTree = "<group>"; };
+		9D6BC8591938CBC400E21E1C /* fastpin_avr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastpin_avr.h; sourceTree = "<group>"; };
+		9D6BC85A1938CBC400E21E1C /* fastspi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastspi.h; sourceTree = "<group>"; };
+		9D6BC85B1938CBC400E21E1C /* fastspi_arm_k20.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastspi_arm_k20.h; sourceTree = "<group>"; };
+		9D6BC85C1938CBC400E21E1C /* fastspi_arm_sam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastspi_arm_sam.h; sourceTree = "<group>"; };
+		9D6BC85D1938CBC400E21E1C /* fastspi_avr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastspi_avr.h; sourceTree = "<group>"; };
+		9D6BC85E1938CBC400E21E1C /* fastspi_bitbang.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastspi_bitbang.h; sourceTree = "<group>"; };
+		9D6BC85F1938CBC400E21E1C /* fastspi_dma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastspi_dma.h; sourceTree = "<group>"; };
+		9D6BC8601938CBC400E21E1C /* FastSPI_LED2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastSPI_LED2.h; sourceTree = "<group>"; };
+		9D6BC8611938CBC400E21E1C /* fastspi_nop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastspi_nop.h; sourceTree = "<group>"; };
+		9D6BC8621938CBC400E21E1C /* fastspi_ref.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fastspi_ref.h; sourceTree = "<group>"; };
+		9D6BC8631938CBC400E21E1C /* hsv2rgb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hsv2rgb.cpp; sourceTree = "<group>"; };
+		9D6BC8641938CBC400E21E1C /* hsv2rgb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hsv2rgb.h; sourceTree = "<group>"; };
+		9D6BC8651938CBC400E21E1C /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
+		9D6BC8661938CBC400E21E1C /* led_sysdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = led_sysdefs.h; sourceTree = "<group>"; };
+		9D6BC8671938CBC400E21E1C /* lib8tion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lib8tion.cpp; sourceTree = "<group>"; };
+		9D6BC8681938CBC400E21E1C /* lib8tion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lib8tion.h; sourceTree = "<group>"; };
+		9D6BC8691938CBC400E21E1C /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		9D6BC86A1938CBC400E21E1C /* pixeltypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pixeltypes.h; sourceTree = "<group>"; };
+		9D6BC86B1938CBC400E21E1C /* preview_changes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = preview_changes.txt; sourceTree = "<group>"; };
+		9D6BC86C1938CBC400E21E1C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		9D6BC86D1938CBC400E21E1C /* release_notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.txt; sourceTree = "<group>"; };
 		9D77CB9D1589994A0089EB0A /* Index */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Index; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D8ED2C517C01F7F001E1C06 /* Arduino Leonardo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino Leonardo.xcconfig"; sourceTree = "<group>"; };
 		9D8ED2C617C01F7F001E1C06 /* Arduino mega2560.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino mega2560.xcconfig"; sourceTree = "<group>"; };
@@ -1131,11 +1161,6 @@
 		9DBE906F18A8AA5500154550 /* socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = socket.h; sourceTree = "<group>"; };
 		9DBE907018A8AA5500154550 /* w5100.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = w5100.cpp; sourceTree = "<group>"; };
 		9DBE907118A8AA5500154550 /* w5100.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = w5100.h; sourceTree = "<group>"; };
-		9DBE907318A8AA5500154550 /* 3001.nfo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 3001.nfo; sourceTree = "<group>"; };
-		9DBE907618A8AA5500154550 /* testleds.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testleds.pde; sourceTree = "<group>"; };
-		9DBE907718A8AA5500154550 /* FastSPI_LED.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastSPI_LED.cpp; sourceTree = "<group>"; };
-		9DBE907818A8AA5500154550 /* FastSPI_LED.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastSPI_LED.h; sourceTree = "<group>"; };
-		9DBE907918A8AA5500154550 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
 		9DBE907B18A8AA5500154550 /* Boards.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Boards.h; sourceTree = "<group>"; };
 		9DBE907E18A8AA5500154550 /* AllInputsFirmata.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllInputsFirmata.ino; sourceTree = "<group>"; };
 		9DBE908018A8AA5500154550 /* AnalogFirmata.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalogFirmata.ino; sourceTree = "<group>"; };
@@ -1257,85 +1282,6 @@
 		9DBE911918A8AA5500154550 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
 		9DBE911A18A8AA5500154550 /* LiquidCrystal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiquidCrystal.cpp; sourceTree = "<group>"; };
 		9DBE911B18A8AA5500154550 /* LiquidCrystal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiquidCrystal.h; sourceTree = "<group>"; };
-		9DBE911D18A8AA5500154550 /* Adafruit_NeoPixel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_NeoPixel.cpp; sourceTree = "<group>"; };
-		9DBE911E18A8AA5500154550 /* Adafruit_NeoPixel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_NeoPixel.h; sourceTree = "<group>"; };
-		9DBE911F18A8AA5500154550 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
-		9DBE912218A8AA5500154550 /* strandtest.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = strandtest.pde; sourceTree = "<group>"; };
-		9DBE912418A8AA5500154550 /* Adafruit_GFX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_GFX.cpp; sourceTree = "<group>"; };
-		9DBE912518A8AA5500154550 /* Adafruit_GFX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_GFX.h; sourceTree = "<group>"; };
-		9DBE912618A8AA5500154550 /* Arduino_LCD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Arduino_LCD.cpp; sourceTree = "<group>"; };
-		9DBE912718A8AA5500154550 /* Arduino_LCD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arduino_LCD.h; sourceTree = "<group>"; };
-		9DBE912818A8AA5500154550 /* ArduinoRobot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArduinoRobot.cpp; sourceTree = "<group>"; };
-		9DBE912918A8AA5500154550 /* ArduinoRobot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArduinoRobot.h; sourceTree = "<group>"; };
-		9DBE912A18A8AA5500154550 /* communication.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = communication.cpp; sourceTree = "<group>"; };
-		9DBE912B18A8AA5500154550 /* Compass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Compass.cpp; sourceTree = "<group>"; };
-		9DBE912C18A8AA5500154550 /* Compass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compass.h; sourceTree = "<group>"; };
-		9DBE912D18A8AA5500154550 /* EasyTransfer2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EasyTransfer2.cpp; sourceTree = "<group>"; };
-		9DBE912E18A8AA5500154550 /* EasyTransfer2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EasyTransfer2.h; sourceTree = "<group>"; };
-		9DBE912F18A8AA5500154550 /* EEPROM_I2C.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EEPROM_I2C.cpp; sourceTree = "<group>"; };
-		9DBE913018A8AA5500154550 /* EEPROM_I2C.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EEPROM_I2C.h; sourceTree = "<group>"; };
-		9DBE913418A8AA5500154550 /* R01_Logo.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R01_Logo.ino; sourceTree = "<group>"; };
-		9DBE913618A8AA5500154550 /* R02_Line_Follow.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R02_Line_Follow.ino; sourceTree = "<group>"; };
-		9DBE913818A8AA5500154550 /* R03_Disco_Bot.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R03_Disco_Bot.ino; sourceTree = "<group>"; };
-		9DBE913A18A8AA5500154550 /* R04_Compass.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R04_Compass.ino; sourceTree = "<group>"; };
-		9DBE913C18A8AA5500154550 /* R05_Inputs.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R05_Inputs.ino; sourceTree = "<group>"; };
-		9DBE913E18A8AA5500154550 /* R06_Wheel_Calibration.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R06_Wheel_Calibration.ino; sourceTree = "<group>"; };
-		9DBE914018A8AA5500154550 /* R07_Runaway_Robot.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R07_Runaway_Robot.ino; sourceTree = "<group>"; };
-		9DBE914218A8AA5500154550 /* R08_Remote_Control.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R08_Remote_Control.ino; sourceTree = "<group>"; };
-		9DBE914418A8AA5500154550 /* R09_Picture_Browser.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R09_Picture_Browser.ino; sourceTree = "<group>"; };
-		9DBE914618A8AA5500154550 /* R10_Rescue.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R10_Rescue.ino; sourceTree = "<group>"; };
-		9DBE914818A8AA5500154550 /* R11_Hello_User.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = R11_Hello_User.ino; sourceTree = "<group>"; };
-		9DBE914B18A8AA5500154550 /* AllIOPorts.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AllIOPorts.ino; sourceTree = "<group>"; };
-		9DBE914D18A8AA5500154550 /* Beep.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Beep.ino; sourceTree = "<group>"; };
-		9DBE914F18A8AA5500154550 /* CleanEEPROM.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CleanEEPROM.ino; sourceTree = "<group>"; };
-		9DBE915118A8AA5500154550 /* Compass.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Compass.ino; sourceTree = "<group>"; };
-		9DBE915318A8AA5500154550 /* IRArray.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IRArray.ino; sourceTree = "<group>"; };
-		9DBE915518A8AA5500154550 /* keyboardTest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keyboardTest.ino; sourceTree = "<group>"; };
-		9DBE915618A8AA5500154550 /* keyboardTest.ino.orig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keyboardTest.ino.orig; sourceTree = "<group>"; };
-		9DBE915818A8AA5600154550 /* LCDDebugPrint.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LCDDebugPrint.ino; sourceTree = "<group>"; };
-		9DBE915A18A8AA5600154550 /* LCDPrint.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LCDPrint.ino; sourceTree = "<group>"; };
-		9DBE915C18A8AA5600154550 /* LCDWriteText.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LCDWriteText.ino; sourceTree = "<group>"; };
-		9DBE915E18A8AA5600154550 /* LineFollowWithPause.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LineFollowWithPause.ino; sourceTree = "<group>"; };
-		9DBE916018A8AA5600154550 /* Melody.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Melody.ino; sourceTree = "<group>"; };
-		9DBE916218A8AA5600154550 /* MotorTest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MotorTest.ino; sourceTree = "<group>"; };
-		9DBE916418A8AA5600154550 /* SpeedByPotentiometer.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpeedByPotentiometer.ino; sourceTree = "<group>"; };
-		9DBE916618A8AA5600154550 /* TurnTest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TurnTest.ino; sourceTree = "<group>"; };
-		9DBE916718A8AA5600154550 /* TurnTest.ino.orig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TurnTest.ino.orig; sourceTree = "<group>"; };
-		9DBE916818A8AA5600154550 /* Fat16.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fat16.cpp; sourceTree = "<group>"; };
-		9DBE916918A8AA5600154550 /* Fat16.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fat16.h; sourceTree = "<group>"; };
-		9DBE916A18A8AA5600154550 /* Fat16Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fat16Config.h; sourceTree = "<group>"; };
-		9DBE916B18A8AA5600154550 /* Fat16mainpage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fat16mainpage.h; sourceTree = "<group>"; };
-		9DBE916C18A8AA5600154550 /* Fat16util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fat16util.h; sourceTree = "<group>"; };
-		9DBE916D18A8AA5600154550 /* FatStructs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FatStructs.h; sourceTree = "<group>"; };
-		9DBE916E18A8AA5600154550 /* glcdfont.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glcdfont.c; sourceTree = "<group>"; };
-		9DBE916F18A8AA5600154550 /* helper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = helper.cpp; sourceTree = "<group>"; };
-		9DBE917018A8AA5600154550 /* information.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = information.cpp; sourceTree = "<group>"; };
-		9DBE917118A8AA5600154550 /* keyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = keyboard.cpp; sourceTree = "<group>"; };
-		9DBE917218A8AA5600154550 /* lcd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lcd.cpp; sourceTree = "<group>"; };
-		9DBE917318A8AA5600154550 /* Melody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Melody.cpp; sourceTree = "<group>"; };
-		9DBE917418A8AA5600154550 /* Motors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Motors.cpp; sourceTree = "<group>"; };
-		9DBE917518A8AA5600154550 /* Multiplexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Multiplexer.cpp; sourceTree = "<group>"; };
-		9DBE917618A8AA5600154550 /* Multiplexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Multiplexer.h; sourceTree = "<group>"; };
-		9DBE917718A8AA5600154550 /* RobotSdCard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RobotSdCard.cpp; sourceTree = "<group>"; };
-		9DBE917818A8AA5600154550 /* SdCard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdCard.cpp; sourceTree = "<group>"; };
-		9DBE917918A8AA5600154550 /* SdCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdCard.h; sourceTree = "<group>"; };
-		9DBE917A18A8AA5600154550 /* SdInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdInfo.h; sourceTree = "<group>"; };
-		9DBE917B18A8AA5600154550 /* Sensors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sensors.cpp; sourceTree = "<group>"; };
-		9DBE917C18A8AA5600154550 /* SPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SPI.cpp; sourceTree = "<group>"; };
-		9DBE917D18A8AA5600154550 /* SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPI.h; sourceTree = "<group>"; };
-		9DBE917E18A8AA5600154550 /* Squawk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Squawk.cpp; sourceTree = "<group>"; };
-		9DBE917F18A8AA5600154550 /* Squawk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Squawk.h; sourceTree = "<group>"; };
-		9DBE918018A8AA5600154550 /* SquawkSD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SquawkSD.cpp; sourceTree = "<group>"; };
-		9DBE918118A8AA5600154550 /* SquawkSD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SquawkSD.h; sourceTree = "<group>"; };
-		9DBE918318A8AA5600154550 /* RobotTextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RobotTextManager.cpp; sourceTree = "<group>"; };
-		9DBE918418A8AA5600154550 /* RobotTextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RobotTextManager.h; sourceTree = "<group>"; };
-		9DBE918518A8AA5600154550 /* scripts_Hello_User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scripts_Hello_User.h; sourceTree = "<group>"; };
-		9DBE918618A8AA5600154550 /* twi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = twi.c; sourceTree = "<group>"; };
-		9DBE918718A8AA5600154550 /* twi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = twi.h; sourceTree = "<group>"; };
-		9DBE918818A8AA5600154550 /* VirtualKeyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VirtualKeyboard.cpp; sourceTree = "<group>"; };
-		9DBE918918A8AA5600154550 /* VirtualKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualKeyboard.h; sourceTree = "<group>"; };
-		9DBE918A18A8AA5600154550 /* Wire.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Wire.cpp; sourceTree = "<group>"; };
-		9DBE918B18A8AA5600154550 /* Wire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Wire.h; sourceTree = "<group>"; };
 		9DBE918D18A8AA5600154550 /* ArduinoRobotMotorBoard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArduinoRobotMotorBoard.cpp; sourceTree = "<group>"; };
 		9DBE918E18A8AA5600154550 /* ArduinoRobotMotorBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArduinoRobotMotorBoard.h; sourceTree = "<group>"; };
 		9DBE918F18A8AA5600154550 /* EasyTransfer2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EasyTransfer2.cpp; sourceTree = "<group>"; };
@@ -1864,6 +1810,196 @@
 				9DBE89F818A8A84F00154550 /* teensy3 */,
 			);
 			name = "Arduino Reference Files";
+			sourceTree = "<group>";
+		};
+		9D6BC8271938CBC400E21E1C /* FastLED */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8281938CBC400E21E1C /* block_clockless.h */,
+				9D6BC8291938CBC400E21E1C /* chipsets.h */,
+				9D6BC82A1938CBC400E21E1C /* clockless.h */,
+				9D6BC82B1938CBC400E21E1C /* clockless2.h */,
+				9D6BC82C1938CBC400E21E1C /* clockless_arm_k20.h */,
+				9D6BC82D1938CBC400E21E1C /* clockless_arm_sam.h */,
+				9D6BC82E1938CBC400E21E1C /* clockless_trinket.h */,
+				9D6BC82F1938CBC400E21E1C /* color.h */,
+				9D6BC8301938CBC400E21E1C /* colorutils.cpp */,
+				9D6BC8311938CBC400E21E1C /* colorutils.h */,
+				9D6BC8321938CBC400E21E1C /* controller.h */,
+				9D6BC8331938CBC400E21E1C /* delay.h */,
+				9D6BC8341938CBC400E21E1C /* dithertodo.txt */,
+				9D6BC8351938CBC400E21E1C /* dmx.h */,
+				9D6BC8361938CBC400E21E1C /* examples */,
+				9D6BC8541938CBC400E21E1C /* FastLED.cpp */,
+				9D6BC8551938CBC400E21E1C /* FastLED.h */,
+				9D6BC8561938CBC400E21E1C /* fastpin.h */,
+				9D6BC8571938CBC400E21E1C /* fastpin_arm_k20.h */,
+				9D6BC8581938CBC400E21E1C /* fastpin_arm_sam.h */,
+				9D6BC8591938CBC400E21E1C /* fastpin_avr.h */,
+				9D6BC85A1938CBC400E21E1C /* fastspi.h */,
+				9D6BC85B1938CBC400E21E1C /* fastspi_arm_k20.h */,
+				9D6BC85C1938CBC400E21E1C /* fastspi_arm_sam.h */,
+				9D6BC85D1938CBC400E21E1C /* fastspi_avr.h */,
+				9D6BC85E1938CBC400E21E1C /* fastspi_bitbang.h */,
+				9D6BC85F1938CBC400E21E1C /* fastspi_dma.h */,
+				9D6BC8601938CBC400E21E1C /* FastSPI_LED2.h */,
+				9D6BC8611938CBC400E21E1C /* fastspi_nop.h */,
+				9D6BC8621938CBC400E21E1C /* fastspi_ref.h */,
+				9D6BC8631938CBC400E21E1C /* hsv2rgb.cpp */,
+				9D6BC8641938CBC400E21E1C /* hsv2rgb.h */,
+				9D6BC8651938CBC400E21E1C /* keywords.txt */,
+				9D6BC8661938CBC400E21E1C /* led_sysdefs.h */,
+				9D6BC8671938CBC400E21E1C /* lib8tion.cpp */,
+				9D6BC8681938CBC400E21E1C /* lib8tion.h */,
+				9D6BC8691938CBC400E21E1C /* LICENSE */,
+				9D6BC86A1938CBC400E21E1C /* pixeltypes.h */,
+				9D6BC86B1938CBC400E21E1C /* preview_changes.txt */,
+				9D6BC86C1938CBC400E21E1C /* README.md */,
+				9D6BC86D1938CBC400E21E1C /* release_notes.txt */,
+			);
+			name = FastLED;
+			path = Libraries/FastLED;
+			sourceTree = SOURCE_ROOT;
+		};
+		9D6BC8361938CBC400E21E1C /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8371938CBC400E21E1C /* AnalogOutput */,
+				9D6BC8391938CBC400E21E1C /* Blink */,
+				9D6BC83B1938CBC400E21E1C /* ColorTemperature */,
+				9D6BC83D1938CBC400E21E1C /* Cylon */,
+				9D6BC83F1938CBC400E21E1C /* Fast2Dev */,
+				9D6BC8411938CBC400E21E1C /* Fire2012 */,
+				9D6BC8431938CBC400E21E1C /* FirstLight */,
+				9D6BC8451938CBC400E21E1C /* Multiple */,
+				9D6BC84E1938CBC400E21E1C /* Pintest */,
+				9D6BC8501938CBC400E21E1C /* RGBCalibrate */,
+				9D6BC8521938CBC400E21E1C /* XYMatrix */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		9D6BC8371938CBC400E21E1C /* AnalogOutput */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8381938CBC400E21E1C /* AnalogOutput.ino */,
+			);
+			path = AnalogOutput;
+			sourceTree = "<group>";
+		};
+		9D6BC8391938CBC400E21E1C /* Blink */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC83A1938CBC400E21E1C /* Blink.ino */,
+			);
+			path = Blink;
+			sourceTree = "<group>";
+		};
+		9D6BC83B1938CBC400E21E1C /* ColorTemperature */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC83C1938CBC400E21E1C /* ColorTemperature.ino */,
+			);
+			path = ColorTemperature;
+			sourceTree = "<group>";
+		};
+		9D6BC83D1938CBC400E21E1C /* Cylon */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC83E1938CBC400E21E1C /* Cylon.ino */,
+			);
+			path = Cylon;
+			sourceTree = "<group>";
+		};
+		9D6BC83F1938CBC400E21E1C /* Fast2Dev */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8401938CBC400E21E1C /* Fast2Dev.ino */,
+			);
+			path = Fast2Dev;
+			sourceTree = "<group>";
+		};
+		9D6BC8411938CBC400E21E1C /* Fire2012 */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8421938CBC400E21E1C /* Fire2012.ino */,
+			);
+			path = Fire2012;
+			sourceTree = "<group>";
+		};
+		9D6BC8431938CBC400E21E1C /* FirstLight */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8441938CBC400E21E1C /* FirstLight.ino */,
+			);
+			path = FirstLight;
+			sourceTree = "<group>";
+		};
+		9D6BC8451938CBC400E21E1C /* Multiple */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8461938CBC400E21E1C /* ArrayOfLedArrays */,
+				9D6BC8481938CBC400E21E1C /* MirroringSample */,
+				9D6BC84A1938CBC400E21E1C /* MultiArrays */,
+				9D6BC84C1938CBC400E21E1C /* MultipleStripsInOneArray */,
+			);
+			path = Multiple;
+			sourceTree = "<group>";
+		};
+		9D6BC8461938CBC400E21E1C /* ArrayOfLedArrays */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8471938CBC400E21E1C /* ArrayOfLedArrays.ino */,
+			);
+			path = ArrayOfLedArrays;
+			sourceTree = "<group>";
+		};
+		9D6BC8481938CBC400E21E1C /* MirroringSample */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8491938CBC400E21E1C /* MirroringSample.ino */,
+			);
+			path = MirroringSample;
+			sourceTree = "<group>";
+		};
+		9D6BC84A1938CBC400E21E1C /* MultiArrays */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC84B1938CBC400E21E1C /* MultiArrays.ino */,
+			);
+			path = MultiArrays;
+			sourceTree = "<group>";
+		};
+		9D6BC84C1938CBC400E21E1C /* MultipleStripsInOneArray */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC84D1938CBC400E21E1C /* MultipleStripsInOneArray.ino */,
+			);
+			path = MultipleStripsInOneArray;
+			sourceTree = "<group>";
+		};
+		9D6BC84E1938CBC400E21E1C /* Pintest */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC84F1938CBC400E21E1C /* Pintest.ino */,
+			);
+			path = Pintest;
+			sourceTree = "<group>";
+		};
+		9D6BC8501938CBC400E21E1C /* RGBCalibrate */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8511938CBC400E21E1C /* RGBCalibrate.ino */,
+			);
+			path = RGBCalibrate;
+			sourceTree = "<group>";
+		};
+		9D6BC8521938CBC400E21E1C /* XYMatrix */ = {
+			isa = PBXGroup;
+			children = (
+				9D6BC8531938CBC400E21E1C /* XYMatrix.ino */,
+			);
+			path = XYMatrix;
 			sourceTree = "<group>";
 		};
 		9D77CB94158999490089EB0A = {
@@ -3167,12 +3303,9 @@
 				9DBE901718A8AA5500154550 /* EEPROM */,
 				9DBE902218A8AA5500154550 /* Esplora */,
 				9DBE904318A8AA5500154550 /* Ethernet */,
-				9DBE907218A8AA5500154550 /* FastSPI_LED */,
 				9DBE907A18A8AA5500154550 /* Firmata */,
 				9DBE909D18A8AA5500154550 /* GSM */,
 				9DBE910318A8AA5500154550 /* LiquidCrystal */,
-				9DBE911C18A8AA5500154550 /* NeoPixel */,
-				9DBE912318A8AA5500154550 /* Robot_Control */,
 				9DBE918C18A8AA5600154550 /* Robot_Motor */,
 				9DBE91B818A8AA5600154550 /* Servo */,
 				9DBE91C118A8AA5600154550 /* SoftwareSerial */,
@@ -3602,34 +3735,6 @@
 				9DBE907118A8AA5500154550 /* w5100.h */,
 			);
 			path = utility;
-			sourceTree = "<group>";
-		};
-		9DBE907218A8AA5500154550 /* FastSPI_LED */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE907318A8AA5500154550 /* 3001.nfo */,
-				9DBE907418A8AA5500154550 /* examples */,
-				9DBE907718A8AA5500154550 /* FastSPI_LED.cpp */,
-				9DBE907818A8AA5500154550 /* FastSPI_LED.h */,
-				9DBE907918A8AA5500154550 /* keywords.txt */,
-			);
-			path = FastSPI_LED;
-			sourceTree = "<group>";
-		};
-		9DBE907418A8AA5500154550 /* examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE907518A8AA5500154550 /* testleds */,
-			);
-			path = examples;
-			sourceTree = "<group>";
-		};
-		9DBE907518A8AA5500154550 /* testleds */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE907618A8AA5500154550 /* testleds.pde */,
-			);
-			path = testleds;
 			sourceTree = "<group>";
 		};
 		9DBE907A18A8AA5500154550 /* Firmata */ = {
@@ -4076,347 +4181,6 @@
 				9DBE911818A8AA5500154550 /* TextDirection.ino */,
 			);
 			path = TextDirection;
-			sourceTree = "<group>";
-		};
-		9DBE911C18A8AA5500154550 /* NeoPixel */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE911E18A8AA5500154550 /* Adafruit_NeoPixel.h */,
-				9DBE911D18A8AA5500154550 /* Adafruit_NeoPixel.cpp */,
-				9DBE911F18A8AA5500154550 /* COPYING */,
-				9DBE912018A8AA5500154550 /* examples */,
-			);
-			path = NeoPixel;
-			sourceTree = "<group>";
-		};
-		9DBE912018A8AA5500154550 /* examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE912118A8AA5500154550 /* strandtest */,
-			);
-			path = examples;
-			sourceTree = "<group>";
-		};
-		9DBE912118A8AA5500154550 /* strandtest */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE912218A8AA5500154550 /* strandtest.pde */,
-			);
-			path = strandtest;
-			sourceTree = "<group>";
-		};
-		9DBE912318A8AA5500154550 /* Robot_Control */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE912418A8AA5500154550 /* Adafruit_GFX.cpp */,
-				9DBE912518A8AA5500154550 /* Adafruit_GFX.h */,
-				9DBE912618A8AA5500154550 /* Arduino_LCD.cpp */,
-				9DBE912718A8AA5500154550 /* Arduino_LCD.h */,
-				9DBE912818A8AA5500154550 /* ArduinoRobot.cpp */,
-				9DBE912918A8AA5500154550 /* ArduinoRobot.h */,
-				9DBE912A18A8AA5500154550 /* communication.cpp */,
-				9DBE912B18A8AA5500154550 /* Compass.cpp */,
-				9DBE912C18A8AA5500154550 /* Compass.h */,
-				9DBE912D18A8AA5500154550 /* EasyTransfer2.cpp */,
-				9DBE912E18A8AA5500154550 /* EasyTransfer2.h */,
-				9DBE912F18A8AA5500154550 /* EEPROM_I2C.cpp */,
-				9DBE913018A8AA5500154550 /* EEPROM_I2C.h */,
-				9DBE913118A8AA5500154550 /* examples */,
-				9DBE916818A8AA5600154550 /* Fat16.cpp */,
-				9DBE916918A8AA5600154550 /* Fat16.h */,
-				9DBE916A18A8AA5600154550 /* Fat16Config.h */,
-				9DBE916B18A8AA5600154550 /* Fat16mainpage.h */,
-				9DBE916C18A8AA5600154550 /* Fat16util.h */,
-				9DBE916D18A8AA5600154550 /* FatStructs.h */,
-				9DBE916E18A8AA5600154550 /* glcdfont.c */,
-				9DBE916F18A8AA5600154550 /* helper.cpp */,
-				9DBE917018A8AA5600154550 /* information.cpp */,
-				9DBE917118A8AA5600154550 /* keyboard.cpp */,
-				9DBE917218A8AA5600154550 /* lcd.cpp */,
-				9DBE917318A8AA5600154550 /* Melody.cpp */,
-				9DBE917418A8AA5600154550 /* Motors.cpp */,
-				9DBE917518A8AA5600154550 /* Multiplexer.cpp */,
-				9DBE917618A8AA5600154550 /* Multiplexer.h */,
-				9DBE917718A8AA5600154550 /* RobotSdCard.cpp */,
-				9DBE917818A8AA5600154550 /* SdCard.cpp */,
-				9DBE917918A8AA5600154550 /* SdCard.h */,
-				9DBE917A18A8AA5600154550 /* SdInfo.h */,
-				9DBE917B18A8AA5600154550 /* Sensors.cpp */,
-				9DBE917C18A8AA5600154550 /* SPI.cpp */,
-				9DBE917D18A8AA5600154550 /* SPI.h */,
-				9DBE917E18A8AA5600154550 /* Squawk.cpp */,
-				9DBE917F18A8AA5600154550 /* Squawk.h */,
-				9DBE918018A8AA5600154550 /* SquawkSD.cpp */,
-				9DBE918118A8AA5600154550 /* SquawkSD.h */,
-				9DBE918218A8AA5600154550 /* utility */,
-				9DBE918A18A8AA5600154550 /* Wire.cpp */,
-				9DBE918B18A8AA5600154550 /* Wire.h */,
-			);
-			path = Robot_Control;
-			sourceTree = "<group>";
-		};
-		9DBE913118A8AA5500154550 /* examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE913218A8AA5500154550 /* explore */,
-				9DBE914918A8AA5500154550 /* learn */,
-			);
-			path = examples;
-			sourceTree = "<group>";
-		};
-		9DBE913218A8AA5500154550 /* explore */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE913318A8AA5500154550 /* R01_Logo */,
-				9DBE913518A8AA5500154550 /* R02_Line_Follow */,
-				9DBE913718A8AA5500154550 /* R03_Disco_Bot */,
-				9DBE913918A8AA5500154550 /* R04_Compass */,
-				9DBE913B18A8AA5500154550 /* R05_Inputs */,
-				9DBE913D18A8AA5500154550 /* R06_Wheel_Calibration */,
-				9DBE913F18A8AA5500154550 /* R07_Runaway_Robot */,
-				9DBE914118A8AA5500154550 /* R08_Remote_Control */,
-				9DBE914318A8AA5500154550 /* R09_Picture_Browser */,
-				9DBE914518A8AA5500154550 /* R10_Rescue */,
-				9DBE914718A8AA5500154550 /* R11_Hello_User */,
-			);
-			path = explore;
-			sourceTree = "<group>";
-		};
-		9DBE913318A8AA5500154550 /* R01_Logo */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE913418A8AA5500154550 /* R01_Logo.ino */,
-			);
-			path = R01_Logo;
-			sourceTree = "<group>";
-		};
-		9DBE913518A8AA5500154550 /* R02_Line_Follow */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE913618A8AA5500154550 /* R02_Line_Follow.ino */,
-			);
-			path = R02_Line_Follow;
-			sourceTree = "<group>";
-		};
-		9DBE913718A8AA5500154550 /* R03_Disco_Bot */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE913818A8AA5500154550 /* R03_Disco_Bot.ino */,
-			);
-			path = R03_Disco_Bot;
-			sourceTree = "<group>";
-		};
-		9DBE913918A8AA5500154550 /* R04_Compass */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE913A18A8AA5500154550 /* R04_Compass.ino */,
-			);
-			path = R04_Compass;
-			sourceTree = "<group>";
-		};
-		9DBE913B18A8AA5500154550 /* R05_Inputs */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE913C18A8AA5500154550 /* R05_Inputs.ino */,
-			);
-			path = R05_Inputs;
-			sourceTree = "<group>";
-		};
-		9DBE913D18A8AA5500154550 /* R06_Wheel_Calibration */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE913E18A8AA5500154550 /* R06_Wheel_Calibration.ino */,
-			);
-			path = R06_Wheel_Calibration;
-			sourceTree = "<group>";
-		};
-		9DBE913F18A8AA5500154550 /* R07_Runaway_Robot */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE914018A8AA5500154550 /* R07_Runaway_Robot.ino */,
-			);
-			path = R07_Runaway_Robot;
-			sourceTree = "<group>";
-		};
-		9DBE914118A8AA5500154550 /* R08_Remote_Control */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE914218A8AA5500154550 /* R08_Remote_Control.ino */,
-			);
-			path = R08_Remote_Control;
-			sourceTree = "<group>";
-		};
-		9DBE914318A8AA5500154550 /* R09_Picture_Browser */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE914418A8AA5500154550 /* R09_Picture_Browser.ino */,
-			);
-			path = R09_Picture_Browser;
-			sourceTree = "<group>";
-		};
-		9DBE914518A8AA5500154550 /* R10_Rescue */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE914618A8AA5500154550 /* R10_Rescue.ino */,
-			);
-			path = R10_Rescue;
-			sourceTree = "<group>";
-		};
-		9DBE914718A8AA5500154550 /* R11_Hello_User */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE914818A8AA5500154550 /* R11_Hello_User.ino */,
-			);
-			path = R11_Hello_User;
-			sourceTree = "<group>";
-		};
-		9DBE914918A8AA5500154550 /* learn */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE914A18A8AA5500154550 /* AllIOPorts */,
-				9DBE914C18A8AA5500154550 /* Beep */,
-				9DBE914E18A8AA5500154550 /* CleanEEPROM */,
-				9DBE915018A8AA5500154550 /* Compass */,
-				9DBE915218A8AA5500154550 /* IRArray */,
-				9DBE915418A8AA5500154550 /* keyboardTest */,
-				9DBE915718A8AA5500154550 /* LCDDebugPrint */,
-				9DBE915918A8AA5600154550 /* LCDPrint */,
-				9DBE915B18A8AA5600154550 /* LCDWriteText */,
-				9DBE915D18A8AA5600154550 /* LineFollowWithPause */,
-				9DBE915F18A8AA5600154550 /* Melody */,
-				9DBE916118A8AA5600154550 /* MotorTest */,
-				9DBE916318A8AA5600154550 /* SpeedByPotentiometer */,
-				9DBE916518A8AA5600154550 /* TurnTest */,
-			);
-			path = learn;
-			sourceTree = "<group>";
-		};
-		9DBE914A18A8AA5500154550 /* AllIOPorts */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE914B18A8AA5500154550 /* AllIOPorts.ino */,
-			);
-			path = AllIOPorts;
-			sourceTree = "<group>";
-		};
-		9DBE914C18A8AA5500154550 /* Beep */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE914D18A8AA5500154550 /* Beep.ino */,
-			);
-			path = Beep;
-			sourceTree = "<group>";
-		};
-		9DBE914E18A8AA5500154550 /* CleanEEPROM */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE914F18A8AA5500154550 /* CleanEEPROM.ino */,
-			);
-			path = CleanEEPROM;
-			sourceTree = "<group>";
-		};
-		9DBE915018A8AA5500154550 /* Compass */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE915118A8AA5500154550 /* Compass.ino */,
-			);
-			path = Compass;
-			sourceTree = "<group>";
-		};
-		9DBE915218A8AA5500154550 /* IRArray */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE915318A8AA5500154550 /* IRArray.ino */,
-			);
-			path = IRArray;
-			sourceTree = "<group>";
-		};
-		9DBE915418A8AA5500154550 /* keyboardTest */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE915518A8AA5500154550 /* keyboardTest.ino */,
-				9DBE915618A8AA5500154550 /* keyboardTest.ino.orig */,
-			);
-			path = keyboardTest;
-			sourceTree = "<group>";
-		};
-		9DBE915718A8AA5500154550 /* LCDDebugPrint */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE915818A8AA5600154550 /* LCDDebugPrint.ino */,
-			);
-			path = LCDDebugPrint;
-			sourceTree = "<group>";
-		};
-		9DBE915918A8AA5600154550 /* LCDPrint */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE915A18A8AA5600154550 /* LCDPrint.ino */,
-			);
-			path = LCDPrint;
-			sourceTree = "<group>";
-		};
-		9DBE915B18A8AA5600154550 /* LCDWriteText */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE915C18A8AA5600154550 /* LCDWriteText.ino */,
-			);
-			path = LCDWriteText;
-			sourceTree = "<group>";
-		};
-		9DBE915D18A8AA5600154550 /* LineFollowWithPause */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE915E18A8AA5600154550 /* LineFollowWithPause.ino */,
-			);
-			path = LineFollowWithPause;
-			sourceTree = "<group>";
-		};
-		9DBE915F18A8AA5600154550 /* Melody */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE916018A8AA5600154550 /* Melody.ino */,
-			);
-			path = Melody;
-			sourceTree = "<group>";
-		};
-		9DBE916118A8AA5600154550 /* MotorTest */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE916218A8AA5600154550 /* MotorTest.ino */,
-			);
-			path = MotorTest;
-			sourceTree = "<group>";
-		};
-		9DBE916318A8AA5600154550 /* SpeedByPotentiometer */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE916418A8AA5600154550 /* SpeedByPotentiometer.ino */,
-			);
-			path = SpeedByPotentiometer;
-			sourceTree = "<group>";
-		};
-		9DBE916518A8AA5600154550 /* TurnTest */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE916618A8AA5600154550 /* TurnTest.ino */,
-				9DBE916718A8AA5600154550 /* TurnTest.ino.orig */,
-			);
-			path = TurnTest;
-			sourceTree = "<group>";
-		};
-		9DBE918218A8AA5600154550 /* utility */ = {
-			isa = PBXGroup;
-			children = (
-				9DBE918318A8AA5600154550 /* RobotTextManager.cpp */,
-				9DBE918418A8AA5600154550 /* RobotTextManager.h */,
-				9DBE918518A8AA5600154550 /* scripts_Hello_User.h */,
-				9DBE918618A8AA5600154550 /* twi.c */,
-				9DBE918718A8AA5600154550 /* twi.h */,
-				9DBE918818A8AA5600154550 /* VirtualKeyboard.cpp */,
-				9DBE918918A8AA5600154550 /* VirtualKeyboard.h */,
-			);
-			path = utility;
 			sourceTree = "<group>";
 		};
 		9DBE918C18A8AA5600154550 /* Robot_Motor */ = {
@@ -5057,6 +4821,7 @@
 		9DCC75F61589A3D300564CB8 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				9D6BC8271938CBC400E21E1C /* FastLED */,
 				9DDC5FE71938488D00C602BC /* AdaFruit_NeoPixel */,
 				9DDC5FF11938488D00C602BC /* L3G_Pololu */,
 				9DDC5FFB1938488D00C602BC /* LSM303_Pololu */,
@@ -6256,10 +6021,8 @@
 				9DBE8A7318A8A85000154550 /* usb_inst.cpp in Sources */,
 				9DDC61DD1938488E00C602BC /* SdVolume.cpp in Sources */,
 				9DBE8DA118A8A9C700154550 /* vector.tcc in Sources */,
-				9DBE929118A8AA5600154550 /* communication.cpp in Sources */,
 				9DBE8D9D18A8A9C700154550 /* regex_nfa.tcc in Sources */,
 				9DBE8A7018A8A85000154550 /* usb_desc.c in Sources */,
-				9DBE929818A8AA5600154550 /* information.cpp in Sources */,
 				9DBE92B518A8AA5600154550 /* TFT.cpp in Sources */,
 				9DBE926A18A8AA5600154550 /* Firmata.cpp in Sources */,
 				9DBE8DAE18A8A9C700154550 /* modified_bessel_func.tcc in Sources */,
@@ -6286,7 +6049,6 @@
 				9DBE926018A8AA5600154550 /* EthernetUdp.cpp in Sources */,
 				9DBE8DAC18A8A9C700154550 /* hypergeometric.tcc in Sources */,
 				9DBE8D9418A8A9C700154550 /* fstream.tcc in Sources */,
-				9DBE929618A8AA5600154550 /* glcdfont.c in Sources */,
 				9DBE8A5818A8A84F00154550 /* analog.c in Sources */,
 				9DBE8D9018A8A9C700154550 /* basic_ios.tcc in Sources */,
 				9DBE8A5B18A8A84F00154550 /* eeprom.c in Sources */,
@@ -6294,24 +6056,18 @@
 				9DBE8A7618A8A85000154550 /* usb_mem.c in Sources */,
 				9DBE8DAD18A8A9C700154550 /* legendre_function.tcc in Sources */,
 				9DBE92BB18A8AA5600154550 /* spi_drv.cpp in Sources */,
-				9DBE929F18A8AA5600154550 /* SdCard.cpp in Sources */,
-				9DBE929718A8AA5600154550 /* helper.cpp in Sources */,
 				9DBE8DB118A8A9C700154550 /* random.tcc in Sources */,
 				9DDC61CC1938488E00C602BC /* istream.cpp in Sources */,
 				9DBE8A5D18A8A84F00154550 /* HardwareSerial2.cpp in Sources */,
 				9DDC61C71938488E00C602BC /* Adafruit_NeoPixel.cpp in Sources */,
-				9DBE92A518A8AA5600154550 /* twi.c in Sources */,
 				9DDC61DB1938488E00C602BC /* SdSpiSAM3X.cpp in Sources */,
 				9DBE8A5918A8A84F00154550 /* AudioStream.cpp in Sources */,
 				9DBE8A5E18A8A84F00154550 /* HardwareSerial3.cpp in Sources */,
-				9DBE929A18A8AA5600154550 /* lcd.cpp in Sources */,
 				9DBE92B718A8AA5600154550 /* Adafruit_ST7735.cpp in Sources */,
 				9DBE928518A8AA5600154550 /* GSM3ShieldV1ScanNetworks.cpp in Sources */,
 				9DBE8A7818A8A85000154550 /* usb_mouse.c in Sources */,
 				9DBE92C118A8AA5600154550 /* twi.c in Sources */,
-				9DBE929D18A8AA5600154550 /* Multiplexer.cpp in Sources */,
 				9DBE927018A8AA5600154550 /* GSM3MobileDataNetworkProvider.cpp in Sources */,
-				9DBE929418A8AA5600154550 /* EEPROM_I2C.cpp in Sources */,
 				9DBE928318A8AA5600154550 /* GSM3ShieldV1MultiServerProvider.cpp in Sources */,
 				9DBE92C018A8AA5600154550 /* WiFiUdp.cpp in Sources */,
 				9DDC61DC1938488E00C602BC /* SdStream.cpp in Sources */,
@@ -6319,21 +6075,19 @@
 				9DDC61D91938488E00C602BC /* SdSpiAVR.cpp in Sources */,
 				9DBE92B418A8AA5600154550 /* Stepper.cpp in Sources */,
 				9DBE926D18A8AA5600154550 /* GSM3MobileCellManagement.cpp in Sources */,
-				9DBE929E18A8AA5600154550 /* RobotSdCard.cpp in Sources */,
 				9DBE8DB218A8A9C700154550 /* riemann_zeta.tcc in Sources */,
 				9DBE925D18A8AA5600154550 /* Ethernet.cpp in Sources */,
-				9DBE929C18A8AA5600154550 /* Motors.cpp in Sources */,
 				9DBE8A5F18A8A84F00154550 /* IntervalTimer.cpp in Sources */,
 				9DBE8A6518A8A85000154550 /* mk20dx128.c in Sources */,
 				9DBE8A7218A8A85000154550 /* usb_flightsim.cpp in Sources */,
 				9DBE927D18A8AA5600154550 /* GSM3ShieldV1ClientProvider.cpp in Sources */,
 				9DBE8DB318A8A9C700154550 /* bool_set.tcc in Sources */,
-				9DBE929B18A8AA5600154550 /* Melody.cpp in Sources */,
 				9DBE8D9818A8A9C700154550 /* locale_facets.tcc in Sources */,
 				9DBE8DB018A8A9C700154550 /* poly_laguerre.tcc in Sources */,
 				9DBE928818A8AA5600154550 /* GSM3ShieldV1VoiceProvider.cpp in Sources */,
 				9DBE8A6318A8A85000154550 /* Makefile in Sources */,
 				9DBE928A18A8AA5600154550 /* GSM3SoftSerial.cpp in Sources */,
+				9D6BC8711938CBC400E21E1C /* lib8tion.cpp in Sources */,
 				9DBE8A7A18A8A85000154550 /* usb_seremu.c in Sources */,
 				9DBE92CA18AA834D00154550 /* CDLEDStripPatterns.cpp in Sources */,
 				9DBE8A7E18A8A85000154550 /* yield.c in Sources */,
@@ -6353,9 +6107,6 @@
 				9DBE927A18A8AA5600154550 /* GSM3ShieldV1BandManagement.cpp in Sources */,
 				9DBE928918A8AA5600154550 /* GSM3SMSService.cpp in Sources */,
 				9DBE8A6218A8A84F00154550 /* main.cpp in Sources */,
-				9DBE929518A8AA5600154550 /* Fat16.cpp in Sources */,
-				9DBE92A418A8AA5600154550 /* RobotTextManager.cpp in Sources */,
-				9DBE92A218A8AA5600154550 /* Squawk.cpp in Sources */,
 				9DBE926218A8AA5600154550 /* w5100.cpp in Sources */,
 				9DDC61D71938488E00C602BC /* SdFile.cpp in Sources */,
 				9DBE8A7118A8A85000154550 /* usb_dev.c in Sources */,
@@ -6371,24 +6122,18 @@
 				9DBE925E18A8AA5600154550 /* EthernetClient.cpp in Sources */,
 				9DBE92BE18A8AA5600154550 /* WiFiClient.cpp in Sources */,
 				9DBE92B118A8AA5600154550 /* Servo.cpp in Sources */,
-				9DBE929018A8AA5600154550 /* ArduinoRobot.cpp in Sources */,
 				9DDC61D01938488E00C602BC /* SdBaseFile.cpp in Sources */,
 				9DBE8D9918A8A9C700154550 /* locale_facets_nonio.tcc in Sources */,
-				9DBE92A618A8AA5600154550 /* VirtualKeyboard.cpp in Sources */,
+				9D6BC8701938CBC400E21E1C /* hsv2rgb.cpp in Sources */,
 				9DDC61CB1938488E00C602BC /* SD.cpp in Sources */,
 				9DBE927F18A8AA5600154550 /* GSM3ShieldV1DirectModemProvider.cpp in Sources */,
-				9DBE926318A8AA5600154550 /* FastSPI_LED.cpp in Sources */,
-				9DBE929318A8AA5600154550 /* EasyTransfer2.cpp in Sources */,
-				9DBE929218A8AA5600154550 /* Compass.cpp in Sources */,
-				9DBE92A718A8AA5600154550 /* Wire.cpp in Sources */,
 				9DBE92BA18A8AA5600154550 /* socket.c in Sources */,
 				9DBE92B218A8AA5600154550 /* SoftwareSerial.cpp in Sources */,
-				9DBE928E18A8AA5600154550 /* Adafruit_GFX.cpp in Sources */,
 				9DBE926E18A8AA5600154550 /* GSM3MobileClientProvider.cpp in Sources */,
 				9DBE8DAF18A8A9C700154550 /* poly_hermite.tcc in Sources */,
 				9DBE927518A8AA5600154550 /* GSM3MobileServerService.cpp in Sources */,
 				9DBE8DAA18A8A9C700154550 /* exp_integral.tcc in Sources */,
-				9DBE928D18A8AA5600154550 /* Adafruit_NeoPixel.cpp in Sources */,
+				9D6BC86F1938CBC400E21E1C /* FastLED.cpp in Sources */,
 				9DBE928418A8AA5600154550 /* GSM3ShieldV1PinManagement.cpp in Sources */,
 				9DDC61D31938488E00C602BC /* SdFatErrorPrint.cpp in Sources */,
 				9DBE8A6618A8A85000154550 /* new.cpp in Sources */,
@@ -6400,19 +6145,15 @@
 				9DBE8DAB18A8A9C700154550 /* gamma.tcc in Sources */,
 				9DBE8A6E18A8A85000154550 /* Tone.cpp in Sources */,
 				9DBE927E18A8AA5600154550 /* GSM3ShieldV1DataNetworkProvider.cpp in Sources */,
-				9DBE92A318A8AA5600154550 /* SquawkSD.cpp in Sources */,
 				9DBE927818A8AA5600154550 /* GSM3ShieldV1.cpp in Sources */,
 				9DDC61D61938488E00C602BC /* SdFatUtil.cpp in Sources */,
 				9DBE8D9318A8A9C700154550 /* forward_list.tcc in Sources */,
 				9DBE8DA418A8A9C700154550 /* safe_sequence.tcc in Sources */,
 				9DBE8A7418A8A85000154550 /* usb_joystick.c in Sources */,
-				9DBE928F18A8AA5600154550 /* Arduino_LCD.cpp in Sources */,
 				9DDC61CD1938488E00C602BC /* MinimumSerial.cpp in Sources */,
-				9DBE92A118A8AA5600154550 /* SPI.cpp in Sources */,
 				9DBE8A6F18A8A85000154550 /* touch.c in Sources */,
 				9DBE8D9618A8A9C700154550 /* list.tcc in Sources */,
 				9DBE8D9118A8A9C700154550 /* basic_string.tcc in Sources */,
-				9DBE92A018A8AA5600154550 /* Sensors.cpp in Sources */,
 				9DBE8D9A18A8A9C700154550 /* ostream.tcc in Sources */,
 				9DDC61CA1938488E00C602BC /* File.cpp in Sources */,
 				9DBE8DA618A8A9C700154550 /* vstring.tcc in Sources */,
@@ -6424,6 +6165,7 @@
 				9DBE927C18A8AA5600154550 /* GSM3ShieldV1CellManagement.cpp in Sources */,
 				9DDC61C91938488E00C602BC /* LSM303.cpp in Sources */,
 				9DBE926B18A8AA5600154550 /* GSM3CircularBuffer.cpp in Sources */,
+				9D6BC86E1938CBC400E21E1C /* colorutils.cpp in Sources */,
 				9DBE8A5C18A8A84F00154550 /* HardwareSerial1.cpp in Sources */,
 				9DBE92AB18A8AA5600154550 /* Multiplexer.cpp in Sources */,
 				9DBE927918A8AA5600154550 /* GSM3ShieldV1AccessProvider.cpp in Sources */,
@@ -6450,7 +6192,6 @@
 				9DBE925A18A8AA5600154550 /* Esplora.cpp in Sources */,
 				9DBE92B618A8AA5600154550 /* Adafruit_GFX.cpp in Sources */,
 				9DBE92BC18A8AA5600154550 /* wifi_drv.cpp in Sources */,
-				9DBE929918A8AA5600154550 /* keyboard.cpp in Sources */,
 				9DBE8A7C18A8A85000154550 /* WMath.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
