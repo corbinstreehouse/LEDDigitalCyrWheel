@@ -121,34 +121,7 @@ void setAllPixelsToColor(uint32_t color) {
 }
 
 
-float waveValueForTime(float ledCount, float time, float duration, int initialPixel) {
-    float numberOfWaves = 2;
-    float A = ledCount / 2.0;
-    float x = time;
-    float totalTime = duration;
-    float waveLength = totalTime / numberOfWaves;
-    float k = (2*M_PI)/waveLength;
-    //    float a = (numberOfWaves/totalTime)*1.8;  // a is the rate of decay
-    
-    //    float y = A * exp(-a*x) *sin(k*x) + A;
-    
-    // direct fade with negative sloping line; linear drop off
-    // y = (m*x+b)*sin(k*x)+A
-    
-    float b = ledCount / 2.0; // A
-    float m = -b/totalTime;
-    float y = (m*x+b)*sin(k*x)+A;
-    
-    // Offset randomly each iteration
-    y = round(y); // round..floor, what should i do?
-    
-//    y += initialPixel;
-//    if (y >= ledCount) {
-//        // wrap
-//        y -= ledCount;
-//    }
-    return y;
-}
+extern float waveValueForTime(float ledCount, float time, float duration, int initialPixel);
 
 #define WRAP_AROUND(pixel, count) if (pixel < 0) pixel += count; if (pixel >= count) pixel -= count;
 
@@ -329,7 +302,6 @@ static inline void fadePixel(int i, PackedColorUnion color, float amount) {
     color.green *= amount;
     color.blue *= amount;
     g_strip.setPixelColor(i, color.red, color.green, color.blue);
-    
 }
 
 void fadeIn(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t timePassedInMS) {
@@ -346,16 +318,6 @@ void fadeIn(CDPatternItemHeader *itemHeader, uint32_t intervalCount, uint32_t ti
         PackedColorUnion color;
         color.color = itemHeader->color;
         fadePixel(i, color, y);
-        
-//        byte r = itemHeader->color >> 16;
-//        byte g = itemHeader->color >> 8;
-//        byte b = itemHeader->color;
-//        
-//        r *= y;
-//        g *= y;
-//        b *= y;
-//        
-//        g_strip.setPixelColor(i, r, g, b);
     }
 }
 
@@ -1830,7 +1792,6 @@ void CDLEDPatternManager::stripPatternLoop(CDPatternItemHeader *itemHeader, uint
 
     m_itemHeader = itemHeader;
     m_intervalCount = intervalCount;
-    m_timePassedInMS = timePassedInMS;
     m_isFirstPass = isFirstPass;
 
     updateBrightness();

@@ -54,7 +54,6 @@ private:
     STRIP_CLASS *m_strip;
     CDPatternItemHeader *m_itemHeader;
     uint32_t m_intervalCount;
-    uint32_t m_timePassedInMS; // In MS
     bool m_isFirstPass;
     
     // velocity based state

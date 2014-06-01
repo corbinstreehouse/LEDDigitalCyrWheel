@@ -80,6 +80,7 @@ typedef enum ENUM_SIZE {
     CDPatternTypeAllOff = CDPatternTypeMax,
 } CDPatternType;
 
+#warning eliminate, corbin
 typedef union {
     struct {
         /// TODO: GRB format for perf... but RGB matches Adafruit packing little indian style  (hence BGR)
