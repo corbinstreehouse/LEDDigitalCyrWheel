@@ -16,3 +16,6 @@
 [submodule "Libraries/FastLED"]
 	path = Libraries/FastLED
 	url = https://github.com/FastLED/FastLED.git
+[submodule "Libraries/LEDPatterns"]
+	path = Libraries/LEDPatterns
+	url = git@github.com:corbinstreehouse/LEDPatterns.git
