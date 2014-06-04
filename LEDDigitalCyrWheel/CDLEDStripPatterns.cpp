@@ -11,7 +11,6 @@
 #include "SD.h"
 #include <math.h>
 
-#define STRIP_LENGTH  331 // my actual count // (14+60*2)// (60*4) // (67*2)
 #define ANALOG_READ_MAX UINT16_MAX // setup for 16 bit resolution
 
 #if USE_ADAFRUIT

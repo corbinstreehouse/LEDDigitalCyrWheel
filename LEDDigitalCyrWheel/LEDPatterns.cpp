@@ -10,7 +10,7 @@
 #include "colorutils.h"
 #include "hsv2rgb.h"
 #if SD_CARD_SUPPORT
-#include <SD.h>
+#include "SD.h"
 #endif
 #if DEBUG
     #define DEBUG_PRINTLN(a) Serial.println(a)
@@ -18,6 +18,10 @@
 #else
     #define DEBUG_PRINTLN(a)
     #define DEBUG_PRINTF(a, ...)
+#endif
+
+#ifndef byte
+#define byte uint8_t
 #endif
 
 
@@ -62,6 +66,7 @@ static inline bool PatternIsContinuous(LEDPatternType p) {
         case LEDPatternTypeSolidColor:
             return false; // repeats after a rotation
         case LEDPatternTypeMax:
+        case LEDPatternTypeBlink:
             return false;
     }
 }
@@ -73,6 +78,7 @@ void LEDPatterns::setPatternType(LEDPatternType type) {
     m_firstTime = true;
     m_intervalCount = 0;
     m_loopCount = 0;
+    m_count = 0;
 }
 
 void LEDPatterns::show() {
@@ -134,14 +140,16 @@ void LEDPatterns::show() {
             theaterChase();
             break;
         }
+#if SD_CARD_SUPPORT
         case LEDPatternTypeImageLinearFade: {
-//            linearImageFade(itemHeader, intervalCount, timePassedInMS, isFirstPass);
+            linearImageFade();
             break;
         }
         case LEDPatternTypeImageEntireStrip: {
-//            patternImageEntireStrip(itemHeader, intervalCount, timePassedInMS, isFirstPass);
+            patternImageEntireStrip();
             break;
         }
+#endif
         case LEDPatternTypeGradient: {
             ledGradients();
             break;
@@ -160,7 +168,7 @@ void LEDPatterns::show() {
             // start with alternating red and green m_leds that randomly walk
             // to other colors for 400 loopCounts, fading over last 80
             maxLoops = 400;
-            randomColorWalk(m_ledCount == 0 ? 1 : 0, m_ledCount > maxLoops - 80);
+            randomColorWalk(m_loopCount == 0 ? 1 : 0, m_loopCount > maxLoops - 80);
             
             break;
             
@@ -176,7 +184,7 @@ void LEDPatterns::show() {
             // of every 200 count cycle or over the over final 100 counts
             // (this creates a repeating bloom/decay effect)
             maxLoops = 630;
-            colorExplosion((m_ledCount % 200 > 130) || (m_ledCount > maxLoops - 100));
+            colorExplosion((m_loopCount % 200 > 130) || (m_loopCount > maxLoops - 100));
             
             break;
             
@@ -261,15 +269,19 @@ void LEDPatterns::show() {
             randomGradients();
             break;
         }
+        case LEDPatternTypeBlink: {
+            blinkPattern();
+            break;
+        }
         case LEDPatternTypeAllOff: {
 #if DEBUG
-            showOn();
+            //showOn();
 #endif
             break;
         }
     }
     
-    if (m_patternType >= LEDPatternTypeWarmWhiteShimmer) {
+    if (m_patternType >= LEDPatternTypeWarmWhiteShimmer && m_patternType <= LEDPatternTypeCollision) {
         //        rgb_color *m_leds = (rgb_color *)m_strip.getPixels();
         // do a bit walk over to fix brightness, then show
         //        if (m_patternType != LEDPatternTypeWarmWhiteShimmer && m_patternType != LEDPatternTypeRandomColorWalk && m_patternType != LEDPatternTypeColorExplosion && m_patternType != LEDPatternTypeBrightTwinkle ) {
@@ -295,6 +307,8 @@ void LEDPatterns::show() {
         }
     }
     internalShow();
+    // no longer the first time
+    m_firstTime = false;
 }
 
 // pololu... https://github.com/pololu/pololu-led-strip-arduino/blob/master/PololuLedStrip/examples/LedStripXmas/LedStripXmas.ino
@@ -468,7 +482,7 @@ void LEDPatterns::traditionalColors()
     // loop counts it takes to go from full off to fully bright
     const unsigned char brighteningCycles = 20;
     
-    if (m_ledCount < initialDarkCycles)  // leave strip fully off for 20 cycles
+    if (m_loopCount < initialDarkCycles)  // leave strip fully off for 20 cycles
     {
         return;
     }
@@ -481,8 +495,8 @@ void LEDPatterns::traditionalColors()
     
     for (int i = 0; i < extendedLEDCount; i++)
     {
-        unsigned char brightness = (m_ledCount - initialDarkCycles)%brighteningCycles + 1;
-        unsigned char cycle = (m_ledCount - initialDarkCycles)/brighteningCycles;
+        unsigned char brightness = (m_loopCount - initialDarkCycles)%brighteningCycles + 1;
+        unsigned char cycle = (m_loopCount - initialDarkCycles)/brighteningCycles;
         
         // transform i into a moving idx space that translates one step per
         // brightening cycle and wraps around
@@ -684,9 +698,9 @@ void LEDPatterns::pololuGradient()
 {
     unsigned int j = 0;
     
-    // populate m_leds array with full-brightness gradient m_leds
-    // (since the array indices are a function of m_ledCount, the gradient
-    // m_leds scroll over time)
+    // populate colors array with full-brightness gradient colors
+    // (since the array indices are a function of m_loopCount, the gradient
+    // colors scroll over time)
     while (j < m_ledCount)
     {
         // transition from red to green over 8 LEDs
@@ -699,7 +713,7 @@ void LEDPatterns::pololuGradient()
             c.red = (byte)(160 - 20*i);
             c.green = (byte)(20*i);
             c.blue = (byte)((160 - 20*i)*20*i/160);
-            m_leds[(m_ledCount/2 + j + m_ledCount)%m_ledCount] = c;
+            m_leds[(m_loopCount/2 + j + m_ledCount)%m_ledCount] = c;
             
             j++;
         }
@@ -711,13 +725,13 @@ void LEDPatterns::pololuGradient()
             c.red = (byte)(20*i);
             c.green = (byte)(160 - 20*i);
             c.blue = (byte)((160 - 20*i)*20*i/160);
-            m_leds[(m_ledCount/2 + j + m_ledCount)%m_ledCount] = c;
+            m_leds[(m_loopCount/2 + j + m_ledCount)%m_ledCount] = c;
             j++;
         }
     }
     
-    // modify the m_leds array to overlay the waves of dimness
-    // (since the array indices are a function of m_ledCount, the waves
+    // modify the colors array to overlay the waves of dimness
+    // (since the array indices are a function of m_loopCount, the waves
     // of dimness scroll over time)
     const unsigned char fullDarkLEDs = 10;  // number of LEDs to leave fully off
     const unsigned char fullBrightLEDs = 5;  // number of LEDs to leave fully bright
@@ -737,7 +751,7 @@ void LEDPatterns::pololuGradient()
         // progressively dim the LEDs
         for (int i = 1; i < 8; i++)
         {
-            idx = (j + m_ledCount) % extendedLEDCount;
+            idx = (j + m_loopCount) % extendedLEDCount;
             if (j++ >= extendedLEDCount){ return; }
             if (idx >= m_ledCount){ continue; }
             
@@ -749,7 +763,7 @@ void LEDPatterns::pololuGradient()
         // turn off these LEDs
         for (int i = 0; i < fullDarkLEDs; i++)
         {
-            idx = (j + m_ledCount) % extendedLEDCount;
+            idx = (j + m_loopCount) % extendedLEDCount;
             if (j++ >= extendedLEDCount){ return; }
             if (idx >= m_ledCount){ continue; }
             
@@ -761,7 +775,7 @@ void LEDPatterns::pololuGradient()
         // progressively bring these LEDs back
         for (int i = 0; i < 7; i++)
         {
-            idx = (j + m_ledCount) % extendedLEDCount;
+            idx = (j + m_loopCount) % extendedLEDCount;
             if (j++ >= extendedLEDCount){ return; }
             if (idx >= m_ledCount){ continue; }
             
@@ -872,13 +886,10 @@ void LEDPatterns::brightTwinkle(unsigned char minColor, unsigned char numColors,
 // still in progress).
 unsigned char LEDPatterns::collision()
 {
-    const unsigned char maxBrightness = 180;  // max brightness for the m_leds
+    const unsigned char maxBrightness = 180;  // max brightness for the colors
     const unsigned char numCollisions = 5;  // # of collisions before pattern ends
-
-#warning remove static state!
-    static unsigned int count = 0;  // counter used by pattern
     
-    if (m_ledCount == 0)
+    if (m_loopCount == 0)
     {
         m_state = 0;
     }
@@ -926,16 +937,16 @@ unsigned char LEDPatterns::collision()
         m_leds[m_ledCount - 3] = m_leds[2];
         
         m_state++;  // advance to next state
-        count = 8;  // pick the first value of count that results in a startIdx of 1 (see below)
+        m_count = 8;  // pick the first value of count that results in a startIdx of 1 (see below)
         return 0;
     }
     
     if (m_state % 3 == 1)
     {
         // stream-generation state; streams accelerate towards each other
-        unsigned int startIdx = count*(count + 1) >> 6;
-        unsigned int stopIdx = startIdx + (count >> 5);
-        count++;
+        unsigned int startIdx = m_count*(m_count + 1) >> 6;
+        unsigned int stopIdx = startIdx + (m_count >> 5);
+        m_count++;
         if (startIdx < (m_ledCount + 1)/2)
         {
             // if streams have not crossed the half-way point, keep them growing
@@ -1027,7 +1038,7 @@ unsigned char LEDPatterns::collision()
             }
         }
     }
-    
+
     return 0;
 }
 
@@ -1116,7 +1127,7 @@ void LEDPatterns::wavePatternWithColor(CRGB c, int initialPixel) {
         timePassed = 0;
     }
     
-    int pixel = waveValueForTime(m_ledCount, m_timePassed, m_duration, initialPixel);
+    int pixel = waveValueForTime(m_ledCount, timePassed, m_duration, initialPixel);
     float pixelsToFadeOver = mainPixel - pixel;
     // fade to that one..
     if (pixelsToFadeOver != 0) {
@@ -1170,15 +1181,20 @@ void LEDPatterns::wavePattern() {
             // replace the original color
             hsv = CHSV(random(HUE_MAX_RAINBOW), 255, 255);
             hsv2rgb_rainbow(hsv, m_patternColor);
+
+            int inc = HUE_MAX_RAINBOW / 4;
+            
+            hsv.hue += inc; // Wraps
+            hsv2rgb_rainbow(hsv, m_randColor1);
+
+            hsv.hue += inc; // Wraps
+            hsv2rgb_rainbow(hsv, m_randColor2);
+
+            hsv.hue += inc; // Wraps
+            hsv2rgb_rainbow(hsv, m_randColor3);
+        } else {
+            m_randColor1 = m_randColor2 = m_randColor3 = m_patternColor;
         }
-        hsv = CHSV(random(HUE_MAX_RAINBOW), 255, 255);
-        hsv2rgb_rainbow(hsv, m_randColor1);
-
-        hsv = CHSV(random(HUE_MAX_RAINBOW), 255, 255);
-        hsv2rgb_rainbow(hsv, m_randColor2);
-
-        hsv = CHSV(random(HUE_MAX_RAINBOW), 255, 255);
-        hsv2rgb_rainbow(hsv, m_randColor3);
     }
     
     // reset to black
@@ -1250,6 +1266,14 @@ void LEDPatterns::bottomGlow() {
     // Set once, and done. A cheap pattern.
     if (m_firstTime) {
         bottomGlowFromTopPixel(0); // glow from pixel 0..
+    }
+}
+
+void LEDPatterns::blinkPattern() {
+    if (getPercentagePassed() < 0.5) {
+        fill_solid(m_leds, m_ledCount, m_patternColor);
+    } else {
+        fill_solid(m_leds, m_ledCount, CRGB::Black);
     }
 }
 
@@ -1325,9 +1349,14 @@ static CRGB hsvToRgb(uint16_t h, uint8_t s, uint8_t v)
 void LEDPatterns::solidRainbow(int positionInWheel, int count) {
     int countPerSection = round(m_ledCount / count);
     for (int i = 0; i < m_ledCount; i++) {
-        uint16_t angle = 360.0 * ((float)((i + positionInWheel) / (float)countPerSection));
-        CRGB color = hsvToRgb(angle, 255, 255);
-        setPixelColor(i, color);
+//        uint16_t angle = 360.0 * ((float)((i + positionInWheel) / (float)countPerSection));
+//        CRGB color = hsvToRgb(angle, 255, 255);
+//        setPixelColor(i, color);
+        
+        uint16_t hue = HUE_MAX_RAINBOW * ((float)((i + positionInWheel) / (float)countPerSection));
+
+        CHSV hsv = CHSV(hue, 255, 255);
+        hsv2rgb_rainbow(hsv, m_leds[i]);
     }
 }
 
@@ -1528,7 +1557,8 @@ void LEDPatterns::randomGradients() {
     if (m_firstTime) {
         // generate an initial random color for each gradient
         for (int i = 0; i < numberOfGradients; i++) {
-            CHSV hsv = CHSV(random(HUE_MAX_RAINBOW), 255, 255);
+            // Well, not really random..
+            CHSV hsv = CHSV(HUE_MAX_RAINBOW*((float)i / (float)numberOfGradients), 255, 255);
             hsv2rgb_rainbow(hsv, tmpBuffer[i]);
         }
     }
@@ -1542,7 +1572,6 @@ void LEDPatterns::randomGradients() {
     pixel = pixel % m_ledCount;
     
     for (int i = 0; i < numberOfGradients; i++) {
-        // stupid color stuff..
         pixel = gradientOverXPixels(pixel, 0, offPixels, rampCount, tmpBuffer[i]);
     }
     //    // black on extras
@@ -1587,7 +1616,7 @@ void LEDPatterns::readDataIntoBufferStartingAtPosition(uint32_t position, uint8_
 
 void LEDPatterns::initImageDataForHeader() {
     DEBUG_PRINTLN("------------------------------");
-    DEBUG_PRINTF("playing image with length: %d\r\n", imageHeader->dataLength);
+    DEBUG_PRINTF("playing image with length: %d\r\n", m_dataLength);
     //    Serial.printf("init image state; header: %x, data:%x, datavalue:%x\r\n", imageHeader, imageState->dataOffset, dataStart(imageHeader));
     DEBUG_PRINTLN("");
     
@@ -1650,6 +1679,89 @@ static inline uint32_t keepOffsetInDataBounds(uint32_t offset, uint32_t length) 
     }
     return offset;
 }
+
+
+void LEDPatterns::patternImageEntireStrip() {
+    int totalPixelsInImage = m_dataLength / 3; // Assumes RGB encoding, 3 bytes per pixel...this should divide evenly..
+    
+    if (m_firstTime) {
+        initImageDataForHeader();
+    }
+    
+    uint32_t currentOffset = 0;
+    uint32_t nextOffsetForBlending = 0;
+    float percentageThrough = getPercentagePassed();
+    if (!m_firstTime) {
+        // Increase the offset by whole amounts once we have enough time passed
+        if (totalPixelsInImage > m_ledCount) {
+            int numOfCompleteImages = totalPixelsInImage / m_ledCount;
+            float percentageThroughOfCompleteImagesThrough = percentageThrough * (float)numOfCompleteImages;
+            // Floor it; we always go up from the previous to the next
+            int totalWholeCompleteImagesThrough = floor(percentageThroughOfCompleteImagesThrough);
+            int wholeCompleteImagesThrough = totalWholeCompleteImagesThrough;
+            // wrap
+            if (wholeCompleteImagesThrough > numOfCompleteImages) {
+                wholeCompleteImagesThrough = wholeCompleteImagesThrough % numOfCompleteImages;
+            }
+            
+            // again...3 bytes per pixel hardcoding!! I think I'd have to decode to this format.
+            if (wholeCompleteImagesThrough > 0) {
+                currentOffset = currentOffset + (3*m_ledCount*wholeCompleteImagesThrough);
+                currentOffset = keepOffsetInDataBounds(currentOffset, m_dataLength); /// Shouldn't happen unless the image length/size is messed up
+            }
+            // Figure out the blending offset by adding one cycle through
+            nextOffsetForBlending = currentOffset + (3*m_ledCount);
+            nextOffsetForBlending = keepOffsetInDataBounds(nextOffsetForBlending, m_dataLength);
+            // Adjust the percentageThrough to the amount we are through based on this current offset....
+            //            percentageThrough = percentageThroughOfCompleteImagesThrough - wholeCompleteImagesThrough;
+            percentageThrough = percentageThroughOfCompleteImagesThrough - totalWholeCompleteImagesThrough;
+        }
+    }
+    
+    for (int x = 0; x < m_ledCount; x++) {
+        // First, bounds check each time... shouldn't be needed unless the size of the image isn't an integral value for the number of pixels.
+        currentOffset = keepOffsetInDataBounds(currentOffset, m_dataLength);
+        nextOffsetForBlending = keepOffsetInDataBounds(nextOffsetForBlending, m_dataLength);
+        
+        uint8_t *data = dataForOffset(currentOffset);
+        uint8_t r = data[0];
+        uint8_t g = data[1];
+        uint8_t b = data[2];
+        
+#if USE_TWO_BUFFERS
+        if (currentOffset != nextOffsetForBlending && percentageThrough > 0) {
+            // Grab the next color and mix it...
+            uint8_t *nextDataForBlending = dataForOffset(nextOffsetForBlending);
+            
+            uint8_t r2 = nextDataForBlending[0];
+            uint8_t g2 = nextDataForBlending[1];
+            uint8_t b2 = nextDataForBlending[2];
+            
+            //            Serial.print("percentage through");
+            //            DEBUG_PRINTLN(percentageThrough);
+            //            Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
+            //            Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r2, g2, b2);
+            //
+            //            DEBUG_PRINTLN();
+            
+            // TODO: non floating point math.. ??
+            r = r + round(percentageThrough * (float)(r2 - r));
+            g = g + round(percentageThrough * (float)(g2 - g));
+            b = b + round(percentageThrough * (float)(b2 - b));
+            //            Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n\r\n", x, r, g, b);
+        }
+#endif
+        
+#if 0 // DEBUG
+        Serial.printf("x:%d, r:%d, g:%d, b:%d\r\n", x, r, g, b);
+#endif
+        setPixelColor(x, CRGB(r, g, b));
+        // Again..assumes 3 bytes per pixel
+        currentOffset += 3;
+        nextOffsetForBlending += 3;
+    }
+}
+
 
 void LEDPatterns::linearImageFade() {
     if (m_firstTime) {
@@ -1715,5 +1827,18 @@ void LEDPatterns::linearImageFade() {
     }
 }
 
-
 #endif  // SD_CARD_SUPPORT
+
+void LEDPatterns::flashThreeTimesWithDelay(CRGB color, uint32_t delayAmount) {
+    for (int i = 0; i < 3; i++) {
+        fill_solid(m_leds, m_ledCount, color);
+        delay(delayAmount);
+        fill_solid(m_leds, m_ledCount, CRGB::Black);
+        delay(delayAmount);
+    }
+}
+
+void LEDPatterns::flashOnce(CRGB color) {
+    fill_solid(m_leds, m_ledCount, color);
+    delay(250);
+}

@@ -8,10 +8,11 @@
 // http://www.pololu.com/file/download/LSM303DLH-compass-app-note.pdf?file_id=0J434
 
 #include "CDOrientation.h"
+#include "LEDCommon.h"
 
 #if PATTERN_EDITOR
 
-CDOrientation::CDOrientation() {
+CDOrientation::CDOrientation() : m_maxVelocity(0), m_targetBrightness(0) {
 }
 
 bool CDOrientation::init() {
@@ -49,11 +50,12 @@ void CDOrientation::beginSavingData() {
 void CDOrientation::endSavingData() {
 }
 
-
+uint8_t CDOrientation::getRotationalVelocityBrightness(uint8_t currentBrightness) {
+    return currentBrightness;
+}
 
 #else
 
-#include "CDLEDStripPatterns.h" // for debug-print
 #include "LEDDigitalCyrWheel.h" // For EEPROM_ADDRESS....i could make this settable.
 #include "EEPROM.h"
 #include "EEPROM2.h"
@@ -190,6 +192,7 @@ void Matrix_Multiply(float a[3][3], float b[3][3],float mat[3][3])
 
 CDOrientation::CDOrientation() {
     _shouldSaveDataToFile = false;
+    m_startBrightness = 0;
 }
 
 /**************************************************/
@@ -864,7 +867,12 @@ double CDOrientation::getAccelZ() {
 double CDOrientation::getRotationalVelocity() {
     // Get the length of the gyro vector
     double temp = sqrt(sq(_gyro.g.x) + sq(_gyro.g.y) + sq(_gyro.g.z));
-    return GYRO_RAW_VALUE_TO_DEG_PER_SEC(temp);
+    double result = GYRO_RAW_VALUE_TO_DEG_PER_SEC(temp);
+    if (result > m_maxVelocity) {
+        m_maxVelocity = result; // I might do something with this later
+        //        DEBUG_PRINTF("new max velocity: %.3f\r\n", m_maxVelocity);
+    }
+    return result;
 }
 
 void CDOrientation::beginSavingData() {
@@ -969,6 +977,64 @@ void CDOrientation::print()
 #endif
 // Serial.println();
     
+}
+
+uint8_t CDOrientation::getRotationalVelocityBrightness(uint8_t currentBrightness) {
+#define MIN_BRIGHTNESS 1
+#define MAX_BRIGHTNESS 255 // Not too bright....but seems bright
+    
+    uint8_t targetBrightness = 0;
+#define MAX_ROTATIONAL_VELOCITY 800 // at this value, we hit max brightness, but it is hard to hit..usually I hit half
+    double velocity = getRotationalVelocity();
+    if (velocity >= MAX_ROTATIONAL_VELOCITY) {
+        targetBrightness = MAX_BRIGHTNESS;
+    } else {
+        float percentage = velocity / (float)MAX_ROTATIONAL_VELOCITY;
+        // quadric growth slows it down at the start
+        percentage = percentage*percentage*percentage;
+        
+        
+        float diffBetweenMinMax = MAX_BRIGHTNESS - MIN_BRIGHTNESS;
+        targetBrightness = MIN_BRIGHTNESS + round(percentage * diffBetweenMinMax);
+    }
+    
+    uint8_t result = currentBrightness;
+    
+    if (m_isFirstPass) {
+        m_targetBrightness = targetBrightness;
+        result = targetBrightness;
+//        m_strip->setBrightness(targetBrightness);
+    }
+//    uint8_t currentBrightness = m_strip->getBrightness();
+    
+    if (m_targetBrightness != targetBrightness) {
+        m_targetBrightness = targetBrightness;
+        
+        if (m_startBrightness != currentBrightness) {
+            m_startBrightness = currentBrightness;
+            m_brightnessStartTime = millis();
+            DEBUG_PRINTF("START Brightness changed: current: %d target: %d\r\n", currentBrightness, targetBrightness);
+        } else {
+            DEBUG_PRINTF("TARGET Brightness changed: current: %d target: %d\r\n", currentBrightness, targetBrightness);
+        }
+    }
+    
+    if (currentBrightness != m_targetBrightness) {
+#define BRIGHTNESS_RAMPUP_TIME 200.0 // ms  -- this smooths things out
+        float timePassed = millis() - m_brightnessStartTime;
+        if (timePassed > BRIGHTNESS_RAMPUP_TIME || timePassed < 0) {
+            result = m_targetBrightness;
+        } else {
+            float percentagePassed = timePassed / BRIGHTNESS_RAMPUP_TIME;
+            //y =x^2  exponential ramp up (desired?)
+            //            percentagePassed = sq(percentagePassed);
+            float targetDiff = m_targetBrightness - m_startBrightness;
+            uint8_t brightness = m_startBrightness + round(percentagePassed * targetDiff);
+            //            DEBUG_PRINTF("    Changing brightness: %d,  time passed: %.3f   targetDiff: %.3f,    newB: %d\r\n", currentBrightness, timePassed, targetDiff, brightness);
+            result = brightness;
+        }
+    }
+    return result;
 }
 
 #endif

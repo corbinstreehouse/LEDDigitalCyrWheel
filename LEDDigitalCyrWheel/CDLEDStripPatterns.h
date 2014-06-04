@@ -12,20 +12,7 @@
 #include <stdint.h>
 #include "CDPatternData.h"
 #include "CDOrientation.h"
-
-#define DEBUG 0
-#define IGNORE_VOLTAGE 0 //for hardware testing w/out a battery
-
-#define USE_ADAFRUIT 1
-
-#if DEBUG
-    #define DEBUG_PRINTLN(a) Serial.println(a)
-    #define DEBUG_PRINTF(a, ...) Serial.printf(a, ##__VA_ARGS__)
-#else
-    #define DEBUG_PRINTLN(a)
-    #define DEBUG_PRINTF(a, ...)
-#endif
-
+#include "LEDCommon.h"
 
 #if USE_ADAFRUIT
 #include "Adafruit_NeoPixel.h"
@@ -54,6 +41,7 @@ private:
     STRIP_CLASS *m_strip;
     CDPatternItemHeader *m_itemHeader;
     uint32_t m_intervalCount;
+    uint32_t m_timePassedInMS; // In MS
     bool m_isFirstPass;
     
     // velocity based state

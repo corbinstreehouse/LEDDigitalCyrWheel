@@ -104,6 +104,8 @@ private:
 
     LSM303::vector<int16_t> _calibrationMin;
     LSM303::vector<int16_t> _calibrationMax;
+    
+    
     void _calibrate();
     
     void normalize();
@@ -123,6 +125,12 @@ private:
     
     void writeStatusToFile();
 #endif
+    
+    double m_maxVelocity;
+    double m_targetBrightness;
+    bool m_isFirstPass;
+    uint32_t m_brightnessStartTime;
+    uint8_t m_startBrightness;
     
 public:
     CDOrientation();
@@ -144,6 +152,13 @@ public:
     
 
     double getRotationalVelocity(); // In degress per second
+    
+
+    void setFirstPass(bool isFirstPass) {  m_isFirstPass = isFirstPass; m_brightnessStartTime = millis(); };
+    
+    // Calculations for brightness based on the velocity of things for the cyr wheel
+    uint8_t getRotationalVelocityBrightness(uint8_t currentBrightness);
+    
 };
 
 

@@ -21,8 +21,10 @@
 
 #include "CWPatternSequenceManager.h"
 #include "CDPatternData.h"
-#include "CDLEDStripPatterns.h"
+//#include "CDLEDStripPatterns.h"
 #include "LEDDigitalCyrWheel.h"
+
+#define IGNORE_VOLTAGE 0 //for hardware testing w/out a battery
 
 // 2 cell LiPO, 4.2v each: 8.4v max. 3.0v should be the min, 3.0*2=6v min
 #define LOW_VOLTAGE_VALUE 6.4 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
@@ -129,19 +131,21 @@ void setup() {
     if (initPassed) {
 #if DEBUG
 #if IGNORE_VOLTAGE
-      // Having this on could be bad..flash red
-        flashThreeTimes(255, 0, 0, 150); //
+       // Having this on could be bad..flash red
+        g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Red, 150);
+#else
+        g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Red, 150);
 #endif
 #endif
         // See if we read more than the default sequence
         if (g_sequenceManager.getNumberOfSequenceNames() > 1) {
             //flashNTimes(0, 255, 0, 1, 150); // Don't do anything..
         } else {
-            flashThreeTimes(255, 127, 0, 150); // flash orange...couldn't find any data files
+            g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Violet, 150);
         }
     } else {
         // Flash the LEDs all red to indicate no card...
-        flashThreeTimes(255, 0, 0, 300);
+        g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Orange, 150);
         g_sequenceManager.loadDefaultSequence();
     }
     
@@ -162,8 +166,7 @@ bool checkVoltage() {
             DEBUG_PRINTF("---------------------- LOW BATTERY VOLTAGE: %f", voltage);
             // half the max brightness...
             g_sequenceManager.setLowBatteryWarning();
-            
-            flashThreeTimes(255, 0, 0, 150); // flash red
+            g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Red, 150);
             
             delay(2000); // delay for 2 seconds to give the user time to react and turn it off
             return false;
@@ -183,6 +186,6 @@ void loop() {
     }
 #endif
     if (checkVoltage()) {
-        g_sequenceManager.process(false);
+        g_sequenceManager.process();
     }
 }

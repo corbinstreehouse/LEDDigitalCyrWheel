@@ -18,6 +18,9 @@ bool busyDelay(uint32_t ms);
 #define BRIGHTNESS_PIN 22
 #define STRIP_PIN 2 // 14 // Use pin 2 so Octo works, and pin 14 for a secondary strip (opposite side) to do patterns
 
+// TOOD: actually make the strip length dynamic...
+#define STRIP_LENGTH  331 // my actual count // (14+60*2)// (60*4) // (67*2)
+
 const int g_LED = LED_BUILTIN;
 const int g_batteryVoltagePin = A3; // pin 17
 const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm not sure i need this)

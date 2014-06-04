@@ -9,10 +9,3 @@
 #include "NeoPixelLEDPatterns.h"
 
 
-void NeoPixelLEDPatterns::begin() {
-    m_strip.begin();
-}
-
-void NeoPixelLEDPatterns::internalShow() {
-    m_strip.show();
-}

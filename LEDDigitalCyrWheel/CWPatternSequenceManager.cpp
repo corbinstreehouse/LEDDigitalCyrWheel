@@ -7,22 +7,9 @@
 //
 
 #include "CWPatternSequenceManager.h"
-#include "CDLEDStripPatterns.h"
+#include "LEDPatterns.h"
 #include "LEDDigitalCyrWheel.h"
-
-#if DEBUG
-#if PATTERN_EDITOR
-    #define ASSERT(a) NSCAssert(a, @"Fail");
-#else
-    #define ASSERT(a) if (!(a)) { \
-        Serial.print("ASSERT ");  \
-        Serial.print(__FILE__); Serial.print(" : "); \
-        Serial.print(__LINE__); }
-#endif
-
-#else
-    #define ASSERT(a) ((void)0)
-#endif
+#include "LEDCommon.h"
 
 #define RECORD_INDICATOR_FILENAME "RECORD.TXT" // If this file exists, we record data in other files.
 
@@ -36,11 +23,10 @@ static char *getExtension(char *filename) {
     }
 }
 
-CWPatternSequenceManager::CWPatternSequenceManager() {
+CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH) {
     _patternItems = NULL;
     _sequenceNames = NULL;
 }
-
 
 #if PATTERN_EDITOR
 void CWPatternSequenceManager::freeSequenceNames() {
@@ -52,14 +38,17 @@ void CWPatternSequenceManager::freeSequenceNames() {
         _sequenceNames = NULL;
     }
 }
-#endif
 
-// not needed if i ever only have one instance
-#if PATTERN_EDITOR
 CWPatternSequenceManager::~CWPatternSequenceManager() {
     freePatternItems();
     freeSequenceNames();
 }
+    
+void CWPatternSequenceManager::setCyrWheelView(CDCyrWheelView *view) {
+    m_ledPatterns.setCyrWheelView(view);
+}
+
+
 #endif
 
 void CWPatternSequenceManager::loadDefaultSequence() {
@@ -256,6 +245,13 @@ static inline bool isPatternFile(char *filename) {
     return false;
 }
 
+bool CWPatternSequenceManager::initStrip() {
+    m_savedBrightness = 128; // Default value?? this is still super bright. maybe the algorithm is wrong..
+    m_ledPatterns.begin();
+    m_ledPatterns.setBrightness(m_savedBrightness);
+    return true;
+}
+
 bool CWPatternSequenceManager::init(bool buttonIsDown) {
     DEBUG_PRINTLN("::init");
     _shouldRecordData = false;
@@ -263,9 +259,7 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
     delay(2); // without this, things don't always init....
 
     initOrientation();
-    
-    stripInit(&_orientation);
-
+    initStrip();
     
     bool result = initSDCard();
 
@@ -317,7 +311,7 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
         _numberOfAvailableSequences++;
         
         if (_shouldRecordData) {
-            flashThreeTimes(30, 30, 30, 150); // flash to let me know..
+            m_ledPatterns.flashThreeTimesWithDelay(CRGB(30,30,30), 150);
         }
         
         // TODO: Read the last sequence we were on to start from there again...but make this optional...
@@ -333,7 +327,11 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
     
     if (buttonIsDown) {
         // Go into calibration mode for the accell
-        _orientation.beginCalibration();
+        m_orientation.beginCalibration();
+        // Override the default sequence to blink
+        m_ledPatterns.setDuration(300);
+        m_ledPatterns.setPatternColor(CRGB::Pink);
+        m_ledPatterns.setPatternType(LEDPatternTypeBlink);
     }
     
     return result;
@@ -341,7 +339,7 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
 
 bool CWPatternSequenceManager::initOrientation() {
     DEBUG_PRINTLN("init orientation");
-    bool result = _orientation.init(); // TODO: return if it failed???
+    bool result = m_orientation.init(); // TODO: return if it failed???
     
     DEBUG_PRINTLN("DONE init orientation");
     
@@ -360,54 +358,10 @@ void CWPatternSequenceManager::loadNextSequence() {
     }
 }
 
-static inline bool PatternIsContinuous(CDPatternType p) {
-    switch (p) {
-        case CDPatternTypeRotatingRainbow:
-        case CDPatternTypeRotatingMiniRainbows:
-        case CDPatternTypeTheaterChase:
-        case CDPatternTypeGradient:
-        case CDPatternTypePluseGradientEffect:
-        case CDPatternTypeSolidRainbow:
-        case CDPatternTypeRainbowWithSpaces:
-        case CDPatternTypeRandomGradients:
-            return true;
-        case CDPatternTypeWarmWhiteShimmer:
-        case CDPatternTypeRandomColorWalk:
-        case CDPatternTypeTraditionalColors:
-        case CDPatternTypeColorExplosion:
-        case CDPatternTypeRWGradient:
-        case CDPatternTypeWhiteBrightTwinkle:
-        case CDPatternTypeWhiteRedBrightTwinkle:
-        case CDPatternTypeRedGreenBrightTwinkle:
-        case CDPatternTypeColorTwinkle:
-            return false; // i think
-        case CDPatternTypeCollision:
-            return false;
-        case CDPatternTypeFadeOut:
-        case CDPatternTypeFadeIn:
-        case CDPatternTypeColorWipe:
-            return false;
-            
-        case CDPatternTypeDoNothing:
-            return true;
-        case CDPatternTypeImageLinearFade:
-        case CDPatternTypeWave:
-            return false;
-        case CDPatternTypeImageEntireStrip:
-            return true;
-        case CDPatternTypeBottomGlow:
-            return true; // Doesn't do anything
-        case CDPatternTypeRotatingBottomGlow:
-        case CDPatternTypeSolidColor:
-            return false; // repeats after a rotati
-        case CDPatternTypeMax:
-            return false;
-    }
-}
-
 void CWPatternSequenceManager::buttonClick() {
-    if (_orientation.isCalibrating()) {
-        _orientation.endCalibration();
+    if (m_orientation.isCalibrating()) {
+        m_orientation.endCalibration();
+        firstPatternItem();
     } else {
         nextPatternItem();
     }
@@ -415,81 +369,67 @@ void CWPatternSequenceManager::buttonClick() {
 
 void CWPatternSequenceManager::buttonLongClick() {
     if (_shouldRecordData) {
-        if (_orientation.isSavingData()) {
-            flashThreeTimesNoProcess(0, 0, 255, 150);
-            _orientation.endSavingData();
+        if (m_orientation.isSavingData()) {
+            m_ledPatterns.flashThreeTimesWithDelay(CRGB::Blue, 150);
+            m_orientation.endSavingData();
         } else {
             // Flash green to let me know
-            flashThreeTimesNoProcess(0, 255, 0, 150);
-            _orientation.beginSavingData();
+            m_ledPatterns.flashThreeTimesWithDelay(CRGB::Green, 150);
+            m_orientation.beginSavingData();
         }
     } else {
         loadNextSequence();
     }
 }
 
-
-bool CWPatternSequenceManager::orientationProcess(uint32_t now, uint32_t timePassed) {
-    _orientation.process();
-    if (_orientation.isCalibrating()) {
-        // Flash the color  blue when in calibration mode..
-        // How many half seconds have passed?
-        int halfSecondsPassed = timePassed / 500;
-        if (halfSecondsPassed % 2 == 0) {
-            setEntireStripAsColor(0, 0, 255);
-        } else {
-            // off
-            setEntireStripAsColor(0, 0, 0);
-        }
-        return true; // don't do anything else
-    } else {
-        return false;
+void CWPatternSequenceManager::process() {
+    m_orientation.process();
+    if (m_orientation.isCalibrating()) {
+        // Show the flashing, and return
+        m_ledPatterns.show();
+        return;
     }
-}
-
-void CWPatternSequenceManager::process(bool initialProcess) {
-    uint32_t now = millis();
-    // The inital tick always starts with 0
-    uint32_t timePassed = initialProcess ? 0 : now - _patternStartTime;
-
-    if (orientationProcess(now, timePassed)) {
-        return; // don't do anything else
-    }
-
+    
     if (_numberOfPatternItems == 0) {
         DEBUG_PRINTLN("No pattern items to show!");
-        flashThreeTimes(255, 255, 0, 150);
+        m_ledPatterns.flashThreeTimesWithDelay(CRGB::Yellow, 150);
         delay(1000);
         return;
     }
-    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
     
-    // How many intervals have passed?
-    int intervalCount = timePassed / itemHeader->duration;
-    if (!PatternIsContinuous(itemHeader->patternType)) {
-        // Since it isn't continuous, modify the timePassed here
-        if (intervalCount > 0) {
-            timePassed = timePassed - intervalCount*itemHeader->duration;
-        }
-    }
-
+    updateBrightness();
+    
+    // First, always do one pass through the update of the patterns; this updates the time
+    m_ledPatterns.show();
+    
+    // This updates how much time has passed since the pattern started and how many full intervals have run through.
     // See if we should go to the next pattern
+    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
+    // See if we should go to the next pattern. Interval counts are 1 based.
     if (itemHeader->patternEndCondition == CDPatternEndConditionAfterRepeatCount) {
-        if (intervalCount >= itemHeader->intervalCount) {
+        if (m_ledPatterns.getIntervalCount() >= itemHeader->intervalCount) {
             nextPatternItem();
             itemHeader = &_patternItems[_currentPatternItemIndex];
-            // reset the state I pass to the loop pattern
-            timePassed = 0;
-            intervalCount = 0;
-            initialProcess = true;
+            // We will do at least one show of the pattern startig on the next loop
         }
+    } else {
+        // It is waiting for some other condition before going to the next pattern (button click is the only condition now)
     }
-    
-    g_patternManager.stripPatternLoop(itemHeader, intervalCount, timePassed, initialProcess);
+}
+
+
+void CWPatternSequenceManager::updateBrightness() {
+    CDPatternItemHeader *itemHeader = getCurrentItemHeader();
+    if (itemHeader->shouldSetBrightnessByRotationalVelocity) {
+        uint8_t brightness = m_orientation.getRotationalVelocityBrightness(m_ledPatterns.getBrightness());
+        m_ledPatterns.setBrightness(brightness);
+    } else {
+        m_ledPatterns.setBrightness(m_savedBrightness);
+    }
 }
 
 void CWPatternSequenceManager::setLowBatteryWarning() {
-    g_patternManager.setSavedBrightness(64); // Low brightness warning!
+    m_savedBrightness = 64; // Lower brightness so we can see it get low! it is updated on the update pass
 }
 
 void CWPatternSequenceManager::firstPatternItem() {
@@ -502,10 +442,21 @@ void CWPatternSequenceManager::nextPatternItem() {
     if (_currentPatternItemIndex >= _numberOfPatternItems) {
         _currentPatternItemIndex = 0;
     }
-    // This would be better suited to a common method...
-    _patternStartTime = millis();
-//    _intervalCount = 0;
-    process(true); // Initial process at time 0
+    
+    CDPatternItemHeader *itemHeader = getCurrentItemHeader();
+    // Reset the stuff based on the new header
+    m_ledPatterns.setPatternType((LEDPatternType)itemHeader->patternType); // corbin!! remove hard cast
+    m_ledPatterns.setDuration(itemHeader->duration);
+    m_ledPatterns.setPatternColor(itemHeader->color);
+    
+    
+    m_orientation.setFirstPass(true); // why do I need this??
+    
+    // corbin, call process true??
+#warning I'm removing this call...seems wrong!!
+//    process(true); // Initial process at time 0
+    
+    
 #if DEBUG 
 //    DEBUG_PRINTF("--------- Next pattern Item: %d of %d\r\n", _currentPatternItemIndex, _numberOfPatternItems);
 //    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];

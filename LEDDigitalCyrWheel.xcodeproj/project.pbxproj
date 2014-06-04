@@ -204,6 +204,7 @@
 		9D4FCB24193A5F280000DE28 /* LEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDPatterns.h; sourceTree = "<group>"; };
 		9D4FCB26193A7EA10000DE28 /* NeoPixelLEDPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeoPixelLEDPatterns.cpp; sourceTree = "<group>"; };
 		9D4FCB27193A7EA10000DE28 /* NeoPixelLEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeoPixelLEDPatterns.h; sourceTree = "<group>"; };
+		9D4FCB29193BB3A40000DE28 /* LEDCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEDCommon.h; sourceTree = "<group>"; };
 		9D6BC8281938CBC400E21E1C /* block_clockless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = block_clockless.h; sourceTree = "<group>"; };
 		9D6BC8291938CBC400E21E1C /* chipsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chipsets.h; sourceTree = "<group>"; };
 		9D6BC82A1938CBC400E21E1C /* clockless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clockless.h; sourceTree = "<group>"; };
@@ -2031,6 +2032,7 @@
 			children = (
 				9D8ED2C317C01F7F001E1C06 /* Builds */,
 				9D8ED2C417C01F7F001E1C06 /* Config */,
+				9D4FCB29193BB3A40000DE28 /* LEDCommon.h */,
 				9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */,
 				9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */,
 				9DBE92C818AA7ED000154550 /* CDOctoWS2811.h */,

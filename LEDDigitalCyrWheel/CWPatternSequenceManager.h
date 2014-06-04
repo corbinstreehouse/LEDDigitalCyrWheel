@@ -16,6 +16,20 @@
 #include "SD.h"
 
 #include "CDOrientation.h"
+#include "LEDCommon.h"
+
+#if PATTERN_EDITOR
+    #include "CDSimulatorLEDPatterns.h"
+    #define LED_PATTERNS_CLASS CDSimulatorLEDPatterns
+    @class CDCyrWheelView;
+#else
+    #if USE_ADAFRUIT
+        #include "NeoPixelLEDPatterns.h"
+    #define LED_PATTERNS_CLASS NeoPixelLEDPatterns
+    #else
+    Uh...finish this stuff?
+    #endif
+#endif
 
 class CWPatternSequenceManager {
 private:
@@ -31,22 +45,32 @@ private:
 
     // Current pattern item information
     int _currentPatternItemIndex;
-    uint32_t _patternStartTime;
+
+    uint8_t m_savedBrightness;
     
     bool _shouldRecordData;
     
-    CDOrientation _orientation;
+    LED_PATTERNS_CLASS m_ledPatterns;
+    CDOrientation m_orientation;
     
     bool initSDCard();
     bool initOrientation();
+    bool initStrip();
     bool loadCurrentSequence();
     void freePatternItems();
     void freeSequenceNames();
     void loadSequenceNamed(const char *filename);
+    
+    void updateBrightness();
+    
+    inline CDPatternItemHeader *getCurrentItemHeader() {
+        return &_patternItems[_currentPatternItemIndex];
+    }
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
     ~CWPatternSequenceManager();
+    void setCyrWheelView(CDCyrWheelView *view); // Binding..
 #endif
     bool init(bool buttonIsDown);
     
@@ -59,13 +83,13 @@ public:
     // Playing back patterns
     void nextPatternItem();
     void firstPatternItem();
-    void process(bool initialProcess); // Main loop work
-    bool orientationProcess(uint32_t now, uint32_t timePassed);
+    void process();
     
     void makeSequenceFlashColor(uint32_t color);
     
     int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
     void setLowBatteryWarning();
+    inline LEDPatterns *getLEDPatterns() { return &m_ledPatterns; }
 #if PATTERN_EDITOR
     char *getSequenceNameAtIndex(int index) { return _sequenceNames[index]; }
     char *getCurrentSequenceName() { return _sequenceNames[_currentSequenceIndex]; };
