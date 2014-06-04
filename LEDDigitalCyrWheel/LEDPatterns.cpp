@@ -1832,13 +1832,16 @@ void LEDPatterns::linearImageFade() {
 void LEDPatterns::flashThreeTimesWithDelay(CRGB color, uint32_t delayAmount) {
     for (int i = 0; i < 3; i++) {
         fill_solid(m_leds, m_ledCount, color);
+        internalShow();
         delay(delayAmount);
         fill_solid(m_leds, m_ledCount, CRGB::Black);
+        internalShow();
         delay(delayAmount);
     }
 }
 
 void LEDPatterns::flashOnce(CRGB color) {
     fill_solid(m_leds, m_ledCount, color);
+    internalShow();
     delay(250);
 }

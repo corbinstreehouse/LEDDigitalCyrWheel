@@ -134,7 +134,7 @@ void setup() {
        // Having this on could be bad..flash red
         g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Red, 150);
 #else
-        g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Red, 150);
+        g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Red);
 #endif
 #endif
         // See if we read more than the default sequence

@@ -16,7 +16,7 @@ bool busyDelay(uint32_t ms);
 #define BUTTON_PIN 23
 
 #define BRIGHTNESS_PIN 22
-#define STRIP_PIN 2 // 14 // Use pin 2 so Octo works, and pin 14 for a secondary strip (opposite side) to do patterns
+//#define STRIP_PIN 2 // 14 // Use pin 2 so Octo works, and pin 14 for a secondary strip (opposite side) to do patterns
 
 // TOOD: actually make the strip length dynamic...
 #define STRIP_LENGTH  331 // my actual count // (14+60*2)// (60*4) // (67*2)
