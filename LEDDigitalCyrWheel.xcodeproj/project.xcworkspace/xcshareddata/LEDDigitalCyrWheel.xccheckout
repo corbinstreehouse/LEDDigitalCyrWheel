@@ -10,10 +10,6 @@
 	<string>LEDDigitalCyrWheel</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>0E017B05-1BE0-4425-A0EF-488762ABB170</key>
-		<string>file://localhost/corbin/Documents/Arduino/Libraries/SD</string>
-		<key>0F181D8A-E05B-43AC-9035-EBBE71D2B4CA</key>
-		<string>ssh://github.com/corbinstreehouse/LEDPatterns.git</string>
 		<key>31D19277-93C1-4B36-8D47-39BAE008E6C8</key>
 		<string>https://github.com/adafruit/Adafruit_NeoPixel.git</string>
 		<key>581ADA72-D596-47B7-96A2-A3DFDF0C6864</key>
@@ -22,6 +18,8 @@
 		<string>https://github.com/adafruit/SD.git</string>
 		<key>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</key>
 		<string>https://github.com/corbinstreehouse/LEDDigitalCyrWheel.git</string>
+		<key>B998CEF2-BA3A-4B9A-861D-23AB57E81EA4</key>
+		<string>https://github.com/FastLED/FastLED.git</string>
 		<key>BB79AA8B-9CED-45F6-9A86-44FF4DDD236C</key>
 		<string>https://github.com/adafruit/RTClib.git</string>
 		<key>D49A604E-E9FF-408A-B3BC-33F3DEF41E6B</key>
@@ -31,10 +29,6 @@
 	<string>LEDDigitalCyrWheel.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>0E017B05-1BE0-4425-A0EF-488762ABB170</key>
-		<string>../../Libraries/SD</string>
-		<key>0F181D8A-E05B-43AC-9035-EBBE71D2B4CA</key>
-		<string>../../Libraries/LEDPatterns</string>
 		<key>31D19277-93C1-4B36-8D47-39BAE008E6C8</key>
 		<string>../../../../../Documents/Arduino/Libraries/AdaFruit_NeoPixel</string>
 		<key>581ADA72-D596-47B7-96A2-A3DFDF0C6864</key>
@@ -43,6 +37,8 @@
 		<string>../../../../../Documents/Arduino/Libraries/SD</string>
 		<key>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</key>
 		<string>../..</string>
+		<key>B998CEF2-BA3A-4B9A-861D-23AB57E81EA4</key>
+		<string>../../Libraries/FastLED</string>
 		<key>BB79AA8B-9CED-45F6-9A86-44FF4DDD236C</key>
 		<string>../../../../../Documents/Arduino/Libraries/RTClib</string>
 		<key>D49A604E-E9FF-408A-B3BC-33F3DEF41E6B</key>
@@ -76,17 +72,17 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</string>
+			<string>B998CEF2-BA3A-4B9A-861D-23AB57E81EA4</string>
 			<key>IDESourceControlWCCName</key>
-			<string>LEDDigitalCyrWheel</string>
+			<string>FastLED</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>0F181D8A-E05B-43AC-9035-EBBE71D2B4CA</string>
+			<string>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</string>
 			<key>IDESourceControlWCCName</key>
-			<string>LEDPatterns</string>
+			<string>LEDDigitalCyrWheel</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
@@ -101,14 +97,6 @@
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>7B373F31-FC1C-4563-BCFF-DFA44AB4C0D0</string>
-			<key>IDESourceControlWCCName</key>
-			<string>SD</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>0E017B05-1BE0-4425-A0EF-488762ABB170</string>
 			<key>IDESourceControlWCCName</key>
 			<string>SD</string>
 		</dict>
