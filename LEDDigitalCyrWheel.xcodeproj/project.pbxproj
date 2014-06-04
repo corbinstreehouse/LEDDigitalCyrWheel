@@ -10,8 +10,6 @@
 		9D3A0DA81889BE64001AD553 /* LEDDigitalCyrWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */; };
 		9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DAC188A0EBD001AD553 /* Button.cpp */; };
 		9D472E1D1902F1590076281A /* CDOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D472E1B1902F1590076281A /* CDOrientation.cpp */; };
-		9D4FCB25193A5F280000DE28 /* LEDPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D4FCB23193A5F280000DE28 /* LEDPatterns.cpp */; };
-		9D4FCB28193A7EA10000DE28 /* NeoPixelLEDPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D4FCB26193A7EA10000DE28 /* NeoPixelLEDPatterns.cpp */; };
 		9D6BC86E1938CBC400E21E1C /* colorutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8301938CBC400E21E1C /* colorutils.cpp */; };
 		9D6BC86F1938CBC400E21E1C /* FastLED.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8541938CBC400E21E1C /* FastLED.cpp */; };
 		9D6BC8701938CBC400E21E1C /* hsv2rgb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8631938CBC400E21E1C /* hsv2rgb.cpp */; };
@@ -166,7 +164,6 @@
 		9DBE92C018A8AA5600154550 /* WiFiUdp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE924218A8AA5600154550 /* WiFiUdp.cpp */; };
 		9DBE92C118A8AA5600154550 /* twi.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE925418A8AA5600154550 /* twi.c */; };
 		9DBE92C218A8AA5600154550 /* Wire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE925618A8AA5600154550 /* Wire.cpp */; };
-		9DBE92CA18AA834D00154550 /* CDLEDStripPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */; };
 		9DD1E672193EC47100290878 /* LEDPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD1E66E193EC47100290878 /* LEDPatterns.cpp */; };
 		9DD655D3193582100017BDAA /* CDOctoWS2811.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD655D2193582100017BDAA /* CDOctoWS2811.cpp */; };
 		9DDC61C71938488E00C602BC /* Adafruit_NeoPixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC5FE81938488D00C602BC /* Adafruit_NeoPixel.cpp */; };
@@ -201,10 +198,6 @@
 		9D472E1B1902F1590076281A /* CDOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDOrientation.cpp; sourceTree = "<group>"; };
 		9D472E1C1902F1590076281A /* CDOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDOrientation.h; sourceTree = "<group>"; };
 		9D472E1E19140BC10076281A /* EEPROM2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EEPROM2.h; sourceTree = "<group>"; };
-		9D4FCB23193A5F280000DE28 /* LEDPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LEDPatterns.cpp; sourceTree = "<group>"; };
-		9D4FCB24193A5F280000DE28 /* LEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDPatterns.h; sourceTree = "<group>"; };
-		9D4FCB26193A7EA10000DE28 /* NeoPixelLEDPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NeoPixelLEDPatterns.cpp; sourceTree = "<group>"; };
-		9D4FCB27193A7EA10000DE28 /* NeoPixelLEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NeoPixelLEDPatterns.h; sourceTree = "<group>"; };
 		9D4FCB29193BB3A40000DE28 /* LEDCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEDCommon.h; sourceTree = "<group>"; };
 		9D6BC8281938CBC400E21E1C /* block_clockless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = block_clockless.h; sourceTree = "<group>"; };
 		9D6BC8291938CBC400E21E1C /* chipsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chipsets.h; sourceTree = "<group>"; };
@@ -1398,8 +1391,6 @@
 		9DBE925618A8AA5600154550 /* Wire.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Wire.cpp; sourceTree = "<group>"; };
 		9DBE925718A8AA5600154550 /* Wire.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Wire.h; sourceTree = "<group>"; };
 		9DBE92C818AA7ED000154550 /* CDOctoWS2811.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDOctoWS2811.h; sourceTree = "<group>"; };
-		9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDLEDStripPatterns.cpp; sourceTree = "<group>"; };
-		9DBE92CB18AA836E00154550 /* CDLEDStripPatterns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDLEDStripPatterns.h; sourceTree = "<group>"; };
 		9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDDigitalCyrWheel.h; sourceTree = "<group>"; };
 		9DD1E66E193EC47100290878 /* LEDPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LEDPatterns.cpp; sourceTree = "<group>"; };
 		9DD1E66F193EC47100290878 /* LEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDPatterns.h; sourceTree = "<group>"; };
@@ -2045,12 +2036,6 @@
 				9D1234C11889AC3B00A97482 /* CDPatternData.h */,
 				9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */,
 				9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */,
-				9D4FCB24193A5F280000DE28 /* LEDPatterns.h */,
-				9D4FCB23193A5F280000DE28 /* LEDPatterns.cpp */,
-				9D4FCB27193A7EA10000DE28 /* NeoPixelLEDPatterns.h */,
-				9D4FCB26193A7EA10000DE28 /* NeoPixelLEDPatterns.cpp */,
-				9DBE92CB18AA836E00154550 /* CDLEDStripPatterns.h */,
-				9DBE92C918AA834D00154550 /* CDLEDStripPatterns.cpp */,
 				9D472E1E19140BC10076281A /* EEPROM2.h */,
 				9D472E1C1902F1590076281A /* CDOrientation.h */,
 				9D472E1B1902F1590076281A /* CDOrientation.cpp */,
@@ -4853,8 +4838,8 @@
 		9DD1E66D193EC47100290878 /* LEDPatterns */ = {
 			isa = PBXGroup;
 			children = (
-				9DD1E66E193EC47100290878 /* LEDPatterns.cpp */,
 				9DD1E66F193EC47100290878 /* LEDPatterns.h */,
+				9DD1E66E193EC47100290878 /* LEDPatterns.cpp */,
 				9DD1E670193EC47100290878 /* NeoPixelLEDPatterns.h */,
 				9DD1E671193EC47100290878 /* README.md */,
 			);
@@ -6051,7 +6036,6 @@
 				9DBE8A7318A8A85000154550 /* usb_inst.cpp in Sources */,
 				9DDC61DD1938488E00C602BC /* SdVolume.cpp in Sources */,
 				9DBE8DA118A8A9C700154550 /* vector.tcc in Sources */,
-				9D4FCB28193A7EA10000DE28 /* NeoPixelLEDPatterns.cpp in Sources */,
 				9DBE8D9D18A8A9C700154550 /* regex_nfa.tcc in Sources */,
 				9DBE8A7018A8A85000154550 /* usb_desc.c in Sources */,
 				9DBE92B518A8AA5600154550 /* TFT.cpp in Sources */,
@@ -6120,7 +6104,6 @@
 				9DBE928A18A8AA5600154550 /* GSM3SoftSerial.cpp in Sources */,
 				9D6BC8711938CBC400E21E1C /* lib8tion.cpp in Sources */,
 				9DBE8A7A18A8A85000154550 /* usb_seremu.c in Sources */,
-				9DBE92CA18AA834D00154550 /* CDLEDStripPatterns.cpp in Sources */,
 				9DBE8A7E18A8A85000154550 /* yield.c in Sources */,
 				9DDC61DA1938488E00C602BC /* SdSpiMK20DX128.cpp in Sources */,
 				9DBE8DA218A8A9C700154550 /* safe_iterator.tcc in Sources */,
@@ -6189,7 +6172,6 @@
 				9DDC61CA1938488E00C602BC /* File.cpp in Sources */,
 				9DBE8DA618A8A9C700154550 /* vstring.tcc in Sources */,
 				9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */,
-				9D4FCB25193A5F280000DE28 /* LEDPatterns.cpp in Sources */,
 				9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */,
 				9DBE925818A8AA5600154550 /* Bounce.cpp in Sources */,
 				9DBE92AA18A8AA5600154550 /* lineFollow.cpp in Sources */,

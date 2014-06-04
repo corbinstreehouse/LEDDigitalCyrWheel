@@ -6,8 +6,7 @@
 //
 //
 
-#include "CDLEDStripPatterns.h"
-#if !USE_ADAFRUIT
+#if USE_OCTO_WS2811
 
 #include "CDOctoWS2811.h"
 
