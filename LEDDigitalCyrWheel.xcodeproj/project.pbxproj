@@ -265,6 +265,8 @@
 		9D8ED2DD17C01F7F001E1C06 /* Step1.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step1.mk; sourceTree = "<group>"; };
 		9D8ED2DE17C01F7F001E1C06 /* Step2.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step2.mk; sourceTree = "<group>"; usesTabs = 1; };
 		9D922F0C17C711630097A027 /* Arduino micro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino micro.xcconfig"; sourceTree = "<group>"; };
+		9DA685AE19401D3B003631F6 /* OctoWS2811LEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OctoWS2811LEDPatterns.h; sourceTree = "<group>"; };
+		9DA685AF194021D8003631F6 /* FastLEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastLEDPatterns.h; sourceTree = "<group>"; };
 		9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CWPatternSequenceManager.cpp; sourceTree = "<group>"; };
 		9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWPatternSequenceManager.h; sourceTree = "<group>"; };
 		9DBE89F918A8A84F00154550 /* analog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analog.c; sourceTree = "<group>"; };
@@ -4841,6 +4843,8 @@
 				9DD1E66F193EC47100290878 /* LEDPatterns.h */,
 				9DD1E66E193EC47100290878 /* LEDPatterns.cpp */,
 				9DD1E670193EC47100290878 /* NeoPixelLEDPatterns.h */,
+				9DA685AE19401D3B003631F6 /* OctoWS2811LEDPatterns.h */,
+				9DA685AF194021D8003631F6 /* FastLEDPatterns.h */,
 				9DD1E671193EC47100290878 /* README.md */,
 			);
 			name = LEDPatterns;
