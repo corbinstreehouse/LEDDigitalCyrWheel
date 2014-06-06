@@ -56,17 +56,17 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     freePatternItems();
 
     _pixelCount = 300; // Well..whatever;it is too late at this point, and I don't even use it..
-    _numberOfPatternItems = CDPatternTypeMax;
+    _numberOfPatternItems = LEDPatternTypeMax;
     
     // After the header each item follows
     _patternItems = (CDPatternItemHeader *)malloc(_numberOfPatternItems * sizeof(CDPatternItemHeader));
     
     int i = 0;
-    for (int p = CDPatternTypeMin; p < CDPatternTypeMax; p++) {
-        if (p == CDPatternTypeDoNothing || p == CDPatternTypeFadeIn || p == CDPatternTypeImageLinearFade || p == CDPatternTypeImageEntireStrip) {
+    for (int p = LEDPatternTypeMin; p < LEDPatternTypeMax; p++) {
+        if (p == LEDPatternTypeDoNothing || p == LEDPatternTypeFadeIn || p == LEDPatternTypeImageLinearFade || p == LEDPatternTypeImageEntireStrip) {
             continue; // skip a few
         }
-        _patternItems[i].patternType = (CDPatternType)p;
+        _patternItems[i].patternType = (LEDPatternType)p;
         _patternItems[i].patternEndCondition = CDPatternEndConditionOnButtonClick;
         _patternItems[i].intervalCount = 1;
         _patternItems[i].duration = 2000; //  2 seconds
@@ -108,13 +108,13 @@ void CWPatternSequenceManager::freePatternItems() {
 void CWPatternSequenceManager::makeSequenceFlashColor(uint32_t color) {
     _numberOfPatternItems = 2;
     _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
-    _patternItems[0].patternType = CDPatternTypeSolidColor;
+    _patternItems[0].patternType = LEDPatternTypeSolidColor;
     _patternItems[0].duration = 500;
     _patternItems[0].color = color; // TODO: better representation of colors.. this is yellow..
     _patternItems[0].intervalCount = 1;
     _patternItems[0].patternEndCondition = CDPatternEndConditionAfterRepeatCount;
     
-    _patternItems[1].patternType = CDPatternTypeSolidColor;
+    _patternItems[1].patternType = LEDPatternTypeSolidColor;
     _patternItems[1].duration = 500;
     _patternItems[1].color = 0x000000; // TODO: better representation of colors..
     _patternItems[1].intervalCount = 1;
@@ -163,7 +163,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
                 sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
                 DEBUG_PRINTF("Header, type: %d, duration: %d, intervalC: %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].intervalCount);
                 // Verify it
-                ASSERT(_patternItems[i].patternType >= CDPatternTypeMin && _patternItems[i].patternType < CDPatternTypeMax);
+                ASSERT(_patternItems[i].patternType >= LEDPatternTypeMin && _patternItems[i].patternType < LEDPatternTypeMax);
                 ASSERT(_patternItems[i].duration > 0);
                 // After the header, is the (optional) image data
                 uint32_t dataLength = _patternItems[i].dataLength;
@@ -445,19 +445,13 @@ void CWPatternSequenceManager::nextPatternItem() {
     
     CDPatternItemHeader *itemHeader = getCurrentItemHeader();
     // Reset the stuff based on the new header
-    m_ledPatterns.setPatternType((LEDPatternType)itemHeader->patternType); // corbin!! remove hard cast
+    m_ledPatterns.setPatternType(itemHeader->patternType);
     m_ledPatterns.setDuration(itemHeader->duration);
     m_ledPatterns.setPatternColor(itemHeader->color);
-    
-    
+        
     m_orientation.setFirstPass(true); // why do I need this??
-    
-    // corbin, call process true??
-#warning I'm removing this call...seems wrong!!
-//    process(true); // Initial process at time 0
-    
-    
-#if DEBUG 
+
+#if DEBUG
 //    DEBUG_PRINTF("--------- Next pattern Item: %d of %d\r\n", _currentPatternItemIndex, _numberOfPatternItems);
 //    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
 //    

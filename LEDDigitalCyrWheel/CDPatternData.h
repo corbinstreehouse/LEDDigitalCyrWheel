@@ -10,6 +10,7 @@
 #define CyrWheelPatternEditor_CDPatternData_h
 
 #include <stdint.h>
+#include "LEDPatterns.h"
 
 // stuff shared with the editor
 
@@ -33,53 +34,6 @@ typedef enum ENUM_SIZE {
 
 #define SEQUENCE_VERSION 2
 
-// NOTE: update g_patternTypeNames when this changes!!
-typedef enum ENUM_SIZE {
-    CDPatternTypeMin = 0,
-    
-    CDPatternTypeRotatingRainbow = 0,
-    CDPatternTypeRotatingMiniRainbows,
-    
-    CDPatternTypeFadeOut,
-    CDPatternTypeFadeIn,
-    CDPatternTypeColorWipe,
-    CDPatternTypeDoNothing,
-    CDPatternTypeTheaterChase,
-    
-    CDPatternTypeGradient,
-    CDPatternTypePluseGradientEffect,
-    CDPatternTypeRandomGradients,
-
-    // Patterns defined by an image
-    CDPatternTypeImageLinearFade, // smooth traverse over pixels
-    CDPatternTypeImageEntireStrip, // one strip piece at a time defined
-    
-    // the next set is ordered specifically
-    CDPatternTypeWarmWhiteShimmer,
-    CDPatternTypeRandomColorWalk,
-    CDPatternTypeTraditionalColors,
-    CDPatternTypeColorExplosion,
-    CDPatternTypeRWGradient,
-    
-    CDPatternTypeWhiteBrightTwinkle,
-    CDPatternTypeWhiteRedBrightTwinkle,
-    CDPatternTypeRedGreenBrightTwinkle,
-    CDPatternTypeColorTwinkle,
-    
-    CDPatternTypeCollision,
-    
-    CDPatternTypeWave, // 4 wave
-    CDPatternTypeBottomGlow,
-    CDPatternTypeRotatingBottomGlow,
-    
-    CDPatternTypeSolidColor,
-    CDPatternTypeSolidRainbow,
-    CDPatternTypeRainbowWithSpaces,
-
-    CDPatternTypeMax,
-    CDPatternTypeAllOff = CDPatternTypeMax,
-} CDPatternType;
-
 #warning eliminate, corbin
 typedef union {
     struct {
@@ -91,7 +45,7 @@ typedef union {
 
 // 28 bytes on device with buffer padding...28 on mac.
 typedef struct  __attribute__((__packed__)) {
-    CDPatternType patternType; // 1
+    LEDPatternType patternType; // 1
 #if !PATTERN_EDITOR
     char __buffer; // 1
 #endif
