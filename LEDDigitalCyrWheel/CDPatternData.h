@@ -32,16 +32,7 @@ typedef enum ENUM_SIZE {
 } CDPatternEncodingType;
 
 
-#define SEQUENCE_VERSION 2
-
-#warning eliminate, corbin
-typedef union {
-    struct {
-        /// TODO: GRB format for perf... but RGB matches Adafruit packing little indian style  (hence BGR)
-        uint8_t blue, green, red, _buff;
-    };
-    uint32_t color;
-} PackedColorUnion;
+#define SEQUENCE_VERSION 3
 
 // 28 bytes on device with buffer padding...28 on mac.
 typedef struct  __attribute__((__packed__)) {

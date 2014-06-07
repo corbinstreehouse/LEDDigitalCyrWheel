@@ -27,7 +27,8 @@
         #include "NeoPixelLEDPatterns.h"
     #define LED_PATTERNS_CLASS NeoPixelLEDPatterns
     #else
-    Uh...finish this stuff?
+        #include "FastLEDPatterns.H"
+        #define LED_PATTERNS_CLASS FastLEDPatterns
     #endif
 #endif
 

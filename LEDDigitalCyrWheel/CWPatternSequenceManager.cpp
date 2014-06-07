@@ -142,8 +142,8 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
     
     // Verify it
     if (verifyHeader(&patternHeader)) {
-        // Verify the version
-        if (patternHeader.version == SEQUENCE_VERSION) {
+        // Verify the version; support v2 and v3
+        if (patternHeader.version >= 2 && patternHeader.version <= SEQUENCE_VERSION) {
             // Free existing stuff
             if (_patternItems) {
                 DEBUG_PRINTLN("ERROR: PATTERN ITEMS SHOULD BE FREE!!!!");
