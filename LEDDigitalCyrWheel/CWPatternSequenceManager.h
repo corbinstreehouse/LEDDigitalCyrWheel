@@ -67,6 +67,16 @@ private:
     inline CDPatternItemHeader *getCurrentItemHeader() {
         return &_patternItems[_currentPatternItemIndex];
     }
+    
+    // for crossfade
+    inline CDPatternItemHeader *getNextItemHeader() {
+        int tmp = _currentPatternItemIndex;
+        tmp++;
+        if (tmp >= _numberOfPatternItems) {
+            tmp = 0;
+        }
+        return &_patternItems[tmp];
+    }
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR

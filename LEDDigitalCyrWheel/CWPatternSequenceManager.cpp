@@ -448,7 +448,21 @@ void CWPatternSequenceManager::nextPatternItem() {
     m_ledPatterns.setPatternType(itemHeader->patternType);
     m_ledPatterns.setDuration(itemHeader->duration);
     m_ledPatterns.setPatternColor(itemHeader->color);
-        
+    
+    // Crossfade patterns need to know the next one!
+    if (itemHeader->patternType == LEDPatternTypeCrossfade) {
+        // Load the next... and set its color (cross fade doesn't use it)
+        CDPatternItemHeader *nextItemHeader = getNextItemHeader();
+        if (nextItemHeader->patternType != LEDPatternTypeCrossfade) {
+            m_ledPatterns.setNextPatternType(nextItemHeader->patternType);
+            m_ledPatterns.setPatternColor(nextItemHeader->color);
+        } else {
+            // We can't crossfade to crossfade; pick red as an error
+            m_ledPatterns.setNextPatternType(LEDPatternTypeSolidColor);
+            m_ledPatterns.setPatternColor(CRGB::Red);
+        }
+    }
+    
     m_orientation.setFirstPass(true); // why do I need this??
 
 #if DEBUG
