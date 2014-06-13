@@ -260,10 +260,13 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
 
     initOrientation();
     initStrip();
+    DEBUG_PRINTLN("done init strip");
     
     bool result = initSDCard();
+    DEBUG_PRINTLN("done init sd card");
 
     if (result) {
+        DEBUG_PRINTLN("opening sd card to read it");
         // Load up the names of available patterns
         File rootDir = SD.open("/");
         _numberOfAvailableSequences = 0;
@@ -398,7 +401,7 @@ void CWPatternSequenceManager::process() {
     }
     
     updateBrightness();
-    
+
     // First, always do one pass through the update of the patterns; this updates the time
     m_ledPatterns.show();
     
@@ -407,6 +410,7 @@ void CWPatternSequenceManager::process() {
     CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
     // See if we should go to the next pattern. Interval counts are 1 based.
     if (itemHeader->patternEndCondition == CDPatternEndConditionAfterRepeatCount) {
+        DEBUG_PRINTLN("loop repeat count check");
         if (m_ledPatterns.getIntervalCount() >= itemHeader->intervalCount) {
             nextPatternItem();
             itemHeader = &_patternItems[_currentPatternItemIndex];
@@ -422,6 +426,12 @@ void CWPatternSequenceManager::updateBrightness() {
     CDPatternItemHeader *itemHeader = getCurrentItemHeader();
     if (itemHeader->shouldSetBrightnessByRotationalVelocity) {
         uint8_t brightness = m_orientation.getRotationalVelocityBrightness(m_ledPatterns.getBrightness());
+#if DEBUG
+        if (brightness < 10){
+            DEBUG_PRINTLN("low brightness");
+        }
+#endif
+        
         m_ledPatterns.setBrightness(brightness);
     } else {
         m_ledPatterns.setBrightness(m_savedBrightness);
@@ -448,6 +458,10 @@ void CWPatternSequenceManager::nextPatternItem() {
     m_ledPatterns.setPatternType(itemHeader->patternType);
     m_ledPatterns.setDuration(itemHeader->duration);
     m_ledPatterns.setPatternColor(itemHeader->color);
+    m_ledPatterns.setDataInfo(itemHeader->dataFilename, itemHeader->dataLength);
+#if DEBUG
+    DEBUG_PRINTF("--------- Next pattern Item (patternType: %d): %d of %d, %d long\r\n", itemHeader->patternType, _currentPatternItemIndex, _numberOfPatternItems, itemHeader->duration);
+#endif
     
     // Crossfade patterns need to know the next one!
     if (itemHeader->patternType == LEDPatternTypeCrossfade) {
@@ -465,11 +479,5 @@ void CWPatternSequenceManager::nextPatternItem() {
     
     m_orientation.setFirstPass(true); // why do I need this??
 
-#if DEBUG
-//    DEBUG_PRINTF("--------- Next pattern Item: %d of %d\r\n", _currentPatternItemIndex, _numberOfPatternItems);
-//    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
-//    
-//    NSLog(@"Duration: %.3f seconds", itemHeader->duration/1000.0);
-#endif
 }
 
