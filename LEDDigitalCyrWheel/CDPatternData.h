@@ -32,13 +32,14 @@ typedef enum ENUM_SIZE {
 } CDPatternEncodingType;
 
 
-#define SEQUENCE_VERSION 3
+#define SEQUENCE_VERSION 4
 
 // 28 bytes on device with buffer padding...28 on mac.
+// Update v3: 36 bytes...what happened??
 typedef struct  __attribute__((__packed__)) {
-    LEDPatternType patternType; // 1
+    LEDPatternType patternType; // 2 (was 1...but went past 16, so it went to 2 bytes)
 #if !PATTERN_EDITOR
-    char __buffer; // 1
+//    char __buffer; // 1
 #endif
     uint32_t duration; //4
     uint32_t intervalCount; //4
@@ -49,8 +50,8 @@ typedef struct  __attribute__((__packed__)) {
     uint32_t color; //4
     uint32_t dataLength; // how long the data is following // 4
     uint32_t dataOffset; // When loaded, points to the offset in the file where we should load from.
-    int32_t shouldSetBrightnessByRotationalVelocity:1;
-    int32_t _unused:31;
+    uint32_t shouldSetBrightnessByRotationalVelocity:1; // (and next) 4
+    uint32_t _unused:31;
     
     union {
         const char *dataFilename;  // A reference to the string....we don't own it!
@@ -65,6 +66,8 @@ typedef struct  __attribute__((__packed__)) {
     uint8_t version; // in case i need to do versioning of the header
     uint16_t patternCount; // Following the header will be this number of patterns
     uint32_t pixelCount; // What was designed against
-} CDPatternSequenceHeader;
+    uint32_t ignoreSingleClickButtonForTimedPatterns:1;
+    uint32_t _unused:31;
+} CDPatternSequenceHeader; // maybe rename to "CDPatternFileHeader"
 
 #endif

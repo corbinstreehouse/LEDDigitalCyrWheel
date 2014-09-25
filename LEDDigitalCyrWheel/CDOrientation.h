@@ -35,6 +35,8 @@ private:
     bool _shouldSaveDataToFile;
     bool _calibrating;
     char _filenameBuffer[PATH_COMPONENT_BUFFER_LEN+1];
+    bool m_gyroInitialized;
+    bool m_compassInitialized;
 
 #if !PATTERN_EDITOR
     L3G _gyro;

@@ -193,6 +193,8 @@ void Matrix_Multiply(float a[3][3], float b[3][3],float mat[3][3])
 CDOrientation::CDOrientation() {
     _shouldSaveDataToFile = false;
     m_startBrightness = 0;
+    m_gyroInitialized = false;
+    m_compassInitialized = false;
 }
 
 /**************************************************/
@@ -591,20 +593,22 @@ bool CDOrientation::init() {
 }
 
 bool CDOrientation::initGyro() {
-    bool result = false;
-    for (int i = 0; i < 10; i++) {
-        result = _gyro.init();
-        if (result) {
-            _gyro.writeReg(L3G_CTRL_REG4, 0x20); // 2000 dps full scale. See http://www.pololu.com/file/download/L3GD20.pdf?file_id=0J563
-            _gyro.writeReg(L3G_CTRL_REG1, 0x0F); // normal power mode, all axes enabled, 100 Hz
-            break;
-        } else {
+    DEBUG_PRINTLN("initGyro");
+    if (!m_gyroInitialized) {
+        // why do I try 10 times??
+        for (int i = 0; i < 10; i++) {
+            m_gyroInitialized = _gyro.init();
+            if (m_gyroInitialized) {
+                _gyro.writeReg(L3G_CTRL_REG4, 0x20); // 2000 dps full scale. See http://www.pololu.com/file/download/L3GD20.pdf?file_id=0J563
+                _gyro.writeReg(L3G_CTRL_REG1, 0x0F); // normal power mode, all axes enabled, 100 Hz
+                break;
+            } else {
+                DEBUG_PRINTLN(" -> failed");
+            }
         }
+        if (!m_gyroInitialized) DEBUG_PRINTLN("FAILED TO init gyro");
     }
-    if (!result) DEBUG_PRINTLN("FAILED TO init gyro");
-    
-    return result;
-    
+    return m_gyroInitialized;
 }
 
 // reather abitrary...
@@ -612,14 +616,16 @@ bool CDOrientation::initGyro() {
 #define IS_VALID_MAX_COMPASS_VALUE(x) ((x > 0 && x < 4000) ? true : false)
 
 bool CDOrientation::initAccel() {
-    bool result = false;
-    for (int i = 0; i < 10; i++) {
-        result = _compass.init();
-        if (result) {
-            break;
+    DEBUG_PRINTLN("initAccel");
+    if (!m_compassInitialized) {
+        for (int i = 0; i < 10; i++) {
+            m_compassInitialized = _compass.init();
+            if (m_compassInitialized) {
+                break;
+            }
         }
     }
-    if (result) {
+    if (m_compassInitialized) {
         _compass.enableDefault();
         switch (_compass.getDeviceType())
         {
@@ -669,11 +675,12 @@ bool CDOrientation::initAccel() {
     } else {
         DEBUG_PRINTLN("FAILED TO INIT accel/compass ");
     }
-    return result;
+    return m_compassInitialized;
 }
 
 void CDOrientation::readGyro()
 {
+    if (!m_gyroInitialized) return;
     _gyro.read();
     
     AN[0] = _gyro.g.x;
@@ -685,8 +692,9 @@ void CDOrientation::readGyro()
 }
 
 // Reads x,y and z accelerometer registers
-void CDOrientation::readAccel()
-{
+void CDOrientation::readAccel() {
+    if (!m_compassInitialized) return;
+    
     _compass.readAcc();
     
     
@@ -704,8 +712,9 @@ void CDOrientation::readAccel()
 }
 
 
-void CDOrientation::readCompass()
-{
+void CDOrientation::readCompass() {
+    if (!m_compassInitialized) return;
+    
     _compass.readMag();
     
     magnetom_x = SENSOR_SIGN[6] * _compass.m.x;
@@ -716,76 +725,79 @@ void CDOrientation::readCompass()
 
 
 void CDOrientation::_internalProcess() {
-    counter++;
-    timer_old = timer;
-    timer = millis();
-    if (timer>timer_old) {
-        G_Dt = (timer-timer_old)/1000.0;    // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
-        if (G_Dt > 1) {
-            G_Dt = 0;  //Something is wrong - keeps dt from blowing up, goes to zero to keep gyros from departing
+    if (m_compassInitialized && m_gyroInitialized) {
+        
+        counter++;
+        timer_old = timer;
+        timer = millis();
+        if (timer>timer_old) {
+            G_Dt = (timer-timer_old)/1000.0;    // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
+            if (G_Dt > 1) {
+                G_Dt = 0;  //Something is wrong - keeps dt from blowing up, goes to zero to keep gyros from departing
+            }
+        } else {
+            G_Dt = 0;
         }
-    } else {
-        G_Dt = 0;
-    }
-//    DEBUG_PRINTF("G_Dt: %.3f\r\n--", G_Dt);
-    
-    // *** DCM algorithm
-    // Data adquisition
-    readGyro();   // This read gyro data
-    readAccel();     // Read I2C accelerometer
-    
-    if (counter > 5)  // Read compass data at 10Hz... (5 loop runs)
-    {
-        counter = 0;
-        readCompass();    // Read I2C magnetometer
-        Compass_Heading(); // Calculate magnetic heading
-    }
-//    print();
-//
-//    DEBUG_PRINTF("START: DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
-//    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
-//    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
-//    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
-//    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n---\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
-//    print();
+    //    DEBUG_PRINTF("G_Dt: %.3f\r\n--", G_Dt);
+        
+        // *** DCM algorithm
+        // Data adquisition
+        readGyro();   // This read gyro data
+        readAccel();     // Read I2C accelerometer
+        
+        if (counter > 5)  // Read compass data at 10Hz... (5 loop runs)
+        {
+            counter = 0;
+            readCompass();    // Read I2C magnetometer
+            Compass_Heading(); // Calculate magnetic heading
+        }
+    //    print();
+    //
+    //    DEBUG_PRINTF("START: DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
+    //    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
+    //    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
+    //    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
+    //    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n---\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
+    //    print();
 
-    // Calculations...
-    Matrix_update();
+        // Calculations...
+        Matrix_update();
 
-//    DEBUG_PRINTF("AFTER MATRIX_UPDATE DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
-//    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
-//    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
-//    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
-//    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n++++\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
-//    print();
+    //    DEBUG_PRINTF("AFTER MATRIX_UPDATE DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
+    //    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
+    //    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
+    //    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
+    //    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n++++\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
+    //    print();
 
-    normalize();
+        normalize();
 
-//    DEBUG_PRINTF("AFTER NORM: DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
-//    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
-//    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
-//    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
-//    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n++++\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
-//    print();
+    //    DEBUG_PRINTF("AFTER NORM: DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
+    //    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
+    //    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
+    //    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
+    //    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n++++\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
+    //    print();
 
-    driftCorrection();
+        driftCorrection();
 
-//    DEBUG_PRINTF("AFTER DRIFT: DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
-//    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
-//    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
-//    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
-//    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n++++\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
-//    print();
+    //    DEBUG_PRINTF("AFTER DRIFT: DCM: %.3f, %.3f, %.3f\r\n", DCM_Matrix[0][0], DCM_Matrix[0][1], DCM_Matrix[0][2]);
+    //    DEBUG_PRINTF("Omega: %.3f %.3f %.3f\r\n", Omega[0], Omega[1], Omega[2]);
+    //    DEBUG_PRINTF("Gyro_Vector: %.3f %.3f %.3f\r\n", Gyro_Vector[0], Gyro_Vector[1], Gyro_Vector[2]);
+    //    DEBUG_PRINTF("Omega_I: %.3f %.3f %.3f\r\n", Omega_I[0], Omega_I[1], Omega_I[2]);
+    //    DEBUG_PRINTF("Omega_P: %.3f %.3f %.3f\r\n++++\r\n", Omega_P[0], Omega_P[1], Omega_P[2]);
+    //    print();
 
-    Euler_angles();
-    
-//    DEBUG_PRINTLN("--DONE");
-#if DEBUG
-//    print();
-#endif
-    
-    if (_shouldSaveDataToFile) {
-        writeStatusToFile();
+        Euler_angles();
+        
+    //    DEBUG_PRINTLN("--DONE");
+    #if DEBUG
+    //    print();
+    #endif
+        
+        if (_shouldSaveDataToFile) {
+            writeStatusToFile();
+        }
     }
 }
 
@@ -980,8 +992,8 @@ void CDOrientation::print()
 }
 
 uint8_t CDOrientation::getRotationalVelocityBrightness(uint8_t currentBrightness) {
-#define MIN_BRIGHTNESS 1
-#define MAX_BRIGHTNESS 255 // Not too bright....but seems bright
+#define MIN_BRIGHTNESS 10
+#define MAX_BRIGHTNESS 200 // Not too bright....but seems bright
     
     uint8_t targetBrightness = 0;
 #define MAX_ROTATIONAL_VELOCITY 800 // at this value, we hit max brightness, but it is hard to hit..usually I hit half

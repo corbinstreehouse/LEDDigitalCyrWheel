@@ -11,12 +11,15 @@
 
 bool busyDelay(uint32_t ms);
 
+#include "LEDCommon.h" // Defines STRIP_PIN
+
 // All my defined pins
-#define SD_CARD_CS_PIN 4         ///////////// AGGG!!! I shouldn't have used pin 4. It prevents working with OctoWS2811.
+#define SD_CARD_CS_PIN 4 /* SS is pin 10 by default, but I have it wird in my wheel to pin 4! */ // I think my wheel is wired to pin 4, which is wrong!!! I fixed my breadboard..
+// See: https://www.pjrc.com/teensy/td_libs_SPI.html#ss for more info
+
 #define BUTTON_PIN 23
 
 #define BRIGHTNESS_PIN 22
-//#define STRIP_PIN 2 // 14 // Use pin 2 so Octo works, and pin 14 for a secondary strip (opposite side) to do patterns
 
 // TOOD: actually make the strip length dynamic...
 #define STRIP_LENGTH 331 // my actual count // (14+60*2)// (60*4) // (67*2)
@@ -41,7 +44,7 @@ const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm 
  
  LED Strip:
  ----------------
- Teensy STRIP_PIN -> resistor (R?) -> Data in of LED strip
+ Teensy STRIP_PIN (pin 2) -> resistor (R?) -> Data in of LED strip
  +5V -> LED strip +5v
  Gnd -> LED strip Gnd
  
@@ -59,7 +62,7 @@ const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm 
  ----------------
  +5v -> +5v on SD Card
  Gnd -> Gnd on SD Card
- Teensy SD_CARD_CS_PIN -> SD SS
+ Teensy SD_CARD_CS_PIN -> SD SS        // SD_CARD_CS_PIN is pin 4 (not pin 10!! which is what is defined as SS normallly for teensy 3.0)
  Teensy MOSI (pin 11) -> SD MOSI
  Teensy MISO (pin 12) -> SD MISO
  Teensy SCLK (pin 13) -> SD SCLK

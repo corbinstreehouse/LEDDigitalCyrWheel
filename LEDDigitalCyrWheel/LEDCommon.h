@@ -18,6 +18,7 @@
 #endif
 
 #if DEBUG
+#warning "DEBUG CODE IS ON!!!! LEDCommon.h"
     #define DEBUG_PRINTLN(a) Serial.println(a)
     #define DEBUG_PRINTF(a, ...) Serial.printf(a, ##__VA_ARGS__)
 #else
@@ -27,6 +28,9 @@
 
 #endif
 
+// Defined here so I can use it in multiple places more easily
+#define STRIP_PIN 2 // 14 // Use pin 2 so Octo works, and pin 14 for a secondary strip (opposite side) to do patterns
+// CORBIN: led cyr wheel is wired to pin 2
 
 
 #if DEBUG
@@ -36,7 +40,7 @@
     #define ASSERT(a) if (!(a)) { \
         Serial.print("ASSERT ");  \
         Serial.print(__FILE__); Serial.print(" : "); \
-        Serial.print(__LINE__); }
+        Serial.println(__LINE__); }
 #endif
 
 #else

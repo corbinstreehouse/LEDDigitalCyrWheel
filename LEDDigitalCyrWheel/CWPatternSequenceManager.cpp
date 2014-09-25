@@ -13,6 +13,10 @@
 
 #define RECORD_INDICATOR_FILENAME "RECORD.TXT" // If this file exists, we record data in other files.
 
+#if DEBUG
+    #warning "DEBUG Code is on!!"
+#endif
+
 static char *getExtension(char *filename) {
     char *ext = strchr(filename, '.');
     if (ext) {
@@ -26,6 +30,7 @@ static char *getExtension(char *filename) {
 CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH) {
     _patternItems = NULL;
     _sequenceNames = NULL;
+    m_shouldIgnoreButtonClickWhenTimed = true; // TODO: make this an option per sequence...
 }
 
 #if PATTERN_EDITOR
@@ -57,6 +62,7 @@ void CWPatternSequenceManager::loadDefaultSequence() {
 
     _pixelCount = 300; // Well..whatever;it is too late at this point, and I don't even use it..
     _numberOfPatternItems = LEDPatternTypeMax;
+    m_shouldIgnoreButtonClickWhenTimed = false;
     
     // After the header each item follows
     _patternItems = (CDPatternItemHeader *)malloc(_numberOfPatternItems * sizeof(CDPatternItemHeader));
@@ -105,12 +111,22 @@ void CWPatternSequenceManager::freePatternItems() {
     
 }
 
+CDPatternItemHeader CWPatternSequenceManager::makeFlashPatternItem(CRGB color) {
+    CDPatternItemHeader result;
+    result.patternType = LEDPatternTypeBlink;
+    result.duration = 500;
+    result.color = color;
+    result.intervalCount = 1;
+    result.patternEndCondition = CDPatternEndConditionOnButtonClick;
+    return result;
+}
+
 void CWPatternSequenceManager::makeSequenceFlashColor(uint32_t color) {
     _numberOfPatternItems = 2;
     _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
     _patternItems[0].patternType = LEDPatternTypeSolidColor;
     _patternItems[0].duration = 500;
-    _patternItems[0].color = color; // TODO: better representation of colors.. this is yellow..
+    _patternItems[0].color = color;
     _patternItems[0].intervalCount = 1;
     _patternItems[0].patternEndCondition = CDPatternEndConditionAfterRepeatCount;
     
@@ -142,8 +158,8 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
     
     // Verify it
     if (verifyHeader(&patternHeader)) {
-        // Verify the version; support v2 and v3
-        if (patternHeader.version >= 2 && patternHeader.version <= SEQUENCE_VERSION) {
+        // Only version 4 now
+        if (patternHeader.version == SEQUENCE_VERSION) {
             // Free existing stuff
             if (_patternItems) {
                 DEBUG_PRINTLN("ERROR: PATTERN ITEMS SHOULD BE FREE!!!!");
@@ -151,6 +167,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
                 // Then read in and store the stock info
             _pixelCount = patternHeader.pixelCount;
             _numberOfPatternItems = patternHeader.patternCount;
+            m_shouldIgnoreButtonClickWhenTimed = patternHeader.ignoreSingleClickButtonForTimedPatterns;
             DEBUG_PRINTF("pixelCount: %d, now reading %d items, headerSize: %d\r\n", _pixelCount, _numberOfPatternItems, sizeof(CDPatternItemHeader));
             
             // After the header each item follows
@@ -163,24 +180,30 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
                 sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
                 DEBUG_PRINTF("Header, type: %d, duration: %d, intervalC: %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].intervalCount);
                 // Verify it
-                ASSERT(_patternItems[i].patternType >= LEDPatternTypeMin && _patternItems[i].patternType < LEDPatternTypeMax);
-                ASSERT(_patternItems[i].duration > 0);
-                // After the header, is the (optional) image data
-                uint32_t dataLength = _patternItems[i].dataLength;
-                if (dataLength > 0) {
-                    DEBUG_PRINTF("we have %d data\r\n", dataLength);
-                    // Read in the data that is following the header, and put it in the data pointer...
-                    // 65536 kb of ram..more than 20,000 pixels would overflow...which i'm now hitting w/larger images. darn it..i have to chunk these and dynamically load each one ;(
-                    _patternItems[i].dataOffset = sequenceFile.position();
-                    _patternItems[i].dataFilename = filename;
-    //                _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
-    //                sequenceFile.readBytes((char*)_patternItems[i].data, dataLength);
-                    // seek past the data
-                    sequenceFile.seek(sequenceFile.position() + dataLength);
+                bool validData = _patternItems[i].patternType >= LEDPatternTypeMin && _patternItems[i].patternType < LEDPatternTypeMax;
+                ASSERT(validData);
+                if (!validData) {
+                    // fill it in with something..
+                    _patternItems[i] = makeFlashPatternItem(CRGB::Red);
                 } else {
-                    // data pointer should always be NULL
-                    _patternItems[i].dataOffset = 0;
-                    _patternItems[i].dataFilename = NULL;
+                    ASSERT(_patternItems[i].duration > 0);
+                    // After the header, is the (optional) image data
+                    uint32_t dataLength = _patternItems[i].dataLength;
+                    if (dataLength > 0) {
+                        DEBUG_PRINTF("we have %d data\r\n", dataLength);
+                        // Read in the data that is following the header, and put it in the data pointer...
+                        // 65536 kb of ram..more than 20,000 pixels would overflow...which i'm now hitting w/larger images. darn it..i have to chunk these and dynamically load each one ;(
+                        _patternItems[i].dataOffset = sequenceFile.position();
+                        _patternItems[i].dataFilename = filename;
+        //                _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
+        //                sequenceFile.readBytes((char*)_patternItems[i].data, dataLength);
+                        // seek past the data
+                        sequenceFile.seek(sequenceFile.position() + dataLength);
+                    } else {
+                        // data pointer should always be NULL
+                        _patternItems[i].dataOffset = 0;
+                        _patternItems[i].dataFilename = NULL;
+                    }
                 }
             }
             DEBUG_PRINTLN("DONE");
@@ -214,11 +237,23 @@ bool CWPatternSequenceManager::loadCurrentSequence() {
 }
 
 bool CWPatternSequenceManager::initSDCard() {
-    pinMode(SS, OUTPUT);
-    bool result = SD.begin(SPI_FULL_SPEED, SD_CARD_CS_PIN);
+    DEBUG_PRINTLN("initSD Card");
+#if 0 // DEBUG
+    delay(2000);
+    DEBUG_PRINTLN("END: really slow pause... and doing SD init....");
+#endif
+//    pinMode(SD_CARD_CS_PIN, OUTPUT); // Any pin can be used as SS, but it must remain low
+//    digitalWrite(SD_CARD_CS_PIN, LOW);
+    
+    bool result = SD.begin(SPI_HALF_SPEED, SD_CARD_CS_PIN); //  was SPI_FULL_SPEED
     int i = 0;
+#if DEBUG
+    if (!result) {
+        DEBUG_PRINTLN("SD Card full speed SPI init failed...trying again slower...");
+    }
+#endif
     while (!result) {
-        result = SD.begin(SPI_HALF_SPEED, SD_CARD_CS_PIN);
+        result = SD.begin(SPI_FULL_SPEED, SD_CARD_CS_PIN); // was SPI_HALF_SPEED...
         i++;
         if (i == 1) {
             break; // give it 3 more chances??.. (it is slow to init for some reason...)
@@ -260,7 +295,7 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
 
     initOrientation();
     initStrip();
-    DEBUG_PRINTLN("done init strip");
+    DEBUG_PRINTLN("done init strip, starting to init SD Card");
     
     bool result = initSDCard();
     DEBUG_PRINTLN("done init sd card");
@@ -277,10 +312,13 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
                 _numberOfAvailableSequences++;
                 DEBUG_PRINTF("found pattern: %s\r\n", filenameBuffer);
             } else if (strcmp(filenameBuffer, RECORD_INDICATOR_FILENAME) == 0) {
+                DEBUG_PRINTF("found record file name: %s\r\n", filenameBuffer);
                 _shouldRecordData = true;
+            } else {
+                DEBUG_PRINTF("found unknown file name: %s\r\n", filenameBuffer);
             }
         }
-        DEBUG_PRINTF("Found %d sequences\r\n", _numberOfAvailableSequences);
+        DEBUG_PRINTF("Found %d sequences on SD Card\r\n", _numberOfAvailableSequences);
         
         if (_numberOfAvailableSequences > 0) {
             // Now we can malloc the space to save the names
@@ -366,7 +404,15 @@ void CWPatternSequenceManager::buttonClick() {
         m_orientation.endCalibration();
         firstPatternItem();
     } else {
-        nextPatternItem();
+        if (m_shouldIgnoreButtonClickWhenTimed) {
+            // Only go to next if it isn't timed; this helps me avoid switching the pattern accidentally when stepping on it.
+            CDPatternItemHeader *itemHeader = getCurrentItemHeader();
+            if (itemHeader == NULL || itemHeader->patternEndCondition == CDPatternEndConditionOnButtonClick) {
+                nextPatternItem();
+            }
+        } else {
+            nextPatternItem();
+        }
     }
 }
 
@@ -392,7 +438,7 @@ void CWPatternSequenceManager::process() {
         m_ledPatterns.show();
         return;
     }
-    
+
     if (_numberOfPatternItems == 0) {
         DEBUG_PRINTLN("No pattern items to show!");
         m_ledPatterns.flashThreeTimesWithDelay(CRGB::Yellow, 150);
@@ -410,7 +456,6 @@ void CWPatternSequenceManager::process() {
     CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
     // See if we should go to the next pattern. Interval counts are 1 based.
     if (itemHeader->patternEndCondition == CDPatternEndConditionAfterRepeatCount) {
-        DEBUG_PRINTLN("loop repeat count check");
         if (m_ledPatterns.getIntervalCount() >= itemHeader->intervalCount) {
             nextPatternItem();
             itemHeader = &_patternItems[_currentPatternItemIndex];

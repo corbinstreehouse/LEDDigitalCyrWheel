@@ -27,7 +27,7 @@
 #define IGNORE_VOLTAGE 0 //for hardware testing w/out a battery
 
 // 2 cell LiPO, 4.2v each: 8.4v max. 3.0v should be the min, 3.0*2=6v min
-#define LOW_VOLTAGE_VALUE 6.4 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
+#define LOW_VOLTAGE_VALUE 6.2 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
 #define TIME_BETWEEN_VOLTAGE_READS 1000 // read every second..
 #define MAX_INPUT_VOLTAGE 10.0 // max voltage we can read
 #define RESISTOR_Z1_VALUE 10000.0 // 10k resistor
@@ -73,6 +73,7 @@ void buttonHeld(Button &b) {
 }
 
 #define DEBUG_VOLTAGE 0
+// corbin!! voltage debug on..
 
 static float readBatteryVoltage() {
     float readValue = analogRead(g_batteryVoltagePin); // returns 0 - 1023; 0 is 0v, and 1023 is 10v (since I use two 10k resistors in a voltage divider). 5v is the max...
@@ -82,7 +83,7 @@ static float readBatteryVoltage() {
     Serial.print(" ");
 #endif
     float vRef = 3.30; // 3.3v ref
-    float refValue = analogRead(g_batteryRefPin);
+    float refValue = 3.30; // analogRead(g_batteryRefPin); // hardcoded now..
 #if DEBUG_VOLTAGE
     Serial.print("refValue: ");
     Serial.print(refValue);

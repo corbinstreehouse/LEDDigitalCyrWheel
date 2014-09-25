@@ -27,6 +27,7 @@
         #include "NeoPixelLEDPatterns.h"
     #define LED_PATTERNS_CLASS NeoPixelLEDPatterns
     #else
+test this
         #include "FastLEDPatterns.H"
         #define LED_PATTERNS_CLASS FastLEDPatterns
     #endif
@@ -49,10 +50,13 @@ private:
 
     uint8_t m_savedBrightness;
     
-    bool _shouldRecordData;
+    uint32_t _shouldRecordData:1;
+    uint32_t m_shouldIgnoreButtonClickWhenTimed:1;
+    uint32_t __reserved:31;
     
     LED_PATTERNS_CLASS m_ledPatterns;
     CDOrientation m_orientation;
+    
     
     bool initSDCard();
     bool initOrientation();
@@ -77,6 +81,9 @@ private:
         }
         return &_patternItems[tmp];
     }
+    
+    
+    CDPatternItemHeader makeFlashPatternItem(CRGB color);
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR

@@ -7,6 +7,40 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D0C1D0619CF3CE0004E027E /* LEDPatterns.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DD1E66F193EC47100290878 /* LEDPatterns.h */; };
+		9D0C1D0719CF3CE0004E027E /* NeoPixelLEDPatterns.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DD1E670193EC47100290878 /* NeoPixelLEDPatterns.h */; };
+		9D0C1D0819CF3CE0004E027E /* OctoWS2811LEDPatterns.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DA685AE19401D3B003631F6 /* OctoWS2811LEDPatterns.h */; };
+		9D0C1D0919CF3CE0004E027E /* FastLEDPatterns.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DA685AF194021D8003631F6 /* FastLEDPatterns.h */; };
+		9D0C1D0A19CF3CE0004E027E /* block_clockless.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8281938CBC400E21E1C /* block_clockless.h */; };
+		9D0C1D0B19CF3CE0004E027E /* chipsets.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8291938CBC400E21E1C /* chipsets.h */; };
+		9D0C1D0C19CF3CE0004E027E /* clockless.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC82A1938CBC400E21E1C /* clockless.h */; };
+		9D0C1D0D19CF3CE0004E027E /* clockless2.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC82B1938CBC400E21E1C /* clockless2.h */; };
+		9D0C1D0E19CF3CE0004E027E /* clockless_arm_k20.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC82C1938CBC400E21E1C /* clockless_arm_k20.h */; };
+		9D0C1D0F19CF3CE0004E027E /* clockless_arm_sam.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC82D1938CBC400E21E1C /* clockless_arm_sam.h */; };
+		9D0C1D1019CF3CE0004E027E /* clockless_trinket.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC82E1938CBC400E21E1C /* clockless_trinket.h */; };
+		9D0C1D1119CF3CE0004E027E /* color.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC82F1938CBC400E21E1C /* color.h */; };
+		9D0C1D1219CF3CE0004E027E /* colorutils.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8311938CBC400E21E1C /* colorutils.h */; };
+		9D0C1D1319CF3CE0004E027E /* controller.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8321938CBC400E21E1C /* controller.h */; };
+		9D0C1D1419CF3CE0004E027E /* delay.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8331938CBC400E21E1C /* delay.h */; };
+		9D0C1D1519CF3CE0004E027E /* dmx.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8351938CBC400E21E1C /* dmx.h */; };
+		9D0C1D1619CF3CE0004E027E /* FastLED.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8551938CBC400E21E1C /* FastLED.h */; };
+		9D0C1D1719CF3CE0004E027E /* fastpin.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8561938CBC400E21E1C /* fastpin.h */; };
+		9D0C1D1819CF3CE0004E027E /* fastpin_arm_k20.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8571938CBC400E21E1C /* fastpin_arm_k20.h */; };
+		9D0C1D1919CF3CE0004E027E /* fastpin_arm_sam.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8581938CBC400E21E1C /* fastpin_arm_sam.h */; };
+		9D0C1D1A19CF3CE0004E027E /* fastpin_avr.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8591938CBC400E21E1C /* fastpin_avr.h */; };
+		9D0C1D1B19CF3CE0004E027E /* fastspi.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC85A1938CBC400E21E1C /* fastspi.h */; };
+		9D0C1D1C19CF3CE0004E027E /* fastspi_arm_k20.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC85B1938CBC400E21E1C /* fastspi_arm_k20.h */; };
+		9D0C1D1D19CF3CE0004E027E /* fastspi_arm_sam.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC85C1938CBC400E21E1C /* fastspi_arm_sam.h */; };
+		9D0C1D1E19CF3CE0004E027E /* fastspi_avr.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC85D1938CBC400E21E1C /* fastspi_avr.h */; };
+		9D0C1D1F19CF3CE0004E027E /* fastspi_bitbang.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC85E1938CBC400E21E1C /* fastspi_bitbang.h */; };
+		9D0C1D2019CF3CE0004E027E /* fastspi_dma.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC85F1938CBC400E21E1C /* fastspi_dma.h */; };
+		9D0C1D2119CF3CE0004E027E /* FastSPI_LED2.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8601938CBC400E21E1C /* FastSPI_LED2.h */; };
+		9D0C1D2219CF3CE0004E027E /* fastspi_nop.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8611938CBC400E21E1C /* fastspi_nop.h */; };
+		9D0C1D2319CF3CE0004E027E /* fastspi_ref.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8621938CBC400E21E1C /* fastspi_ref.h */; };
+		9D0C1D2419CF3CE0004E027E /* hsv2rgb.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8641938CBC400E21E1C /* hsv2rgb.h */; };
+		9D0C1D2519CF3CE0004E027E /* led_sysdefs.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8661938CBC400E21E1C /* led_sysdefs.h */; };
+		9D0C1D2619CF3CE0004E027E /* lib8tion.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8681938CBC400E21E1C /* lib8tion.h */; };
+		9D0C1D2719CF3CE0004E027E /* pixeltypes.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC86A1938CBC400E21E1C /* pixeltypes.h */; };
 		9D3A0DA81889BE64001AD553 /* LEDDigitalCyrWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */; };
 		9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DAC188A0EBD001AD553 /* Button.cpp */; };
 		9D472E1D1902F1590076281A /* CDOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D472E1B1902F1590076281A /* CDOrientation.cpp */; };
@@ -6030,6 +6064,40 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D0C1D0619CF3CE0004E027E /* LEDPatterns.h in Sources */,
+				9D0C1D0719CF3CE0004E027E /* NeoPixelLEDPatterns.h in Sources */,
+				9D0C1D0819CF3CE0004E027E /* OctoWS2811LEDPatterns.h in Sources */,
+				9D0C1D0919CF3CE0004E027E /* FastLEDPatterns.h in Sources */,
+				9D0C1D0A19CF3CE0004E027E /* block_clockless.h in Sources */,
+				9D0C1D0B19CF3CE0004E027E /* chipsets.h in Sources */,
+				9D0C1D0C19CF3CE0004E027E /* clockless.h in Sources */,
+				9D0C1D0D19CF3CE0004E027E /* clockless2.h in Sources */,
+				9D0C1D0E19CF3CE0004E027E /* clockless_arm_k20.h in Sources */,
+				9D0C1D0F19CF3CE0004E027E /* clockless_arm_sam.h in Sources */,
+				9D0C1D1019CF3CE0004E027E /* clockless_trinket.h in Sources */,
+				9D0C1D1119CF3CE0004E027E /* color.h in Sources */,
+				9D0C1D1219CF3CE0004E027E /* colorutils.h in Sources */,
+				9D0C1D1319CF3CE0004E027E /* controller.h in Sources */,
+				9D0C1D1419CF3CE0004E027E /* delay.h in Sources */,
+				9D0C1D1519CF3CE0004E027E /* dmx.h in Sources */,
+				9D0C1D1619CF3CE0004E027E /* FastLED.h in Sources */,
+				9D0C1D1719CF3CE0004E027E /* fastpin.h in Sources */,
+				9D0C1D1819CF3CE0004E027E /* fastpin_arm_k20.h in Sources */,
+				9D0C1D1919CF3CE0004E027E /* fastpin_arm_sam.h in Sources */,
+				9D0C1D1A19CF3CE0004E027E /* fastpin_avr.h in Sources */,
+				9D0C1D1B19CF3CE0004E027E /* fastspi.h in Sources */,
+				9D0C1D1C19CF3CE0004E027E /* fastspi_arm_k20.h in Sources */,
+				9D0C1D1D19CF3CE0004E027E /* fastspi_arm_sam.h in Sources */,
+				9D0C1D1E19CF3CE0004E027E /* fastspi_avr.h in Sources */,
+				9D0C1D1F19CF3CE0004E027E /* fastspi_bitbang.h in Sources */,
+				9D0C1D2019CF3CE0004E027E /* fastspi_dma.h in Sources */,
+				9D0C1D2119CF3CE0004E027E /* FastSPI_LED2.h in Sources */,
+				9D0C1D2219CF3CE0004E027E /* fastspi_nop.h in Sources */,
+				9D0C1D2319CF3CE0004E027E /* fastspi_ref.h in Sources */,
+				9D0C1D2419CF3CE0004E027E /* hsv2rgb.h in Sources */,
+				9D0C1D2519CF3CE0004E027E /* led_sysdefs.h in Sources */,
+				9D0C1D2619CF3CE0004E027E /* lib8tion.h in Sources */,
+				9D0C1D2719CF3CE0004E027E /* pixeltypes.h in Sources */,
 				9DBE92C218A8AA5600154550 /* Wire.cpp in Sources */,
 				9D3A0DA81889BE64001AD553 /* LEDDigitalCyrWheel.cpp in Sources */,
 				9DBE8A6A18A8A85000154550 /* serial1.c in Sources */,
