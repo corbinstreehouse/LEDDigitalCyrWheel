@@ -31,6 +31,7 @@ CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGT
     _patternItems = NULL;
     _sequenceNames = NULL;
     m_shouldIgnoreButtonClickWhenTimed = true; // TODO: make this an option per sequence...
+    ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // make sure I don't screw stuff up by chaning the size and not updating things again
 }
 
 #if PATTERN_EDITOR
@@ -69,19 +70,23 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     
     int i = 0;
     for (int p = LEDPatternTypeMin; p < LEDPatternTypeMax; p++) {
-        if (p == LEDPatternTypeDoNothing || p == LEDPatternTypeFadeIn || p == LEDPatternTypeImageLinearFade || p == LEDPatternTypeImageEntireStrip) {
+        if (p == LEDPatternTypeDoNothing || p == LEDPatternTypeFadeIn || p == LEDPatternTypeImageLinearFade || p == LEDPatternTypeImageEntireStrip || p == LEDPatternTypeCrossfade) {
             continue; // skip a few
         }
+        bzero(&_patternItems[i], sizeof(CDPatternItemHeader));
+        
         _patternItems[i].patternType = (LEDPatternType)p;
         _patternItems[i].patternEndCondition = CDPatternEndConditionOnButtonClick;
-        _patternItems[i].intervalCount = 1;
         _patternItems[i].duration = 2000; //  2 seconds
-        _patternItems[i].dataLength = 0;
-        _patternItems[i].shouldSetBrightnessByRotationalVelocity = 0; // for testing..
+        _patternItems[i].patternDuration = 2000;
+        // bzero takes care of these
+//        _patternItems[i].patternOptions = 0;
+//        _patternItems[i].dataLength = 0;
+        _patternItems[i].shouldSetBrightnessByRotationalVelocity = 0; // Nope.
 //        _patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
 //        _patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
         switch (random(3)) { case 0: _patternItems[i].color = 0xFF0000; break; case 1: _patternItems[i].color = 0x00FF00; break; case 2: _patternItems[i].color = 0x0000FF; break; }
-        _patternItems[i].dataOffset = 0;
+//        _patternItems[i].dataOffset = 0;
         i++;
     }
     _numberOfPatternItems = i;
@@ -115,8 +120,8 @@ CDPatternItemHeader CWPatternSequenceManager::makeFlashPatternItem(CRGB color) {
     CDPatternItemHeader result;
     result.patternType = LEDPatternTypeBlink;
     result.duration = 500;
+    result.patternDuration = 500;
     result.color = color;
-    result.intervalCount = 1;
     result.patternEndCondition = CDPatternEndConditionOnButtonClick;
     return result;
 }
@@ -126,15 +131,15 @@ void CWPatternSequenceManager::makeSequenceFlashColor(uint32_t color) {
     _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
     _patternItems[0].patternType = LEDPatternTypeSolidColor;
     _patternItems[0].duration = 500;
+    _patternItems[0].patternDuration = 500; // Not used
     _patternItems[0].color = color;
-    _patternItems[0].intervalCount = 1;
-    _patternItems[0].patternEndCondition = CDPatternEndConditionAfterRepeatCount;
+    _patternItems[0].patternEndCondition = CDPatternEndConditionAfterDuration;
     
     _patternItems[1].patternType = LEDPatternTypeSolidColor;
     _patternItems[1].duration = 500;
-    _patternItems[1].color = 0x000000; // TODO: better representation of colors..
-    _patternItems[1].intervalCount = 1;
-    _patternItems[1].patternEndCondition = CDPatternEndConditionAfterRepeatCount;
+    _patternItems[1].color = CRGB::Black;
+    _patternItems[1].patternDuration = 500; // not used..
+    _patternItems[1].patternEndCondition = CDPatternEndConditionAfterDuration;
 }
 
 void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
@@ -168,6 +173,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
             _pixelCount = patternHeader.pixelCount;
             _numberOfPatternItems = patternHeader.patternCount;
             m_shouldIgnoreButtonClickWhenTimed = patternHeader.ignoreSingleClickButtonForTimedPatterns;
+            ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // MAKE SURE IT IS RIGHT..
             DEBUG_PRINTF("pixelCount: %d, now reading %d items, headerSize: %d\r\n", _pixelCount, _numberOfPatternItems, sizeof(CDPatternItemHeader));
             
             // After the header each item follows
@@ -178,7 +184,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
             for (int i = 0; i < _numberOfPatternItems; i++ ){
                 DEBUG_PRINTF("reading item %d\r\n", i);
                 sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
-                DEBUG_PRINTF("Header, type: %d, duration: %d, intervalC: %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].intervalCount);
+                DEBUG_PRINTF("Header, type: %d, duration: %d, patternDuration %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].patternDuration);
                 // Verify it
                 bool validData = _patternItems[i].patternType >= LEDPatternTypeMin && _patternItems[i].patternType < LEDPatternTypeMax;
                 ASSERT(validData);
@@ -370,7 +376,7 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
         // Go into calibration mode for the accell
         m_orientation.beginCalibration();
         // Override the default sequence to blink
-        m_ledPatterns.setDuration(300);
+        m_ledPatterns.setPatternDuration(300);
         m_ledPatterns.setPatternColor(CRGB::Pink);
         m_ledPatterns.setPatternType(LEDPatternTypeBlink);
     }
@@ -432,6 +438,11 @@ void CWPatternSequenceManager::buttonLongClick() {
 }
 
 void CWPatternSequenceManager::process() {
+    
+//    float time = millis()-m_timedPatternStartTime;
+//    time = time / 1000.0;
+//    Serial.println(time);
+    
     m_orientation.process();
     if (m_orientation.isCalibrating()) {
         // Show the flashing, and return
@@ -454,12 +465,12 @@ void CWPatternSequenceManager::process() {
     // This updates how much time has passed since the pattern started and how many full intervals have run through.
     // See if we should go to the next pattern
     CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
-    // See if we should go to the next pattern. Interval counts are 1 based.
-    if (itemHeader->patternEndCondition == CDPatternEndConditionAfterRepeatCount) {
-        if (m_ledPatterns.getIntervalCount() >= itemHeader->intervalCount) {
+    // See if we should go to the next pattern if enough time passed
+    if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
+        // subtract out how much time has passed from our initial pattern, and when we actually started the first timed pattern. This gives more accurate timings.
+        uint32_t timePassed = millis() - m_timedUsedBeforeCurrentPattern - m_timedPatternStartTime;
+        if (timePassed >= itemHeader->duration) {
             nextPatternItem();
-            itemHeader = &_patternItems[_currentPatternItemIndex];
-            // We will do at least one show of the pattern startig on the next loop
         }
     } else {
         // It is waiting for some other condition before going to the next pattern (button click is the only condition now)
@@ -497,11 +508,38 @@ void CWPatternSequenceManager::nextPatternItem() {
     if (_currentPatternItemIndex >= _numberOfPatternItems) {
         _currentPatternItemIndex = 0;
     }
-    
+
     CDPatternItemHeader *itemHeader = getCurrentItemHeader();
+    // if we are the first timed pattern, then reset m_timedPatternStartTime and how many timed patterns have gone before us
+    if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
+        // We are the first timed one, or the only one, then we have to reset everything
+        if (_currentPatternItemIndex == 0 || _numberOfPatternItems == 1) {
+            resetStartingTime();
+        } else if (getPreviousItemHeader()->patternEndCondition != CDPatternEndConditionAfterDuration) {
+            // The last one was NOT timed, so we need to reset, as this is the first timed pattern after a button click, and all timed ones need to go off the start of this one so we get accurate full length timing
+            resetStartingTime();
+        } else {
+            // The last one ran, and was timed, and we need to include its duration in what passed. Based on the first condition, we always have a previous that is not us, and was timed
+            ASSERT(getPreviousItemHeader()->patternEndCondition == CDPatternEndConditionAfterDuration);
+            m_timedUsedBeforeCurrentPattern += getPreviousItemHeader()->duration;
+            // If the actual time passed isn't this long...well, make it so
+            if ((millis() - m_timedPatternStartTime) < m_timedUsedBeforeCurrentPattern) {
+                m_timedPatternStartTime = millis() - m_timedUsedBeforeCurrentPattern; // go back in the past!
+            }
+        }
+        
+    } else if (_currentPatternItemIndex == 0) {
+        resetStartingTime();
+    }
+    
     // Reset the stuff based on the new header
     m_ledPatterns.setPatternType(itemHeader->patternType);
-    m_ledPatterns.setDuration(itemHeader->duration);
+    // Migration help..
+    uint32_t duration = itemHeader->patternDuration;
+    if (duration == 0) {
+        duration = itemHeader->duration;
+    }
+    m_ledPatterns.setPatternDuration(duration);
     m_ledPatterns.setPatternColor(itemHeader->color);
     m_ledPatterns.setDataInfo(itemHeader->dataFilename, itemHeader->dataLength);
 #if DEBUG

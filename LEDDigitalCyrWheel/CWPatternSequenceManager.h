@@ -23,12 +23,15 @@
     #define LED_PATTERNS_CLASS CDSimulatorLEDPatterns
     @class CDCyrWheelView;
 #else
-    #if USE_ADAFRUIT
+    #if USE_OCTO // doesn't work
+        #include "OctoWS2811.h"
+        #include "OctoWS2811LEDPatterns.h"
+        #define LED_PATTERNS_CLASS OctoWS2811LEDPatterns
+    #elif USE_ADAFRUIT
         #include "NeoPixelLEDPatterns.h"
-    #define LED_PATTERNS_CLASS NeoPixelLEDPatterns
+        #define LED_PATTERNS_CLASS NeoPixelLEDPatterns
     #else
-test this
-        #include "FastLEDPatterns.H"
+        #include "FastLEDPatterns.h"
         #define LED_PATTERNS_CLASS FastLEDPatterns
     #endif
 #endif
@@ -56,12 +59,13 @@ private:
     
     LED_PATTERNS_CLASS m_ledPatterns;
     CDOrientation m_orientation;
-    
+
+    uint32_t m_timedPatternStartTime; // In milliseconds; the time that all the current run of timed patterns starts, so we can accurately generate a full duration for all of them
+    uint32_t m_timedUsedBeforeCurrentPattern;
     
     bool initSDCard();
     bool initOrientation();
     bool initStrip();
-    bool loadCurrentSequence();
     void freePatternItems();
     void freeSequenceNames();
     void loadSequenceNamed(const char *filename);
@@ -82,6 +86,19 @@ private:
         return &_patternItems[tmp];
     }
     
+    inline CDPatternItemHeader *getPreviousItemHeader() {
+        int tmp = _currentPatternItemIndex;
+        tmp--;
+        if (tmp < 0) {
+            tmp = _numberOfPatternItems - 1;
+        }
+        return &_patternItems[tmp];
+    }
+    
+    inline void resetStartingTime() {
+        m_timedPatternStartTime = millis();
+        m_timedUsedBeforeCurrentPattern = 0;
+    }
     
     CDPatternItemHeader makeFlashPatternItem(CRGB color);
 public:
@@ -96,7 +113,7 @@ public:
     void buttonLongClick();
     void loadNextSequence(); // returns true if we could advance (or loop to the start)
     void loadDefaultSequence();
-    
+    bool loadCurrentSequence();
     
     // Playing back patterns
     void nextPatternItem();
@@ -112,6 +129,8 @@ public:
     char *getSequenceNameAtIndex(int index) { return _sequenceNames[index]; }
     char *getCurrentSequenceName() { return _sequenceNames[_currentSequenceIndex]; };
     int getCurrentSequenceIndex() { return _currentSequenceIndex; }
+    uint32_t getPatternTimePassed() { return millis() - m_timedPatternStartTime - m_timedUsedBeforeCurrentPattern; };
+    uint32_t getPatternTimePassedFromFirstTimedPattern() { return millis() - m_timedPatternStartTime; };
 
     uint32_t getPixelCount() { return _pixelCount; }
     uint32_t getNumberOfPatternItems() { return _numberOfPatternItems; }

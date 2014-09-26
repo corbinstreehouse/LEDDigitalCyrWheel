@@ -14,7 +14,7 @@
 #if PATTERN_EDITOR
     #define USE_ADAFRUIT 0
 #else
-    #define USE_ADAFRUIT 1
+    #define USE_ADAFRUIT 1// 0 uses fast LED
 #endif
 
 #if DEBUG
@@ -34,17 +34,20 @@
 
 
 #if DEBUG
-#if PATTERN_EDITOR
-    #define ASSERT(a) NSCAssert(a, @"Fail");
+    #if PATTERN_EDITOR
+        #define ASSERT(a) NSCAssert(a, @"Fail");
+    #else
+        #define ASSERT(a) if (!(a)) { \
+            Serial.print("ASSERT ");  \
+            Serial.print(__FILE__); Serial.print(" : "); \
+            Serial.println(__LINE__); }
+    #endif
 #else
-    #define ASSERT(a) if (!(a)) { \
-        Serial.print("ASSERT ");  \
-        Serial.print(__FILE__); Serial.print(" : "); \
-        Serial.println(__LINE__); }
-#endif
-
-#else
-    #define ASSERT(a) ((void)0)
+    #if PATTERN_EDITOR
+        #define ASSERT(a) NSCAssert(a, @"Fail");
+    #else
+        #define ASSERT(a) ((void)0)
+    #endif
 #endif
 
 

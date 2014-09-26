@@ -22,7 +22,7 @@
 // TODO: make sure the enum size for the teensy matches
 
 typedef enum ENUM_SIZE {
-    CDPatternEndConditionAfterRepeatCount,
+    CDPatternEndConditionAfterDuration,
     CDPatternEndConditionOnButtonClick,
 } CDPatternEndCondition;
 
@@ -34,20 +34,25 @@ typedef enum ENUM_SIZE {
 
 #define SEQUENCE_VERSION 4
 
-// 28 bytes on device with buffer padding...28 on mac.
 // Update v3: 36 bytes...what happened??
+// Update v4: 40??
+#define PATTERN_HEADER_SIZE_v0 40
 typedef struct  __attribute__((__packed__)) {
     LEDPatternType patternType; // 2 (was 1...but went past 16, so it went to 2 bytes)
 #if !PATTERN_EDITOR
-//    char __buffer; // 1
+//    char __buffer; // 1 now used
 #endif
     uint32_t duration; //4
-    uint32_t intervalCount; //4
-    CDPatternEndCondition patternEndCondition; //1
+    uint32_t patternDuration; //4 -- not used by all patterns, but how "fast" each interval in the pattern should run if it has some variable in how fast it runs
+    int32_t patternOptions; //4 -- not used by all patterns
+    
+    CDPatternEndCondition patternEndCondition; //1 (2 on desktop)
 #if !PATTERN_EDITOR
     char __buffer2;// 1
 #endif
-    uint32_t color; //4
+    CRGB color; // 3 // TODO: wait, did this fuck up the ref of the offsets?
+    uint8_t __buffer3; // 1
+    
     uint32_t dataLength; // how long the data is following // 4
     uint32_t dataOffset; // When loaded, points to the offset in the file where we should load from.
     uint32_t shouldSetBrightnessByRotationalVelocity:1; // (and next) 4
