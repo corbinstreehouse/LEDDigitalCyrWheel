@@ -26,7 +26,7 @@ bool busyDelay(uint32_t ms);
 
 const int g_LED = LED_BUILTIN;
 const int g_batteryVoltagePin = A3; // pin 17
-const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm not sure i need this)
+//const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm not sure i need this) // NOTE: I need the 3.3v for the SD card! 
 
 #define MIN_MAX_IS_SAVED_EEPROM_ADDRESS 22 // rather abitrary
 #define MIN_EEPROM_ADDRESS 24 // rather abitrary
