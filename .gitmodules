@@ -15,7 +15,7 @@
 	url = git@github.com:corbinstreehouse/SD.git
 [submodule "Libraries/FastLED"]
 	path = Libraries/FastLED
-	url = https://github.com/FastLED/FastLED.git
+	url = git@github.com:corbinstreehouse/FastLED.git
 [submodule "Libraries/LEDPatterns"]
 	path = Libraries/LEDPatterns
 	url = git@github.com:corbinstreehouse/LEDPatterns.git
