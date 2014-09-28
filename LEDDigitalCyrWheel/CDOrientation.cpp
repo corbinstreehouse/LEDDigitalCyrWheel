@@ -546,6 +546,8 @@ bool CDOrientation::init() {
     Wire.begin();
     bool result = initGyro() && initAccel();
     if (result) {
+        DEBUG_PRINTLN("Orientation initialized");
+
         // Don't do this calibration! we want the same position always....
 //        
 //        // NOTE: not so sure why we do this... is it needed?? (I think it figured out the current orientation as default
@@ -565,15 +567,6 @@ bool CDOrientation::init() {
 //
 //        // corbin, evaluate...
 //        AN_OFFSET[5] -= GRAVITY*SENSOR_SIGN[5];
-//        
-//        
-//        
-//        
-//        
-        
-        
-        
-        
         
 #if DEBUG
         DEBUG_PRINTLN("Offset:");
@@ -593,8 +586,8 @@ bool CDOrientation::init() {
 }
 
 bool CDOrientation::initGyro() {
-    DEBUG_PRINTLN("initGyro");
     if (!m_gyroInitialized) {
+        DEBUG_PRINTLN("  initGyro");
         // why do I try 10 times??
         for (int i = 0; i < 10; i++) {
             m_gyroInitialized = _gyro.init();
@@ -611,7 +604,7 @@ bool CDOrientation::initGyro() {
     return m_gyroInitialized;
 }
 
-// reather abitrary...
+// rather abitrary...
 #define IS_VALID_MIN_COMPASS_VALUE(x) ((x > -4000 && x <= 0) ? true : false)
 #define IS_VALID_MAX_COMPASS_VALUE(x) ((x > 0 && x < 4000) ? true : false)
 
@@ -644,7 +637,7 @@ bool CDOrientation::initAccel() {
                 _compass.writeReg(LSM303::CTRL_REG4_A, 0x30); // 8 g full scale: FS = 11
         }
         // values I read from Calibrate for the given gain setting; I could have a program/mode to read/write these
-//        EEPROM.write(MIN_MAX_IS_SAVED_EEPROM_ADDRESS, false); // corbin: flash the chip with this once
+//        EEPROM.write(MIN_MAX_IS_SAVED_EEPROM_ADDRESS, false); // corbin: flash the chip with this once on new chips so they don't have random data in them
         
         bool isMinMaxSaved = EEPROM.read(MIN_MAX_IS_SAVED_EEPROM_ADDRESS) != 0;
         if (isMinMaxSaved) {
@@ -992,19 +985,20 @@ void CDOrientation::print()
 }
 
 uint8_t CDOrientation::getRotationalVelocityBrightness(uint8_t currentBrightness) {
-#define MIN_BRIGHTNESS 10
-#define MAX_BRIGHTNESS 200 // Not too bright....but seems bright
+#define MIN_BRIGHTNESS 50
+#define MAX_BRIGHTNESS 240 // Not too bright....but seems bright
     
     uint8_t targetBrightness = 0;
 #define MAX_ROTATIONAL_VELOCITY 800 // at this value, we hit max brightness, but it is hard to hit..usually I hit half
     double velocity = getRotationalVelocity();
+//    DEBUG_PRINTF("Velocity %.3f\r\n", velocity);
+
     if (velocity >= MAX_ROTATIONAL_VELOCITY) {
         targetBrightness = MAX_BRIGHTNESS;
     } else {
         float percentage = velocity / (float)MAX_ROTATIONAL_VELOCITY;
         // quadric growth slows it down at the start
         percentage = percentage*percentage*percentage;
-        
         
         float diffBetweenMinMax = MAX_BRIGHTNESS - MIN_BRIGHTNESS;
         targetBrightness = MIN_BRIGHTNESS + round(percentage * diffBetweenMinMax);
@@ -1046,6 +1040,7 @@ uint8_t CDOrientation::getRotationalVelocityBrightness(uint8_t currentBrightness
             result = brightness;
         }
     }
+//    DEBUG_PRINTF("brightness: %d\r\n", result);
     return result;
 }
 

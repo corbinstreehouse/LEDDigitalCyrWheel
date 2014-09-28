@@ -71,7 +71,7 @@ typedef struct  __attribute__((__packed__)) {
     uint8_t version; // in case i need to do versioning of the header
     uint16_t patternCount; // Following the header will be this number of patterns
     uint32_t pixelCount; // What was designed against
-    uint32_t ignoreSingleClickButtonForTimedPatterns:1;
+    uint32_t ignoreButtonForTimedPatterns:1;
     uint32_t _unused:31;
 } CDPatternSequenceHeader; // maybe rename to "CDPatternFileHeader"
 

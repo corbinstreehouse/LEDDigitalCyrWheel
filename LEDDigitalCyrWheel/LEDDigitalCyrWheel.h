@@ -24,9 +24,12 @@ bool busyDelay(uint32_t ms);
 // TOOD: actually make the strip length dynamic...
 #define STRIP_LENGTH 331 // my actual count // (14+60*2)// (60*4) // (67*2)
 
-const int g_LED = LED_BUILTIN;
+//const int g_LED = LED_BUILTIN; // Using the built-in LED will conflict with the SD Card, as it is on SCLK pin 13. So, don't use it!
 const int g_batteryVoltagePin = A3; // pin 17
-//const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm not sure i need this) // NOTE: I need the 3.3v for the SD card! 
+
+// TODO: I need to rewrire my battery voltage test; I need to base it off 5v ref, and not 3.3v
+
+const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm not sure i need this) // NOTE: I need the 3.3v for the SD card! So, I'm no longer using this. My measured value is around 3.29v last I checked, but now my algorithm to check for low voltage is no longer working. However...the wheel just "shuts off", so it isn't too bad.
 
 #define MIN_MAX_IS_SAVED_EEPROM_ADDRESS 22 // rather abitrary
 #define MIN_EEPROM_ADDRESS 24 // rather abitrary

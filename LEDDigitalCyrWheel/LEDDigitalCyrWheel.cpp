@@ -27,11 +27,11 @@
 #define IGNORE_VOLTAGE 0 //for hardware testing w/out a battery
 
 // 2 cell LiPO, 4.2v each: 8.4v max. 3.0v should be the min, 3.0*2=6v min
-#define LOW_VOLTAGE_VALUE 6.4 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
+#define LOW_VOLTAGE_VALUE 6.3 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
 #define TIME_BETWEEN_VOLTAGE_READS 1000 // read every second..
 #define MAX_INPUT_VOLTAGE 10.0 // max voltage we can read
 #define RESISTOR_Z1_VALUE 10000.0 // 10k resistor
-#define RESISTOR_Z2_VALUE 4680.0 // MESURED value of 4.7k resistor
+#define RESISTOR_Z2_VALUE 4680.0 // MEASURED value of 4.7k resistor
 
 static Button g_button = Button(BUTTON_PIN);
 static CWPatternSequenceManager g_sequenceManager;
@@ -83,7 +83,7 @@ static float readBatteryVoltage() {
     Serial.print(" ");
 #endif
     float vRef = 3.30; // 3.3v ref
-    float refValue = 3.30; // analogRead(g_batteryRefPin); // hardcoded now..
+    float refValue = analogRead(g_batteryRefPin);
 #if DEBUG_VOLTAGE
     Serial.print("refValue: ");
     Serial.print(refValue);
@@ -108,16 +108,16 @@ static float readBatteryVoltage() {
 }
 
 void setup() {
-//    pinMode(g_LED, OUTPUT);
-//    digitalWrite(g_LED, HIGH);
 #if DEBUG
     Serial.begin(9600);
-    delay(1000);
-    Serial.println("--- begin serial --- ");
+    //delay(1000);
+    Serial.println("--- begin serial --- (WARNING: delay on start!!)");
 #endif
+    pinMode(SD_CARD_CS_PIN, OUTPUT); // The class does this...not sure why I do it too, but the SD card is a pain to deal with
+    digitalWrite(SD_CARD_CS_PIN, HIGH);
     
     pinMode(g_batteryVoltagePin, INPUT);
-//    pinMode(g_batteryRefPin, INPUT);
+    pinMode(g_batteryRefPin, INPUT); // TODO: I just re-enabled this. Make sure it works again
 
     analogReadAveraging(16); // longer averaging of reads; drastically stabilizes my battery voltage read compared to the default of 4
     analogReadRes(16); // 16 bit analog read resolution
@@ -131,12 +131,14 @@ void setup() {
     bool initPassed = g_sequenceManager.init(g_button.isPressed());
     if (initPassed) {
 #if DEBUG
-#if IGNORE_VOLTAGE
+    #if IGNORE_VOLTAGE
        // Having this on could be bad..flash red
         g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Red, 150);
-#else
+    #else
         g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Red);
-#endif
+    #endif
+#else
+    //    g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Maroon);
 #endif
         // See if we read more than the default sequence
         if (g_sequenceManager.getNumberOfSequenceNames() > 1) {
@@ -149,8 +151,6 @@ void setup() {
         g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Orange, 150);
         g_sequenceManager.loadDefaultSequence();
     }
-    
-    //   digitalWrite(g_LED, LOW);
 }
 
 
@@ -179,13 +179,6 @@ bool checkVoltage() {
 void loop() {
     mainProcess();
     
-#if DEBUG
-    if (g_button.isPressed()){
-        digitalWrite(g_LED, HIGH);
-    } else {
-        digitalWrite(g_LED, LOW);
-    }
-#endif
     if (checkVoltage()) {
         g_sequenceManager.process();
     }

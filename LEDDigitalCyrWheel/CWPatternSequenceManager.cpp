@@ -172,7 +172,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
                 // Then read in and store the stock info
             _pixelCount = patternHeader.pixelCount;
             _numberOfPatternItems = patternHeader.patternCount;
-            m_shouldIgnoreButtonClickWhenTimed = patternHeader.ignoreSingleClickButtonForTimedPatterns;
+            m_shouldIgnoreButtonClickWhenTimed = patternHeader.ignoreButtonForTimedPatterns;
             ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // MAKE SURE IT IS RIGHT..
             DEBUG_PRINTF("pixelCount: %d, now reading %d items, headerSize: %d\r\n", _pixelCount, _numberOfPatternItems, sizeof(CDPatternItemHeader));
             
@@ -250,16 +250,16 @@ bool CWPatternSequenceManager::initSDCard() {
 #endif
 //    pinMode(SD_CARD_CS_PIN, OUTPUT); // Any pin can be used as SS, but it must remain low
 //    digitalWrite(SD_CARD_CS_PIN, LOW);
-    
+//    delay(10); // sd card is flipping touchy!!
     bool result = SD.begin(SPI_HALF_SPEED, SD_CARD_CS_PIN); //  was SPI_FULL_SPEED
     int i = 0;
 #if DEBUG
     if (!result) {
-        DEBUG_PRINTLN("SD Card full speed SPI init failed...trying again slower...");
+        DEBUG_PRINTLN("SD Card full speed SPI init failed...trying again (slower doesn't work..)...");
     }
 #endif
     while (!result) {
-        result = SD.begin(SPI_FULL_SPEED, SD_CARD_CS_PIN); // was SPI_HALF_SPEED...
+        result = SD.begin(SPI_DIV6_SPEED, SD_CARD_CS_PIN); // was SPI_HALF_SPEED...
         i++;
         if (i == 1) {
             break; // give it 3 more chances??.. (it is slow to init for some reason...)
@@ -433,7 +433,15 @@ void CWPatternSequenceManager::buttonLongClick() {
             m_orientation.beginSavingData();
         }
     } else {
-        loadNextSequence();
+        if (m_shouldIgnoreButtonClickWhenTimed) {
+            // Only go to next if it isn't timed; this helps me avoid switching the pattern accidentally when stepping on it.
+            CDPatternItemHeader *itemHeader = getCurrentItemHeader();
+            if (itemHeader == NULL || itemHeader->patternEndCondition == CDPatternEndConditionOnButtonClick) {
+                loadNextSequence();
+            }
+        } else {
+            loadNextSequence();
+        }
     }
 }
 
@@ -484,7 +492,7 @@ void CWPatternSequenceManager::updateBrightness() {
         uint8_t brightness = m_orientation.getRotationalVelocityBrightness(m_ledPatterns.getBrightness());
 #if DEBUG
         if (brightness < 10){
-            DEBUG_PRINTLN("low brightness");
+            DEBUG_PRINTLN("low brightness from velocity based updateBrightness");
         }
 #endif
         
