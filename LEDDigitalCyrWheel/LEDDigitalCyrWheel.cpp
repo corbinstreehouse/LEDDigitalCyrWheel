@@ -83,7 +83,7 @@ static float readBatteryVoltage() {
     Serial.print(" ");
 #endif
     float vRef = 3.30; // 3.3v ref
-    float refValue = analogRead(g_batteryRefPin);
+    float refValue = 3.27; // hardcoded so i don't have to use this pin... analogRead(g_batteryRefPin);
 #if DEBUG_VOLTAGE
     Serial.print("refValue: ");
     Serial.print(refValue);
@@ -117,7 +117,7 @@ void setup() {
     digitalWrite(SD_CARD_CS_PIN, HIGH);
     
     pinMode(g_batteryVoltagePin, INPUT);
-    pinMode(g_batteryRefPin, INPUT); // TODO: I just re-enabled this. Make sure it works again
+//    pinMode(g_batteryRefPin, INPUT); // TODO: I just re-enabled this. Make sure it works again
 
     analogReadAveraging(16); // longer averaging of reads; drastically stabilizes my battery voltage read compared to the default of 4
     analogReadRes(16); // 16 bit analog read resolution

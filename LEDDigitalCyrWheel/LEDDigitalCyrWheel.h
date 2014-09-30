@@ -14,7 +14,7 @@ bool busyDelay(uint32_t ms);
 #include "LEDCommon.h" // Defines STRIP_PIN
 
 // All my defined pins
-#define SD_CARD_CS_PIN 4 /* SS is pin 10 by default, but I have it wird in my wheel to pin 4! */ // I think my wheel is wired to pin 4, which is wrong!!! I fixed my breadboard..
+#define SD_CARD_CS_PIN 10 //10 in latest update... /* SS is pin 10 by default, but I have it wird in my wheel to pin 4! */ // I think my wheel is wired to pin 4, which is wrong!!! I fixed my breadboard..
 // See: https://www.pjrc.com/teensy/td_libs_SPI.html#ss for more info
 
 #define BUTTON_PIN 23
@@ -29,7 +29,7 @@ const int g_batteryVoltagePin = A3; // pin 17
 
 // TODO: I need to rewrire my battery voltage test; I need to base it off 5v ref, and not 3.3v
 
-const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm not sure i need this) // NOTE: I need the 3.3v for the SD card! So, I'm no longer using this. My measured value is around 3.29v last I checked, but now my algorithm to check for low voltage is no longer working. However...the wheel just "shuts off", so it isn't too bad.
+//const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm not sure i need this) // NOTE: I need the 3.3v for the SD card! So, I'm no longer using this. My measured value is around 3.29v last I checked, but now my algorithm to check for low voltage is no longer working. However...the wheel just "shuts off", so it isn't too bad.
 
 #define MIN_MAX_IS_SAVED_EEPROM_ADDRESS 22 // rather abitrary
 #define MIN_EEPROM_ADDRESS 24 // rather abitrary
