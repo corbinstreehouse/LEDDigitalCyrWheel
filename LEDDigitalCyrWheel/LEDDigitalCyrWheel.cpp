@@ -30,8 +30,22 @@
 #define LOW_VOLTAGE_VALUE 6.3 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
 #define TIME_BETWEEN_VOLTAGE_READS 1000 // read every second..
 #define MAX_INPUT_VOLTAGE 10.0 // max voltage we can read
+
+#define REF_VOLTAGE 3.3
+
+#if USE_NEW_V_REFERENCE // for v3 wheel
+
+// The values below are what I measured on the individual resistors
+#define RESISTOR_Z1_VALUE 17870 // 18k
+#define RESISTOR_Z2_VALUE 9920 // 10k resistor
+
+#else
+// in v1 wheel
+
 #define RESISTOR_Z1_VALUE 10000.0 // 10k resistor
 #define RESISTOR_Z2_VALUE 4680.0 // MEASURED value of 4.7k resistor
+
+#endif
 
 static Button g_button = Button(BUTTON_PIN);
 static CWPatternSequenceManager g_sequenceManager;
@@ -76,34 +90,18 @@ void buttonHeld(Button &b) {
 // corbin!! voltage debug on..
 
 static float readBatteryVoltage() {
-    float readValue = analogRead(g_batteryVoltagePin); // returns 0 - 1023; 0 is 0v, and 1023 is 10v (since I use two 10k resistors in a voltage divider). 5v is the max...
-#if DEBUG_VOLTAGE
-    Serial.print("vread: ");
-    Serial.print(readValue);
-    Serial.print(" ");
-#endif
-    float vRef = 3.30; // 3.3v ref
-    float refValue = 3.27; // hardcoded so i don't have to use this pin... analogRead(g_batteryRefPin);
-#if DEBUG_VOLTAGE
-    Serial.print("refValue: ");
-    Serial.print(refValue);
-    Serial.print(" ");
-#endif
     
-    float voltageReadValue = readValue / refValue * vRef; // 16 bit resolution,
-#if DEBUG_VOLTAGE
-    Serial.print("vreadV: ");
-    Serial.print(voltageReadValue);
-    Serial.print(" ");
-#endif
+    float readValue = analogRead(g_batteryVoltagePin); // returns 0 - [max resolution]; 0 is 0v, and 65535 is ~9.?v
     
-    // The read value is with regards to the input voltage
-    // See voltage dividor for reference
-    float voltage = voltageReadValue * (RESISTOR_Z1_VALUE + RESISTOR_Z2_VALUE)/RESISTOR_Z2_VALUE;
+    // It is a percentage of the resolution; I have it set to:analogReadRes(16) , or 16-bits...plus 0 (the addition of 1)
+    float readValuePercetnage = readValue / (UINT16_MAX + 1);
+    float readValueInVoltage = readValuePercetnage * REF_VOLTAGE; // Over REF_VOLTAGE max volts input
+    float voltage = readValueInVoltage * (RESISTOR_Z1_VALUE + RESISTOR_Z2_VALUE)/RESISTOR_Z2_VALUE;
+
 #if DEBUG_VOLTAGE
-    Serial.print("voltage: ");
-    Serial.println(voltage);
+    Serial.printf("vRead: %.3f, readValuePercetnage: %.3f, readValueInVoltage: %.3f, voltage: %.3f\r\n",readValue, readValuePercetnage, readValueInVoltage, voltage);
 #endif
+
     return voltage;
 }
 

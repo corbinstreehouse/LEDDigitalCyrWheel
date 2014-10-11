@@ -19,7 +19,9 @@ bool busyDelay(uint32_t ms);
 
 #define BUTTON_PIN 23
 
-#define BRIGHTNESS_PIN 22
+#define USE_NEW_V_REFERENCE 1 // new resistor values (not in v2 wheel)
+
+//#define BRIGHTNESS_PIN 22
 
 // TOOD: actually make the strip length dynamic...
 #define STRIP_LENGTH 331 // my actual count // (14+60*2)// (60*4) // (67*2)
