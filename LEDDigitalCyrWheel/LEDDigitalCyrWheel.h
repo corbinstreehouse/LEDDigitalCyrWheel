@@ -9,8 +9,6 @@
 #ifndef LEDDigitalCyrWheel_LEDDigitalCyrWheel_h
 #define LEDDigitalCyrWheel_LEDDigitalCyrWheel_h
 
-bool busyDelay(uint32_t ms);
-
 #include "LEDCommon.h" // Defines STRIP_PIN
 
 // All my defined pins
@@ -20,6 +18,8 @@ bool busyDelay(uint32_t ms);
 #define BUTTON_PIN 23
 
 #define USE_NEW_V_REFERENCE 1 // new resistor values (not in v2 wheel)
+
+#define WIFI 1
 
 //#define BRIGHTNESS_PIN 22
 

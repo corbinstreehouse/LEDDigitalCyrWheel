@@ -223,6 +223,22 @@
 		9DDC61DB1938488E00C602BC /* SdSpiSAM3X.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC61BF1938488E00C602BC /* SdSpiSAM3X.cpp */; };
 		9DDC61DC1938488E00C602BC /* SdStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC61C01938488E00C602BC /* SdStream.cpp */; };
 		9DDC61DD1938488E00C602BC /* SdVolume.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC61C21938488E00C602BC /* SdVolume.cpp */; };
+		9DE7EB5619E8CCEF00C1DCB6 /* Adafruit_CC3000.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB1819E8CCEF00C1DCB6 /* Adafruit_CC3000.cpp */; };
+		9DE7EB5719E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB1A19E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.cpp */; };
+		9DE7EB5819E8CCEF00C1DCB6 /* CC3000_MDNS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB1C19E8CCEF00C1DCB6 /* CC3000_MDNS.cpp */; };
+		9DE7EB5919E8CCEF00C1DCB6 /* ccspi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB1E19E8CCEF00C1DCB6 /* ccspi.cpp */; };
+		9DE7EB5A19E8CCEF00C1DCB6 /* cc3000_common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB4019E8CCEF00C1DCB6 /* cc3000_common.cpp */; };
+		9DE7EB5B19E8CCEF00C1DCB6 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB4319E8CCEF00C1DCB6 /* debug.cpp */; };
+		9DE7EB5C19E8CCEF00C1DCB6 /* evnt_handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB4519E8CCEF00C1DCB6 /* evnt_handler.cpp */; };
+		9DE7EB5D19E8CCEF00C1DCB6 /* hci.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB4719E8CCEF00C1DCB6 /* hci.cpp */; };
+		9DE7EB5E19E8CCEF00C1DCB6 /* netapp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB4A19E8CCEF00C1DCB6 /* netapp.cpp */; };
+		9DE7EB5F19E8CCEF00C1DCB6 /* nvmem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB4C19E8CCEF00C1DCB6 /* nvmem.cpp */; };
+		9DE7EB6019E8CCEF00C1DCB6 /* security.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB4E19E8CCEF00C1DCB6 /* security.cpp */; };
+		9DE7EB6119E8CCEF00C1DCB6 /* sntp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB5019E8CCEF00C1DCB6 /* sntp.cpp */; };
+		9DE7EB6219E8CCEF00C1DCB6 /* socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB5219E8CCEF00C1DCB6 /* socket.cpp */; };
+		9DE7EB6319E8CCEF00C1DCB6 /* wlan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB5419E8CCEF00C1DCB6 /* wlan.cpp */; };
+		9DE7EBF019EAE59600C1DCB6 /* WebServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EBEB19EAE59600C1DCB6 /* WebServer.cpp */; };
+		9DE7EBFD19EAE82700C1DCB6 /* LEDWebServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EBFB19EAE82700C1DCB6 /* LEDWebServer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1438,9 +1454,6 @@
 		9DD818EA18889DE900AD92E2 /* Avrdude.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Avrdude.mk; sourceTree = "<group>"; };
 		9DDC5FE81938488D00C602BC /* Adafruit_NeoPixel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_NeoPixel.cpp; sourceTree = "<group>"; };
 		9DDC5FE91938488D00C602BC /* Adafruit_NeoPixel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_NeoPixel.h; sourceTree = "<group>"; };
-		9DDC5FEA1938488D00C602BC /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
-		9DDC5FED1938488D00C602BC /* goggles.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = goggles.pde; sourceTree = "<group>"; };
-		9DDC5FEF1938488D00C602BC /* strandtest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = strandtest.ino; sourceTree = "<group>"; };
 		9DDC5FF01938488D00C602BC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		9DDC5FF51938488D00C602BC /* Serial.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Serial.ino; sourceTree = "<group>"; };
 		9DDC5FF61938488D00C602BC /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
@@ -1838,6 +1851,58 @@
 		9DDC61C31938488E00C602BC /* SdVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdVolume.h; sourceTree = "<group>"; };
 		9DDC61C51938488E00C602BC /* DigitalPin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DigitalPin.h; sourceTree = "<group>"; };
 		9DDC61C61938488E00C602BC /* SoftSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftSPI.h; sourceTree = "<group>"; };
+		9DE7EB1819E8CCEF00C1DCB6 /* Adafruit_CC3000.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_CC3000.cpp; sourceTree = "<group>"; };
+		9DE7EB1919E8CCEF00C1DCB6 /* Adafruit_CC3000.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_CC3000.h; sourceTree = "<group>"; };
+		9DE7EB1A19E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_CC3000_Server.cpp; sourceTree = "<group>"; };
+		9DE7EB1B19E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_CC3000_Server.h; sourceTree = "<group>"; };
+		9DE7EB1C19E8CCEF00C1DCB6 /* CC3000_MDNS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CC3000_MDNS.cpp; sourceTree = "<group>"; };
+		9DE7EB1D19E8CCEF00C1DCB6 /* CC3000_MDNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CC3000_MDNS.h; sourceTree = "<group>"; };
+		9DE7EB1E19E8CCEF00C1DCB6 /* ccspi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ccspi.cpp; sourceTree = "<group>"; };
+		9DE7EB1F19E8CCEF00C1DCB6 /* ccspi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ccspi.h; sourceTree = "<group>"; };
+		9DE7EB2219E8CCEF00C1DCB6 /* buildtest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildtest.ino; sourceTree = "<group>"; };
+		9DE7EB2419E8CCEF00C1DCB6 /* ChatServer.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChatServer.ino; sourceTree = "<group>"; };
+		9DE7EB2619E8CCEF00C1DCB6 /* driverpatch_1_12.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = driverpatch_1_12.ino; sourceTree = "<group>"; };
+		9DE7EB2719E8CCEF00C1DCB6 /* driverpatchinc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = driverpatchinc.h; sourceTree = "<group>"; };
+		9DE7EB2919E8CCEF00C1DCB6 /* driverpatch_1_13.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = driverpatch_1_13.ino; sourceTree = "<group>"; };
+		9DE7EB2A19E8CCEF00C1DCB6 /* driverpatchinc_1_13.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = driverpatchinc_1_13.h; sourceTree = "<group>"; };
+		9DE7EB2C19E8CCEF00C1DCB6 /* EchoServer.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EchoServer.ino; sourceTree = "<group>"; };
+		9DE7EB2E19E8CCEF00C1DCB6 /* GeoLocation.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeoLocation.ino; sourceTree = "<group>"; };
+		9DE7EB3019E8CCEF00C1DCB6 /* HTTPServer.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTTPServer.ino; sourceTree = "<group>"; };
+		9DE7EB3219E8CCEF00C1DCB6 /* InternetTime.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = InternetTime.ino; sourceTree = "<group>"; };
+		9DE7EB3419E8CCEF00C1DCB6 /* ntpTest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ntpTest.ino; sourceTree = "<group>"; };
+		9DE7EB3619E8CCEF00C1DCB6 /* SendTweet.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SendTweet.ino; sourceTree = "<group>"; };
+		9DE7EB3819E8CCEF00C1DCB6 /* SmartConfigCreate.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmartConfigCreate.ino; sourceTree = "<group>"; };
+		9DE7EB3A19E8CCEF00C1DCB6 /* SmartConfigReconnect.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmartConfigReconnect.ino; sourceTree = "<group>"; };
+		9DE7EB3C19E8CCEF00C1DCB6 /* WebClient.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebClient.ino; sourceTree = "<group>"; };
+		9DE7EB3D19E8CCEF00C1DCB6 /* license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
+		9DE7EB3E19E8CCEF00C1DCB6 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		9DE7EB4019E8CCEF00C1DCB6 /* cc3000_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cc3000_common.cpp; sourceTree = "<group>"; };
+		9DE7EB4119E8CCEF00C1DCB6 /* cc3000_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cc3000_common.h; sourceTree = "<group>"; };
+		9DE7EB4219E8CCEF00C1DCB6 /* data_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = data_types.h; sourceTree = "<group>"; };
+		9DE7EB4319E8CCEF00C1DCB6 /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
+		9DE7EB4419E8CCEF00C1DCB6 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
+		9DE7EB4519E8CCEF00C1DCB6 /* evnt_handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = evnt_handler.cpp; sourceTree = "<group>"; };
+		9DE7EB4619E8CCEF00C1DCB6 /* evnt_handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = evnt_handler.h; sourceTree = "<group>"; };
+		9DE7EB4719E8CCEF00C1DCB6 /* hci.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hci.cpp; sourceTree = "<group>"; };
+		9DE7EB4819E8CCEF00C1DCB6 /* hci.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hci.h; sourceTree = "<group>"; };
+		9DE7EB4919E8CCEF00C1DCB6 /* host_driver_version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = host_driver_version.h; sourceTree = "<group>"; };
+		9DE7EB4A19E8CCEF00C1DCB6 /* netapp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = netapp.cpp; sourceTree = "<group>"; };
+		9DE7EB4B19E8CCEF00C1DCB6 /* netapp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = netapp.h; sourceTree = "<group>"; };
+		9DE7EB4C19E8CCEF00C1DCB6 /* nvmem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nvmem.cpp; sourceTree = "<group>"; };
+		9DE7EB4D19E8CCEF00C1DCB6 /* nvmem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nvmem.h; sourceTree = "<group>"; };
+		9DE7EB4E19E8CCEF00C1DCB6 /* security.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = security.cpp; sourceTree = "<group>"; };
+		9DE7EB4F19E8CCEF00C1DCB6 /* security.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = security.h; sourceTree = "<group>"; };
+		9DE7EB5019E8CCEF00C1DCB6 /* sntp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sntp.cpp; sourceTree = "<group>"; };
+		9DE7EB5119E8CCEF00C1DCB6 /* sntp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sntp.h; sourceTree = "<group>"; };
+		9DE7EB5219E8CCEF00C1DCB6 /* socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = socket.cpp; sourceTree = "<group>"; };
+		9DE7EB5319E8CCEF00C1DCB6 /* socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = socket.h; sourceTree = "<group>"; };
+		9DE7EB5419E8CCEF00C1DCB6 /* wlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wlan.cpp; sourceTree = "<group>"; };
+		9DE7EB5519E8CCEF00C1DCB6 /* wlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wlan.h; sourceTree = "<group>"; };
+		9DE7EBEA19EAE59600C1DCB6 /* readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.md; sourceTree = "<group>"; };
+		9DE7EBEB19EAE59600C1DCB6 /* WebServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebServer.cpp; sourceTree = "<group>"; };
+		9DE7EBEC19EAE59600C1DCB6 /* WebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServer.h; sourceTree = "<group>"; };
+		9DE7EBFB19EAE82700C1DCB6 /* LEDWebServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LEDWebServer.cpp; sourceTree = "<group>"; };
+		9DE7EBFC19EAE82700C1DCB6 /* LEDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDWebServer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -2078,6 +2143,8 @@
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,
 				9D3A0DAC188A0EBD001AD553 /* Button.cpp */,
 				9D3A0DAD188A0EBD001AD553 /* Button.h */,
+				9DE7EBFB19EAE82700C1DCB6 /* LEDWebServer.cpp */,
+				9DE7EBFC19EAE82700C1DCB6 /* LEDWebServer.h */,
 				9D8ED2D417C01F7F001E1C06 /* Makefiles */,
 			);
 			name = LEDCyrWheel;
@@ -4865,7 +4932,9 @@
 				9DDC5FF11938488D00C602BC /* L3G_Pololu */,
 				9DDC5FFB1938488D00C602BC /* LSM303_Pololu */,
 				9DDC60091938488D00C602BC /* SD */,
+				9DE7EB1719E8CCEF00C1DCB6 /* Adafruit_CC3000_Library */,
 				9DDC601C1938488D00C602BC /* SdFat */,
+				9DE7EBB819EAE59500C1DCB6 /* Webduino */,
 			);
 			name = Libraries;
 			path = ../../../Documents/Arduino/Libraries;
@@ -4890,38 +4959,11 @@
 			children = (
 				9DDC5FE91938488D00C602BC /* Adafruit_NeoPixel.h */,
 				9DDC5FE81938488D00C602BC /* Adafruit_NeoPixel.cpp */,
-				9DDC5FEA1938488D00C602BC /* COPYING */,
-				9DDC5FEB1938488D00C602BC /* examples */,
 				9DDC5FF01938488D00C602BC /* README.md */,
 			);
 			name = AdaFruit_NeoPixel;
 			path = Libraries/AdaFruit_NeoPixel;
 			sourceTree = SOURCE_ROOT;
-		};
-		9DDC5FEB1938488D00C602BC /* examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DDC5FEC1938488D00C602BC /* goggles */,
-				9DDC5FEE1938488D00C602BC /* strandtest */,
-			);
-			path = examples;
-			sourceTree = "<group>";
-		};
-		9DDC5FEC1938488D00C602BC /* goggles */ = {
-			isa = PBXGroup;
-			children = (
-				9DDC5FED1938488D00C602BC /* goggles.pde */,
-			);
-			path = goggles;
-			sourceTree = "<group>";
-		};
-		9DDC5FEE1938488D00C602BC /* strandtest */ = {
-			isa = PBXGroup;
-			children = (
-				9DDC5FEF1938488D00C602BC /* strandtest.ino */,
-			);
-			path = strandtest;
-			sourceTree = "<group>";
 		};
 		9DDC5FF11938488D00C602BC /* L3G_Pololu */ = {
 			isa = PBXGroup;
@@ -5911,6 +5953,192 @@
 			path = utility;
 			sourceTree = "<group>";
 		};
+		9DE7EB1719E8CCEF00C1DCB6 /* Adafruit_CC3000_Library */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB1819E8CCEF00C1DCB6 /* Adafruit_CC3000.cpp */,
+				9DE7EB1919E8CCEF00C1DCB6 /* Adafruit_CC3000.h */,
+				9DE7EB1A19E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.cpp */,
+				9DE7EB1B19E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.h */,
+				9DE7EB1C19E8CCEF00C1DCB6 /* CC3000_MDNS.cpp */,
+				9DE7EB1D19E8CCEF00C1DCB6 /* CC3000_MDNS.h */,
+				9DE7EB1E19E8CCEF00C1DCB6 /* ccspi.cpp */,
+				9DE7EB1F19E8CCEF00C1DCB6 /* ccspi.h */,
+				9DE7EB2019E8CCEF00C1DCB6 /* examples */,
+				9DE7EB3D19E8CCEF00C1DCB6 /* license.txt */,
+				9DE7EB3E19E8CCEF00C1DCB6 /* README.txt */,
+				9DE7EB3F19E8CCEF00C1DCB6 /* utility */,
+			);
+			name = Adafruit_CC3000_Library;
+			path = Libraries/Adafruit_CC3000_Library;
+			sourceTree = SOURCE_ROOT;
+		};
+		9DE7EB2019E8CCEF00C1DCB6 /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB2119E8CCEF00C1DCB6 /* buildtest */,
+				9DE7EB2319E8CCEF00C1DCB6 /* ChatServer */,
+				9DE7EB2519E8CCEF00C1DCB6 /* driverpatch_1_12 */,
+				9DE7EB2819E8CCEF00C1DCB6 /* driverpatch_1_13 */,
+				9DE7EB2B19E8CCEF00C1DCB6 /* EchoServer */,
+				9DE7EB2D19E8CCEF00C1DCB6 /* GeoLocation */,
+				9DE7EB2F19E8CCEF00C1DCB6 /* HTTPServer */,
+				9DE7EB3119E8CCEF00C1DCB6 /* InternetTime */,
+				9DE7EB3319E8CCEF00C1DCB6 /* ntpTest */,
+				9DE7EB3519E8CCEF00C1DCB6 /* SendTweet */,
+				9DE7EB3719E8CCEF00C1DCB6 /* SmartConfigCreate */,
+				9DE7EB3919E8CCEF00C1DCB6 /* SmartConfigReconnect */,
+				9DE7EB3B19E8CCEF00C1DCB6 /* WebClient */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		9DE7EB2119E8CCEF00C1DCB6 /* buildtest */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB2219E8CCEF00C1DCB6 /* buildtest.ino */,
+			);
+			path = buildtest;
+			sourceTree = "<group>";
+		};
+		9DE7EB2319E8CCEF00C1DCB6 /* ChatServer */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB2419E8CCEF00C1DCB6 /* ChatServer.ino */,
+			);
+			path = ChatServer;
+			sourceTree = "<group>";
+		};
+		9DE7EB2519E8CCEF00C1DCB6 /* driverpatch_1_12 */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB2619E8CCEF00C1DCB6 /* driverpatch_1_12.ino */,
+				9DE7EB2719E8CCEF00C1DCB6 /* driverpatchinc.h */,
+			);
+			path = driverpatch_1_12;
+			sourceTree = "<group>";
+		};
+		9DE7EB2819E8CCEF00C1DCB6 /* driverpatch_1_13 */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB2919E8CCEF00C1DCB6 /* driverpatch_1_13.ino */,
+				9DE7EB2A19E8CCEF00C1DCB6 /* driverpatchinc_1_13.h */,
+			);
+			path = driverpatch_1_13;
+			sourceTree = "<group>";
+		};
+		9DE7EB2B19E8CCEF00C1DCB6 /* EchoServer */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB2C19E8CCEF00C1DCB6 /* EchoServer.ino */,
+			);
+			path = EchoServer;
+			sourceTree = "<group>";
+		};
+		9DE7EB2D19E8CCEF00C1DCB6 /* GeoLocation */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB2E19E8CCEF00C1DCB6 /* GeoLocation.ino */,
+			);
+			path = GeoLocation;
+			sourceTree = "<group>";
+		};
+		9DE7EB2F19E8CCEF00C1DCB6 /* HTTPServer */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB3019E8CCEF00C1DCB6 /* HTTPServer.ino */,
+			);
+			path = HTTPServer;
+			sourceTree = "<group>";
+		};
+		9DE7EB3119E8CCEF00C1DCB6 /* InternetTime */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB3219E8CCEF00C1DCB6 /* InternetTime.ino */,
+			);
+			path = InternetTime;
+			sourceTree = "<group>";
+		};
+		9DE7EB3319E8CCEF00C1DCB6 /* ntpTest */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB3419E8CCEF00C1DCB6 /* ntpTest.ino */,
+			);
+			path = ntpTest;
+			sourceTree = "<group>";
+		};
+		9DE7EB3519E8CCEF00C1DCB6 /* SendTweet */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB3619E8CCEF00C1DCB6 /* SendTweet.ino */,
+			);
+			path = SendTweet;
+			sourceTree = "<group>";
+		};
+		9DE7EB3719E8CCEF00C1DCB6 /* SmartConfigCreate */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB3819E8CCEF00C1DCB6 /* SmartConfigCreate.ino */,
+			);
+			path = SmartConfigCreate;
+			sourceTree = "<group>";
+		};
+		9DE7EB3919E8CCEF00C1DCB6 /* SmartConfigReconnect */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB3A19E8CCEF00C1DCB6 /* SmartConfigReconnect.ino */,
+			);
+			path = SmartConfigReconnect;
+			sourceTree = "<group>";
+		};
+		9DE7EB3B19E8CCEF00C1DCB6 /* WebClient */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB3C19E8CCEF00C1DCB6 /* WebClient.ino */,
+			);
+			path = WebClient;
+			sourceTree = "<group>";
+		};
+		9DE7EB3F19E8CCEF00C1DCB6 /* utility */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EB4019E8CCEF00C1DCB6 /* cc3000_common.cpp */,
+				9DE7EB4119E8CCEF00C1DCB6 /* cc3000_common.h */,
+				9DE7EB4219E8CCEF00C1DCB6 /* data_types.h */,
+				9DE7EB4319E8CCEF00C1DCB6 /* debug.cpp */,
+				9DE7EB4419E8CCEF00C1DCB6 /* debug.h */,
+				9DE7EB4519E8CCEF00C1DCB6 /* evnt_handler.cpp */,
+				9DE7EB4619E8CCEF00C1DCB6 /* evnt_handler.h */,
+				9DE7EB4719E8CCEF00C1DCB6 /* hci.cpp */,
+				9DE7EB4819E8CCEF00C1DCB6 /* hci.h */,
+				9DE7EB4919E8CCEF00C1DCB6 /* host_driver_version.h */,
+				9DE7EB4A19E8CCEF00C1DCB6 /* netapp.cpp */,
+				9DE7EB4B19E8CCEF00C1DCB6 /* netapp.h */,
+				9DE7EB4C19E8CCEF00C1DCB6 /* nvmem.cpp */,
+				9DE7EB4D19E8CCEF00C1DCB6 /* nvmem.h */,
+				9DE7EB4E19E8CCEF00C1DCB6 /* security.cpp */,
+				9DE7EB4F19E8CCEF00C1DCB6 /* security.h */,
+				9DE7EB5019E8CCEF00C1DCB6 /* sntp.cpp */,
+				9DE7EB5119E8CCEF00C1DCB6 /* sntp.h */,
+				9DE7EB5219E8CCEF00C1DCB6 /* socket.cpp */,
+				9DE7EB5319E8CCEF00C1DCB6 /* socket.h */,
+				9DE7EB5419E8CCEF00C1DCB6 /* wlan.cpp */,
+				9DE7EB5519E8CCEF00C1DCB6 /* wlan.h */,
+			);
+			path = utility;
+			sourceTree = "<group>";
+		};
+		9DE7EBB819EAE59500C1DCB6 /* Webduino */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EBEA19EAE59600C1DCB6 /* readme.md */,
+				9DE7EBEC19EAE59600C1DCB6 /* WebServer.h */,
+				9DE7EBEB19EAE59600C1DCB6 /* WebServer.cpp */,
+			);
+			name = Webduino;
+			path = ../../../Projects/Arduino/LEDDigitalCyrWheel/Libraries/Webduino;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXLegacyTarget section */
@@ -6119,25 +6347,31 @@
 				9DBE926518A8AA5600154550 /* Makefile in Sources */,
 				9DBE8D9C18A8A9C700154550 /* regex_grep_matcher.tcc in Sources */,
 				9DBE8A6918A8A85000154550 /* Print.cpp in Sources */,
+				9DE7EB6219E8CCEF00C1DCB6 /* socket.cpp in Sources */,
 				9DBE926C18A8AA5600154550 /* GSM3MobileAccessProvider.cpp in Sources */,
 				9DBE928718A8AA5600154550 /* GSM3ShieldV1SMSProvider.cpp in Sources */,
 				9DBE8D9518A8A9C700154550 /* istream.tcc in Sources */,
 				9DBE926718A8AA5600154550 /* Makefile in Sources */,
 				9DBE8D9718A8A9C700154550 /* locale_classes.tcc in Sources */,
 				9DDC61D11938488E00C602BC /* SdBaseFilePrint.cpp in Sources */,
+				9DE7EB5B19E8CCEF00C1DCB6 /* debug.cpp in Sources */,
 				9DBE926818A8AA5600154550 /* Makefile in Sources */,
 				9DBE926F18A8AA5600154550 /* GSM3MobileClientService.cpp in Sources */,
+				9DE7EB6019E8CCEF00C1DCB6 /* security.cpp in Sources */,
 				9DBE8A7B18A8A85000154550 /* usb_serial.c in Sources */,
 				9DBE926118A8AA5600154550 /* socket.cpp in Sources */,
 				9DDC61CF1938488E00C602BC /* Sd2Card.cpp in Sources */,
+				9DE7EB5619E8CCEF00C1DCB6 /* Adafruit_CC3000.cpp in Sources */,
 				9DBE92BF18A8AA5600154550 /* WiFiServer.cpp in Sources */,
 				9DBE8DA718A8A9C700154550 /* bessel_function.tcc in Sources */,
 				9DBE925B18A8AA5600154550 /* Dhcp.cpp in Sources */,
+				9DE7EB6319E8CCEF00C1DCB6 /* wlan.cpp in Sources */,
 				9DBE926018A8AA5600154550 /* EthernetUdp.cpp in Sources */,
 				9DBE8DAC18A8A9C700154550 /* hypergeometric.tcc in Sources */,
 				9DBE8D9418A8A9C700154550 /* fstream.tcc in Sources */,
 				9DBE8A5818A8A84F00154550 /* analog.c in Sources */,
 				9DBE8D9018A8A9C700154550 /* basic_ios.tcc in Sources */,
+				9DE7EB5D19E8CCEF00C1DCB6 /* hci.cpp in Sources */,
 				9DBE8A5B18A8A84F00154550 /* eeprom.c in Sources */,
 				9DBE8DA918A8A9C700154550 /* ell_integral.tcc in Sources */,
 				9DBE8A7618A8A85000154550 /* usb_mem.c in Sources */,
@@ -6151,6 +6385,7 @@
 				9DBE8A5918A8A84F00154550 /* AudioStream.cpp in Sources */,
 				9DBE8A5E18A8A84F00154550 /* HardwareSerial3.cpp in Sources */,
 				9DBE92B718A8AA5600154550 /* Adafruit_ST7735.cpp in Sources */,
+				9DE7EB5919E8CCEF00C1DCB6 /* ccspi.cpp in Sources */,
 				9DBE928518A8AA5600154550 /* GSM3ShieldV1ScanNetworks.cpp in Sources */,
 				9DBE8A7818A8A85000154550 /* usb_mouse.c in Sources */,
 				9DBE92C118A8AA5600154550 /* twi.c in Sources */,
@@ -6175,6 +6410,7 @@
 				9DBE8A6318A8A85000154550 /* Makefile in Sources */,
 				9DBE928A18A8AA5600154550 /* GSM3SoftSerial.cpp in Sources */,
 				9D6BC8711938CBC400E21E1C /* lib8tion.cpp in Sources */,
+				9DE7EB5F19E8CCEF00C1DCB6 /* nvmem.cpp in Sources */,
 				9DBE8A7A18A8A85000154550 /* usb_seremu.c in Sources */,
 				9DBE8A7E18A8A85000154550 /* yield.c in Sources */,
 				9DDC61DA1938488E00C602BC /* SdSpiMK20DX128.cpp in Sources */,
@@ -6182,6 +6418,7 @@
 				9DBE928618A8AA5600154550 /* GSM3ShieldV1ServerProvider.cpp in Sources */,
 				9DBE925F18A8AA5600154550 /* EthernetServer.cpp in Sources */,
 				9DBE8A7918A8A85000154550 /* usb_rawhid.c in Sources */,
+				9DE7EB5719E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.cpp in Sources */,
 				9DBE92A918A8AA5600154550 /* EasyTransfer2.cpp in Sources */,
 				9DBE8D9B18A8A9C700154550 /* random.tcc in Sources */,
 				9DBE8A7518A8A85000154550 /* usb_keyboard.c in Sources */,
@@ -6189,7 +6426,9 @@
 				9DBE8A6B18A8A85000154550 /* serial2.c in Sources */,
 				9DBE8D9E18A8A9C700154550 /* sstream.tcc in Sources */,
 				9DBE926618A8AA5600154550 /* Makefile in Sources */,
+				9DE7EB5E19E8CCEF00C1DCB6 /* netapp.cpp in Sources */,
 				9DBE8D9F18A8A9C700154550 /* streambuf.tcc in Sources */,
+				9DE7EB5819E8CCEF00C1DCB6 /* CC3000_MDNS.cpp in Sources */,
 				9DBE927A18A8AA5600154550 /* GSM3ShieldV1BandManagement.cpp in Sources */,
 				9DBE928918A8AA5600154550 /* GSM3SMSService.cpp in Sources */,
 				9DBE8A6218A8A84F00154550 /* main.cpp in Sources */,
@@ -6201,6 +6440,7 @@
 				9DBE928118A8AA5600154550 /* GSM3ShieldV1ModemVerification.cpp in Sources */,
 				9DBE8A7718A8A85000154550 /* usb_midi.c in Sources */,
 				9DDC61C81938488E00C602BC /* L3G.cpp in Sources */,
+				9DE7EB6119E8CCEF00C1DCB6 /* sntp.cpp in Sources */,
 				9DDC61D41938488E00C602BC /* SdFatTestSuite.cpp in Sources */,
 				9DBE8A6018A8A84F00154550 /* IPAddress.cpp in Sources */,
 				9DBE927718A8AA5600154550 /* GSM3MobileVoiceProvider.cpp in Sources */,
@@ -6214,6 +6454,7 @@
 				9DDC61CB1938488E00C602BC /* SD.cpp in Sources */,
 				9DBE927F18A8AA5600154550 /* GSM3ShieldV1DirectModemProvider.cpp in Sources */,
 				9DBE92BA18A8AA5600154550 /* socket.c in Sources */,
+				9DE7EBFD19EAE82700C1DCB6 /* LEDWebServer.cpp in Sources */,
 				9DBE92B218A8AA5600154550 /* SoftwareSerial.cpp in Sources */,
 				9DBE926E18A8AA5600154550 /* GSM3MobileClientProvider.cpp in Sources */,
 				9DBE8DAF18A8A9C700154550 /* poly_hermite.tcc in Sources */,
@@ -6223,6 +6464,7 @@
 				9DBE928418A8AA5600154550 /* GSM3ShieldV1PinManagement.cpp in Sources */,
 				9DDC61D31938488E00C602BC /* SdFatErrorPrint.cpp in Sources */,
 				9DBE8A6618A8A85000154550 /* new.cpp in Sources */,
+				9DE7EB5A19E8CCEF00C1DCB6 /* cc3000_common.cpp in Sources */,
 				9DDC61D81938488E00C602BC /* SdSpiArduino.cpp in Sources */,
 				9DBE8DA318A8A9C700154550 /* safe_local_iterator.tcc in Sources */,
 				9DBE927118A8AA5600154550 /* GSM3MobileMockupProvider.cpp in Sources */,
@@ -6261,6 +6503,7 @@
 				9DBE8A6818A8A85000154550 /* pins_teensy.c in Sources */,
 				9DBE92B918A8AA5600154550 /* server_drv.cpp in Sources */,
 				9DBE8DA818A8A9C700154550 /* beta_function.tcc in Sources */,
+				9DE7EB5C19E8CCEF00C1DCB6 /* evnt_handler.cpp in Sources */,
 				9DBE927218A8AA5600154550 /* GSM3MobileNetworkProvider.cpp in Sources */,
 				9DBE92B318A8AA5600154550 /* SPI.cpp in Sources */,
 				9DDC61CE1938488E00C602BC /* ostream.cpp in Sources */,
@@ -6276,6 +6519,7 @@
 				9DBE8D9218A8A9C700154550 /* deque.tcc in Sources */,
 				9DBE8A6718A8A85000154550 /* nonstd.c in Sources */,
 				9DBE925A18A8AA5600154550 /* Esplora.cpp in Sources */,
+				9DE7EBF019EAE59600C1DCB6 /* WebServer.cpp in Sources */,
 				9DD1E672193EC47100290878 /* LEDPatterns.cpp in Sources */,
 				9DBE92B618A8AA5600154550 /* Adafruit_GFX.cpp in Sources */,
 				9DBE92BC18A8AA5600154550 /* wifi_drv.cpp in Sources */,

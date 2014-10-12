@@ -24,6 +24,10 @@
 //#include "CDLEDStripPatterns.h"
 #include "LEDDigitalCyrWheel.h"
 
+#if WIFI
+#include "LEDWebServer.h"
+#endif
+
 #define IGNORE_VOLTAGE 0 //for hardware testing w/out a battery
 
 // 2 cell LiPO, 4.2v each: 8.4v max. 3.0v should be the min, 3.0*2=6v min
@@ -50,33 +54,10 @@
 static Button g_button = Button(BUTTON_PIN);
 static CWPatternSequenceManager g_sequenceManager;
 
-bool mainProcess() {
-    g_button.process();
-    if (g_button.isPressed()) {
-        return true;
-    }
-//    stripUpdateBrightness();
-    return false; // Button not pressed
-}
+#if WIFI
+static LEDWebServer g_webServer("", 80); // Running on port 80
 
-
-bool busyDelay(uint32_t ms)
-{
-	uint32_t start = micros();
-    
-	if (ms > 0) {
-		while (1) {
-            if (mainProcess()) return true;
-			if ((micros() - start) >= 1000) {
-				ms--;
-				if (ms == 0) return false;
-				start += 1000;
-			}
-			yield();
-		}
-	}
-    return false;
-}
+#endif
 
 void buttonClicked(Button &b){
     g_sequenceManager.buttonClick();
@@ -149,6 +130,11 @@ void setup() {
         g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Orange, 150);
         g_sequenceManager.loadDefaultSequence();
     }
+    // Start the web server (TODO: optional??)
+#if WIFI
+    g_webServer.setSequenceManager(&g_sequenceManager);
+    g_webServer.begin();
+#endif
 }
 
 
@@ -175,9 +161,12 @@ bool checkVoltage() {
 }
 
 void loop() {
-    mainProcess();
-    
+    g_button.process();
+    // Don't show the LED pattern if we have too low of voltage...
     if (checkVoltage()) {
         g_sequenceManager.process();
+#if WIFI
+        g_webServer.process();
+#endif
     }
 }

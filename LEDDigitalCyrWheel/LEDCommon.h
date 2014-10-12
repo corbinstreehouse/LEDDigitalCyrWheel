@@ -9,7 +9,7 @@
 #ifndef LEDDigitalCyrWheel_LEDCommon_h
 #define LEDDigitalCyrWheel_LEDCommon_h
 
-#define DEBUG 0
+#define DEBUG 1
 
 #if PATTERN_EDITOR
     #define USE_ADAFRUIT 0
