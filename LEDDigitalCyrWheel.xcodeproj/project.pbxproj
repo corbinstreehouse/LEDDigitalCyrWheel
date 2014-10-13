@@ -239,6 +239,41 @@
 		9DE7EB6319E8CCEF00C1DCB6 /* wlan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EB5419E8CCEF00C1DCB6 /* wlan.cpp */; };
 		9DE7EBF019EAE59600C1DCB6 /* WebServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EBEB19EAE59600C1DCB6 /* WebServer.cpp */; };
 		9DE7EBFD19EAE82700C1DCB6 /* LEDWebServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EBFB19EAE82700C1DCB6 /* LEDWebServer.cpp */; };
+		9DE7EC5819EB257400C1DCB6 /* EscapedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC0C19EB257300C1DCB6 /* EscapedString.cpp */; };
+		9DE7EC5919EB257400C1DCB6 /* IndentedPrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC0E19EB257400C1DCB6 /* IndentedPrint.cpp */; };
+		9DE7EC5A19EB257400C1DCB6 /* JsonArrayBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC1119EB257400C1DCB6 /* JsonArrayBase.cpp */; };
+		9DE7EC5B19EB257400C1DCB6 /* JsonObjectBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC1619EB257400C1DCB6 /* JsonObjectBase.cpp */; };
+		9DE7EC5C19EB257400C1DCB6 /* JsonPrettyPrint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC1819EB257400C1DCB6 /* JsonPrettyPrint.cpp */; };
+		9DE7EC5D19EB257400C1DCB6 /* JsonPrintable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC1A19EB257400C1DCB6 /* JsonPrintable.cpp */; };
+		9DE7EC5E19EB257400C1DCB6 /* JsonValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC1C19EB257400C1DCB6 /* JsonValue.cpp */; };
+		9DE7EC5F19EB257400C1DCB6 /* Print.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC1E19EB257400C1DCB6 /* Print.cpp */; };
+		9DE7EC6019EB257400C1DCB6 /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC2219EB257400C1DCB6 /* StringBuilder.cpp */; };
+		9DE7EC6119EB257400C1DCB6 /* JsonGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC2419EB257400C1DCB6 /* JsonGenerator.cpp */; };
+		9DE7EC6219EB257400C1DCB6 /* EscapedStringTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC2719EB257400C1DCB6 /* EscapedStringTests.cpp */; };
+		9DE7EC6319EB257400C1DCB6 /* Issue10.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC2819EB257400C1DCB6 /* Issue10.cpp */; };
+		9DE7EC6419EB257400C1DCB6 /* JsonArrayTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC2919EB257400C1DCB6 /* JsonArrayTests.cpp */; };
+		9DE7EC6519EB257400C1DCB6 /* JsonObject_Indexer_Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC2C19EB257400C1DCB6 /* JsonObject_Indexer_Tests.cpp */; };
+		9DE7EC6619EB257400C1DCB6 /* JsonObject_PrintTo_Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC2D19EB257400C1DCB6 /* JsonObject_PrintTo_Tests.cpp */; };
+		9DE7EC6719EB257400C1DCB6 /* JsonValue_Cast_Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC2E19EB257400C1DCB6 /* JsonValue_Cast_Tests.cpp */; };
+		9DE7EC6819EB257400C1DCB6 /* JsonValue_PrintTo_Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC2F19EB257400C1DCB6 /* JsonValue_PrintTo_Tests.cpp */; };
+		9DE7EC6919EB257400C1DCB6 /* PrettyPrint_Array_Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC3019EB257400C1DCB6 /* PrettyPrint_Array_Tests.cpp */; };
+		9DE7EC6A19EB257400C1DCB6 /* PrettyPrint_Object_Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC3119EB257400C1DCB6 /* PrettyPrint_Object_Tests.cpp */; };
+		9DE7EC6B19EB257400C1DCB6 /* PrettyPrint_String_Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC3219EB257400C1DCB6 /* PrettyPrint_String_Tests.cpp */; };
+		9DE7EC6C19EB257400C1DCB6 /* StringBuilderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC3319EB257400C1DCB6 /* StringBuilderTests.cpp */; };
+		9DE7EC6D19EB257400C1DCB6 /* jsmn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC3519EB257400C1DCB6 /* jsmn.cpp */; };
+		9DE7EC6E19EB257400C1DCB6 /* JsonArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC3719EB257400C1DCB6 /* JsonArray.cpp */; };
+		9DE7EC6F19EB257400C1DCB6 /* JsonObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC3A19EB257400C1DCB6 /* JsonObject.cpp */; };
+		9DE7EC7019EB257400C1DCB6 /* JsonParserBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC4119EB257400C1DCB6 /* JsonParserBase.cpp */; };
+		9DE7EC7119EB257400C1DCB6 /* JsonToken.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC4319EB257400C1DCB6 /* JsonToken.cpp */; };
+		9DE7EC7219EB257400C1DCB6 /* JsonValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC4519EB257400C1DCB6 /* JsonValue.cpp */; };
+		9DE7EC7319EB257400C1DCB6 /* JsonParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC4819EB257400C1DCB6 /* JsonParser.cpp */; };
+		9DE7EC7419EB257400C1DCB6 /* GbathreeBug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC4B19EB257400C1DCB6 /* GbathreeBug.cpp */; };
+		9DE7EC7519EB257400C1DCB6 /* JsonArrayIteratorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC4C19EB257400C1DCB6 /* JsonArrayIteratorTests.cpp */; };
+		9DE7EC7619EB257400C1DCB6 /* JsonArrayTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC4D19EB257400C1DCB6 /* JsonArrayTests.cpp */; };
+		9DE7EC7719EB257400C1DCB6 /* JsonObjectIteratorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC4E19EB257400C1DCB6 /* JsonObjectIteratorTests.cpp */; };
+		9DE7EC7819EB257400C1DCB6 /* JsonObjectTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC4F19EB257400C1DCB6 /* JsonObjectTests.cpp */; };
+		9DE7EC7919EB257400C1DCB6 /* JsonStringTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC5219EB257400C1DCB6 /* JsonStringTests.cpp */; };
+		9DE7EC7A19EB257400C1DCB6 /* TestHashGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EC5319EB257400C1DCB6 /* TestHashGenerator.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -1903,6 +1938,86 @@
 		9DE7EBEC19EAE59600C1DCB6 /* WebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServer.h; sourceTree = "<group>"; };
 		9DE7EBFB19EAE82700C1DCB6 /* LEDWebServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LEDWebServer.cpp; sourceTree = "<group>"; };
 		9DE7EBFC19EAE82700C1DCB6 /* LEDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDWebServer.h; sourceTree = "<group>"; };
+		9DE7EC0019EB257300C1DCB6 /* ArduinoJson.sln */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ArduinoJson.sln; sourceTree = "<group>"; };
+		9DE7EC0119EB257300C1DCB6 /* BuildArduinoPackage.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = BuildArduinoPackage.sh; sourceTree = "<group>"; };
+		9DE7EC0219EB257300C1DCB6 /* CHANGELOG.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGELOG.md; sourceTree = "<group>"; };
+		9DE7EC0519EB257300C1DCB6 /* IndentedPrintExample.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IndentedPrintExample.ino; sourceTree = "<group>"; };
+		9DE7EC0719EB257300C1DCB6 /* JsonGeneratorExample.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = JsonGeneratorExample.ino; sourceTree = "<group>"; };
+		9DE7EC0919EB257300C1DCB6 /* JsonParserExample.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = JsonParserExample.ino; sourceTree = "<group>"; };
+		9DE7EC0A19EB257300C1DCB6 /* FixEndOfFile.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = FixEndOfFile.sh; sourceTree = "<group>"; };
+		9DE7EC0C19EB257300C1DCB6 /* EscapedString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EscapedString.cpp; sourceTree = "<group>"; };
+		9DE7EC0D19EB257400C1DCB6 /* EscapedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EscapedString.h; sourceTree = "<group>"; };
+		9DE7EC0E19EB257400C1DCB6 /* IndentedPrint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndentedPrint.cpp; sourceTree = "<group>"; };
+		9DE7EC0F19EB257400C1DCB6 /* IndentedPrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndentedPrint.h; sourceTree = "<group>"; };
+		9DE7EC1019EB257400C1DCB6 /* JsonArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonArray.h; sourceTree = "<group>"; };
+		9DE7EC1119EB257400C1DCB6 /* JsonArrayBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonArrayBase.cpp; sourceTree = "<group>"; };
+		9DE7EC1219EB257400C1DCB6 /* JsonArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonArrayBase.h; sourceTree = "<group>"; };
+		9DE7EC1319EB257400C1DCB6 /* JsonGenerator.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = JsonGenerator.vcxproj; sourceTree = "<group>"; };
+		9DE7EC1419EB257400C1DCB6 /* JsonGenerator.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = JsonGenerator.vcxproj.filters; sourceTree = "<group>"; };
+		9DE7EC1519EB257400C1DCB6 /* JsonObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonObject.h; sourceTree = "<group>"; };
+		9DE7EC1619EB257400C1DCB6 /* JsonObjectBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonObjectBase.cpp; sourceTree = "<group>"; };
+		9DE7EC1719EB257400C1DCB6 /* JsonObjectBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonObjectBase.h; sourceTree = "<group>"; };
+		9DE7EC1819EB257400C1DCB6 /* JsonPrettyPrint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonPrettyPrint.cpp; sourceTree = "<group>"; };
+		9DE7EC1919EB257400C1DCB6 /* JsonPrettyPrint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonPrettyPrint.h; sourceTree = "<group>"; };
+		9DE7EC1A19EB257400C1DCB6 /* JsonPrintable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonPrintable.cpp; sourceTree = "<group>"; };
+		9DE7EC1B19EB257400C1DCB6 /* JsonPrintable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonPrintable.h; sourceTree = "<group>"; };
+		9DE7EC1C19EB257400C1DCB6 /* JsonValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonValue.cpp; sourceTree = "<group>"; };
+		9DE7EC1D19EB257400C1DCB6 /* JsonValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonValue.h; sourceTree = "<group>"; };
+		9DE7EC1E19EB257400C1DCB6 /* Print.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Print.cpp; sourceTree = "<group>"; };
+		9DE7EC1F19EB257400C1DCB6 /* Print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Print.h; sourceTree = "<group>"; };
+		9DE7EC2019EB257400C1DCB6 /* Printable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Printable.h; sourceTree = "<group>"; };
+		9DE7EC2119EB257400C1DCB6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		9DE7EC2219EB257400C1DCB6 /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilder.cpp; sourceTree = "<group>"; };
+		9DE7EC2319EB257400C1DCB6 /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
+		9DE7EC2419EB257400C1DCB6 /* JsonGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonGenerator.cpp; sourceTree = "<group>"; };
+		9DE7EC2519EB257400C1DCB6 /* JsonGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonGenerator.h; sourceTree = "<group>"; };
+		9DE7EC2719EB257400C1DCB6 /* EscapedStringTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EscapedStringTests.cpp; sourceTree = "<group>"; };
+		9DE7EC2819EB257400C1DCB6 /* Issue10.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Issue10.cpp; sourceTree = "<group>"; };
+		9DE7EC2919EB257400C1DCB6 /* JsonArrayTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonArrayTests.cpp; sourceTree = "<group>"; };
+		9DE7EC2A19EB257400C1DCB6 /* JsonGeneratorTests.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = JsonGeneratorTests.vcxproj; sourceTree = "<group>"; };
+		9DE7EC2B19EB257400C1DCB6 /* JsonGeneratorTests.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = JsonGeneratorTests.vcxproj.filters; sourceTree = "<group>"; };
+		9DE7EC2C19EB257400C1DCB6 /* JsonObject_Indexer_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonObject_Indexer_Tests.cpp; sourceTree = "<group>"; };
+		9DE7EC2D19EB257400C1DCB6 /* JsonObject_PrintTo_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonObject_PrintTo_Tests.cpp; sourceTree = "<group>"; };
+		9DE7EC2E19EB257400C1DCB6 /* JsonValue_Cast_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonValue_Cast_Tests.cpp; sourceTree = "<group>"; };
+		9DE7EC2F19EB257400C1DCB6 /* JsonValue_PrintTo_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonValue_PrintTo_Tests.cpp; sourceTree = "<group>"; };
+		9DE7EC3019EB257400C1DCB6 /* PrettyPrint_Array_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrettyPrint_Array_Tests.cpp; sourceTree = "<group>"; };
+		9DE7EC3119EB257400C1DCB6 /* PrettyPrint_Object_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrettyPrint_Object_Tests.cpp; sourceTree = "<group>"; };
+		9DE7EC3219EB257400C1DCB6 /* PrettyPrint_String_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrettyPrint_String_Tests.cpp; sourceTree = "<group>"; };
+		9DE7EC3319EB257400C1DCB6 /* StringBuilderTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilderTests.cpp; sourceTree = "<group>"; };
+		9DE7EC3519EB257400C1DCB6 /* jsmn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsmn.cpp; sourceTree = "<group>"; };
+		9DE7EC3619EB257400C1DCB6 /* jsmn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsmn.h; sourceTree = "<group>"; };
+		9DE7EC3719EB257400C1DCB6 /* JsonArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonArray.cpp; sourceTree = "<group>"; };
+		9DE7EC3819EB257400C1DCB6 /* JsonArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonArray.h; sourceTree = "<group>"; };
+		9DE7EC3919EB257400C1DCB6 /* JsonArrayIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonArrayIterator.h; sourceTree = "<group>"; };
+		9DE7EC3A19EB257400C1DCB6 /* JsonObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonObject.cpp; sourceTree = "<group>"; };
+		9DE7EC3B19EB257400C1DCB6 /* JsonObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonObject.h; sourceTree = "<group>"; };
+		9DE7EC3C19EB257400C1DCB6 /* JsonObjectIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonObjectIterator.h; sourceTree = "<group>"; };
+		9DE7EC3D19EB257400C1DCB6 /* JsonPair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonPair.h; sourceTree = "<group>"; };
+		9DE7EC3E19EB257400C1DCB6 /* JsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonParser.h; sourceTree = "<group>"; };
+		9DE7EC3F19EB257400C1DCB6 /* JsonParser.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = JsonParser.vcxproj; sourceTree = "<group>"; };
+		9DE7EC4019EB257400C1DCB6 /* JsonParser.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = JsonParser.vcxproj.filters; sourceTree = "<group>"; };
+		9DE7EC4119EB257400C1DCB6 /* JsonParserBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonParserBase.cpp; sourceTree = "<group>"; };
+		9DE7EC4219EB257400C1DCB6 /* JsonParserBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonParserBase.h; sourceTree = "<group>"; };
+		9DE7EC4319EB257400C1DCB6 /* JsonToken.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonToken.cpp; sourceTree = "<group>"; };
+		9DE7EC4419EB257400C1DCB6 /* JsonToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonToken.h; sourceTree = "<group>"; };
+		9DE7EC4519EB257400C1DCB6 /* JsonValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonValue.cpp; sourceTree = "<group>"; };
+		9DE7EC4619EB257400C1DCB6 /* JsonValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonValue.h; sourceTree = "<group>"; };
+		9DE7EC4719EB257400C1DCB6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		9DE7EC4819EB257400C1DCB6 /* JsonParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonParser.cpp; sourceTree = "<group>"; };
+		9DE7EC4919EB257400C1DCB6 /* JsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonParser.h; sourceTree = "<group>"; };
+		9DE7EC4B19EB257400C1DCB6 /* GbathreeBug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GbathreeBug.cpp; sourceTree = "<group>"; };
+		9DE7EC4C19EB257400C1DCB6 /* JsonArrayIteratorTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonArrayIteratorTests.cpp; sourceTree = "<group>"; };
+		9DE7EC4D19EB257400C1DCB6 /* JsonArrayTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonArrayTests.cpp; sourceTree = "<group>"; };
+		9DE7EC4E19EB257400C1DCB6 /* JsonObjectIteratorTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonObjectIteratorTests.cpp; sourceTree = "<group>"; };
+		9DE7EC4F19EB257400C1DCB6 /* JsonObjectTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonObjectTests.cpp; sourceTree = "<group>"; };
+		9DE7EC5019EB257400C1DCB6 /* JsonParserTests.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = JsonParserTests.vcxproj; sourceTree = "<group>"; };
+		9DE7EC5119EB257400C1DCB6 /* JsonParserTests.vcxproj.filters */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = JsonParserTests.vcxproj.filters; sourceTree = "<group>"; };
+		9DE7EC5219EB257400C1DCB6 /* JsonStringTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JsonStringTests.cpp; sourceTree = "<group>"; };
+		9DE7EC5319EB257400C1DCB6 /* TestHashGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestHashGenerator.cpp; sourceTree = "<group>"; };
+		9DE7EC5419EB257400C1DCB6 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
+		9DE7EC5519EB257400C1DCB6 /* library.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = library.json; sourceTree = "<group>"; };
+		9DE7EC5619EB257400C1DCB6 /* LICENSE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.md; sourceTree = "<group>"; };
+		9DE7EC5719EB257400C1DCB6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -4934,6 +5049,7 @@
 				9DDC60091938488D00C602BC /* SD */,
 				9DE7EB1719E8CCEF00C1DCB6 /* Adafruit_CC3000_Library */,
 				9DDC601C1938488D00C602BC /* SdFat */,
+				9DE7EBFE19EB257300C1DCB6 /* ArduinoJson */,
 				9DE7EBB819EAE59500C1DCB6 /* Webduino */,
 			);
 			name = Libraries;
@@ -6139,6 +6255,158 @@
 			path = ../../../Projects/Arduino/LEDDigitalCyrWheel/Libraries/Webduino;
 			sourceTree = "<group>";
 		};
+		9DE7EBFE19EB257300C1DCB6 /* ArduinoJson */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EC0019EB257300C1DCB6 /* ArduinoJson.sln */,
+				9DE7EC0119EB257300C1DCB6 /* BuildArduinoPackage.sh */,
+				9DE7EC0219EB257300C1DCB6 /* CHANGELOG.md */,
+				9DE7EC0319EB257300C1DCB6 /* examples */,
+				9DE7EC0A19EB257300C1DCB6 /* FixEndOfFile.sh */,
+				9DE7EC0B19EB257300C1DCB6 /* JsonGenerator */,
+				9DE7EC2419EB257400C1DCB6 /* JsonGenerator.cpp */,
+				9DE7EC2519EB257400C1DCB6 /* JsonGenerator.h */,
+				9DE7EC2619EB257400C1DCB6 /* JsonGeneratorTests */,
+				9DE7EC3419EB257400C1DCB6 /* JsonParser */,
+				9DE7EC4819EB257400C1DCB6 /* JsonParser.cpp */,
+				9DE7EC4919EB257400C1DCB6 /* JsonParser.h */,
+				9DE7EC4A19EB257400C1DCB6 /* JsonParserTests */,
+				9DE7EC5419EB257400C1DCB6 /* keywords.txt */,
+				9DE7EC5519EB257400C1DCB6 /* library.json */,
+				9DE7EC5619EB257400C1DCB6 /* LICENSE.md */,
+				9DE7EC5719EB257400C1DCB6 /* README.md */,
+			);
+			name = ArduinoJson;
+			path = Libraries/ArduinoJson;
+			sourceTree = SOURCE_ROOT;
+		};
+		9DE7EC0319EB257300C1DCB6 /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EC0419EB257300C1DCB6 /* IndentedPrintExample */,
+				9DE7EC0619EB257300C1DCB6 /* JsonGeneratorExample */,
+				9DE7EC0819EB257300C1DCB6 /* JsonParserExample */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		9DE7EC0419EB257300C1DCB6 /* IndentedPrintExample */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EC0519EB257300C1DCB6 /* IndentedPrintExample.ino */,
+			);
+			path = IndentedPrintExample;
+			sourceTree = "<group>";
+		};
+		9DE7EC0619EB257300C1DCB6 /* JsonGeneratorExample */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EC0719EB257300C1DCB6 /* JsonGeneratorExample.ino */,
+			);
+			path = JsonGeneratorExample;
+			sourceTree = "<group>";
+		};
+		9DE7EC0819EB257300C1DCB6 /* JsonParserExample */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EC0919EB257300C1DCB6 /* JsonParserExample.ino */,
+			);
+			path = JsonParserExample;
+			sourceTree = "<group>";
+		};
+		9DE7EC0B19EB257300C1DCB6 /* JsonGenerator */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EC0C19EB257300C1DCB6 /* EscapedString.cpp */,
+				9DE7EC0D19EB257400C1DCB6 /* EscapedString.h */,
+				9DE7EC0E19EB257400C1DCB6 /* IndentedPrint.cpp */,
+				9DE7EC0F19EB257400C1DCB6 /* IndentedPrint.h */,
+				9DE7EC1019EB257400C1DCB6 /* JsonArray.h */,
+				9DE7EC1119EB257400C1DCB6 /* JsonArrayBase.cpp */,
+				9DE7EC1219EB257400C1DCB6 /* JsonArrayBase.h */,
+				9DE7EC1319EB257400C1DCB6 /* JsonGenerator.vcxproj */,
+				9DE7EC1419EB257400C1DCB6 /* JsonGenerator.vcxproj.filters */,
+				9DE7EC1519EB257400C1DCB6 /* JsonObject.h */,
+				9DE7EC1619EB257400C1DCB6 /* JsonObjectBase.cpp */,
+				9DE7EC1719EB257400C1DCB6 /* JsonObjectBase.h */,
+				9DE7EC1819EB257400C1DCB6 /* JsonPrettyPrint.cpp */,
+				9DE7EC1919EB257400C1DCB6 /* JsonPrettyPrint.h */,
+				9DE7EC1A19EB257400C1DCB6 /* JsonPrintable.cpp */,
+				9DE7EC1B19EB257400C1DCB6 /* JsonPrintable.h */,
+				9DE7EC1C19EB257400C1DCB6 /* JsonValue.cpp */,
+				9DE7EC1D19EB257400C1DCB6 /* JsonValue.h */,
+				9DE7EC1E19EB257400C1DCB6 /* Print.cpp */,
+				9DE7EC1F19EB257400C1DCB6 /* Print.h */,
+				9DE7EC2019EB257400C1DCB6 /* Printable.h */,
+				9DE7EC2119EB257400C1DCB6 /* README.md */,
+				9DE7EC2219EB257400C1DCB6 /* StringBuilder.cpp */,
+				9DE7EC2319EB257400C1DCB6 /* StringBuilder.h */,
+			);
+			path = JsonGenerator;
+			sourceTree = "<group>";
+		};
+		9DE7EC2619EB257400C1DCB6 /* JsonGeneratorTests */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EC2719EB257400C1DCB6 /* EscapedStringTests.cpp */,
+				9DE7EC2819EB257400C1DCB6 /* Issue10.cpp */,
+				9DE7EC2919EB257400C1DCB6 /* JsonArrayTests.cpp */,
+				9DE7EC2A19EB257400C1DCB6 /* JsonGeneratorTests.vcxproj */,
+				9DE7EC2B19EB257400C1DCB6 /* JsonGeneratorTests.vcxproj.filters */,
+				9DE7EC2C19EB257400C1DCB6 /* JsonObject_Indexer_Tests.cpp */,
+				9DE7EC2D19EB257400C1DCB6 /* JsonObject_PrintTo_Tests.cpp */,
+				9DE7EC2E19EB257400C1DCB6 /* JsonValue_Cast_Tests.cpp */,
+				9DE7EC2F19EB257400C1DCB6 /* JsonValue_PrintTo_Tests.cpp */,
+				9DE7EC3019EB257400C1DCB6 /* PrettyPrint_Array_Tests.cpp */,
+				9DE7EC3119EB257400C1DCB6 /* PrettyPrint_Object_Tests.cpp */,
+				9DE7EC3219EB257400C1DCB6 /* PrettyPrint_String_Tests.cpp */,
+				9DE7EC3319EB257400C1DCB6 /* StringBuilderTests.cpp */,
+			);
+			path = JsonGeneratorTests;
+			sourceTree = "<group>";
+		};
+		9DE7EC3419EB257400C1DCB6 /* JsonParser */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EC3519EB257400C1DCB6 /* jsmn.cpp */,
+				9DE7EC3619EB257400C1DCB6 /* jsmn.h */,
+				9DE7EC3719EB257400C1DCB6 /* JsonArray.cpp */,
+				9DE7EC3819EB257400C1DCB6 /* JsonArray.h */,
+				9DE7EC3919EB257400C1DCB6 /* JsonArrayIterator.h */,
+				9DE7EC3A19EB257400C1DCB6 /* JsonObject.cpp */,
+				9DE7EC3B19EB257400C1DCB6 /* JsonObject.h */,
+				9DE7EC3C19EB257400C1DCB6 /* JsonObjectIterator.h */,
+				9DE7EC3D19EB257400C1DCB6 /* JsonPair.h */,
+				9DE7EC3E19EB257400C1DCB6 /* JsonParser.h */,
+				9DE7EC3F19EB257400C1DCB6 /* JsonParser.vcxproj */,
+				9DE7EC4019EB257400C1DCB6 /* JsonParser.vcxproj.filters */,
+				9DE7EC4119EB257400C1DCB6 /* JsonParserBase.cpp */,
+				9DE7EC4219EB257400C1DCB6 /* JsonParserBase.h */,
+				9DE7EC4319EB257400C1DCB6 /* JsonToken.cpp */,
+				9DE7EC4419EB257400C1DCB6 /* JsonToken.h */,
+				9DE7EC4519EB257400C1DCB6 /* JsonValue.cpp */,
+				9DE7EC4619EB257400C1DCB6 /* JsonValue.h */,
+				9DE7EC4719EB257400C1DCB6 /* README.md */,
+			);
+			path = JsonParser;
+			sourceTree = "<group>";
+		};
+		9DE7EC4A19EB257400C1DCB6 /* JsonParserTests */ = {
+			isa = PBXGroup;
+			children = (
+				9DE7EC4B19EB257400C1DCB6 /* GbathreeBug.cpp */,
+				9DE7EC4C19EB257400C1DCB6 /* JsonArrayIteratorTests.cpp */,
+				9DE7EC4D19EB257400C1DCB6 /* JsonArrayTests.cpp */,
+				9DE7EC4E19EB257400C1DCB6 /* JsonObjectIteratorTests.cpp */,
+				9DE7EC4F19EB257400C1DCB6 /* JsonObjectTests.cpp */,
+				9DE7EC5019EB257400C1DCB6 /* JsonParserTests.vcxproj */,
+				9DE7EC5119EB257400C1DCB6 /* JsonParserTests.vcxproj.filters */,
+				9DE7EC5219EB257400C1DCB6 /* JsonStringTests.cpp */,
+				9DE7EC5319EB257400C1DCB6 /* TestHashGenerator.cpp */,
+			);
+			path = JsonParserTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXLegacyTarget section */
@@ -6296,14 +6564,18 @@
 				9D0C1D0719CF3CE0004E027E /* NeoPixelLEDPatterns.h in Sources */,
 				9D0C1D0819CF3CE0004E027E /* OctoWS2811LEDPatterns.h in Sources */,
 				9D0C1D0919CF3CE0004E027E /* FastLEDPatterns.h in Sources */,
+				9DE7EC6719EB257400C1DCB6 /* JsonValue_Cast_Tests.cpp in Sources */,
 				9D0C1D0A19CF3CE0004E027E /* block_clockless.h in Sources */,
 				9D0C1D0B19CF3CE0004E027E /* chipsets.h in Sources */,
 				9D0C1D0C19CF3CE0004E027E /* clockless.h in Sources */,
 				9D0C1D0D19CF3CE0004E027E /* clockless2.h in Sources */,
 				9D0C1D0E19CF3CE0004E027E /* clockless_arm_k20.h in Sources */,
 				9D0C1D0F19CF3CE0004E027E /* clockless_arm_sam.h in Sources */,
+				9DE7EC6919EB257400C1DCB6 /* PrettyPrint_Array_Tests.cpp in Sources */,
+				9DE7EC6319EB257400C1DCB6 /* Issue10.cpp in Sources */,
 				9D0C1D1019CF3CE0004E027E /* clockless_trinket.h in Sources */,
 				9D0C1D1119CF3CE0004E027E /* color.h in Sources */,
+				9DE7EC7419EB257400C1DCB6 /* GbathreeBug.cpp in Sources */,
 				9D0C1D1219CF3CE0004E027E /* colorutils.h in Sources */,
 				9D0C1D1319CF3CE0004E027E /* controller.h in Sources */,
 				9D0C1D1419CF3CE0004E027E /* delay.h in Sources */,
@@ -6319,6 +6591,7 @@
 				9D0C1D1E19CF3CE0004E027E /* fastspi_avr.h in Sources */,
 				9D0C1D1F19CF3CE0004E027E /* fastspi_bitbang.h in Sources */,
 				9D0C1D2019CF3CE0004E027E /* fastspi_dma.h in Sources */,
+				9DE7EC7019EB257400C1DCB6 /* JsonParserBase.cpp in Sources */,
 				9D0C1D2119CF3CE0004E027E /* FastSPI_LED2.h in Sources */,
 				9D0C1D2219CF3CE0004E027E /* fastspi_nop.h in Sources */,
 				9D0C1D2319CF3CE0004E027E /* fastspi_ref.h in Sources */,
@@ -6332,6 +6605,7 @@
 				9DBE8A7D18A8A85000154550 /* WString.cpp in Sources */,
 				9DBE928018A8AA5600154550 /* GSM3ShieldV1ModemCore.cpp in Sources */,
 				9D472E1D1902F1590076281A /* CDOrientation.cpp in Sources */,
+				9DE7EC5919EB257400C1DCB6 /* IndentedPrint.cpp in Sources */,
 				9DBE92BD18A8AA5600154550 /* WiFi.cpp in Sources */,
 				9DBE8A7318A8A85000154550 /* usb_inst.cpp in Sources */,
 				9DDC61DD1938488E00C602BC /* SdVolume.cpp in Sources */,
@@ -6346,10 +6620,13 @@
 				9DBE92A818A8AA5600154550 /* ArduinoRobotMotorBoard.cpp in Sources */,
 				9DBE926518A8AA5600154550 /* Makefile in Sources */,
 				9DBE8D9C18A8A9C700154550 /* regex_grep_matcher.tcc in Sources */,
+				9DE7EC6B19EB257400C1DCB6 /* PrettyPrint_String_Tests.cpp in Sources */,
 				9DBE8A6918A8A85000154550 /* Print.cpp in Sources */,
 				9DE7EB6219E8CCEF00C1DCB6 /* socket.cpp in Sources */,
+				9DE7EC5A19EB257400C1DCB6 /* JsonArrayBase.cpp in Sources */,
 				9DBE926C18A8AA5600154550 /* GSM3MobileAccessProvider.cpp in Sources */,
 				9DBE928718A8AA5600154550 /* GSM3ShieldV1SMSProvider.cpp in Sources */,
+				9DE7EC5E19EB257400C1DCB6 /* JsonValue.cpp in Sources */,
 				9DBE8D9518A8A9C700154550 /* istream.tcc in Sources */,
 				9DBE926718A8AA5600154550 /* Makefile in Sources */,
 				9DBE8D9718A8A9C700154550 /* locale_classes.tcc in Sources */,
@@ -6357,24 +6634,31 @@
 				9DE7EB5B19E8CCEF00C1DCB6 /* debug.cpp in Sources */,
 				9DBE926818A8AA5600154550 /* Makefile in Sources */,
 				9DBE926F18A8AA5600154550 /* GSM3MobileClientService.cpp in Sources */,
+				9DE7EC7719EB257400C1DCB6 /* JsonObjectIteratorTests.cpp in Sources */,
 				9DE7EB6019E8CCEF00C1DCB6 /* security.cpp in Sources */,
+				9DE7EC7519EB257400C1DCB6 /* JsonArrayIteratorTests.cpp in Sources */,
 				9DBE8A7B18A8A85000154550 /* usb_serial.c in Sources */,
 				9DBE926118A8AA5600154550 /* socket.cpp in Sources */,
 				9DDC61CF1938488E00C602BC /* Sd2Card.cpp in Sources */,
 				9DE7EB5619E8CCEF00C1DCB6 /* Adafruit_CC3000.cpp in Sources */,
 				9DBE92BF18A8AA5600154550 /* WiFiServer.cpp in Sources */,
+				9DE7EC5D19EB257400C1DCB6 /* JsonPrintable.cpp in Sources */,
+				9DE7EC7A19EB257400C1DCB6 /* TestHashGenerator.cpp in Sources */,
 				9DBE8DA718A8A9C700154550 /* bessel_function.tcc in Sources */,
 				9DBE925B18A8AA5600154550 /* Dhcp.cpp in Sources */,
 				9DE7EB6319E8CCEF00C1DCB6 /* wlan.cpp in Sources */,
 				9DBE926018A8AA5600154550 /* EthernetUdp.cpp in Sources */,
 				9DBE8DAC18A8A9C700154550 /* hypergeometric.tcc in Sources */,
+				9DE7EC7619EB257400C1DCB6 /* JsonArrayTests.cpp in Sources */,
 				9DBE8D9418A8A9C700154550 /* fstream.tcc in Sources */,
+				9DE7EC6519EB257400C1DCB6 /* JsonObject_Indexer_Tests.cpp in Sources */,
 				9DBE8A5818A8A84F00154550 /* analog.c in Sources */,
 				9DBE8D9018A8A9C700154550 /* basic_ios.tcc in Sources */,
 				9DE7EB5D19E8CCEF00C1DCB6 /* hci.cpp in Sources */,
 				9DBE8A5B18A8A84F00154550 /* eeprom.c in Sources */,
 				9DBE8DA918A8A9C700154550 /* ell_integral.tcc in Sources */,
 				9DBE8A7618A8A85000154550 /* usb_mem.c in Sources */,
+				9DE7EC5F19EB257400C1DCB6 /* Print.cpp in Sources */,
 				9DBE8DAD18A8A9C700154550 /* legendre_function.tcc in Sources */,
 				9DBE92BB18A8AA5600154550 /* spi_drv.cpp in Sources */,
 				9DBE8DB118A8A9C700154550 /* random.tcc in Sources */,
@@ -6384,6 +6668,7 @@
 				9DDC61DB1938488E00C602BC /* SdSpiSAM3X.cpp in Sources */,
 				9DBE8A5918A8A84F00154550 /* AudioStream.cpp in Sources */,
 				9DBE8A5E18A8A84F00154550 /* HardwareSerial3.cpp in Sources */,
+				9DE7EC7119EB257400C1DCB6 /* JsonToken.cpp in Sources */,
 				9DBE92B718A8AA5600154550 /* Adafruit_ST7735.cpp in Sources */,
 				9DE7EB5919E8CCEF00C1DCB6 /* ccspi.cpp in Sources */,
 				9DBE928518A8AA5600154550 /* GSM3ShieldV1ScanNetworks.cpp in Sources */,
@@ -6391,11 +6676,14 @@
 				9DBE92C118A8AA5600154550 /* twi.c in Sources */,
 				9DBE927018A8AA5600154550 /* GSM3MobileDataNetworkProvider.cpp in Sources */,
 				9DBE928318A8AA5600154550 /* GSM3ShieldV1MultiServerProvider.cpp in Sources */,
+				9DE7EC6C19EB257400C1DCB6 /* StringBuilderTests.cpp in Sources */,
 				9DBE92C018A8AA5600154550 /* WiFiUdp.cpp in Sources */,
 				9DDC61DC1938488E00C602BC /* SdStream.cpp in Sources */,
+				9DE7EC6F19EB257400C1DCB6 /* JsonObject.cpp in Sources */,
 				9DBE927418A8AA5600154550 /* GSM3MobileServerProvider.cpp in Sources */,
 				9DDC61D91938488E00C602BC /* SdSpiAVR.cpp in Sources */,
 				9DBE92B418A8AA5600154550 /* Stepper.cpp in Sources */,
+				9DE7EC7319EB257400C1DCB6 /* JsonParser.cpp in Sources */,
 				9DBE926D18A8AA5600154550 /* GSM3MobileCellManagement.cpp in Sources */,
 				9DBE8DB218A8A9C700154550 /* riemann_zeta.tcc in Sources */,
 				9DBE925D18A8AA5600154550 /* Ethernet.cpp in Sources */,
@@ -6411,7 +6699,9 @@
 				9DBE928A18A8AA5600154550 /* GSM3SoftSerial.cpp in Sources */,
 				9D6BC8711938CBC400E21E1C /* lib8tion.cpp in Sources */,
 				9DE7EB5F19E8CCEF00C1DCB6 /* nvmem.cpp in Sources */,
+				9DE7EC6419EB257400C1DCB6 /* JsonArrayTests.cpp in Sources */,
 				9DBE8A7A18A8A85000154550 /* usb_seremu.c in Sources */,
+				9DE7EC6119EB257400C1DCB6 /* JsonGenerator.cpp in Sources */,
 				9DBE8A7E18A8A85000154550 /* yield.c in Sources */,
 				9DDC61DA1938488E00C602BC /* SdSpiMK20DX128.cpp in Sources */,
 				9DBE8DA218A8A9C700154550 /* safe_iterator.tcc in Sources */,
@@ -6431,8 +6721,10 @@
 				9DE7EB5819E8CCEF00C1DCB6 /* CC3000_MDNS.cpp in Sources */,
 				9DBE927A18A8AA5600154550 /* GSM3ShieldV1BandManagement.cpp in Sources */,
 				9DBE928918A8AA5600154550 /* GSM3SMSService.cpp in Sources */,
+				9DE7EC6219EB257400C1DCB6 /* EscapedStringTests.cpp in Sources */,
 				9DBE8A6218A8A84F00154550 /* main.cpp in Sources */,
 				9DBE926218A8AA5600154550 /* w5100.cpp in Sources */,
+				9DE7EC7819EB257400C1DCB6 /* JsonObjectTests.cpp in Sources */,
 				9DDC61D71938488E00C602BC /* SdFile.cpp in Sources */,
 				9DBE8A7118A8A85000154550 /* usb_dev.c in Sources */,
 				9DBE927B18A8AA5600154550 /* GSM3ShieldV1BaseProvider.cpp in Sources */,
@@ -6450,6 +6742,8 @@
 				9DBE92B118A8AA5600154550 /* Servo.cpp in Sources */,
 				9DDC61D01938488E00C602BC /* SdBaseFile.cpp in Sources */,
 				9DBE8D9918A8A9C700154550 /* locale_facets_nonio.tcc in Sources */,
+				9DE7EC6619EB257400C1DCB6 /* JsonObject_PrintTo_Tests.cpp in Sources */,
+				9DE7EC5C19EB257400C1DCB6 /* JsonPrettyPrint.cpp in Sources */,
 				9D6BC8701938CBC400E21E1C /* hsv2rgb.cpp in Sources */,
 				9DDC61CB1938488E00C602BC /* SD.cpp in Sources */,
 				9DBE927F18A8AA5600154550 /* GSM3ShieldV1DirectModemProvider.cpp in Sources */,
@@ -6463,10 +6757,12 @@
 				9D6BC86F1938CBC400E21E1C /* FastLED.cpp in Sources */,
 				9DBE928418A8AA5600154550 /* GSM3ShieldV1PinManagement.cpp in Sources */,
 				9DDC61D31938488E00C602BC /* SdFatErrorPrint.cpp in Sources */,
+				9DE7EC6819EB257400C1DCB6 /* JsonValue_PrintTo_Tests.cpp in Sources */,
 				9DBE8A6618A8A85000154550 /* new.cpp in Sources */,
 				9DE7EB5A19E8CCEF00C1DCB6 /* cc3000_common.cpp in Sources */,
 				9DDC61D81938488E00C602BC /* SdSpiArduino.cpp in Sources */,
 				9DBE8DA318A8A9C700154550 /* safe_local_iterator.tcc in Sources */,
+				9DE7EC7219EB257400C1DCB6 /* JsonValue.cpp in Sources */,
 				9DBE927118A8AA5600154550 /* GSM3MobileMockupProvider.cpp in Sources */,
 				9DBE926418A8AA5600154550 /* Makefile in Sources */,
 				9DBE926918A8AA5600154550 /* Makefile in Sources */,
@@ -6475,12 +6771,14 @@
 				9DBE927E18A8AA5600154550 /* GSM3ShieldV1DataNetworkProvider.cpp in Sources */,
 				9DBE927818A8AA5600154550 /* GSM3ShieldV1.cpp in Sources */,
 				9DDC61D61938488E00C602BC /* SdFatUtil.cpp in Sources */,
+				9DE7EC6A19EB257400C1DCB6 /* PrettyPrint_Object_Tests.cpp in Sources */,
 				9DBE8D9318A8A9C700154550 /* forward_list.tcc in Sources */,
 				9DBE8DA418A8A9C700154550 /* safe_sequence.tcc in Sources */,
 				9DBE8A7418A8A85000154550 /* usb_joystick.c in Sources */,
 				9DDC61CD1938488E00C602BC /* MinimumSerial.cpp in Sources */,
 				9DBE8A6F18A8A85000154550 /* touch.c in Sources */,
 				9DBE8D9618A8A9C700154550 /* list.tcc in Sources */,
+				9DE7EC5B19EB257400C1DCB6 /* JsonObjectBase.cpp in Sources */,
 				9DBE8D9118A8A9C700154550 /* basic_string.tcc in Sources */,
 				9DBE8D9A18A8A9C700154550 /* ostream.tcc in Sources */,
 				9DDC61CA1938488E00C602BC /* File.cpp in Sources */,
@@ -6489,11 +6787,13 @@
 				9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */,
 				9DBE925818A8AA5600154550 /* Bounce.cpp in Sources */,
 				9DBE92AA18A8AA5600154550 /* lineFollow.cpp in Sources */,
+				9DE7EC7919EB257400C1DCB6 /* JsonStringTests.cpp in Sources */,
 				9DBE8A6D18A8A85000154550 /* Stream.cpp in Sources */,
 				9DBE927C18A8AA5600154550 /* GSM3ShieldV1CellManagement.cpp in Sources */,
 				9DDC61C91938488E00C602BC /* LSM303.cpp in Sources */,
 				9DBE926B18A8AA5600154550 /* GSM3CircularBuffer.cpp in Sources */,
 				9D6BC86E1938CBC400E21E1C /* colorutils.cpp in Sources */,
+				9DE7EC6019EB257400C1DCB6 /* StringBuilder.cpp in Sources */,
 				9DBE8A5C18A8A84F00154550 /* HardwareSerial1.cpp in Sources */,
 				9DBE92AB18A8AA5600154550 /* Multiplexer.cpp in Sources */,
 				9DBE927918A8AA5600154550 /* GSM3ShieldV1AccessProvider.cpp in Sources */,
@@ -6509,6 +6809,7 @@
 				9DDC61CE1938488E00C602BC /* ostream.cpp in Sources */,
 				9DBE928B18A8AA5600154550 /* GSM3VoiceCallService.cpp in Sources */,
 				9DBE925C18A8AA5600154550 /* Dns.cpp in Sources */,
+				9DE7EC6E19EB257400C1DCB6 /* JsonArray.cpp in Sources */,
 				9DDC61D21938488E00C602BC /* SdFat.cpp in Sources */,
 				9DBE8DA018A8A9C700154550 /* valarray_array.tcc in Sources */,
 				9DDC61D51938488E00C602BC /* jquery.js in Sources */,
@@ -6517,6 +6818,7 @@
 				9DBE8A6118A8A84F00154550 /* keylayouts.c in Sources */,
 				9DBE8A6C18A8A85000154550 /* serial3.c in Sources */,
 				9DBE8D9218A8A9C700154550 /* deque.tcc in Sources */,
+				9DE7EC6D19EB257400C1DCB6 /* jsmn.cpp in Sources */,
 				9DBE8A6718A8A85000154550 /* nonstd.c in Sources */,
 				9DBE925A18A8AA5600154550 /* Esplora.cpp in Sources */,
 				9DE7EBF019EAE59600C1DCB6 /* WebServer.cpp in Sources */,
@@ -6524,6 +6826,7 @@
 				9DBE92B618A8AA5600154550 /* Adafruit_GFX.cpp in Sources */,
 				9DBE92BC18A8AA5600154550 /* wifi_drv.cpp in Sources */,
 				9DBE8A7C18A8A85000154550 /* WMath.cpp in Sources */,
+				9DE7EC5819EB257400C1DCB6 /* EscapedString.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

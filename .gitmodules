@@ -25,3 +25,6 @@
 [submodule "Libraries/Webduino"]
 	path = Libraries/Webduino
 	url = git@github.com:corbinstreehouse/Webduino.git
+[submodule "Libraries/ArduinoJson"]
+	path = Libraries/ArduinoJson
+	url = git@github.com:bblanchon/ArduinoJson.git

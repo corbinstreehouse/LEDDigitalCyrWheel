@@ -101,6 +101,8 @@ private:
     }
     
     CDPatternItemHeader makeFlashPatternItem(CRGB color);
+    
+    void loadCurrentPatternItem();
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
@@ -111,13 +113,19 @@ public:
     
     void buttonClick();
     void buttonLongClick();
-    void loadNextSequence(); // returns true if we could advance (or loop to the start)
-    void loadDefaultSequence();
-    bool loadCurrentSequence();
     
-    // Playing back patterns
+    void loadNextSequence();
+    void loadPriorSequence();
+    void restartCurrentSequence();
+    
+    void loadDefaultSequence();
+    void loadCurrentSequence(); // loads the default sequence if there is no current one..
+    
+    // Playing back patterns in the current sequence
     void nextPatternItem();
     void firstPatternItem();
+    void priorPatternItem();
+    
     void process();
     
     void makeSequenceFlashColor(uint32_t color);
@@ -125,8 +133,13 @@ public:
     int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
     void setLowBatteryWarning();
     inline LEDPatterns *getLEDPatterns() { return &m_ledPatterns; }
+    char *getSequenceNameAtIndex(int index) {
+        if (index >= 0 && index <= _numberOfAvailableSequences)
+            return _sequenceNames[index];
+        else
+            return NULL;
+    }
 #if PATTERN_EDITOR
-    char *getSequenceNameAtIndex(int index) { return _sequenceNames[index]; }
     char *getCurrentSequenceName() { return _sequenceNames[_currentSequenceIndex]; };
     int getCurrentSequenceIndex() { return _currentSequenceIndex; }
     uint32_t getPatternTimePassed() { return millis() - m_timedPatternStartTime - m_timedUsedBeforeCurrentPattern; };

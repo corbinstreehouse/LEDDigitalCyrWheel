@@ -17,6 +17,10 @@
     #warning "DEBUG Code is on!!"
 #endif
 
+
+static char *g_defaultFilename = "DEFAULT"; // We compare to this address to know if it is the default pattern
+static const char *g_sequencePath = "/";
+
 static char *getExtension(char *filename) {
     char *ext = strchr(filename, '.');
     if (ext) {
@@ -142,8 +146,27 @@ void CWPatternSequenceManager::makeSequenceFlashColor(uint32_t color) {
     _patternItems[1].patternEndCondition = CDPatternEndConditionAfterDuration;
 }
 
-void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
-    DEBUG_PRINTF("  loading sequence name: %s\r\n", filename);
+void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
+    ASSERT(name != NULL);
+    ASSERT(g_sequencePath != NULL);
+    
+    int pathLength = strlen(g_sequencePath);
+    int filenameAndPathSize = pathLength + strlen(name) + 1; // NULL terminator
+    // TODO: macro this
+#define STACK_BUFFER_SIZE 64
+    char stackBuffer[STACK_BUFFER_SIZE];
+    char *filename;
+    if (filenameAndPathSize <= STACK_BUFFER_SIZE) {
+        filename = stackBuffer;
+    } else {
+        filename = (char *)malloc(sizeof(char) * filenameAndPathSize);
+    }
+    
+    // Copy in the path to the file
+    strcpy(filename, g_sequencePath);
+    strcpy(&filename[pathLength], name);
+    
+    DEBUG_PRINTF("  loading sequence name: %s at %s\r\n", name, filename);
     File sequenceFile = SD.open(filename);
     DEBUG_PRINTF(" OPENED file: %s\r\n", sequenceFile.name());
     if (!sequenceFile.available()) {
@@ -222,30 +245,46 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *filename) {
         makeSequenceFlashColor(0xFFFF00);
     }
     sequenceFile.close();
+    //
+    if (filename != stackBuffer) {
+        free(filename);
+    }
 }
 
-bool CWPatternSequenceManager::loadCurrentSequence() {
+void CWPatternSequenceManager::loadCurrentSequence() {
+    // Validate state and loop around if needed
+    if (_numberOfAvailableSequences > 0) {
+        if (_currentSequenceIndex >= _numberOfAvailableSequences) {
+            _currentSequenceIndex = 0;
+        } else if (_currentSequenceIndex < 0) {
+            _currentSequenceIndex = _numberOfAvailableSequences - 1;
+        }
+    } else {
+        _currentSequenceIndex = -1;
+    }
+    
     DEBUG_PRINTF("--- loading sequence %d of %d --- \r\n", _currentSequenceIndex, _numberOfAvailableSequences);
     freePatternItems();
 
-    bool result = true;
-    ASSERT(_currentSequenceIndex >= 0 && _currentSequenceIndex < _numberOfAvailableSequences);
-    const char *filename = _sequenceNames[_currentSequenceIndex];
-    if (filename == NULL) {
-        // Load the default
-        loadDefaultSequence();
+    if (_currentSequenceIndex >= 0) {
+        const char *filename = _sequenceNames[_currentSequenceIndex];
+        if (filename == g_defaultFilename) {
+            // Load the default
+            loadDefaultSequence();
+        } else {
+            loadSequenceNamed(filename);
+        }
     } else {
-        loadSequenceNamed(filename);
+        loadDefaultSequence();
     }
 
     firstPatternItem();
-    return result;
 }
 
 bool CWPatternSequenceManager::initSDCard() {
     DEBUG_PRINTLN("initSD Card");
 #if 0 // DEBUG
-    delay(2000);
+//    delay(2000);
     DEBUG_PRINTLN("END: really slow pause... and doing SD init....");
 #endif
 //    pinMode(SD_CARD_CS_PIN, OUTPUT); // Any pin can be used as SS, but it must remain low
@@ -309,7 +348,7 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
     if (result) {
         DEBUG_PRINTLN("opening sd card to read it");
         // Load up the names of available patterns
-        File rootDir = SD.open("/");
+        File rootDir = SD.open(g_sequencePath);
         _numberOfAvailableSequences = 0;
         // Loop twice; first time count, second time allocate and store
         char filenameBuffer[PATH_COMPONENT_BUFFER_LEN];
@@ -328,18 +367,15 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
         
         if (_numberOfAvailableSequences > 0) {
             // Now we can malloc the space to save the names
-            // One last name is for the "NULL" / default sequence
+            // One last name is for the "g_defaultFilename" / default sequence
             _sequenceNames = (char **)malloc(sizeof(char*) * (_numberOfAvailableSequences + 1));
             _currentSequenceIndex = 0;
             rootDir.moveToStartOfDirectory();
             while (rootDir.getNextFilename(filenameBuffer)) {
                 if (isPatternFile(filenameBuffer)) {
-                    // allocate and store the name so we can easily load it later. -- I include the "/" so it is the "full path". + 1 is for the null terminator, and the extra +1 is for the "/"
-                    char *mallocedName = (char *)malloc(sizeof(char) * strlen(filenameBuffer) + 2);
+                    // allocate and store the name so we can easily load it later. --  + 1 is for the null terminator, and the extra +1 is for the "/"
+                    char *mallocedName = (char *)malloc(sizeof(char) * strlen(filenameBuffer) + 1);
                     _sequenceNames[_currentSequenceIndex] = mallocedName;
-
-                    mallocedName[0] = '/';
-                    mallocedName++;
                     strcpy(mallocedName, filenameBuffer);
                     DEBUG_PRINTF("copied name: %s len: %d\r\n", _sequenceNames[_currentSequenceIndex], strlen(_sequenceNames[_currentSequenceIndex]));
                     
@@ -347,14 +383,14 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
                 }
             }
         } else {
-            // NULL default sequence is always there...
+            // leave space for just the default sequence
             _sequenceNames = (char **)malloc(sizeof(char*) * 1);
         }
         
         rootDir.close();
-        // Null sequecne last...
-        _sequenceNames[_numberOfAvailableSequences] = NULL;
         
+        // Always add in the default item
+        _sequenceNames[_numberOfAvailableSequences] = g_defaultFilename;
         _numberOfAvailableSequences++;
         
         if (_shouldRecordData) {
@@ -366,7 +402,7 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
     } else {
         _numberOfAvailableSequences = 1;
         _sequenceNames = (char **)malloc(sizeof(char*) * 1);
-        _sequenceNames[0] = NULL;
+        _sequenceNames[0] = g_defaultFilename;
         
     }
     _currentSequenceIndex = 0;
@@ -395,12 +431,19 @@ bool CWPatternSequenceManager::initOrientation() {
 
 void CWPatternSequenceManager::loadNextSequence() {
     DEBUG_PRINTF("+++ load next sequence (at: %d of %d\r\n", _currentSequenceIndex, _numberOfAvailableSequences);
-    
     if (_numberOfAvailableSequences > 0) {
         _currentSequenceIndex++;
-        if (_currentSequenceIndex >= _numberOfAvailableSequences) {
-            _currentSequenceIndex = 0;
-        }
+        loadCurrentSequence();
+    }
+}
+
+void CWPatternSequenceManager::restartCurrentSequence() {
+    firstPatternItem();
+}
+
+void CWPatternSequenceManager::loadPriorSequence() {
+    if (_numberOfAvailableSequences > 0) {
+        _currentSequenceIndex--;
         loadCurrentSequence();
     }
 }
@@ -507,16 +550,31 @@ void CWPatternSequenceManager::setLowBatteryWarning() {
 }
 
 void CWPatternSequenceManager::firstPatternItem() {
-    _currentPatternItemIndex = -1;
-    nextPatternItem();
+    _currentPatternItemIndex = 0;
+    loadCurrentPatternItem();
+}
+
+void CWPatternSequenceManager::priorPatternItem() {
+    _currentPatternItemIndex--;
+    loadCurrentPatternItem();
 }
 
 void CWPatternSequenceManager::nextPatternItem() {
     _currentPatternItemIndex++;
-    if (_currentPatternItemIndex >= _numberOfPatternItems) {
+    loadCurrentPatternItem();
+}
+
+void CWPatternSequenceManager::loadCurrentPatternItem() {
+    ASSERT(_numberOfPatternItems > 0);
+    
+    // Ensure we always have good data
+    if (_currentPatternItemIndex < 0) {
+        _currentPatternItemIndex = _numberOfPatternItems - 1;
+    } else if (_currentPatternItemIndex >= _numberOfPatternItems) {
+        // Loop around
         _currentPatternItemIndex = 0;
     }
-
+    
     CDPatternItemHeader *itemHeader = getCurrentItemHeader();
     // if we are the first timed pattern, then reset m_timedPatternStartTime and how many timed patterns have gone before us
     if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
@@ -569,6 +627,7 @@ void CWPatternSequenceManager::nextPatternItem() {
     }
     
     m_orientation.setFirstPass(true); // why do I need this??
-
 }
+
+
 
