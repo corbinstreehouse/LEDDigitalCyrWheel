@@ -74,13 +74,13 @@ MCU = $(call PARSE_BOARD,$(BOARD_TAG),build.cpu)
 
 EXTRA_LDFLAGS = -larm_cortexM4l_math -T$(CORE_LIB_PATH)/mk20dx256.ld -mthumb
 
-#TODO: parse these!
+#TODO: parse these! Every time i update teensduiino i'm killinmyself...
 #teensy31.build.option1=-mthumb
 #teensy31.build.option2=-nostdlib
 #teensy31.build.option3=-D__MK20DX256__
-#teensy31.build.option4=-DTEENSYDUINO=117
+#teensy31.build.option4=-DTEENSYDUINO=120
 
-EXTRA_CPPFLAGS = -MMD -DUSB_VID=null -DUSB_PID=null -I$(VARIANT_PATH) -D$(PLATFORM_TAG) -mthumb  -D__MK20DX256__ -DUSB_SERIAL -DLAYOUT_US_ENGLISH -DTEENSYDUINO=117
+EXTRA_CPPFLAGS = -MMD -DUSB_VID=null -DUSB_PID=null -I$(VARIANT_PATH) -D$(PLATFORM_TAG) -mthumb  -D__MK20DX256__ -DUSB_SERIAL -DLAYOUT_US_ENGLISH -DTEENSYDUINO=120
 
 
 # Leonardo USB PID VID
