@@ -24,6 +24,8 @@
 //#include "CDLEDStripPatterns.h"
 #include "LEDDigitalCyrWheel.h"
 
+#include <SPI.h>
+
 #if WIFI
 #include "LEDWebServer.h"
 #endif
@@ -102,6 +104,9 @@ void setup() {
     analogReadRes(16); // 16 bit analog read resolution
 
     Wire.begin();
+    
+    SPI.begin(); // Do this early??
+    
 
     g_button.clickHandler(buttonClicked);
     g_button.holdHandler(buttonHeld);
