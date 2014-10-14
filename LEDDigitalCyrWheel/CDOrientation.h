@@ -30,6 +30,14 @@
 
 #include "SD.h"
 
+#ifndef MAX_COMPONENT_LEN
+    #define MAX_COMPONENT_LEN 12 //dos
+#endif
+
+#ifndef PATH_COMPONENT_BUFFER_LEN
+    #define PATH_COMPONENT_BUFFER_LEN MAX_COMPONENT_LEN+1
+#endif
+
 class CDOrientation {
 private:
     bool _shouldSaveDataToFile;
