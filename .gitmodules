@@ -7,9 +7,6 @@
 [submodule "Libraries/AdaFruit_NeoPixel"]
 	path = Libraries/AdaFruit_NeoPixel
 	url = git@github.com:corbinstreehouse/Adafruit_NeoPixel.git
-[submodule "Libraries/SdFat"]
-	path = Libraries/SdFat
-	url = git@github.com:corbinstreehouse/SdFat.git
 [submodule "Libraries/SD"]
 	path = Libraries/SD
 	url = git@github.com:corbinstreehouse/SD.git
