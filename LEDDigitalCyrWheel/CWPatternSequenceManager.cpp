@@ -409,15 +409,42 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
     loadCurrentSequence();
     
     if (buttonIsDown) {
-        // Go into calibration mode for the accell
+        startCalibration();
+    }
+    
+    return result;
+}
+
+void CWPatternSequenceManager::startRecordingData() {
+    if (!m_orientation.isSavingData()) {
+        m_ledPatterns.flashThreeTimesWithDelay(CRGB::Green, 150);
+        m_orientation.beginSavingData();
+    }
+}
+
+void CWPatternSequenceManager::endRecordingData() {
+    if (m_orientation.isSavingData()) {
+        m_orientation.endSavingData();
+        m_ledPatterns.flashThreeTimesWithDelay(CRGB::Blue, 150);
+    }
+}
+
+void CWPatternSequenceManager::startCalibration() {
+    // Go into calibration mode for the accell
+    if (!m_orientation.isCalibrating()) {
         m_orientation.beginCalibration();
         // Override the default sequence to blink
         m_ledPatterns.setPatternDuration(300);
         m_ledPatterns.setPatternColor(CRGB::Pink);
         m_ledPatterns.setPatternType(LEDPatternTypeBlink);
     }
-    
-    return result;
+}
+
+void CWPatternSequenceManager::endCalibration() {
+    if (m_orientation.isCalibrating()) {
+        m_orientation.endCalibration();
+        firstPatternItem();
+    }
 }
 
 bool CWPatternSequenceManager::initOrientation() {
@@ -467,13 +494,10 @@ void CWPatternSequenceManager::buttonClick() {
 
 void CWPatternSequenceManager::buttonLongClick() {
     if (_shouldRecordData) {
-        if (m_orientation.isSavingData()) {
-            m_ledPatterns.flashThreeTimesWithDelay(CRGB::Blue, 150);
-            m_orientation.endSavingData();
+        if (!m_orientation.isSavingData()) {
+            startRecordingData();
         } else {
-            // Flash green to let me know
-            m_ledPatterns.flashThreeTimesWithDelay(CRGB::Green, 150);
-            m_orientation.beginSavingData();
+            endRecordingData();
         }
     } else {
         if (m_shouldIgnoreButtonClickWhenTimed) {

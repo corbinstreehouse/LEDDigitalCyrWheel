@@ -889,7 +889,7 @@ void CDOrientation::beginSavingData() {
         v++;
         sprintf(_filenameBuffer, "/Gyro%d.txt", v);
         if (v > 1024) {
-            // something's wrong..
+            // Too many files...
             break;
         }
     }

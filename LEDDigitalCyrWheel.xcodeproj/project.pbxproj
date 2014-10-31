@@ -1904,7 +1904,7 @@
 		9DDC61C31938488E00C602BC /* SdVolume.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdVolume.h; sourceTree = "<group>"; };
 		9DDC61C51938488E00C602BC /* DigitalPin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DigitalPin.h; sourceTree = "<group>"; };
 		9DDC61C61938488E00C602BC /* SoftSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftSPI.h; sourceTree = "<group>"; };
-		9DE7EB1819E8CCEF00C1DCB6 /* Adafruit_CC3000.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_CC3000.cpp; sourceTree = "<group>"; };
+		9DE7EB1819E8CCEF00C1DCB6 /* Adafruit_CC3000.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_CC3000.cpp; sourceTree = "<group>"; tabWidth = 2; };
 		9DE7EB1919E8CCEF00C1DCB6 /* Adafruit_CC3000.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_CC3000.h; sourceTree = "<group>"; };
 		9DE7EB1A19E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_CC3000_Server.cpp; sourceTree = "<group>"; };
 		9DE7EB1B19E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_CC3000_Server.h; sourceTree = "<group>"; };

@@ -138,6 +138,35 @@ void commandRestartSequence(WebServer &server, WebServer::ConnectionType type, c
     manager->restartCurrentSequence();
 }
 
+void commandStartCalibration(WebServer &server, WebServer::ConnectionType type, char *url_tail, bool tail_complete) {
+    server.httpSuccess();
+    // We don't send any data back.. we just do it
+    CWPatternSequenceManager *manager = GET_SEQUENCE_MANAGER;
+    manager->startCalibration();
+}
+
+void commandEndCalibration(WebServer &server, WebServer::ConnectionType type, char *url_tail, bool tail_complete) {
+    server.httpSuccess();
+    // TODO: send back the calibration state...
+    CWPatternSequenceManager *manager = GET_SEQUENCE_MANAGER;
+    manager->endCalibration();
+
+}
+
+void commandStartSavingData(WebServer &server, WebServer::ConnectionType type, char *url_tail, bool tail_complete) {
+    server.httpSuccess();
+    // We don't send any data back.. we just do it
+    CWPatternSequenceManager *manager = GET_SEQUENCE_MANAGER;
+    manager->startRecordingData();
+}
+
+void commandEndSavingData(WebServer &server, WebServer::ConnectionType type, char *url_tail, bool tail_complete) {
+    server.httpSuccess();
+    CWPatternSequenceManager *manager = GET_SEQUENCE_MANAGER;
+    manager->endRecordingData();
+    
+}
+
 LEDWebServer::LEDWebServer(const char *urlPrefix, uint16_t port) : WebServer(urlPrefix, port) {
     
 }
@@ -157,6 +186,14 @@ void LEDWebServer::begin() {
     addCommand("command/next_sequence", &commandNextSequence);
     addCommand("command/prior_sequence", &commandPriorSequence);
     addCommand("command/restart_sequence", &commandRestartSequence);
+ 
+    addCommand("command/start_calibration", &commandStartCalibration);
+    addCommand("command/end_calibration", &commandEndCalibration);
+    
+    addCommand("command/start_saving_gyro_data", &commandStartSavingData);
+    addCommand("command/end_saving_gyro_data", &commandEndSavingData);
+    
+//    addCommand("gyro_data_files", )
     
     WebServer::begin();
 }

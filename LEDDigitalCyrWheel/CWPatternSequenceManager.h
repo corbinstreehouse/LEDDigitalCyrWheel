@@ -126,6 +126,12 @@ public:
     void firstPatternItem();
     void priorPatternItem();
     
+    void startCalibration();
+    void endCalibration();
+
+    void startRecordingData();
+    void endRecordingData();
+    
     void process();
     
     void makeSequenceFlashColor(uint32_t color);
