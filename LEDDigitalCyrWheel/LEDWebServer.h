@@ -17,7 +17,7 @@
 
 class CWPatternSequenceManager;
 
-class LEDWebServer : WebServer {
+class LEDWebServer : public WebServer {
 private:
     CWPatternSequenceManager *m_sequenceManager;
     uint32_t m_lastProcessTime;

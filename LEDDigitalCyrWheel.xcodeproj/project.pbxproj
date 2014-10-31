@@ -1912,7 +1912,7 @@
 		9DE7EB1D19E8CCEF00C1DCB6 /* CC3000_MDNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CC3000_MDNS.h; sourceTree = "<group>"; };
 		9DE7EB1E19E8CCEF00C1DCB6 /* ccspi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ccspi.cpp; sourceTree = "<group>"; };
 		9DE7EB1F19E8CCEF00C1DCB6 /* ccspi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ccspi.h; sourceTree = "<group>"; };
-		9DE7EB2219E8CCEF00C1DCB6 /* buildtest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildtest.ino; sourceTree = "<group>"; };
+		9DE7EB2219E8CCEF00C1DCB6 /* buildtest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buildtest.cpp; sourceTree = "<group>"; };
 		9DE7EB2419E8CCEF00C1DCB6 /* ChatServer.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChatServer.ino; sourceTree = "<group>"; };
 		9DE7EB2619E8CCEF00C1DCB6 /* driverpatch_1_12.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = driverpatch_1_12.ino; sourceTree = "<group>"; };
 		9DE7EB2719E8CCEF00C1DCB6 /* driverpatchinc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = driverpatchinc.h; sourceTree = "<group>"; };
@@ -6204,7 +6204,7 @@
 		9DE7EB2119E8CCEF00C1DCB6 /* buildtest */ = {
 			isa = PBXGroup;
 			children = (
-				9DE7EB2219E8CCEF00C1DCB6 /* buildtest.ino */,
+				9DE7EB2219E8CCEF00C1DCB6 /* buildtest.cpp */,
 			);
 			path = buildtest;
 			sourceTree = "<group>";

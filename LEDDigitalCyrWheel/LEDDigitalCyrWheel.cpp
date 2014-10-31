@@ -27,8 +27,18 @@
 #include <SPI.h>
 
 #if WIFI
+#include "Adafruit_CC3000.h"
 #include "LEDWebServer.h"
 #endif
+
+// TODO: make these determined adhoc via iphone app...
+// Your WiFi SSID and password
+#define WLAN_MACHINE_NAME       "CyrWheel"
+#define WLAN_SSID       "MonkeyPlayground"
+#define WLAN_PASS       "unicycle"
+#define WLAN_SECURITY   AFWifiSecurityModeWPA2
+
+
 
 #define IGNORE_VOLTAGE 0 //for hardware testing w/out a battery
 
@@ -107,7 +117,6 @@ void setup() {
     
     SPI.begin(); // Do this early??
     
-
     g_button.clickHandler(buttonClicked);
     g_button.holdHandler(buttonHeld);
 
@@ -138,6 +147,9 @@ void setup() {
     // Start the web server (TODO: optional??)
 #if WIFI
     g_webServer.setSequenceManager(&g_sequenceManager);
+    g_webServer.getWifiManager()->setDNSName(WLAN_MACHINE_NAME);
+    // TODO: better ways to dynamically figure out the wifi configuration...
+    g_webServer.getWifiManager()->setNetworkName(WLAN_SSID, WLAN_PASS, WLAN_SECURITY);
     g_webServer.begin();
 #endif
 }
@@ -153,7 +165,7 @@ bool checkVoltage() {
         lastReadVoltageTime = millis();
         float voltage = readBatteryVoltage();
         if (voltage < LOW_VOLTAGE_VALUE) {
-            DEBUG_PRINTF("---------------------- LOW BATTERY VOLTAGE: %f", voltage);
+            DEBUG_PRINTF("---------------------- LOW BATTERY VOLTAGE: %f\r\n", voltage);
             // half the max brightness...
             g_sequenceManager.setLowBatteryWarning();
             g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Red, 150);
