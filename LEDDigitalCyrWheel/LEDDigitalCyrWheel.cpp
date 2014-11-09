@@ -26,21 +26,8 @@
 
 #include <SPI.h>
 
-#if WIFI
-#include "Adafruit_CC3000.h"
-#include "LEDWebServer.h"
-#endif
 
-// TODO: make these determined adhoc via iphone app...
-// Your WiFi SSID and password
-#define WLAN_MACHINE_NAME       "CyrWheel"
-#define WLAN_SSID       "MonkeyPlayground"
-#define WLAN_PASS       "unicycle"
-#define WLAN_SECURITY   AFWifiSecurityModeWPA2
-
-
-
-#define IGNORE_VOLTAGE 0 //for hardware testing w/out a battery
+#define IGNORE_VOLTAGE 1 //for hardware testing w/out a battery
 
 // 2 cell LiPO, 4.2v each: 8.4v max. 3.0v should be the min, 3.0*2=6v min
 #define LOW_VOLTAGE_VALUE 6.3 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
@@ -66,10 +53,6 @@
 static Button g_button = Button(BUTTON_PIN);
 static CWPatternSequenceManager g_sequenceManager;
 
-#if WIFI
-static LEDWebServer g_webServer("", 80); // Running on port 80
-
-#endif
 
 void buttonClicked(Button &b){
     g_sequenceManager.buttonClick();
@@ -121,18 +104,18 @@ void setup() {
     g_button.holdHandler(buttonHeld);
 
     g_button.process();
-    bool initPassed = g_sequenceManager.init(g_button.isPressed());
-    if (initPassed) {
+    g_sequenceManager.init(g_button.isPressed());
 #if DEBUG
-    #if IGNORE_VOLTAGE
-       // Having this on could be bad..flash red
-        g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Red, 150);
-    #else
-        g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Red);
-    #endif
+#if IGNORE_VOLTAGE
+    // Having this on could be bad..flash red
+    g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Red, 150);
+#else
+    g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Red);
+#endif
 #else
     //    g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Maroon);
 #endif
+    if (g_sequenceManager.getCardInitPassed()) {
         // See if we read more than the default sequence
         if (g_sequenceManager.getNumberOfSequenceNames() > 1) {
             //flashNTimes(0, 255, 0, 1, 150); // Don't do anything..
@@ -144,14 +127,6 @@ void setup() {
         g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Orange, 150);
         g_sequenceManager.loadDefaultSequence();
     }
-    // Start the web server (TODO: optional??)
-#if WIFI
-    g_webServer.setSequenceManager(&g_sequenceManager);
-    g_webServer.getWifiManager()->setDNSName(WLAN_MACHINE_NAME);
-    // TODO: better ways to dynamically figure out the wifi configuration...
-    g_webServer.getWifiManager()->setNetworkName(WLAN_SSID, WLAN_PASS, WLAN_SECURITY);
-    g_webServer.begin();
-#endif
 }
 
 
@@ -182,8 +157,5 @@ void loop() {
     // Don't show the LED pattern if we have too low of voltage...
     if (checkVoltage()) {
         g_sequenceManager.process();
-#if WIFI
-        g_webServer.process();
-#endif
     }
 }

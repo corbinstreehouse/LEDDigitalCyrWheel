@@ -59,7 +59,7 @@ typedef struct  __attribute__((__packed__)) {
     uint32_t _unused:31;
     
     union {
-        const char *dataFilename;  // A reference to the string....we don't own it!
+//        const char *dataFilename;  // A reference to the string....we don't own it! // NO longer needing this..
         uint64_t __unused_size; // creates 64-bits pointer size; so I can use the same struct size in 32-bit and 64-bit // 8
     };
 

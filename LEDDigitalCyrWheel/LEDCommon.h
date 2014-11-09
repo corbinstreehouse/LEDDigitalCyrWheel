@@ -13,8 +13,10 @@
 
 #if PATTERN_EDITOR
     #define USE_ADAFRUIT 0
+    #define WIFI 0
 #else
     #define USE_ADAFRUIT 1// 0 uses fast LED
+    #define WIFI 1
 #endif
 
 #if DEBUG
@@ -27,6 +29,9 @@
 #endif
 
 #endif
+
+#define SD_CARD_SUPPORT 1
+
 
 // Defined here so I can use it in multiple places more easily
 #define STRIP_PIN 2 // 14 // Use pin 2 so Octo works, and pin 14 for a secondary strip (opposite side) to do patterns
@@ -49,6 +54,11 @@
         #define ASSERT(a) ((void)0)
     #endif
 #endif
+
+#define MIN_BRIGHTNESS 64 // abitrary..
+#define MAX_BRIGHTNESS 200 // usually 128
+#define DEFAULT_BRIGHTNESS 128
+
 
 
 /*

@@ -11,7 +11,8 @@
 
 #define WEBDUINO_FAVICON_DATA ""
 #define WEBDUINO_COMMANDS_COUNT 14
-#define WEBDUINO_OUTPUT_BUFFER_SIZE 64
+#define WEBDUINO_OUTPUT_BUFFER_SIZE 64 // Needed to store the content boundary
+#define WEBDUINO_URL_PATH_COMMAND_LENGTH 16 // normally 8
 
 #include "WebServer.h"
 
@@ -31,9 +32,6 @@ public:
     
     void process();
     
-    
 };
-
-
 
 #endif /* defined(__LEDDigitalCyrWheel__LEDWebServer__) */

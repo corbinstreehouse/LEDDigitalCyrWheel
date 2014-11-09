@@ -28,6 +28,10 @@ void CDOrientation::beginCalibration() {
 void CDOrientation::endCalibration() {
 }
 
+void CDOrientation::cancelCalibration() {
+}
+
+
 double CDOrientation::getAccelX() {
     return 0;
 }
@@ -637,15 +641,15 @@ bool CDOrientation::initAccel() {
                 _compass.writeReg(LSM303::CTRL_REG4_A, 0x30); // 8 g full scale: FS = 11
         }
         // values I read from Calibrate for the given gain setting; I could have a program/mode to read/write these
-//        EEPROM.write(MIN_MAX_IS_SAVED_EEPROM_ADDRESS, false); // corbin: flash the chip with this once on new chips so they don't have random data in them
+//        EEPROM.write(EEPROM_MIN_MAX_IS_SAVED_ADDRESS, false); // corbin: flash the chip with this once on new chips so they don't have random data in them
         
-        bool isMinMaxSaved = EEPROM.read(MIN_MAX_IS_SAVED_EEPROM_ADDRESS) != 0;
+        bool isMinMaxSaved = EEPROM.read(EEPROM_MIN_MAX_IS_SAVED_ADDRESS) != 0;
         if (isMinMaxSaved) {
             DEBUG_PRINTLN("loading saved compass calibration values");
             LSM303::vector<int16_t> savedMin;
             LSM303::vector<int16_t> savedMax;
             EEPROM_Read(MIN_EEPROM_ADDRESS, savedMin);
-            EEPROM_Read(MAX_EEPROM_ADDRESS, savedMax);
+            EEPROM_Read(EEPROM_ACCELEROMETER_MAX_ADDRESS, savedMax);
             // Validate them before using them
             if (IS_VALID_MIN_COMPASS_VALUE(savedMin.x) && IS_VALID_MIN_COMPASS_VALUE(savedMin.y) && IS_VALID_MIN_COMPASS_VALUE(savedMin.z)) {
                 _compass.m_min = savedMin;
@@ -835,18 +839,24 @@ void CDOrientation::_calibrate() {
         _calibrationMax.z = max(_calibrationMax.z, _compass.m.z);
     }
 
-    DEBUG_PRINTF("  compass.m_min.x = %+6d; compass.m_min.y = %+6d; compass.m_min.z = %+6d; \r\n  compass.m_max.x = %+6d; compass.m_max.y = %+6d; compass.m_max.z = %+6d;\r\n\r\n", _calibrationMin.x, _calibrationMin.y, _calibrationMin.z, _calibrationMax.x, _calibrationMax.y, _calibrationMax.z);
+   // DEBUG_PRINTF("  compass.m_min.x = %+6d; compass.m_min.y = %+6d; compass.m_min.z = %+6d; \r\n  compass.m_max.x = %+6d; compass.m_max.y = %+6d; compass.m_max.z = %+6d;\r\n\r\n", _calibrationMin.x, _calibrationMin.y, _calibrationMin.z, _calibrationMax.x, _calibrationMax.y, _calibrationMax.z);
+}
+
+void CDOrientation::cancelCalibration() {
+    DEBUG_PRINTLN("cancel calibration called");
+    _calibrating = false;
 }
 
 void CDOrientation::endCalibration() {
+    DEBUG_PRINTLN("endCalibration called");
     _calibrating = false;
     // TODO: maybe average it with the last calibration I did???
     
     _compass.m_min = _calibrationMin;
     _compass.m_max = _calibrationMax;
-    EEPROM.write(MIN_MAX_IS_SAVED_EEPROM_ADDRESS, true);
+    EEPROM.write(EEPROM_MIN_MAX_IS_SAVED_ADDRESS, true);
     EEPROM_Write(MIN_EEPROM_ADDRESS, _calibrationMin);
-    EEPROM_Write(MAX_EEPROM_ADDRESS, _calibrationMax);
+    EEPROM_Write(EEPROM_ACCELEROMETER_MAX_ADDRESS, _calibrationMax);
 }
 
 double rawAccelToG(int16_t a) {

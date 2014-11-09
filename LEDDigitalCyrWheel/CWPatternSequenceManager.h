@@ -13,10 +13,15 @@
 #include "CDPatternData.h"
 
 #include "Arduino.h"
+
+#if SD_CARD_SUPPORT
 #include "SD.h"
+#endif
 
 #include "CDOrientation.h"
 #include "LEDCommon.h"
+#include "LEDPatterns.h"
+
 
 #if PATTERN_EDITOR
     #include "CDSimulatorLEDPatterns.h"
@@ -34,7 +39,16 @@
         #include "FastLEDPatterns.h"
         #define LED_PATTERNS_CLASS FastLEDPatterns
     #endif
+
 #endif
+
+#if WIFI
+#include "Adafruit_CC3000.h"
+#include "LEDWebServer.h"
+#endif
+
+// TODO: make this generic
+#define WLAN_MACHINE_NAME "cyrwheel"
 
 class CWPatternSequenceManager {
 private:
@@ -53,15 +67,28 @@ private:
 
     uint8_t m_savedBrightness;
     
-    uint32_t _shouldRecordData:1;
+    uint32_t m_shouldRecordData:1;
     uint32_t m_shouldIgnoreButtonClickWhenTimed:1;
-    uint32_t __reserved:31;
+    uint32_t m_wifiEnabled:1;
+    uint32_t m_sdCardWorks:1;
+    uint32_t __reserved:28;
+    
+    // State that we read on startup
+    uint8_t m_shouldStartWifiAutomatically;
     
     LED_PATTERNS_CLASS m_ledPatterns;
     CDOrientation m_orientation;
 
     uint32_t m_timedPatternStartTime; // In milliseconds; the time that all the current run of timed patterns starts, so we can accurately generate a full duration for all of them
     uint32_t m_timedUsedBeforeCurrentPattern;
+    
+#if WIFI
+    LEDWebServer m_webServer; // Running on port 80
+#endif
+    
+    bool processWebServer();
+    void loadSettings();
+    void initWifi();
     
     bool initSDCard();
     bool initOrientation();
@@ -109,7 +136,7 @@ public:
     ~CWPatternSequenceManager();
     void setCyrWheelView(CDCyrWheelView *view); // Binding..
 #endif
-    bool init(bool buttonIsDown);
+    void init(bool buttonIsDown);
     
     void buttonClick();
     void buttonLongClick();
@@ -117,6 +144,11 @@ public:
     void loadNextSequence();
     void loadPriorSequence();
     void restartCurrentSequence();
+    void setCurrentSequenceAtIndex(int index);
+    bool deleteSequenceAtIndex(int index);
+    bool getCardInitPassed() { return m_sdCardWorks; }
+    
+    void loadSequencesFromDisk();
     
     void loadDefaultSequence();
     void loadCurrentSequence(); // loads the default sequence if there is no current one..
@@ -128,6 +160,7 @@ public:
     
     void startCalibration();
     void endCalibration();
+    void cancelCalibration();
 
     void startRecordingData();
     void endRecordingData();
@@ -135,6 +168,8 @@ public:
     void process();
     
     void makeSequenceFlashColor(uint32_t color);
+    
+    const char *getSequencePath();
     
     int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
     void setLowBatteryWarning();
@@ -145,7 +180,8 @@ public:
         else
             return NULL;
     }
-#if PATTERN_EDITOR
+    int getIndexOfSequenceName(char *name);
+    bool isSequenceEditableAtIndex(int index);
     char *getCurrentSequenceName() { return _sequenceNames[_currentSequenceIndex]; };
     int getCurrentSequenceIndex() { return _currentSequenceIndex; }
     uint32_t getPatternTimePassed() { return millis() - m_timedPatternStartTime - m_timedUsedBeforeCurrentPattern; };
@@ -162,7 +198,6 @@ public:
             return NULL;
         }
     }
-#endif
 };
 
 

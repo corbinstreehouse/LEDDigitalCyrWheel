@@ -1522,12 +1522,6 @@
 		9DDC60061938488D00C602BC /* LSM303.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LSM303.cpp; sourceTree = "<group>"; };
 		9DDC60071938488D00C602BC /* LSM303.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LSM303.h; sourceTree = "<group>"; };
 		9DDC60081938488D00C602BC /* README.textile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.textile; sourceTree = "<group>"; };
-		9DDC600C1938488D00C602BC /* CardInfo.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CardInfo.ino; sourceTree = "<group>"; };
-		9DDC600E1938488D00C602BC /* Datalogger.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Datalogger.ino; sourceTree = "<group>"; };
-		9DDC60101938488D00C602BC /* DumpFile.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DumpFile.ino; sourceTree = "<group>"; };
-		9DDC60121938488D00C602BC /* Files.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Files.ino; sourceTree = "<group>"; };
-		9DDC60141938488D00C602BC /* listfiles.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = listfiles.ino; sourceTree = "<group>"; };
-		9DDC60161938488D00C602BC /* ReadWrite.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadWrite.ino; sourceTree = "<group>"; };
 		9DDC60171938488D00C602BC /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
 		9DDC60181938488D00C602BC /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
 		9DDC60191938488D00C602BC /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
@@ -1908,25 +1902,10 @@
 		9DE7EB1919E8CCEF00C1DCB6 /* Adafruit_CC3000.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_CC3000.h; sourceTree = "<group>"; };
 		9DE7EB1A19E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_CC3000_Server.cpp; sourceTree = "<group>"; };
 		9DE7EB1B19E8CCEF00C1DCB6 /* Adafruit_CC3000_Server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_CC3000_Server.h; sourceTree = "<group>"; };
-		9DE7EB1C19E8CCEF00C1DCB6 /* CC3000_MDNS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CC3000_MDNS.cpp; sourceTree = "<group>"; };
+		9DE7EB1C19E8CCEF00C1DCB6 /* CC3000_MDNS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; path = CC3000_MDNS.cpp; sourceTree = "<group>"; tabWidth = 2; };
 		9DE7EB1D19E8CCEF00C1DCB6 /* CC3000_MDNS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CC3000_MDNS.h; sourceTree = "<group>"; };
 		9DE7EB1E19E8CCEF00C1DCB6 /* ccspi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ccspi.cpp; sourceTree = "<group>"; };
 		9DE7EB1F19E8CCEF00C1DCB6 /* ccspi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ccspi.h; sourceTree = "<group>"; };
-		9DE7EB2219E8CCEF00C1DCB6 /* buildtest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = buildtest.cpp; sourceTree = "<group>"; };
-		9DE7EB2419E8CCEF00C1DCB6 /* ChatServer.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChatServer.ino; sourceTree = "<group>"; };
-		9DE7EB2619E8CCEF00C1DCB6 /* driverpatch_1_12.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = driverpatch_1_12.ino; sourceTree = "<group>"; };
-		9DE7EB2719E8CCEF00C1DCB6 /* driverpatchinc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = driverpatchinc.h; sourceTree = "<group>"; };
-		9DE7EB2919E8CCEF00C1DCB6 /* driverpatch_1_13.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = driverpatch_1_13.ino; sourceTree = "<group>"; };
-		9DE7EB2A19E8CCEF00C1DCB6 /* driverpatchinc_1_13.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = driverpatchinc_1_13.h; sourceTree = "<group>"; };
-		9DE7EB2C19E8CCEF00C1DCB6 /* EchoServer.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EchoServer.ino; sourceTree = "<group>"; };
-		9DE7EB2E19E8CCEF00C1DCB6 /* GeoLocation.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeoLocation.ino; sourceTree = "<group>"; };
-		9DE7EB3019E8CCEF00C1DCB6 /* HTTPServer.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTTPServer.ino; sourceTree = "<group>"; };
-		9DE7EB3219E8CCEF00C1DCB6 /* InternetTime.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = InternetTime.ino; sourceTree = "<group>"; };
-		9DE7EB3419E8CCEF00C1DCB6 /* ntpTest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ntpTest.ino; sourceTree = "<group>"; };
-		9DE7EB3619E8CCEF00C1DCB6 /* SendTweet.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SendTweet.ino; sourceTree = "<group>"; };
-		9DE7EB3819E8CCEF00C1DCB6 /* SmartConfigCreate.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmartConfigCreate.ino; sourceTree = "<group>"; };
-		9DE7EB3A19E8CCEF00C1DCB6 /* SmartConfigReconnect.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SmartConfigReconnect.ino; sourceTree = "<group>"; };
-		9DE7EB3C19E8CCEF00C1DCB6 /* WebClient.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebClient.ino; sourceTree = "<group>"; };
 		9DE7EB3D19E8CCEF00C1DCB6 /* license.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
 		9DE7EB3E19E8CCEF00C1DCB6 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		9DE7EB4019E8CCEF00C1DCB6 /* cc3000_common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cc3000_common.cpp; sourceTree = "<group>"; };
@@ -2038,46 +2017,6 @@
 		9DE7EC5719EB257400C1DCB6 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		9DE7EC7C19EB6EFF00C1DCB6 /* ArduinoStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArduinoStream.h; sourceTree = "<group>"; };
 		9DE7EC7D19EB6EFF00C1DCB6 /* bufstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bufstream.h; sourceTree = "<group>"; };
-		9DE7EC8119EB6EFF00C1DCB6 /* AnalogLogger.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalogLogger.ino; sourceTree = "<group>"; };
-		9DE7EC8319EB6EFF00C1DCB6 /* append.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = append.ino; sourceTree = "<group>"; };
-		9DE7EC8519EB6EFF00C1DCB6 /* average.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = average.ino; sourceTree = "<group>"; };
-		9DE7EC8719EB6EFF00C1DCB6 /* benchSD.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = benchSD.ino; sourceTree = "<group>"; };
-		9DE7EC8919EB6EFF00C1DCB6 /* bufstream.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bufstream.ino; sourceTree = "<group>"; };
-		9DE7EC8B19EB6EFF00C1DCB6 /* eventlog.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = eventlog.ino; sourceTree = "<group>"; };
-		9DE7EC8D19EB6EFF00C1DCB6 /* fgetsRewrite.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fgetsRewrite.ino; sourceTree = "<group>"; };
-		9DE7EC8F19EB6EFF00C1DCB6 /* HelloWorld.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HelloWorld.ino; sourceTree = "<group>"; };
-		9DE7EC9119EB6EFF00C1DCB6 /* MiniSerial.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MiniSerial.ino; sourceTree = "<group>"; };
-		9DE7EC9319EB6EFF00C1DCB6 /* PrintBenchmarkSD.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PrintBenchmarkSD.ino; sourceTree = "<group>"; };
-		9DE7EC9519EB6EFF00C1DCB6 /* readlog.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readlog.ino; sourceTree = "<group>"; };
-		9DE7EC9619EB6EFF00C1DCB6 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
-		9DE7EC9819EB6EFF00C1DCB6 /* SD_Size.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SD_Size.ino; sourceTree = "<group>"; };
-		9DE7EC9A19EB6EFF00C1DCB6 /* SdFatSize.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SdFatSize.ino; sourceTree = "<group>"; };
-		9DE7EC9C19EB6EFF00C1DCB6 /* TestMkdir.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TestMkdir.ino; sourceTree = "<group>"; };
-		9DE7EC9E19EB6EFF00C1DCB6 /* TestRmdir.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TestRmdir.ino; sourceTree = "<group>"; };
-		9DE7ECA019EB6EFF00C1DCB6 /* AnalogBinLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnalogBinLogger.h; sourceTree = "<group>"; };
-		9DE7ECA119EB6EFF00C1DCB6 /* AnalogBinLogger.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalogBinLogger.ino; sourceTree = "<group>"; };
-		9DE7ECA319EB6EFF00C1DCB6 /* bench.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bench.ino; sourceTree = "<group>"; };
-		9DE7ECA519EB6EFF00C1DCB6 /* cin_cout.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cin_cout.ino; sourceTree = "<group>"; };
-		9DE7ECA719EB6EFF00C1DCB6 /* dataLogger.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dataLogger.ino; sourceTree = "<group>"; };
-		9DE7ECA919EB6EFF00C1DCB6 /* directoryFunctions.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = directoryFunctions.ino; sourceTree = "<group>"; };
-		9DE7ECAB19EB6EFF00C1DCB6 /* fgets.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = fgets.ino; sourceTree = "<group>"; };
-		9DE7ECAD19EB6EFF00C1DCB6 /* formatting.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = formatting.ino; sourceTree = "<group>"; };
-		9DE7ECAF19EB6EFF00C1DCB6 /* getline.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = getline.ino; sourceTree = "<group>"; };
-		9DE7ECB119EB6EFF00C1DCB6 /* LowLatencyLogger.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LowLatencyLogger.ino; sourceTree = "<group>"; };
-		9DE7ECB219EB6EFF00C1DCB6 /* UserDataType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDataType.h; sourceTree = "<group>"; };
-		9DE7ECB419EB6EFF00C1DCB6 /* OpenNext.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OpenNext.ino; sourceTree = "<group>"; };
-		9DE7ECB619EB6EFF00C1DCB6 /* PrintBenchmark.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PrintBenchmark.ino; sourceTree = "<group>"; };
-		9DE7ECB819EB6EFF00C1DCB6 /* QuickStart.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = QuickStart.ino; sourceTree = "<group>"; };
-		9DE7ECBA19EB6EFF00C1DCB6 /* RawWrite.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RawWrite.ino; sourceTree = "<group>"; };
-		9DE7ECBC19EB6EFF00C1DCB6 /* readCSV.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readCSV.ino; sourceTree = "<group>"; };
-		9DE7ECBE19EB6EFF00C1DCB6 /* ReadWriteSdFat.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadWriteSdFat.ino; sourceTree = "<group>"; };
-		9DE7ECC019EB6EFF00C1DCB6 /* rename.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rename.ino; sourceTree = "<group>"; };
-		9DE7ECC219EB6EFF00C1DCB6 /* SdFormatter.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SdFormatter.ino; sourceTree = "<group>"; };
-		9DE7ECC419EB6EFF00C1DCB6 /* SdInfo.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SdInfo.ino; sourceTree = "<group>"; };
-		9DE7ECC619EB6EFF00C1DCB6 /* StdioBench.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StdioBench.ino; sourceTree = "<group>"; };
-		9DE7ECC819EB6EFF00C1DCB6 /* StressTest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StressTest.ino; sourceTree = "<group>"; };
-		9DE7ECCA19EB6EFF00C1DCB6 /* Timestamp.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Timestamp.ino; sourceTree = "<group>"; };
-		9DE7ECCC19EB6EFF00C1DCB6 /* TwoCards.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TwoCards.ino; sourceTree = "<group>"; };
 		9DE7ECCD19EB6EFF00C1DCB6 /* ios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ios.h; sourceTree = "<group>"; };
 		9DE7ECCE19EB6EFF00C1DCB6 /* iostream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iostream.h; sourceTree = "<group>"; };
 		9DE7ECCF19EB6EFF00C1DCB6 /* istream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = istream.cpp; sourceTree = "<group>"; };
@@ -5269,7 +5208,6 @@
 		9DDC60091938488D00C602BC /* SD */ = {
 			isa = PBXGroup;
 			children = (
-				9DDC600A1938488D00C602BC /* examples */,
 				9DDC60171938488D00C602BC /* File.cpp */,
 				9DDC60181938488D00C602BC /* keywords.txt */,
 				9DDC60191938488D00C602BC /* README.txt */,
@@ -5280,67 +5218,6 @@
 			name = SD;
 			path = Libraries/SD;
 			sourceTree = SOURCE_ROOT;
-		};
-		9DDC600A1938488D00C602BC /* examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DDC600B1938488D00C602BC /* CardInfo */,
-				9DDC600D1938488D00C602BC /* Datalogger */,
-				9DDC600F1938488D00C602BC /* DumpFile */,
-				9DDC60111938488D00C602BC /* Files */,
-				9DDC60131938488D00C602BC /* listfiles */,
-				9DDC60151938488D00C602BC /* ReadWrite */,
-			);
-			path = examples;
-			sourceTree = "<group>";
-		};
-		9DDC600B1938488D00C602BC /* CardInfo */ = {
-			isa = PBXGroup;
-			children = (
-				9DDC600C1938488D00C602BC /* CardInfo.ino */,
-			);
-			path = CardInfo;
-			sourceTree = "<group>";
-		};
-		9DDC600D1938488D00C602BC /* Datalogger */ = {
-			isa = PBXGroup;
-			children = (
-				9DDC600E1938488D00C602BC /* Datalogger.ino */,
-			);
-			path = Datalogger;
-			sourceTree = "<group>";
-		};
-		9DDC600F1938488D00C602BC /* DumpFile */ = {
-			isa = PBXGroup;
-			children = (
-				9DDC60101938488D00C602BC /* DumpFile.ino */,
-			);
-			path = DumpFile;
-			sourceTree = "<group>";
-		};
-		9DDC60111938488D00C602BC /* Files */ = {
-			isa = PBXGroup;
-			children = (
-				9DDC60121938488D00C602BC /* Files.ino */,
-			);
-			path = Files;
-			sourceTree = "<group>";
-		};
-		9DDC60131938488D00C602BC /* listfiles */ = {
-			isa = PBXGroup;
-			children = (
-				9DDC60141938488D00C602BC /* listfiles.ino */,
-			);
-			path = listfiles;
-			sourceTree = "<group>";
-		};
-		9DDC60151938488D00C602BC /* ReadWrite */ = {
-			isa = PBXGroup;
-			children = (
-				9DDC60161938488D00C602BC /* ReadWrite.ino */,
-			);
-			path = ReadWrite;
-			sourceTree = "<group>";
 		};
 		9DDC601C1938488D00C602BC /* SdFat */ = {
 			isa = PBXGroup;
@@ -6172,7 +6049,6 @@
 				9DE7EB1D19E8CCEF00C1DCB6 /* CC3000_MDNS.h */,
 				9DE7EB1E19E8CCEF00C1DCB6 /* ccspi.cpp */,
 				9DE7EB1F19E8CCEF00C1DCB6 /* ccspi.h */,
-				9DE7EB2019E8CCEF00C1DCB6 /* examples */,
 				9DE7EB3D19E8CCEF00C1DCB6 /* license.txt */,
 				9DE7EB3E19E8CCEF00C1DCB6 /* README.txt */,
 				9DE7EB3F19E8CCEF00C1DCB6 /* utility */,
@@ -6180,132 +6056,6 @@
 			name = Adafruit_CC3000_Library;
 			path = Libraries/Adafruit_CC3000_Library;
 			sourceTree = SOURCE_ROOT;
-		};
-		9DE7EB2019E8CCEF00C1DCB6 /* examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB2119E8CCEF00C1DCB6 /* buildtest */,
-				9DE7EB2319E8CCEF00C1DCB6 /* ChatServer */,
-				9DE7EB2519E8CCEF00C1DCB6 /* driverpatch_1_12 */,
-				9DE7EB2819E8CCEF00C1DCB6 /* driverpatch_1_13 */,
-				9DE7EB2B19E8CCEF00C1DCB6 /* EchoServer */,
-				9DE7EB2D19E8CCEF00C1DCB6 /* GeoLocation */,
-				9DE7EB2F19E8CCEF00C1DCB6 /* HTTPServer */,
-				9DE7EB3119E8CCEF00C1DCB6 /* InternetTime */,
-				9DE7EB3319E8CCEF00C1DCB6 /* ntpTest */,
-				9DE7EB3519E8CCEF00C1DCB6 /* SendTweet */,
-				9DE7EB3719E8CCEF00C1DCB6 /* SmartConfigCreate */,
-				9DE7EB3919E8CCEF00C1DCB6 /* SmartConfigReconnect */,
-				9DE7EB3B19E8CCEF00C1DCB6 /* WebClient */,
-			);
-			path = examples;
-			sourceTree = "<group>";
-		};
-		9DE7EB2119E8CCEF00C1DCB6 /* buildtest */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB2219E8CCEF00C1DCB6 /* buildtest.cpp */,
-			);
-			path = buildtest;
-			sourceTree = "<group>";
-		};
-		9DE7EB2319E8CCEF00C1DCB6 /* ChatServer */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB2419E8CCEF00C1DCB6 /* ChatServer.ino */,
-			);
-			path = ChatServer;
-			sourceTree = "<group>";
-		};
-		9DE7EB2519E8CCEF00C1DCB6 /* driverpatch_1_12 */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB2619E8CCEF00C1DCB6 /* driverpatch_1_12.ino */,
-				9DE7EB2719E8CCEF00C1DCB6 /* driverpatchinc.h */,
-			);
-			path = driverpatch_1_12;
-			sourceTree = "<group>";
-		};
-		9DE7EB2819E8CCEF00C1DCB6 /* driverpatch_1_13 */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB2919E8CCEF00C1DCB6 /* driverpatch_1_13.ino */,
-				9DE7EB2A19E8CCEF00C1DCB6 /* driverpatchinc_1_13.h */,
-			);
-			path = driverpatch_1_13;
-			sourceTree = "<group>";
-		};
-		9DE7EB2B19E8CCEF00C1DCB6 /* EchoServer */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB2C19E8CCEF00C1DCB6 /* EchoServer.ino */,
-			);
-			path = EchoServer;
-			sourceTree = "<group>";
-		};
-		9DE7EB2D19E8CCEF00C1DCB6 /* GeoLocation */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB2E19E8CCEF00C1DCB6 /* GeoLocation.ino */,
-			);
-			path = GeoLocation;
-			sourceTree = "<group>";
-		};
-		9DE7EB2F19E8CCEF00C1DCB6 /* HTTPServer */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB3019E8CCEF00C1DCB6 /* HTTPServer.ino */,
-			);
-			path = HTTPServer;
-			sourceTree = "<group>";
-		};
-		9DE7EB3119E8CCEF00C1DCB6 /* InternetTime */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB3219E8CCEF00C1DCB6 /* InternetTime.ino */,
-			);
-			path = InternetTime;
-			sourceTree = "<group>";
-		};
-		9DE7EB3319E8CCEF00C1DCB6 /* ntpTest */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB3419E8CCEF00C1DCB6 /* ntpTest.ino */,
-			);
-			path = ntpTest;
-			sourceTree = "<group>";
-		};
-		9DE7EB3519E8CCEF00C1DCB6 /* SendTweet */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB3619E8CCEF00C1DCB6 /* SendTweet.ino */,
-			);
-			path = SendTweet;
-			sourceTree = "<group>";
-		};
-		9DE7EB3719E8CCEF00C1DCB6 /* SmartConfigCreate */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB3819E8CCEF00C1DCB6 /* SmartConfigCreate.ino */,
-			);
-			path = SmartConfigCreate;
-			sourceTree = "<group>";
-		};
-		9DE7EB3919E8CCEF00C1DCB6 /* SmartConfigReconnect */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB3A19E8CCEF00C1DCB6 /* SmartConfigReconnect.ino */,
-			);
-			path = SmartConfigReconnect;
-			sourceTree = "<group>";
-		};
-		9DE7EB3B19E8CCEF00C1DCB6 /* WebClient */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EB3C19E8CCEF00C1DCB6 /* WebClient.ino */,
-			);
-			path = WebClient;
-			sourceTree = "<group>";
 		};
 		9DE7EB3F19E8CCEF00C1DCB6 /* utility */ = {
 			isa = PBXGroup;
@@ -6504,7 +6254,6 @@
 			children = (
 				9DE7EC7C19EB6EFF00C1DCB6 /* ArduinoStream.h */,
 				9DE7EC7D19EB6EFF00C1DCB6 /* bufstream.h */,
-				9DE7EC7E19EB6EFF00C1DCB6 /* examples */,
 				9DE7ECCD19EB6EFF00C1DCB6 /* ios.h */,
 				9DE7ECCE19EB6EFF00C1DCB6 /* iostream.h */,
 				9DE7ECCF19EB6EFF00C1DCB6 /* istream.cpp */,
@@ -6545,357 +6294,6 @@
 			name = SdFat;
 			path = Libraries/SdFat/SdFat;
 			sourceTree = SOURCE_ROOT;
-		};
-		9DE7EC7E19EB6EFF00C1DCB6 /* examples */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC7F19EB6EFF00C1DCB6 /* #attic */,
-				9DE7EC9F19EB6EFF00C1DCB6 /* AnalogBinLogger */,
-				9DE7ECA219EB6EFF00C1DCB6 /* bench */,
-				9DE7ECA419EB6EFF00C1DCB6 /* cin_cout */,
-				9DE7ECA619EB6EFF00C1DCB6 /* dataLogger */,
-				9DE7ECA819EB6EFF00C1DCB6 /* directoryFunctions */,
-				9DE7ECAA19EB6EFF00C1DCB6 /* fgets */,
-				9DE7ECAC19EB6EFF00C1DCB6 /* formatting */,
-				9DE7ECAE19EB6EFF00C1DCB6 /* getline */,
-				9DE7ECB019EB6EFF00C1DCB6 /* LowLatencyLogger */,
-				9DE7ECB319EB6EFF00C1DCB6 /* OpenNext */,
-				9DE7ECB519EB6EFF00C1DCB6 /* PrintBenchmark */,
-				9DE7ECB719EB6EFF00C1DCB6 /* QuickStart */,
-				9DE7ECB919EB6EFF00C1DCB6 /* RawWrite */,
-				9DE7ECBB19EB6EFF00C1DCB6 /* readCSV */,
-				9DE7ECBD19EB6EFF00C1DCB6 /* ReadWriteSdFat */,
-				9DE7ECBF19EB6EFF00C1DCB6 /* rename */,
-				9DE7ECC119EB6EFF00C1DCB6 /* SdFormatter */,
-				9DE7ECC319EB6EFF00C1DCB6 /* SdInfo */,
-				9DE7ECC519EB6EFF00C1DCB6 /* StdioBench */,
-				9DE7ECC719EB6EFF00C1DCB6 /* StressTest */,
-				9DE7ECC919EB6EFF00C1DCB6 /* Timestamp */,
-				9DE7ECCB19EB6EFF00C1DCB6 /* TwoCards */,
-			);
-			path = examples;
-			sourceTree = "<group>";
-		};
-		9DE7EC7F19EB6EFF00C1DCB6 /* #attic */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC8019EB6EFF00C1DCB6 /* AnalogLogger */,
-				9DE7EC8219EB6EFF00C1DCB6 /* append */,
-				9DE7EC8419EB6EFF00C1DCB6 /* average */,
-				9DE7EC8619EB6EFF00C1DCB6 /* benchSD */,
-				9DE7EC8819EB6EFF00C1DCB6 /* bufstream */,
-				9DE7EC8A19EB6EFF00C1DCB6 /* eventlog */,
-				9DE7EC8C19EB6EFF00C1DCB6 /* fgetsRewrite */,
-				9DE7EC8E19EB6EFF00C1DCB6 /* HelloWorld */,
-				9DE7EC9019EB6EFF00C1DCB6 /* MiniSerial */,
-				9DE7EC9219EB6EFF00C1DCB6 /* PrintBenchmarkSD */,
-				9DE7EC9419EB6EFF00C1DCB6 /* readlog */,
-				9DE7EC9619EB6EFF00C1DCB6 /* readme.txt */,
-				9DE7EC9719EB6EFF00C1DCB6 /* SD_Size */,
-				9DE7EC9919EB6EFF00C1DCB6 /* SdFatSize */,
-				9DE7EC9B19EB6EFF00C1DCB6 /* TestMkdir */,
-				9DE7EC9D19EB6EFF00C1DCB6 /* TestRmdir */,
-			);
-			path = "#attic";
-			sourceTree = "<group>";
-		};
-		9DE7EC8019EB6EFF00C1DCB6 /* AnalogLogger */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC8119EB6EFF00C1DCB6 /* AnalogLogger.ino */,
-			);
-			path = AnalogLogger;
-			sourceTree = "<group>";
-		};
-		9DE7EC8219EB6EFF00C1DCB6 /* append */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC8319EB6EFF00C1DCB6 /* append.ino */,
-			);
-			path = append;
-			sourceTree = "<group>";
-		};
-		9DE7EC8419EB6EFF00C1DCB6 /* average */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC8519EB6EFF00C1DCB6 /* average.ino */,
-			);
-			path = average;
-			sourceTree = "<group>";
-		};
-		9DE7EC8619EB6EFF00C1DCB6 /* benchSD */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC8719EB6EFF00C1DCB6 /* benchSD.ino */,
-			);
-			path = benchSD;
-			sourceTree = "<group>";
-		};
-		9DE7EC8819EB6EFF00C1DCB6 /* bufstream */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC8919EB6EFF00C1DCB6 /* bufstream.ino */,
-			);
-			path = bufstream;
-			sourceTree = "<group>";
-		};
-		9DE7EC8A19EB6EFF00C1DCB6 /* eventlog */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC8B19EB6EFF00C1DCB6 /* eventlog.ino */,
-			);
-			path = eventlog;
-			sourceTree = "<group>";
-		};
-		9DE7EC8C19EB6EFF00C1DCB6 /* fgetsRewrite */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC8D19EB6EFF00C1DCB6 /* fgetsRewrite.ino */,
-			);
-			path = fgetsRewrite;
-			sourceTree = "<group>";
-		};
-		9DE7EC8E19EB6EFF00C1DCB6 /* HelloWorld */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC8F19EB6EFF00C1DCB6 /* HelloWorld.ino */,
-			);
-			path = HelloWorld;
-			sourceTree = "<group>";
-		};
-		9DE7EC9019EB6EFF00C1DCB6 /* MiniSerial */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC9119EB6EFF00C1DCB6 /* MiniSerial.ino */,
-			);
-			path = MiniSerial;
-			sourceTree = "<group>";
-		};
-		9DE7EC9219EB6EFF00C1DCB6 /* PrintBenchmarkSD */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC9319EB6EFF00C1DCB6 /* PrintBenchmarkSD.ino */,
-			);
-			path = PrintBenchmarkSD;
-			sourceTree = "<group>";
-		};
-		9DE7EC9419EB6EFF00C1DCB6 /* readlog */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC9519EB6EFF00C1DCB6 /* readlog.ino */,
-			);
-			path = readlog;
-			sourceTree = "<group>";
-		};
-		9DE7EC9719EB6EFF00C1DCB6 /* SD_Size */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC9819EB6EFF00C1DCB6 /* SD_Size.ino */,
-			);
-			path = SD_Size;
-			sourceTree = "<group>";
-		};
-		9DE7EC9919EB6EFF00C1DCB6 /* SdFatSize */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC9A19EB6EFF00C1DCB6 /* SdFatSize.ino */,
-			);
-			path = SdFatSize;
-			sourceTree = "<group>";
-		};
-		9DE7EC9B19EB6EFF00C1DCB6 /* TestMkdir */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC9C19EB6EFF00C1DCB6 /* TestMkdir.ino */,
-			);
-			path = TestMkdir;
-			sourceTree = "<group>";
-		};
-		9DE7EC9D19EB6EFF00C1DCB6 /* TestRmdir */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7EC9E19EB6EFF00C1DCB6 /* TestRmdir.ino */,
-			);
-			path = TestRmdir;
-			sourceTree = "<group>";
-		};
-		9DE7EC9F19EB6EFF00C1DCB6 /* AnalogBinLogger */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECA019EB6EFF00C1DCB6 /* AnalogBinLogger.h */,
-				9DE7ECA119EB6EFF00C1DCB6 /* AnalogBinLogger.ino */,
-			);
-			path = AnalogBinLogger;
-			sourceTree = "<group>";
-		};
-		9DE7ECA219EB6EFF00C1DCB6 /* bench */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECA319EB6EFF00C1DCB6 /* bench.ino */,
-			);
-			path = bench;
-			sourceTree = "<group>";
-		};
-		9DE7ECA419EB6EFF00C1DCB6 /* cin_cout */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECA519EB6EFF00C1DCB6 /* cin_cout.ino */,
-			);
-			path = cin_cout;
-			sourceTree = "<group>";
-		};
-		9DE7ECA619EB6EFF00C1DCB6 /* dataLogger */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECA719EB6EFF00C1DCB6 /* dataLogger.ino */,
-			);
-			path = dataLogger;
-			sourceTree = "<group>";
-		};
-		9DE7ECA819EB6EFF00C1DCB6 /* directoryFunctions */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECA919EB6EFF00C1DCB6 /* directoryFunctions.ino */,
-			);
-			path = directoryFunctions;
-			sourceTree = "<group>";
-		};
-		9DE7ECAA19EB6EFF00C1DCB6 /* fgets */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECAB19EB6EFF00C1DCB6 /* fgets.ino */,
-			);
-			path = fgets;
-			sourceTree = "<group>";
-		};
-		9DE7ECAC19EB6EFF00C1DCB6 /* formatting */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECAD19EB6EFF00C1DCB6 /* formatting.ino */,
-			);
-			path = formatting;
-			sourceTree = "<group>";
-		};
-		9DE7ECAE19EB6EFF00C1DCB6 /* getline */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECAF19EB6EFF00C1DCB6 /* getline.ino */,
-			);
-			path = getline;
-			sourceTree = "<group>";
-		};
-		9DE7ECB019EB6EFF00C1DCB6 /* LowLatencyLogger */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECB119EB6EFF00C1DCB6 /* LowLatencyLogger.ino */,
-				9DE7ECB219EB6EFF00C1DCB6 /* UserDataType.h */,
-			);
-			path = LowLatencyLogger;
-			sourceTree = "<group>";
-		};
-		9DE7ECB319EB6EFF00C1DCB6 /* OpenNext */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECB419EB6EFF00C1DCB6 /* OpenNext.ino */,
-			);
-			path = OpenNext;
-			sourceTree = "<group>";
-		};
-		9DE7ECB519EB6EFF00C1DCB6 /* PrintBenchmark */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECB619EB6EFF00C1DCB6 /* PrintBenchmark.ino */,
-			);
-			path = PrintBenchmark;
-			sourceTree = "<group>";
-		};
-		9DE7ECB719EB6EFF00C1DCB6 /* QuickStart */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECB819EB6EFF00C1DCB6 /* QuickStart.ino */,
-			);
-			path = QuickStart;
-			sourceTree = "<group>";
-		};
-		9DE7ECB919EB6EFF00C1DCB6 /* RawWrite */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECBA19EB6EFF00C1DCB6 /* RawWrite.ino */,
-			);
-			path = RawWrite;
-			sourceTree = "<group>";
-		};
-		9DE7ECBB19EB6EFF00C1DCB6 /* readCSV */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECBC19EB6EFF00C1DCB6 /* readCSV.ino */,
-			);
-			path = readCSV;
-			sourceTree = "<group>";
-		};
-		9DE7ECBD19EB6EFF00C1DCB6 /* ReadWriteSdFat */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECBE19EB6EFF00C1DCB6 /* ReadWriteSdFat.ino */,
-			);
-			path = ReadWriteSdFat;
-			sourceTree = "<group>";
-		};
-		9DE7ECBF19EB6EFF00C1DCB6 /* rename */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECC019EB6EFF00C1DCB6 /* rename.ino */,
-			);
-			path = rename;
-			sourceTree = "<group>";
-		};
-		9DE7ECC119EB6EFF00C1DCB6 /* SdFormatter */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECC219EB6EFF00C1DCB6 /* SdFormatter.ino */,
-			);
-			path = SdFormatter;
-			sourceTree = "<group>";
-		};
-		9DE7ECC319EB6EFF00C1DCB6 /* SdInfo */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECC419EB6EFF00C1DCB6 /* SdInfo.ino */,
-			);
-			path = SdInfo;
-			sourceTree = "<group>";
-		};
-		9DE7ECC519EB6EFF00C1DCB6 /* StdioBench */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECC619EB6EFF00C1DCB6 /* StdioBench.ino */,
-			);
-			path = StdioBench;
-			sourceTree = "<group>";
-		};
-		9DE7ECC719EB6EFF00C1DCB6 /* StressTest */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECC819EB6EFF00C1DCB6 /* StressTest.ino */,
-			);
-			path = StressTest;
-			sourceTree = "<group>";
-		};
-		9DE7ECC919EB6EFF00C1DCB6 /* Timestamp */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECCA19EB6EFF00C1DCB6 /* Timestamp.ino */,
-			);
-			path = Timestamp;
-			sourceTree = "<group>";
-		};
-		9DE7ECCB19EB6EFF00C1DCB6 /* TwoCards */ = {
-			isa = PBXGroup;
-			children = (
-				9DE7ECCC19EB6EFF00C1DCB6 /* TwoCards.ino */,
-			);
-			path = TwoCards;
-			sourceTree = "<group>";
 		};
 		9DE7ECF019EB6EFF00C1DCB6 /* utility */ = {
 			isa = PBXGroup;

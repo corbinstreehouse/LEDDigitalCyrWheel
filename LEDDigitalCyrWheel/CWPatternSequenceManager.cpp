@@ -11,15 +11,26 @@
 #include "LEDDigitalCyrWheel.h"
 #include "LEDCommon.h"
 
+#if !PATTERN_EDITOR
+#include "EEPROM2.h"
+#endif
+
 #define RECORD_INDICATOR_FILENAME "RECORD.TXT" // If this file exists, we record data in other files.
 
 #if DEBUG
     #warning "DEBUG Code is on!!"
 #endif
 
+// TODO: make these determined adhoc via iphone app...
+// Your WiFi SSID and password
+#define WLAN_SSID       "MonkeyPlayground"
+#define WLAN_PASS       "unicycle"
+#define WLAN_SECURITY   AFWifiSecurityModeWPA2
+
+
 
 static char *g_defaultFilename = "DEFAULT"; // We compare to this address to know if it is the default pattern
-static const char *g_sequencePath = "/";
+static const char *g_sequencePath = "/"; // warning..changing this may require different buffers
 
 static char *getExtension(char *filename) {
     char *ext = strchr(filename, '.');
@@ -31,24 +42,36 @@ static char *getExtension(char *filename) {
     }
 }
 
-CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH) {
+const char *CWPatternSequenceManager::getSequencePath() {
+    return g_sequencePath;
+}
+
+CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH)
+#if WIFI
+, m_webServer("", 80)
+#endif
+{
     _patternItems = NULL;
     _sequenceNames = NULL;
+    m_wifiEnabled = false;
     m_shouldIgnoreButtonClickWhenTimed = true; // TODO: make this an option per sequence...
     ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // make sure I don't screw stuff up by chaning the size and not updating things again
 }
 
-#if PATTERN_EDITOR
 void CWPatternSequenceManager::freeSequenceNames() {
     if (_sequenceNames) {
         for (int i = 0; i < _numberOfAvailableSequences; i++) {
-            free(_sequenceNames[i]);
+            // Don't free the default string!
+            if (_sequenceNames[i] != g_defaultFilename) {
+                free(_sequenceNames[i]);
+            }
         }
         free(_sequenceNames);
         _sequenceNames = NULL;
     }
 }
 
+#if PATTERN_EDITOR
 CWPatternSequenceManager::~CWPatternSequenceManager() {
     freePatternItems();
     freeSequenceNames();
@@ -130,6 +153,23 @@ CDPatternItemHeader CWPatternSequenceManager::makeFlashPatternItem(CRGB color) {
     return result;
 }
 
+bool CWPatternSequenceManager::isSequenceEditableAtIndex(int index) {
+    if (index >= 0 && index <= _numberOfAvailableSequences) {
+        return _sequenceNames[index] != g_defaultFilename;
+    } else {
+        return false;
+    }
+}
+
+int CWPatternSequenceManager::getIndexOfSequenceName(char *name) {
+    for (int i = 0; i < _numberOfAvailableSequences; i++) {
+        if (strcmp(name, getSequenceNameAtIndex(i)) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void CWPatternSequenceManager::makeSequenceFlashColor(uint32_t color) {
     _numberOfPatternItems = 2;
     _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
@@ -146,31 +186,36 @@ void CWPatternSequenceManager::makeSequenceFlashColor(uint32_t color) {
     _patternItems[1].patternEndCondition = CDPatternEndConditionAfterDuration;
 }
 
+// mallocs memory if bufferSize isn't large enough
+static char *getFullpathName(const char *name, char *buffer, int bufferSize) {
+    size_t pathLength = strlen(g_sequencePath);
+    size_t filenameAndPathSize = pathLength + strlen(name) + 1; // NULL terminator
+    char *filename;
+    if (filenameAndPathSize <= bufferSize) {
+        filename = buffer;
+    } else {
+        filename = (char *)malloc(sizeof(char) * filenameAndPathSize);
+    }
+    // Copy in the path to the file
+    strcpy(filename, g_sequencePath);
+    strcpy(&filename[pathLength], name);
+    return filename;
+}
+
 void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
     ASSERT(name != NULL);
     ASSERT(g_sequencePath != NULL);
     
-    int pathLength = strlen(g_sequencePath);
-    int filenameAndPathSize = pathLength + strlen(name) + 1; // NULL terminator
-    // TODO: macro this
-#define STACK_BUFFER_SIZE 64
+#define STACK_BUFFER_SIZE 32
     char stackBuffer[STACK_BUFFER_SIZE];
-    char *filename;
-    if (filenameAndPathSize <= STACK_BUFFER_SIZE) {
-        filename = stackBuffer;
-    } else {
-        filename = (char *)malloc(sizeof(char) * filenameAndPathSize);
-    }
-    
-    // Copy in the path to the file
-    strcpy(filename, g_sequencePath);
-    strcpy(&filename[pathLength], name);
+    char *filename = getFullpathName(name, stackBuffer, STACK_BUFFER_SIZE);
     
     DEBUG_PRINTF("  loading sequence name: %s at %s\r\n", name, filename);
     File sequenceFile = SD.open(filename);
     DEBUG_PRINTF(" OPENED file: %s\r\n", sequenceFile.name());
     if (!sequenceFile.available()) {
-        // Try again???
+        sequenceFile.close(); // well, shouldn't be needed
+        // Try again??? Frequently I have to try twice.
         sequenceFile = SD.open(filename);
         DEBUG_PRINTF(" try again... file: %s\r\n", sequenceFile.name());
     }
@@ -189,9 +234,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
         // Only version 4 now
         if (patternHeader.version == SEQUENCE_VERSION) {
             // Free existing stuff
-            if (_patternItems) {
-                DEBUG_PRINTLN("ERROR: PATTERN ITEMS SHOULD BE FREE!!!!");
-            }
+            ASSERT(_patternItems == NULL);
                 // Then read in and store the stock info
             _pixelCount = patternHeader.pixelCount;
             _numberOfPatternItems = patternHeader.patternCount;
@@ -223,7 +266,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
                         // Read in the data that is following the header, and put it in the data pointer...
                         // 65536 kb of ram..more than 20,000 pixels would overflow...which i'm now hitting w/larger images. darn it..i have to chunk these and dynamically load each one ;(
                         _patternItems[i].dataOffset = sequenceFile.position();
-                        _patternItems[i].dataFilename = filename;
+//                        _patternItems[i].dataFilename = filename; // idiot..this points to stuff on the stack now!
         //                _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
         //                sequenceFile.readBytes((char*)_patternItems[i].data, dataLength);
                         // seek past the data
@@ -231,7 +274,7 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
                     } else {
                         // data pointer should always be NULL
                         _patternItems[i].dataOffset = 0;
-                        _patternItems[i].dataFilename = NULL;
+//                        _patternItems[i].dataFilename = NULL;
                     }
                 }
             }
@@ -248,6 +291,47 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
     //
     if (filename != stackBuffer) {
         free(filename);
+    }
+}
+
+bool CWPatternSequenceManager::deleteSequenceAtIndex(int index) {
+    bool result = false;
+    int lastIndex = _currentSequenceIndex;
+    if (index >= 0 && index < _numberOfAvailableSequences) {
+        char *name = getSequenceNameAtIndex(index);
+        if (name != g_defaultFilename) {
+#define STACK_BUFFER_SIZE 32
+            char stackBuffer[STACK_BUFFER_SIZE];
+            char *filename = getFullpathName(name, stackBuffer, STACK_BUFFER_SIZE);
+            DEBUG_PRINTF("deleting %s\n", filename);
+            
+            result = SD.remove(filename);
+            
+            if (filename != stackBuffer) {
+                free(filename);
+            }
+            if (lastIndex >= index) {
+                lastIndex--;
+            }
+        }
+    }
+    
+    if (result) {
+        loadSequencesFromDisk();
+        if (_currentSequenceIndex != lastIndex) {
+            loadCurrentSequence();
+        }
+    }
+    return result;
+}
+
+void CWPatternSequenceManager::setCurrentSequenceAtIndex(int index) {
+    if (_currentSequenceIndex == index) {
+        // just play at the start
+        firstPatternItem();
+    } else {
+        _currentSequenceIndex = index;
+        loadCurrentSequence(); // validates the index here
     }
 }
 
@@ -326,29 +410,61 @@ static inline bool isPatternFile(char *filename) {
 }
 
 bool CWPatternSequenceManager::initStrip() {
-    m_savedBrightness = 128; // Default value?? this is still super bright. maybe the algorithm is wrong..
     m_ledPatterns.begin();
     m_ledPatterns.setBrightness(m_savedBrightness);
     return true;
 }
 
-bool CWPatternSequenceManager::init(bool buttonIsDown) {
-    DEBUG_PRINTLN("::init");
-    _shouldRecordData = false;
-// I don't need this delay
-//    delay(2); // without this, things don't always init....
-
-    initOrientation();
-    initStrip();
-    DEBUG_PRINTLN("done init strip, starting to init SD Card");
+void CWPatternSequenceManager::initWifi() {
+#if WIFI
+    DEBUG_PRINTLN("::initWifi");
+    m_wifiEnabled = true;
+    m_webServer.setSequenceManager(this);
     
-    bool result = initSDCard();
-    DEBUG_PRINTLN("done init sd card");
+    // show all blue while this is happening as the load is slow
+    m_ledPatterns.setNextPatternType(LEDPatternTypeSolidColor);
+    m_ledPatterns.setPatternColor(CRGB::Blue);
+    m_ledPatterns.show();
+    
+    // TODO: better ways to dynamically figure out the wifi configuration...
+    m_webServer.getWifiManager()->setDNSName(WLAN_MACHINE_NAME);
+    m_webServer.getWifiManager()->setNetworkName(WLAN_SSID, WLAN_PASS, WLAN_SECURITY);
+    
+//    DEBUG_PRINTLN("starting the web server,,,");
+    m_webServer.begin();
+    DEBUG_PRINTLN("ok, done starting");
+    
+    resetStartingTime();
+    loadCurrentSequence();// reset the pattern..
+    processWebServer();
+#endif
+}
 
-    if (result) {
+void CWPatternSequenceManager::loadSettings() {
+#if !PATTERN_EDITOR
+    // TODO: how to burn the initial state??
+    EEPROM_Read(EEPROM_START_WIFI_AUTOMATICALLY_ADDRESS, m_shouldStartWifiAutomatically);
+    if (m_shouldStartWifiAutomatically != 0 && m_shouldStartWifiAutomatically != 1) {
+        m_shouldStartWifiAutomatically = true;
+    }
+    EEPROM_Read(EEPROM_BRIGHTNESS_ADDRESS, m_savedBrightness);
+    if (m_savedBrightness < MIN_BRIGHTNESS || m_savedBrightness > MAX_BRIGHTNESS) {
+        m_savedBrightness = DEFAULT_BRIGHTNESS;
+        DEBUG_PRINTF("SAVED BRIGHTNESS setting to default..out of band");
+    } else {
+        DEBUG_PRINTF("SAVED BRIGHTNESS: %d", m_savedBrightness);
+    }
+#else
+    m_savedBrightness = DEFAULT_BRIGHTNESS; // Default value?? this is still super bright. maybe the algorithm is wrong..
+#endif
+}
+
+void CWPatternSequenceManager::loadSequencesFromDisk() {
+    if (m_sdCardWorks) {
         DEBUG_PRINTLN("opening sd card to read it");
         // Load up the names of available patterns
         File rootDir = SD.open(g_sequencePath);
+        rootDir.moveToStartOfDirectory();
         _numberOfAvailableSequences = 0;
         // Loop twice; first time count, second time allocate and store
         char filenameBuffer[PATH_COMPONENT_BUFFER_LEN];
@@ -358,13 +474,14 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
                 DEBUG_PRINTF("found pattern: %s\r\n", filenameBuffer);
             } else if (strcmp(filenameBuffer, RECORD_INDICATOR_FILENAME) == 0) {
                 DEBUG_PRINTF("found record file name: %s\r\n", filenameBuffer);
-                _shouldRecordData = true;
+                m_shouldRecordData = true;
             } else {
                 DEBUG_PRINTF("found unknown file name: %s\r\n", filenameBuffer);
             }
         }
         DEBUG_PRINTF("Found %d sequences on SD Card\r\n", _numberOfAvailableSequences);
         
+        freeSequenceNames();
         if (_numberOfAvailableSequences > 0) {
             // Now we can malloc the space to save the names
             // One last name is for the "g_defaultFilename" / default sequence
@@ -393,7 +510,7 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
         _sequenceNames[_numberOfAvailableSequences] = g_defaultFilename;
         _numberOfAvailableSequences++;
         
-        if (_shouldRecordData) {
+        if (m_shouldRecordData) {
             m_ledPatterns.flashThreeTimesWithDelay(CRGB(30,30,30), 150);
         }
         
@@ -408,11 +525,26 @@ bool CWPatternSequenceManager::init(bool buttonIsDown) {
     _currentSequenceIndex = 0;
     loadCurrentSequence();
     
-    if (buttonIsDown) {
-        startCalibration();
-    }
+}
+
+void CWPatternSequenceManager::init(bool buttonIsDown) {
+    DEBUG_PRINTLN("::init");
+    m_shouldRecordData = false;
     
-    return result;
+    loadSettings();
+
+    initOrientation();
+    initStrip();
+    DEBUG_PRINTLN("done init strip, starting to init SD Card");
+    
+    m_sdCardWorks = initSDCard();
+    DEBUG_PRINTLN("done init sd card");
+    
+    loadSequencesFromDisk();
+    
+    if (m_shouldStartWifiAutomatically || buttonIsDown) {
+        initWifi();
+    }
 }
 
 void CWPatternSequenceManager::startRecordingData() {
@@ -434,16 +566,29 @@ void CWPatternSequenceManager::startCalibration() {
     if (!m_orientation.isCalibrating()) {
         m_orientation.beginCalibration();
         // Override the default sequence to blink
-        m_ledPatterns.setPatternDuration(300);
+        m_ledPatterns.setPatternDuration(600);
         m_ledPatterns.setPatternColor(CRGB::Pink);
         m_ledPatterns.setPatternType(LEDPatternTypeBlink);
     }
 }
 
 void CWPatternSequenceManager::endCalibration() {
+    DEBUG_PRINTLN("about to end!");
     if (m_orientation.isCalibrating()) {
         m_orientation.endCalibration();
+        // Flash to let you know it is done
+        m_ledPatterns.flashThreeTimesWithDelay(CRGB::Green, 150);
         firstPatternItem();
+    } else {
+        DEBUG_PRINTLN("not calibration!!!");
+
+    }
+}
+
+void CWPatternSequenceManager::cancelCalibration() {
+    DEBUG_PRINTLN("about to cancel!");
+    if (m_orientation.isCalibrating()) {
+        m_orientation.cancelCalibration();
     }
 }
 
@@ -476,6 +621,16 @@ void CWPatternSequenceManager::loadPriorSequence() {
 }
 
 void CWPatternSequenceManager::buttonClick() {
+#if WIFI
+    if (m_wifiEnabled) {
+        // See if we should cancel wifi
+        if (m_webServer.getWifiManager()->getState() != AFWifiStateReady) {
+            m_wifiEnabled = false;
+            m_webServer.getWifiManager()->stop();
+            return; // handled
+        }
+    }
+#endif
     if (m_orientation.isCalibrating()) {
         m_orientation.endCalibration();
         firstPatternItem();
@@ -493,7 +648,7 @@ void CWPatternSequenceManager::buttonClick() {
 }
 
 void CWPatternSequenceManager::buttonLongClick() {
-    if (_shouldRecordData) {
+    if (m_shouldRecordData) {
         if (!m_orientation.isSavingData()) {
             startRecordingData();
         } else {
@@ -512,11 +667,46 @@ void CWPatternSequenceManager::buttonLongClick() {
     }
 }
 
+bool CWPatternSequenceManager::processWebServer() {
+#if WIFI
+    if (m_wifiEnabled) {
+        m_webServer.process();
+        // If we are waiting for it to load...then show dots
+        AFWifiState state = m_webServer.getWifiManager()->getState();
+        if (state == AFWifiStateReady) {
+            // good to go!
+            return true;
+        }
+        if (state == AFWifiStateTimedOut) {
+            // Not sure if we should restart or try to reconnect automatically
+            m_webServer.getWifiManager()->stop(); // stopping should allow it to restart (i need to test this..)
+            m_ledPatterns.flashThreeTimesWithDelay(CRGB::Red, 150);
+        }
+        
+        // Show some loading feedback...
+        float progress = (float)(millis() - m_timedPatternStartTime) / 10000.0; // 10 second progress to fill the entire wheel
+        m_ledPatterns.showProgress(progress, CRGB::DarkBlue);
+        
+        return false;
+    } else {
+        return true;
+    }
+#else
+    return true;
+#endif
+}
+
 void CWPatternSequenceManager::process() {
     
 //    float time = millis()-m_timedPatternStartTime;
 //    time = time / 1000.0;
 //    Serial.println(time);
+
+#if WIFI
+    if (!processWebServer()) {
+        return; // It is loading the webserver still..
+    }
+#endif
     
     m_orientation.process();
     if (m_orientation.isCalibrating()) {
@@ -571,6 +761,14 @@ void CWPatternSequenceManager::updateBrightness() {
 
 void CWPatternSequenceManager::setLowBatteryWarning() {
     m_savedBrightness = 64; // Lower brightness so we can see it get low! it is updated on the update pass
+
+    // Turn off wifi to save power
+    if (m_wifiEnabled) {
+        m_wifiEnabled = false;
+#if WIFI
+        m_webServer.getWifiManager()->stop();
+#endif
+    }
 }
 
 void CWPatternSequenceManager::firstPatternItem() {
@@ -631,7 +829,8 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     }
     m_ledPatterns.setPatternDuration(duration);
     m_ledPatterns.setPatternColor(itemHeader->color);
-    m_ledPatterns.setDataInfo(itemHeader->dataFilename, itemHeader->dataLength);
+    // Assume it is the current file..
+    m_ledPatterns.setDataInfo(getCurrentSequenceName(), itemHeader->dataLength);
 #if DEBUG
     DEBUG_PRINTF("--------- Next pattern Item (patternType: %d): %d of %d, %d long\r\n", itemHeader->patternType, _currentPatternItemIndex, _numberOfPatternItems, itemHeader->duration);
 #endif

@@ -151,6 +151,7 @@ public:
     bool isCalibrating() { return _calibrating; }
     void beginCalibration();
     void endCalibration();
+    void cancelCalibration();
     
     bool isSavingData() { return _shouldSaveDataToFile; }
     void beginSavingData();

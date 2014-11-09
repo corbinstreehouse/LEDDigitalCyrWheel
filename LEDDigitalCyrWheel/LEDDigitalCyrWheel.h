@@ -19,8 +19,6 @@
 
 #define USE_NEW_V_REFERENCE 1 // new resistor values (not in v2 wheel)
 
-#define WIFI 1
-
 //#define BRIGHTNESS_PIN 22
 
 // TOOD: actually make the strip length dynamic...
@@ -33,9 +31,14 @@ const int g_batteryVoltagePin = A3; // pin 17
 
 //const int g_batteryRefPin = A7; // 3.3v ref voltage is connected to pin 21 (I'm not sure i need this) // NOTE: I need the 3.3v for the SD card! So, I'm no longer using this. My measured value is around 3.29v last I checked, but now my algorithm to check for low voltage is no longer working. However...the wheel just "shuts off", so it isn't too bad.
 
-#define MIN_MAX_IS_SAVED_EEPROM_ADDRESS 22 // rather abitrary
+
+// Locations in EEPROM
+#define EEPROM_BRIGHTNESS_ADDRESS 10
+#define EEPROM_START_WIFI_AUTOMATICALLY_ADDRESS 12
+#define EEPROM_MIN_MAX_IS_SAVED_ADDRESS 22 // rather abitrary
 #define MIN_EEPROM_ADDRESS 24 // rather abitrary
-#define MAX_EEPROM_ADDRESS (24+2*3)    // min value has a vector of 3 16-bit values; 16-bits is 2 bytes. 3*2 = 6 bytes for the prior read
+#define EEPROM_ACCELEROMETER_MAX_ADDRESS (24+2*3)    // min value has a vector of 3 16-bit values; 16-bits is 2 bytes. 3*2 = 6 bytes for the prior read
+
 
 /* Teensy 3.1 wiring diagram 
 
