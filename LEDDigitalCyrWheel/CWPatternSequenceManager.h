@@ -22,6 +22,9 @@
 #include "LEDCommon.h"
 #include "LEDPatterns.h"
 
+#define PATTERN_FILE_EXTENSION "PAT"
+#define PATTERN_FILE_EXTENSION_LC "pat" // stupid non case sensative
+
 
 #if PATTERN_EDITOR
     #include "CDSimulatorLEDPatterns.h"
@@ -71,7 +74,8 @@ private:
     uint32_t m_shouldIgnoreButtonClickWhenTimed:1;
     uint32_t m_wifiEnabled:1;
     uint32_t m_sdCardWorks:1;
-    uint32_t __reserved:28;
+    uint32_t m_dynamicMode:1;
+    uint32_t __reserved:27;
     
     // State that we read on startup
     uint8_t m_shouldStartWifiAutomatically;
@@ -157,6 +161,8 @@ public:
     void nextPatternItem();
     void firstPatternItem();
     void priorPatternItem();
+    
+    void setDynamicPatternWithHeader(CDPatternItemHeader *header);
     
     void startCalibration();
     void endCalibration();

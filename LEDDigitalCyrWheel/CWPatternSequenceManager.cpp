@@ -53,6 +53,7 @@ CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGT
 {
     _patternItems = NULL;
     _sequenceNames = NULL;
+    m_dynamicMode = false;
     m_wifiEnabled = false;
     m_shouldIgnoreButtonClickWhenTimed = true; // TODO: make this an option per sequence...
     ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // make sure I don't screw stuff up by chaning the size and not updating things again
@@ -171,6 +172,7 @@ int CWPatternSequenceManager::getIndexOfSequenceName(char *name) {
 }
 
 void CWPatternSequenceManager::makeSequenceFlashColor(uint32_t color) {
+    freePatternItems();
     _numberOfPatternItems = 2;
     _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
     _patternItems[0].patternType = LEDPatternTypeSolidColor;
@@ -206,6 +208,8 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
     ASSERT(name != NULL);
     ASSERT(g_sequencePath != NULL);
     
+    freePatternItems();
+    
 #define STACK_BUFFER_SIZE 32
     char stackBuffer[STACK_BUFFER_SIZE];
     char *filename = getFullpathName(name, stackBuffer, STACK_BUFFER_SIZE);
@@ -235,10 +239,13 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
         if (patternHeader.version == SEQUENCE_VERSION) {
             // Free existing stuff
             ASSERT(_patternItems == NULL);
-                // Then read in and store the stock info
+            // Then read in and store the stock info
             _pixelCount = patternHeader.pixelCount;
+            
+            // TODO: I could eliminate several variables and just store these
             _numberOfPatternItems = patternHeader.patternCount;
             m_shouldIgnoreButtonClickWhenTimed = patternHeader.ignoreButtonForTimedPatterns;
+            
             ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // MAKE SURE IT IS RIGHT..
             DEBUG_PRINTF("pixelCount: %d, now reading %d items, headerSize: %d\r\n", _pixelCount, _numberOfPatternItems, sizeof(CDPatternItemHeader));
             
@@ -335,7 +342,22 @@ void CWPatternSequenceManager::setCurrentSequenceAtIndex(int index) {
     }
 }
 
+void CWPatternSequenceManager::setDynamicPatternWithHeader(CDPatternItemHeader *header) {
+    if (!m_dynamicMode || (_numberOfPatternItems != 1)) {
+        m_dynamicMode = true;
+        _currentSequenceIndex = -1;
+    
+        freePatternItems();
+        _numberOfPatternItems = 1;
+
+        _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
+    }
+
+    _patternItems[0] = *header;
+}
+
 void CWPatternSequenceManager::loadCurrentSequence() {
+    m_dynamicMode = false;
     // Validate state and loop around if needed
     if (_numberOfAvailableSequences > 0) {
         if (_currentSequenceIndex >= _numberOfAvailableSequences) {
@@ -348,7 +370,6 @@ void CWPatternSequenceManager::loadCurrentSequence() {
     }
     
     DEBUG_PRINTF("--- loading sequence %d of %d --- \r\n", _currentSequenceIndex, _numberOfAvailableSequences);
-    freePatternItems();
 
     if (_currentSequenceIndex >= 0) {
         const char *filename = _sequenceNames[_currentSequenceIndex];
@@ -402,7 +423,7 @@ bool CWPatternSequenceManager::initSDCard() {
 static inline bool isPatternFile(char *filename) {
     char *ext = getExtension(filename);
     if (ext) {
-        if (strcmp(ext, "PAT") == 0 || strcmp(ext, "pat") == 0) {
+        if (strcmp(ext, PATTERN_FILE_EXTENSION) == 0 || strcmp(ext, PATTERN_FILE_EXTENSION_LC) == 0) {
             return true;
         }
     }
@@ -524,7 +545,6 @@ void CWPatternSequenceManager::loadSequencesFromDisk() {
     }
     _currentSequenceIndex = 0;
     loadCurrentSequence();
-    
 }
 
 void CWPatternSequenceManager::init(bool buttonIsDown) {

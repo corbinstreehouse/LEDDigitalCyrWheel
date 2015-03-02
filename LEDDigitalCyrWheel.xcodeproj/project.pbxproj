@@ -48,6 +48,8 @@
 		9D6BC86F1938CBC400E21E1C /* FastLED.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8541938CBC400E21E1C /* FastLED.cpp */; };
 		9D6BC8701938CBC400E21E1C /* hsv2rgb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8631938CBC400E21E1C /* hsv2rgb.cpp */; };
 		9D6BC8711938CBC400E21E1C /* lib8tion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8671938CBC400E21E1C /* lib8tion.cpp */; };
+		9D7F8C421A106F6A009785C0 /* aJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D7F8C331A106F6A009785C0 /* aJSON.cpp */; };
+		9D7F8C431A106F6A009785C0 /* stringbuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D7F8C401A106F6A009785C0 /* stringbuffer.c */; };
 		9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */; };
 		9DBE8A5818A8A84F00154550 /* analog.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE89F918A8A84F00154550 /* analog.c */; };
 		9DBE8A5918A8A84F00154550 /* AudioStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE89FD18A8A84F00154550 /* AudioStream.cpp */; };
@@ -360,6 +362,16 @@
 		9D6BC86B1938CBC400E21E1C /* preview_changes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = preview_changes.txt; sourceTree = "<group>"; };
 		9D6BC86C1938CBC400E21E1C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		9D77CB9D1589994A0089EB0A /* Index */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Index; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D7F8C331A106F6A009785C0 /* aJSON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aJSON.cpp; sourceTree = "<group>"; };
+		9D7F8C341A106F6A009785C0 /* aJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aJSON.h; sourceTree = "<group>"; };
+		9D7F8C371A106F6A009785C0 /* Json_Example.ino */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Json_Example.ino; sourceTree = "<group>"; };
+		9D7F8C391A106F6A009785C0 /* Json_Serial.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Json_Serial.ino; sourceTree = "<group>"; };
+		9D7F8C3B1A106F6A009785C0 /* MultiLevelParsing.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MultiLevelParsing.ino; sourceTree = "<group>"; };
+		9D7F8C3C1A106F6A009785C0 /* keywords.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keywords.txt; sourceTree = "<group>"; };
+		9D7F8C3D1A106F6A009785C0 /* library.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = library.json; sourceTree = "<group>"; };
+		9D7F8C3E1A106F6A009785C0 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		9D7F8C401A106F6A009785C0 /* stringbuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stringbuffer.c; sourceTree = "<group>"; };
+		9D7F8C411A106F6A009785C0 /* stringbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stringbuffer.h; sourceTree = "<group>"; };
 		9D8ED2C517C01F7F001E1C06 /* Arduino Leonardo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino Leonardo.xcconfig"; sourceTree = "<group>"; };
 		9D8ED2C617C01F7F001E1C06 /* Arduino mega2560.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino mega2560.xcconfig"; sourceTree = "<group>"; };
 		9D8ED2C717C01F7F001E1C06 /* Arduino mini pro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino mini pro.xcconfig"; sourceTree = "<group>"; };
@@ -2285,6 +2297,64 @@
 				9D77CB9D1589994A0089EB0A /* Index */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		9D7F8C311A106F6A009785C0 /* aJson */ = {
+			isa = PBXGroup;
+			children = (
+				9D7F8C331A106F6A009785C0 /* aJSON.cpp */,
+				9D7F8C341A106F6A009785C0 /* aJSON.h */,
+				9D7F8C351A106F6A009785C0 /* Examples */,
+				9D7F8C3C1A106F6A009785C0 /* keywords.txt */,
+				9D7F8C3D1A106F6A009785C0 /* library.json */,
+				9D7F8C3E1A106F6A009785C0 /* README.md */,
+				9D7F8C3F1A106F6A009785C0 /* utility */,
+			);
+			name = aJson;
+			path = Libraries/aJson;
+			sourceTree = SOURCE_ROOT;
+		};
+		9D7F8C351A106F6A009785C0 /* Examples */ = {
+			isa = PBXGroup;
+			children = (
+				9D7F8C361A106F6A009785C0 /* Json_Example */,
+				9D7F8C381A106F6A009785C0 /* Json_Serial */,
+				9D7F8C3A1A106F6A009785C0 /* MultiLevelParsing */,
+			);
+			path = Examples;
+			sourceTree = "<group>";
+		};
+		9D7F8C361A106F6A009785C0 /* Json_Example */ = {
+			isa = PBXGroup;
+			children = (
+				9D7F8C371A106F6A009785C0 /* Json_Example.ino */,
+			);
+			path = Json_Example;
+			sourceTree = "<group>";
+		};
+		9D7F8C381A106F6A009785C0 /* Json_Serial */ = {
+			isa = PBXGroup;
+			children = (
+				9D7F8C391A106F6A009785C0 /* Json_Serial.ino */,
+			);
+			path = Json_Serial;
+			sourceTree = "<group>";
+		};
+		9D7F8C3A1A106F6A009785C0 /* MultiLevelParsing */ = {
+			isa = PBXGroup;
+			children = (
+				9D7F8C3B1A106F6A009785C0 /* MultiLevelParsing.ino */,
+			);
+			path = MultiLevelParsing;
+			sourceTree = "<group>";
+		};
+		9D7F8C3F1A106F6A009785C0 /* utility */ = {
+			isa = PBXGroup;
+			children = (
+				9D7F8C401A106F6A009785C0 /* stringbuffer.c */,
+				9D7F8C411A106F6A009785C0 /* stringbuffer.h */,
+			);
+			path = utility;
 			sourceTree = "<group>";
 		};
 		9D8ED2C217C01F7F001E1C06 /* LEDCyrWheel */ = {
@@ -5081,6 +5151,7 @@
 				9DDC601C1938488D00C602BC /* SdFat */,
 				9DE7EBFE19EB257300C1DCB6 /* ArduinoJson */,
 				9DE7EBB819EAE59500C1DCB6 /* Webduino */,
+				9D7F8C311A106F6A009785C0 /* aJson */,
 			);
 			name = Libraries;
 			path = ../../../Documents/Arduino/Libraries;
@@ -6556,6 +6627,7 @@
 				9DBE8D9518A8A9C700154550 /* istream.tcc in Sources */,
 				9DBE926718A8AA5600154550 /* Makefile in Sources */,
 				9DBE8D9718A8A9C700154550 /* locale_classes.tcc in Sources */,
+				9D7F8C421A106F6A009785C0 /* aJSON.cpp in Sources */,
 				9DDC61D11938488E00C602BC /* SdBaseFilePrint.cpp in Sources */,
 				9DE7EB5B19E8CCEF00C1DCB6 /* debug.cpp in Sources */,
 				9DBE926818A8AA5600154550 /* Makefile in Sources */,
@@ -6597,6 +6669,7 @@
 				9DDC61C71938488E00C602BC /* Adafruit_NeoPixel.cpp in Sources */,
 				9DDC61DB1938488E00C602BC /* SdSpiSAM3X.cpp in Sources */,
 				9DE7ED0519EB6EFF00C1DCB6 /* SdSpiTeensy3.cpp in Sources */,
+				9D7F8C431A106F6A009785C0 /* stringbuffer.c in Sources */,
 				9DBE8A5918A8A84F00154550 /* AudioStream.cpp in Sources */,
 				9DBE8A5E18A8A84F00154550 /* HardwareSerial3.cpp in Sources */,
 				9DE7EC7119EB257400C1DCB6 /* JsonToken.cpp in Sources */,

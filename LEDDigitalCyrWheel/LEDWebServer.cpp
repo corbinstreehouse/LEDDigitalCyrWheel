@@ -14,6 +14,7 @@
 #endif
 
 #include <JsonGenerator.h>
+#include <aJSON.h>
 
 /* REST API documentation:
 
@@ -71,7 +72,7 @@ void defaultCommand(WebServer &server, WebServer::ConnectionType type, char *, b
         /* this defines some HTML text in read-only memory aka PROGMEM.
          * This is needed to avoid having the string copied to our limited
          * amount of RAM. */
-        const char *helloMsg = "<html><body><h1>Hello, Costanza! <br><br> LED Cyr Wheel Server</h1></body></html>";
+        const char *helloMsg = "<html><body><h1>corbin's<br><br>LED Cyr Wheel Server</h1></body></html>";
         
         /* this is a special form of print that outputs from PROGMEM */
         server.print(helloMsg);
@@ -224,6 +225,7 @@ static bool readFormDataAddSequence(WebServer &server) {
                     
                     strcpy(fullFilenameWithPath, path);
                     strcpy(&fullFilenameWithPath[pathLength], filename);
+                    DEBUG_PRINTLN("upload START!");
                     
                     File sequenceFile = SD.open(fullFilenameWithPath, FILE_WRITE);
 //                    Serial.printf(" - creating file\n");
@@ -249,6 +251,7 @@ static bool readFormDataAddSequence(WebServer &server) {
 //                        Serial.printf(" - done reading...\n");
                         sequenceFile.close();
                         sequenceFile.flush();
+                        DEBUG_PRINTLN("upload DONE!");
                     } else {
                         // TODO: error about not being able to write the file
                         
@@ -363,6 +366,35 @@ void commandEndSavingData(WebServer &server, WebServer::ConnectionType type, cha
     
 }
 
+void commandSetDynamicPatternItem(WebServer &server, WebServer::ConnectionType type, char *url_tail, bool tail_complete) {
+    Serial.println("dynamic test");
+    // Read in the type..
+    if (strcmp(JSON_CONTENT_TYPE, server.getContentType()) == 0) {
+        Serial.println("got json");
+        aJsonClientStream jsonStream = aJsonClientStream(server.getClient());
+        aJsonObject *rootObject = aJson.parse(&jsonStream);
+        
+        char *string = aJson.print(rootObject);
+        if (string != NULL) {
+            Serial.println("got str");
+            Serial.println(string);
+        }
+        else {
+            Serial.println("nuttin");
+        }
+
+        
+        CWPatternSequenceManager *manager = GET_SEQUENCE_MANAGER;
+        
+        
+        server.httpSuccess(JSON_CONTENT_TYPE);
+    } else {
+        Serial.printf("no json???; %s\n", server.getContentType());
+        server.httpFail();
+    }
+    // TODO: stop using the other JSON library.....as it isn't as dynamic as I'd like or as easy to use for parsing
+}
+
 LEDWebServer::LEDWebServer(const char *urlPrefix, uint16_t port) : WebServer(urlPrefix, port) {
     
 }
@@ -390,6 +422,7 @@ void LEDWebServer::begin() {
     addCommand("command/end_calibration", &commandEndCalibration);
     addCommand("command/cancel_calibration", &commandCancelCalibration);
     
+    addCommand("command/dynamic_pattern_item", &commandSetDynamicPatternItem);
     /// get state...
     
 //    addCommand("command/is_calibrating", &commandEndCalibration);
@@ -407,6 +440,7 @@ void LEDWebServer::process() {
     uint32_t now = millis();
     if ((now - m_lastProcessTime) >= WEB_SERVER_CHECK_INTERVAL) {   // Main loop runs at 50Hz
         m_lastProcessTime = now;
+ //       DEBUG_PRINTF("%d\n", now);
         processConnection();
     }
 }
