@@ -370,19 +370,19 @@ void commandSetDynamicPatternItem(WebServer &server, WebServer::ConnectionType t
     Serial.println("dynamic test");
     // Read in the type..
     if (strcmp(JSON_CONTENT_TYPE, server.getContentType()) == 0) {
-        Serial.println("got json");
-        aJsonClientStream jsonStream = aJsonClientStream(server.getClient());
-        aJsonObject *rootObject = aJson.parse(&jsonStream);
-        
-        char *string = aJson.print(rootObject);
-        if (string != NULL) {
-            Serial.println("got str");
-            Serial.println(string);
-        }
-        else {
-            Serial.println("nuttin");
-        }
-
+//        Serial.println("got json");
+//        aJsonClientStream jsonStream = aJsonClientStream(server.getClient());
+//        aJsonObject *rootObject = aJson.parse(&jsonStream);
+//        
+//        char *string = aJson.print(rootObject);
+//        if (string != NULL) {
+//            Serial.println("got str");
+//            Serial.println(string);
+//        }
+//        else {
+//            Serial.println("nuttin");
+//        }
+//
         
         CWPatternSequenceManager *manager = GET_SEQUENCE_MANAGER;
         
