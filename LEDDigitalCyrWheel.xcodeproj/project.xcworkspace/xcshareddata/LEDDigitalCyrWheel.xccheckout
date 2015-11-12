@@ -10,48 +10,96 @@
 	<string>LEDDigitalCyrWheel</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+		<key>03BADEDAEB515837617516C147252618322AC8E1</key>
+		<string>github.com:corbinstreehouse/Adafruit_CC3000_Library.git</string>
+		<key>149CC3ECD5EBE206E32A40C6C2A47C2728DF21AB</key>
+		<string>github.com:interactive-matter/aJson.git</string>
+		<key>26BA4590D0DE6BE40E566829E2C744202A22E062</key>
+		<string>github.com:corbinstreehouse/Adafruit_NeoPixel.git</string>
 		<key>31D19277-93C1-4B36-8D47-39BAE008E6C8</key>
 		<string>https://github.com/adafruit/Adafruit_NeoPixel.git</string>
+		<key>445165399F010635F8C8DA546E878D9F4302478D</key>
+		<string>github.com:corbinstreehouse/LEDPatterns.git</string>
 		<key>581ADA72-D596-47B7-96A2-A3DFDF0C6864</key>
 		<string>https://github.com/corbinstreehouse/ElithionBMSCanBus.git</string>
+		<key>680B43941F48A36A0471451E1F70DFF3E2A8F430</key>
+		<string>github.com:bblanchon/ArduinoJson.git</string>
+		<key>6920F3797F7813915682D317F749167AACBD8BDD</key>
+		<string>https://github.com/FastLED/FastLED.git</string>
+		<key>6FAD55BACFC0D2A0903F46E07D45B6B262C2C3FD</key>
+		<string>https://github.com/pololu/lsm303-arduino.git</string>
 		<key>7B373F31-FC1C-4563-BCFF-DFA44AB4C0D0</key>
 		<string>https://github.com/adafruit/SD.git</string>
-		<key>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</key>
+		<key>A1DD5C037D7B143761ABEB5BBAF556657A5A89C2</key>
 		<string>https://github.com/corbinstreehouse/LEDDigitalCyrWheel.git</string>
-		<key>B998CEF2-BA3A-4B9A-861D-23AB57E81EA4</key>
-		<string>https://github.com/FastLED/FastLED.git</string>
+		<key>AAF2E9DE496C06C8111DBB184575AF8C4B0F475A</key>
+		<string>github.com:corbinstreehouse/SD.git</string>
+		<key>B64AFA8169F3B6C9350D593F2249D4A2E202525E</key>
+		<string>https://github.com/pololu/l3g-arduino.git</string>
 		<key>BB79AA8B-9CED-45F6-9A86-44FF4DDD236C</key>
 		<string>https://github.com/adafruit/RTClib.git</string>
+		<key>C9F338F893A7AC8202E092C578A7FBACDA641501</key>
+		<string>github.com:greiman/SdFat-beta.git</string>
 		<key>D49A604E-E9FF-408A-B3BC-33F3DEF41E6B</key>
 		<string>https://github.com/corbinstreehouse/UTFT_Adafruit_22TFT</string>
+		<key>D5939EAB079F8C283848F5D4010563CB20561D54</key>
+		<string>github.com:corbinstreehouse/Webduino.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>LEDDigitalCyrWheel.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
+		<key>03BADEDAEB515837617516C147252618322AC8E1</key>
+		<string>../../Libraries/Adafruit_CC3000_Library/</string>
+		<key>149CC3ECD5EBE206E32A40C6C2A47C2728DF21AB</key>
+		<string>../../Libraries/aJson/</string>
+		<key>26BA4590D0DE6BE40E566829E2C744202A22E062</key>
+		<string>../../Libraries/AdaFruit_NeoPixel/</string>
 		<key>31D19277-93C1-4B36-8D47-39BAE008E6C8</key>
-		<string>../../../../../Documents/Arduino/Libraries/AdaFruit_NeoPixel</string>
+		<string>../../../Documents/Arduino/Libraries/AdaFruit_NeoPixel</string>
+		<key>445165399F010635F8C8DA546E878D9F4302478D</key>
+		<string>../../Libraries/LEDPatterns/</string>
 		<key>581ADA72-D596-47B7-96A2-A3DFDF0C6864</key>
-		<string>../../../../../Documents/Arduino/Libraries/Canbus</string>
-		<key>7B373F31-FC1C-4563-BCFF-DFA44AB4C0D0</key>
-		<string>../../../../../Documents/Arduino/Libraries/SD</string>
-		<key>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</key>
-		<string>../..</string>
-		<key>B998CEF2-BA3A-4B9A-861D-23AB57E81EA4</key>
+		<string>../../../Documents/Arduino/Libraries/Canbus</string>
+		<key>680B43941F48A36A0471451E1F70DFF3E2A8F430</key>
+		<string>../../Libraries/ArduinoJson/</string>
+		<key>6920F3797F7813915682D317F749167AACBD8BDD</key>
 		<string>../../Libraries/FastLED</string>
+		<key>6FAD55BACFC0D2A0903F46E07D45B6B262C2C3FD</key>
+		<string>../../Libraries/LSM303_Pololu/</string>
+		<key>7B373F31-FC1C-4563-BCFF-DFA44AB4C0D0</key>
+		<string>../../../Documents/Arduino/Libraries/SD</string>
+		<key>A1DD5C037D7B143761ABEB5BBAF556657A5A89C2</key>
+		<string>../..</string>
+		<key>AAF2E9DE496C06C8111DBB184575AF8C4B0F475A</key>
+		<string>../../Libraries/SD/</string>
+		<key>B64AFA8169F3B6C9350D593F2249D4A2E202525E</key>
+		<string>../../Libraries/L3G_Pololu/</string>
 		<key>BB79AA8B-9CED-45F6-9A86-44FF4DDD236C</key>
-		<string>../../../../../Documents/Arduino/Libraries/RTClib</string>
+		<string>../../../Documents/Arduino/Libraries/RTClib</string>
+		<key>C9F338F893A7AC8202E092C578A7FBACDA641501</key>
+		<string>../../Libraries/SdFat/</string>
 		<key>D49A604E-E9FF-408A-B3BC-33F3DEF41E6B</key>
-		<string>../../../../../Documents/Arduino/Libraries/UTFT</string>
+		<string>../../../Documents/Arduino/Libraries/UTFT</string>
+		<key>D5939EAB079F8C283848F5D4010563CB20561D54</key>
+		<string>../../Libraries/Webduino/</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/corbinstreehouse/LEDDigitalCyrWheel.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</string>
+	<string>A1DD5C037D7B143761ABEB5BBAF556657A5A89C2</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>03BADEDAEB515837617516C147252618322AC8E1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Adafruit_CC3000_Library</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
@@ -59,6 +107,30 @@
 			<string>31D19277-93C1-4B36-8D47-39BAE008E6C8</string>
 			<key>IDESourceControlWCCName</key>
 			<string>AdaFruit_NeoPixel</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>26BA4590D0DE6BE40E566829E2C744202A22E062</string>
+			<key>IDESourceControlWCCName</key>
+			<string>AdaFruit_NeoPixel</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>149CC3ECD5EBE206E32A40C6C2A47C2728DF21AB</string>
+			<key>IDESourceControlWCCName</key>
+			<string>aJson</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>680B43941F48A36A0471451E1F70DFF3E2A8F430</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ArduinoJson</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
@@ -72,7 +144,7 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>B998CEF2-BA3A-4B9A-861D-23AB57E81EA4</string>
+			<string>6920F3797F7813915682D317F749167AACBD8BDD</string>
 			<key>IDESourceControlWCCName</key>
 			<string>FastLED</string>
 		</dict>
@@ -80,9 +152,33 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>7B5D90EB-E67D-4F4F-B891-A4D47362BD97</string>
+			<string>B64AFA8169F3B6C9350D593F2249D4A2E202525E</string>
+			<key>IDESourceControlWCCName</key>
+			<string>L3G_Pololu</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>A1DD5C037D7B143761ABEB5BBAF556657A5A89C2</string>
 			<key>IDESourceControlWCCName</key>
 			<string>LEDDigitalCyrWheel</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>445165399F010635F8C8DA546E878D9F4302478D</string>
+			<key>IDESourceControlWCCName</key>
+			<string>LEDPatterns</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6FAD55BACFC0D2A0903F46E07D45B6B262C2C3FD</string>
+			<key>IDESourceControlWCCName</key>
+			<string>LSM303_Pololu</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
@@ -104,9 +200,33 @@
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>AAF2E9DE496C06C8111DBB184575AF8C4B0F475A</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SD</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>C9F338F893A7AC8202E092C578A7FBACDA641501</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SdFat</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
 			<string>D49A604E-E9FF-408A-B3BC-33F3DEF41E6B</string>
 			<key>IDESourceControlWCCName</key>
 			<string>UTFT</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D5939EAB079F8C283848F5D4010563CB20561D54</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Webduino</string>
 		</dict>
 	</array>
 </dict>
