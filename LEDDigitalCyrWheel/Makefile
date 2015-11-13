@@ -45,7 +45,7 @@
 APP_LIBS_LIST = SPI Wire Wire/utility EEPROM
 
 # List users libraries here -- edit this list for what i'm using in my user libs...
-USER_LIBS_LIST = AdaFruit_NeoPixel SDFat SDFat/utility SD L3G_Pololu/L3G LSM303_Pololu/LSM303 FastLED LEDPatterns
+USER_LIBS_LIST = AdaFruit_NeoPixel SD SD/utility L3G_Pololu/L3G LSM303_Pololu/LSM303 FastLED LEDPatterns
 #USER_LIBS_LIST = OctoWS2811 SDFat SDFat/utility SD L3G_Pololu/L3G LSM303_Pololu/LSM303 FastLED LEDPatterns
 #USER_LIBS_LIST = OctoWS2811 SDFat SDFat/utility SD L3G_Pololu/L3G LSM303_Pololu/LSM303
 
