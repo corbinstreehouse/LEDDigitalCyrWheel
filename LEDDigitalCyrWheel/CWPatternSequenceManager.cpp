@@ -259,7 +259,7 @@ bool CWPatternSequenceManager::initSDCard() {
     }
 #endif
     while (!result) {
-        result = SD.begin(SPI_DIV6_SPEED, SD_CARD_CS_PIN); // was SPI_HALF_SPEED...
+        result = SD.begin(SPI_QUARTER_SPEED, SD_CARD_CS_PIN); // was SPI_HALF_SPEED...
         i++;
         if (i == 1) {
             break; // give it 3 more chances??.. (it is slow to init for some reason...)
