@@ -72,7 +72,9 @@ private:
     
     uint32_t m_shouldRecordData:1;
     uint32_t m_shouldIgnoreButtonClickWhenTimed:1;
+#if WIFI
     uint32_t m_wifiEnabled:1;
+#endif
     uint32_t m_sdCardWorks:1;
     uint32_t m_dynamicMode:1;
     uint32_t __reserved:27;
@@ -92,7 +94,9 @@ private:
     
     bool processWebServer();
     void loadSettings();
+#if WIFI
     void initWifi();
+#endif
     
     bool initSDCard();
     bool initOrientation();

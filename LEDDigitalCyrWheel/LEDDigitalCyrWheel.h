@@ -19,8 +19,6 @@
 
 #define USE_NEW_V_REFERENCE 1 // new resistor values (not in v2 wheel)
 
-//#define BRIGHTNESS_PIN 22
-
 // TOOD: actually make the strip length dynamic...
 #define STRIP_LENGTH 331 // my actual count // (14+60*2)// (60*4) // (67*2)
 
@@ -62,7 +60,6 @@ const int g_batteryVoltagePin = A3; // pin 17
  Other side of button -> Gnd
  
  
- BRIGHTNESS_PIN --- not wired up anymore..
  ----------------
  
  
@@ -82,6 +79,14 @@ const int g_batteryVoltagePin = A3; // pin 17
  Teensy 18 -> SDA
  Teensy 19 -> SCL
  Then, these two need a pull up. Add +5v to a 4.7k resistor to the break between Teensy 18/SDA. Same goes for 19/SCL.
+ 
+
+  ----------------
+ WiFI CC3000 adafruit
+  ----------------
+ Pins:
+ Teensy        |     Wifi
+ 
  
  
 */

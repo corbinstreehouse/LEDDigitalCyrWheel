@@ -9,6 +9,8 @@
 #include "LEDWebServer.h"
 #include "CWPatternSequenceManager.h"
 
+#if WIFI
+
 #if SD_CARD_SUPPORT
 #include "SD.h"
 #endif
@@ -444,3 +446,5 @@ void LEDWebServer::process() {
         processConnection();
     }
 }
+
+#endif

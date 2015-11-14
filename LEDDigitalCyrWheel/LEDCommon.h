@@ -10,13 +10,14 @@
 #define LEDDigitalCyrWheel_LEDCommon_h
 
 #define DEBUG 1
+// warning!! debug on
 
 #if PATTERN_EDITOR
     #define USE_ADAFRUIT 0
     #define WIFI 0
 #else
     #define USE_ADAFRUIT 1// 0 uses fast LED
-    #define WIFI 1
+    #define WIFI 0 // disabled!!
 #endif
 
 #if DEBUG

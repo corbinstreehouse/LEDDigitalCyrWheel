@@ -21,12 +21,13 @@
     #warning "DEBUG Code is on!!"
 #endif
 
+#if WIFI
 // TODO: make these determined adhoc via iphone app...
 // Your WiFi SSID and password
 #define WLAN_SSID       "MonkeyPlayground"
 #define WLAN_PASS       "unicycle"
 #define WLAN_SECURITY   AFWifiSecurityModeWPA2
-
+#endif
 
 
 static char *g_defaultFilename = "DEFAULT"; // We compare to this address to know if it is the default pattern
@@ -54,7 +55,9 @@ CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGT
     _patternItems = NULL;
     _sequenceNames = NULL;
     m_dynamicMode = false;
+#if WIFI
     m_wifiEnabled = false;
+#endif
     m_shouldIgnoreButtonClickWhenTimed = true; // TODO: make this an option per sequence...
     ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // make sure I don't screw stuff up by chaning the size and not updating things again
 }
@@ -436,8 +439,8 @@ bool CWPatternSequenceManager::initStrip() {
     return true;
 }
 
-void CWPatternSequenceManager::initWifi() {
 #if WIFI
+void CWPatternSequenceManager::initWifi() {
     DEBUG_PRINTLN("::initWifi");
     m_wifiEnabled = true;
     m_webServer.setSequenceManager(this);
@@ -451,19 +454,20 @@ void CWPatternSequenceManager::initWifi() {
     m_webServer.getWifiManager()->setDNSName(WLAN_MACHINE_NAME);
     m_webServer.getWifiManager()->setNetworkName(WLAN_SSID, WLAN_PASS, WLAN_SECURITY);
     
-//    DEBUG_PRINTLN("starting the web server,,,");
+    DEBUG_PRINTLN("starting the web server,,,");
     m_webServer.begin();
     DEBUG_PRINTLN("ok, done starting");
     
     resetStartingTime();
     loadCurrentSequence();// reset the pattern..
     processWebServer();
-#endif
 }
+#endif
 
 void CWPatternSequenceManager::loadSettings() {
 #if !PATTERN_EDITOR
     // TODO: how to burn the initial state??
+    // TODO: make the state settable via bluetooth
     EEPROM_Read(EEPROM_START_WIFI_AUTOMATICALLY_ADDRESS, m_shouldStartWifiAutomatically);
     if (m_shouldStartWifiAutomatically != 0 && m_shouldStartWifiAutomatically != 1) {
         m_shouldStartWifiAutomatically = true;
@@ -562,9 +566,11 @@ void CWPatternSequenceManager::init(bool buttonIsDown) {
     
     loadSequencesFromDisk();
     
+#if WIFI
     if (m_shouldStartWifiAutomatically || buttonIsDown) {
         initWifi();
     }
+#endif
 }
 
 void CWPatternSequenceManager::startRecordingData() {
@@ -783,12 +789,12 @@ void CWPatternSequenceManager::setLowBatteryWarning() {
     m_savedBrightness = 64; // Lower brightness so we can see it get low! it is updated on the update pass
 
     // Turn off wifi to save power
+#if WIFI
     if (m_wifiEnabled) {
         m_wifiEnabled = false;
-#if WIFI
         m_webServer.getWifiManager()->stop();
-#endif
     }
+#endif
 }
 
 void CWPatternSequenceManager::firstPatternItem() {
