@@ -79,7 +79,7 @@ endif
 endif
 endif
 
-ARDUINO_PATH = $(ARDUINO_APP)/Contents/Resources/Java
+ARDUINO_PATH = $(ARDUINO_APP)/Contents/Java
 MPIDE_PATH   = $(MPIDE_APP)/Contents/Resources/Java
 WIRING_PATH  = $(WIRING_APP)/Contents/Resources/Java
 ENERGIA_PATH = $(ENERGIA_APP)/Contents/Resources/Java
@@ -135,7 +135,7 @@ endif
 #
 ifneq ($(TARGET_NAME),boards)
 ifneq ($(TARGET_NAME),clean)
-ifneq ($(shell grep ^$(BOARD_TAG).name $(ARDUINO_PATH)/hardware/teensy/boards.txt),)
+ifneq ($(shell grep ^$(BOARD_TAG).name $(ARDUINO_PATH)/hardware/teensy/avr/boards.txt),)
     include $(MAKEFILE_PATH)/Teensy.mk
 else ifneq ($(shell grep ^$(BOARD_TAG).name $(ARDUINO_PATH)/hardware/arduino/boards.txt),)
     include $(MAKEFILE_PATH)/Arduino.mk

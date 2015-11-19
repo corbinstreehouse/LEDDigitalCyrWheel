@@ -97,8 +97,8 @@ ifneq ($(USER_LIBS_LIST),0)
     USER_LIB_CPP_SRC = $(wildcard $(patsubst %,%/*.cpp,$(USER_LIBS))) # */
     USER_LIB_C_SRC   = $(wildcard $(patsubst %,%/*.c,$(USER_LIBS))) # */
 
-    USER_OBJS     = $(patsubst $(USER_LIB_PATH)/%.cpp,$(OBJDIR)/libs/%.o,$(USER_LIB_CPP_SRC))
-    USER_OBJS    += $(patsubst $(USER_LIB_PATH)/%.c,$(OBJDIR)/libs/%.o,$(USER_LIB_C_SRC))
+    USER_OBJS     = $(patsubst $(USER_LIB_PATH)/%.cpp,$(OBJDIR)/user_libs/%.o,$(USER_LIB_CPP_SRC))
+    USER_OBJS    += $(patsubst $(USER_LIB_PATH)/%.c,$(OBJDIR)/user_libs/%.o,$(USER_LIB_C_SRC))
 endif
 
 # LOCAL sources
@@ -135,11 +135,12 @@ DEPS   = $(LOCAL_OBJS:.o=.d)
 #
 ifndef MCU
 MCU   = $(call PARSE_BOARD,$(BOARD_TAG),build.mcu)
-echo "mcu:" $MCU
+echo "mcu computed:" $MCU
 endif
 
 ifndef F_CPU
 F_CPU = $(call PARSE_BOARD,$(BOARD_TAG),build.f_cpu)
+echo "F_CPU computed:" $F_CPU
 endif
 
 
@@ -236,12 +237,12 @@ $(OBJDIR)/libs/%.o: $(BUILD_APP_LIB_PATH)/%.c
 
 # USER library sources
 #
-$(OBJDIR)/libs/%.o: $(USER_LIB_PATH)/%.cpp
+$(OBJDIR)/user_libs/%.o: $(USER_LIB_PATH)/%.cpp
 	@echo "3-" $<
 	mkdir -p $(dir $@)
 	$(CXX) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
     
-$(OBJDIR)/libs/%.o: $(USER_LIB_PATH)/%.c
+$(OBJDIR)/user_libs/%.o: $(USER_LIB_PATH)/%.c
 	@echo "4-" $<
 	mkdir -p $(dir $@)
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@

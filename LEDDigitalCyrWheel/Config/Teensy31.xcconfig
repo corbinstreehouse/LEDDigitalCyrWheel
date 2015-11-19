@@ -10,7 +10,7 @@
 // Board indentifier
 // see Boards.txt for teensy31.name=Teensy 3.1, in /Applications/Arduino.app/Contents/Resources/Java/hardware/teensy
 //
-BOARD_TAG  = teensy31
+BOARD_TAG = teensy31
 
 // Port (optionnal)
 // most common are /dev/tty.usbserial*, /dev/tty.usbmodem* or /dev/tty.uart*
@@ -25,7 +25,7 @@ BOARD_PORT = /dev/tty.usbmodem*
 GCC_PREPROCESSOR_DEFINITIONS = __MK20DX256__
 // Sort of duplicated... this needs to be thought out better
 ARDUINO_APP = /Applications/Arduino.app
-APPLICATION_PATH = $(ARDUINO_APP)/Contents/Resources/Java
+APPLICATION_PATH = $(ARDUINO_APP)/Contents/Java
 HEADER_SEARCH_PATHS = $(APPLICATION_PATH)/hardware/teensy/cores/teensy3/** $(SKETCHBOOK_DIR)/Libraries/**
 
 // From the boards.txt for teensy:
@@ -34,5 +34,5 @@ HEADER_SEARCH_PATHS = $(APPLICATION_PATH)/hardware/teensy/cores/teensy3/** $(SKE
 //#teensy31.menu.speed.24.build.f_cpu=24000000
 //#overclock (this is an option in the Arduino IDE for Teensy)
 F_CPU = 96000000UL
-
+MCU = mk20dx256
 

@@ -15,16 +15,17 @@
 # ----------------------------------
 #
 PLATFORM         := Arduino 
-PLATFORM_TAG     := ARDUINO=105
-APPLICATION_PATH := /Applications/Arduino.app/Contents/Resources/Java
+PLATFORM_TAG     := ARDUINO=166
+APPLICATION_PATH := /Applications/Arduino.app/Contents/Java
 
 # avr for other chips.. #corbin
 ARCHITECTURE := arm-none-eabi
 
-APP_TOOLS_PATH   := $(APPLICATION_PATH)/hardware/tools/$(ARCHITECTURE)/bin
-CORE_LIB_PATH    := $(APPLICATION_PATH)/hardware/teensy/cores/teensy3
-APP_LIB_PATH     := $(APPLICATION_PATH)/libraries
-BOARDS_TXT       := $(APPLICATION_PATH)/hardware/teensy/boards.txt
+# corbin, hardcoded for teensy again
+APP_TOOLS_PATH   := $(APPLICATION_PATH)/hardware/tools/arm/bin
+CORE_LIB_PATH    := $(APPLICATION_PATH)/hardware/teensy/avr/cores/teensy3
+APP_LIB_PATH     := $(APPLICATION_PATH)/hardware/teensy/avr/libraries
+BOARDS_TXT       := $(APPLICATION_PATH)/hardware/teensy/avr/boards.txt
 
 # Sketchbook/Libraries path
 # wildcard required for ~ management
@@ -69,8 +70,12 @@ VARIANT_PATH = $(APPLICATION_PATH)/hardware/teensy/teensy3
 
 
 MCU_FLAG_NAME  = mcpu
-MCU = $(call PARSE_BOARD,$(BOARD_TAG),build.cpu)
+#corbin, hacked..hardcoded
+MCU = cortex-m4
+#$(call PARSE_BOARD,$(BOARD_TAG),build.mcu)
 # not build.mcu, which is what Step2.mk does by default
+
+
 
 EXTRA_LDFLAGS = -larm_cortexM4l_math -T$(CORE_LIB_PATH)/mk20dx256.ld -mthumb
 
@@ -78,9 +83,9 @@ EXTRA_LDFLAGS = -larm_cortexM4l_math -T$(CORE_LIB_PATH)/mk20dx256.ld -mthumb
 #teensy31.build.option1=-mthumb
 #teensy31.build.option2=-nostdlib
 #teensy31.build.option3=-D__MK20DX256__
-#teensy31.build.option4=-DTEENSYDUINO=120
+#teensy31.build.option4=-DTEENSYDUINO=126
 
-EXTRA_CPPFLAGS = -MMD -DUSB_VID=null -DUSB_PID=null -I$(VARIANT_PATH) -D$(PLATFORM_TAG) -mthumb  -D__MK20DX256__ -DUSB_SERIAL -DLAYOUT_US_ENGLISH -DTEENSYDUINO=120
+EXTRA_CPPFLAGS = -MMD -DUSB_VID=null -DUSB_PID=null -I$(VARIANT_PATH) -D$(PLATFORM_TAG) -mthumb  -D__MK20DX256__ -DUSB_SERIAL -DLAYOUT_US_ENGLISH -DTEENSYDUINO=126 -DFASTLED_TEENSY3=1
 
 
 # Leonardo USB PID VID
@@ -99,10 +104,14 @@ endif
 
 
 
-POSTCOMPILE_COMMAND_SCRIPT_NAME = $(call PARSE_BOARD,$(BOARD_TAG),build.post_compile_script)
+# corbin, now hardcoded; this moved to platform.txt, and I don't parse it..
+# $(call PARSE_BOARD,$(BOARD_TAG),build.post_compile_script)
+POSTCOMPILE_COMMAND_SCRIPT_NAME = teensy_post_compile
 POSTCOMPILE_COMMAND = $(APPLICATION_PATH)/hardware/tools/$(POSTCOMPILE_COMMAND_SCRIPT_NAME) -tools=$(APPLICATION_PATH)/hardware/tools/
 
-REBOOT_COMMAND_SCRIPT_NAME = $(call PARSE_BOARD,$(BOARD_TAG),upload.avrdude_wrapper)
+#corbin, again hardcoded
+#$(call PARSE_BOARD,$(BOARD_TAG),upload.avrdude_wrapper)
+REBOOT_COMMAND_SCRIPT_NAME = teensy_reboot
 REBOOT_COMMAND = $(APPLICATION_PATH)/hardware/tools/$(REBOOT_COMMAND_SCRIPT_NAME)
 
 

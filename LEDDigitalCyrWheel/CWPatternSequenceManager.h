@@ -79,9 +79,6 @@ private:
     uint32_t m_dynamicMode:1;
     uint32_t __reserved:27;
     
-    // State that we read on startup
-    uint8_t m_shouldStartWifiAutomatically;
-    
     LED_PATTERNS_CLASS m_ledPatterns;
     CDOrientation m_orientation;
 
@@ -89,14 +86,14 @@ private:
     uint32_t m_timedUsedBeforeCurrentPattern;
     
 #if WIFI
+    // State that we read on startup
+    uint8_t m_shouldStartWifiAutomatically;
     LEDWebServer m_webServer; // Running on port 80
+    void initWifi();
+    bool processWebServer();
 #endif
     
-    bool processWebServer();
     void loadSettings();
-#if WIFI
-    void initWifi();
-#endif
     
     bool initSDCard();
     bool initOrientation();

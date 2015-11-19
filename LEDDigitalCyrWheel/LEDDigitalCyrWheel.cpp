@@ -14,8 +14,6 @@
 #include "Button.h"
 #include "Wire.h"
 //#include <HardwareSerial.h>
-//#include <EEPROM.h>
-//#include <avr/eeprom.h>
 
 #include <stdint.h> // We can compile without this, but it kills xcode completion without it! it took me a while to discover that..
 
@@ -25,6 +23,9 @@
 #include "LEDDigitalCyrWheel.h"
 
 #include <SPI.h>
+#if BLUETOOTH
+#include "Adafruit_BLE_UART.h"
+#endif
 
 
 #define IGNORE_VOLTAGE 1 //for hardware testing w/out a battery

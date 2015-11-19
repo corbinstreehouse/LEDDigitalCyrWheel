@@ -10,10 +10,7 @@
 #include "LEDPatterns.h"
 #include "LEDDigitalCyrWheel.h"
 #include "LEDCommon.h"
-
-#if !PATTERN_EDITOR
-#include "EEPROM2.h"
-#endif
+#include "EEPROM.h"
 
 #define RECORD_INDICATOR_FILENAME "RECORD.TXT" // If this file exists, we record data in other files.
 
@@ -468,16 +465,18 @@ void CWPatternSequenceManager::loadSettings() {
 #if !PATTERN_EDITOR
     // TODO: how to burn the initial state??
     // TODO: make the state settable via bluetooth
-    EEPROM_Read(EEPROM_START_WIFI_AUTOMATICALLY_ADDRESS, m_shouldStartWifiAutomatically);
+#if WIFI
+    EEPROM.get(EEPROM_START_WIFI_AUTOMATICALLY_ADDRESS, m_shouldStartWifiAutomatically);
     if (m_shouldStartWifiAutomatically != 0 && m_shouldStartWifiAutomatically != 1) {
         m_shouldStartWifiAutomatically = true;
     }
-    EEPROM_Read(EEPROM_BRIGHTNESS_ADDRESS, m_savedBrightness);
+#endif
+    EEPROM.get(EEPROM_BRIGHTNESS_ADDRESS, m_savedBrightness);
     if (m_savedBrightness < MIN_BRIGHTNESS || m_savedBrightness > MAX_BRIGHTNESS) {
         m_savedBrightness = DEFAULT_BRIGHTNESS;
-        DEBUG_PRINTF("SAVED BRIGHTNESS setting to default..out of band");
+        DEBUG_PRINTF("SAVED BRIGHTNESS setting to default..out of band\r\n");
     } else {
-        DEBUG_PRINTF("SAVED BRIGHTNESS: %d", m_savedBrightness);
+        DEBUG_PRINTF("SAVED BRIGHTNESS: %d\r\n", m_savedBrightness);
     }
 #else
     m_savedBrightness = DEFAULT_BRIGHTNESS; // Default value?? this is still super bright. maybe the algorithm is wrong..
@@ -557,7 +556,9 @@ void CWPatternSequenceManager::init(bool buttonIsDown) {
     
     loadSettings();
 
+    DEBUG_PRINTLN("init orientation");
     initOrientation();
+    DEBUG_PRINTLN("init strip");
     initStrip();
     DEBUG_PRINTLN("done init strip, starting to init SD Card");
     
@@ -693,8 +694,8 @@ void CWPatternSequenceManager::buttonLongClick() {
     }
 }
 
-bool CWPatternSequenceManager::processWebServer() {
 #if WIFI
+bool CWPatternSequenceManager::processWebServer() {
     if (m_wifiEnabled) {
         m_webServer.process();
         // If we are waiting for it to load...then show dots
@@ -717,10 +718,8 @@ bool CWPatternSequenceManager::processWebServer() {
     } else {
         return true;
     }
-#else
-    return true;
-#endif
 }
+#endif
 
 void CWPatternSequenceManager::process() {
     

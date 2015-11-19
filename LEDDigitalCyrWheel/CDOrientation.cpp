@@ -62,7 +62,6 @@ uint8_t CDOrientation::getRotationalVelocityBrightness(uint8_t currentBrightness
 
 #include "LEDDigitalCyrWheel.h" // For EEPROM_ADDRESS....i could make this settable.
 #include "EEPROM.h"
-#include "EEPROM2.h"
 
 
 // LSM303 magnetometer calibration constants; use the Calibrate example from  the Pololu LSM303 library to find the right values for your board
@@ -584,6 +583,9 @@ bool CDOrientation::init() {
         
         _internalProcess();
 #warning corbin i can probably remove the above line
+        
+        DEBUG_PRINTLN("Orientation initial read done...");
+
     }
     
     return result;
@@ -648,8 +650,8 @@ bool CDOrientation::initAccel() {
             DEBUG_PRINTLN("loading saved compass calibration values");
             LSM303::vector<int16_t> savedMin;
             LSM303::vector<int16_t> savedMax;
-            EEPROM_Read(MIN_EEPROM_ADDRESS, savedMin);
-            EEPROM_Read(EEPROM_ACCELEROMETER_MAX_ADDRESS, savedMax);
+            EEPROM.get(MIN_EEPROM_ADDRESS, savedMin);
+            EEPROM.get(EEPROM_ACCELEROMETER_MAX_ADDRESS, savedMax);
             // Validate them before using them
             if (IS_VALID_MIN_COMPASS_VALUE(savedMin.x) && IS_VALID_MIN_COMPASS_VALUE(savedMin.y) && IS_VALID_MIN_COMPASS_VALUE(savedMin.z)) {
                 _compass.m_min = savedMin;
@@ -855,8 +857,8 @@ void CDOrientation::endCalibration() {
     _compass.m_min = _calibrationMin;
     _compass.m_max = _calibrationMax;
     EEPROM.write(EEPROM_MIN_MAX_IS_SAVED_ADDRESS, true);
-    EEPROM_Write(MIN_EEPROM_ADDRESS, _calibrationMin);
-    EEPROM_Write(EEPROM_ACCELEROMETER_MAX_ADDRESS, _calibrationMax);
+    EEPROM.put(MIN_EEPROM_ADDRESS, _calibrationMin);
+    EEPROM.put(EEPROM_ACCELEROMETER_MAX_ADDRESS, _calibrationMax);
 }
 
 double rawAccelToG(int16_t a) {

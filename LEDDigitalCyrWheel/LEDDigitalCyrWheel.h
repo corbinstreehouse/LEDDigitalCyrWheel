@@ -12,7 +12,7 @@
 #include "LEDCommon.h" // Defines STRIP_PIN
 
 // All my defined pins
-#define SD_CARD_CS_PIN 10 //10 in latest update... /* SS is pin 10 by default, but I have it wird in my wheel to pin 4! */ // I think my wheel is wired to pin 4, which is wrong!!! I fixed my breadboard..
+#define SD_CARD_CS_PIN 10 //10 in latest update... /* SS is pin 10 by default, but I have it wired in my wheel to pin 4! */ // I think my wheel is wired to pin 4, which is wrong!!! I fixed my breadboard..
 // See: https://www.pjrc.com/teensy/td_libs_SPI.html#ss for more info
 
 #define BUTTON_PIN 23
@@ -36,6 +36,14 @@ const int g_batteryVoltagePin = A3; // pin 17
 #define EEPROM_MIN_MAX_IS_SAVED_ADDRESS 22 // rather abitrary
 #define MIN_EEPROM_ADDRESS 24 // rather abitrary
 #define EEPROM_ACCELEROMETER_MAX_ADDRESS (24+2*3)    // min value has a vector of 3 16-bit values; 16-bits is 2 bytes. 3*2 = 6 bytes for the prior read
+
+
+
+#if BLUETOOTH
+#define ADAFRUITBLE_REQ 6 //10 .//chip select pin
+#define ADAFRUITBLE_RDY 5 // 2     // This should be an interrupt pin, on Uno thats #2 or #3
+#define ADAFRUITBLE_RST 7
+#endif
 
 
 /* Teensy 3.1 wiring diagram 

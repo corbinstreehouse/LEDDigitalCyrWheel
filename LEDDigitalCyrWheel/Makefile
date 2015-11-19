@@ -38,22 +38,12 @@
 
 # List Arduino libraries here
 #
-#APP_LIBS_LIST = Wire Wire/utility EEPROM Ethernet Ethernet/utility	SPI Firmata LiquidCrystal Matrix Sprite SD SD/utility Servo SoftwareSerial Stepper
-#APP_LIBS_LIST = Wire Wire/utility EEPROM  SoftwareSerial
-#APP_LIBS_LIST = Wire Wire/utility
-
-#APP_LIBS_LIST = SPI Wire Wire/utility EEPROM SD SD/utility # uses the default SD library
 APP_LIBS_LIST = SPI Wire Wire/utility EEPROM
 
 # List users libraries here -- edit this list for what i'm using in my user libs...
+USER_LIBS_LIST = AdaFruit_NeoPixel SD SD/Utility L3G_Pololu/L3G LSM303_Pololu/LSM303 FastLED LEDPatterns Adafruit_nRF8001 Adafruit_nRF8001/utility
 
-USER_LIBS_LIST = AdaFruit_NeoPixel SD SD/Utility L3G_Pololu/L3G LSM303_Pololu/LSM303 FastLED LEDPatterns ArduinoJson aJson aJson/utility
 
-#SDFat/SdFat SDFat/SdFat/utility
-
-#USER_LIBS_LIST = AdaFruit_NeoPixel L3G_Pololu/L3G LSM303_Pololu/LSM303 FastLED LEDPatterns ArduinoJson
-
-#USER_LIBS_LIST = OctoWS2811 SDFat SDFat/utility SD L3G_Pololu/L3G LSM303_Pololu/LSM303 FastLED LEDPatterns
 
 MAKEFILE_PATH  = $(CURDIR)/Makefiles
 UTILITIES_PATH = $(CURDIR)/Utilities
