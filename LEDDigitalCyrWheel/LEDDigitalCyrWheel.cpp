@@ -82,14 +82,26 @@ static float readBatteryVoltage() {
     return voltage;
 }
 
+#if BLUETOOTH
+Adafruit_BLE_UART BTLEserial = Adafruit_BLE_UART(ADAFRUITBLE_REQ, ADAFRUITBLE_RDY, ADAFRUITBLE_RST);
+#endif
+
+
 void setup() {
 #if DEBUG
     Serial.begin(9600);
-    //delay(1000);
+    delay(1000);
     Serial.println("--- begin serial --- (WARNING: delay on start!!)");
 #endif
-    pinMode(SD_CARD_CS_PIN, OUTPUT); // The class does this...not sure why I do it too, but the SD card is a pain to deal with
+    // we NEED to do this to avoid conflicting with the other chip selects. TODO: set the OTHER ones I use on SPI as neccessary. This is REQUIRED. Wifi had it missing, and could have been an issue.
+    pinMode(SD_CARD_CS_PIN, OUTPUT);
     digitalWrite(SD_CARD_CS_PIN, HIGH);
+    
+    
+#if BLUETOOTH
+    pinMode(ADAFRUITBLE_REQ, OUTPUT);
+    digitalWrite(ADAFRUITBLE_REQ, HIGH);
+#endif
     
     pinMode(g_batteryVoltagePin, INPUT);
 //    pinMode(g_batteryRefPin, INPUT); // TODO: I just re-enabled this. Make sure it works again
@@ -106,6 +118,7 @@ void setup() {
 
     g_button.process();
     g_sequenceManager.init(g_button.isPressed());
+
 #if DEBUG
 #if IGNORE_VOLTAGE
     // Having this on could be bad..flash red
@@ -128,6 +141,11 @@ void setup() {
         g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Orange, 150);
         g_sequenceManager.loadDefaultSequence();
     }
+
+#if BLUETOOTH
+    BTLEserial.setDeviceName("cyrweel"); /* 7 characters max! */
+    BTLEserial.begin();
+#endif
 }
 
 
@@ -153,10 +171,68 @@ bool checkVoltage() {
     return true;
 }
 
+#if BLUETOOTH
+aci_evt_opcode_t laststatus =  ACI_EVT_CONNECTED;
+#endif
+
+
 void loop() {
     g_button.process();
     // Don't show the LED pattern if we have too low of voltage...
     if (checkVoltage()) {
         g_sequenceManager.process();
+#if BLUETOOTH
+        // Tell the nRF8001 to do whatever it should be working on.
+        BTLEserial.pollACI();
+        
+        // Ask what is our current status
+        aci_evt_opcode_t status = BTLEserial.getState();
+        // If the status changed....
+        if (status != laststatus) {
+            // print it out!
+            if (status == ACI_EVT_DEVICE_STARTED) {
+                Serial.println(F("* Advertising started"));
+            }
+            if (status == ACI_EVT_CONNECTED) {
+                Serial.println(F("* Connected!"));
+            }
+            if (status == ACI_EVT_DISCONNECTED) {
+                Serial.println(F("* Disconnected or advertising timed out"));
+            }
+            // OK set the last status change to this one
+            laststatus = status;
+        }
+        
+        if (status == ACI_EVT_CONNECTED) {
+            // Lets see if there's any data for us!
+            if (BTLEserial.available()) {
+                Serial.print("* "); Serial.print(BTLEserial.available()); Serial.println(F(" bytes available from BTLE"));
+            }
+            // OK while we still have something to read, get a character and print it out
+            while (BTLEserial.available()) {
+                char c = BTLEserial.read();
+                Serial.print(c);
+            }
+            
+            // Next up, see if we have any data to get from the Serial console
+            
+            if (Serial.available()) {
+                // Read a line from Serial
+                Serial.setTimeout(100); // 100 millisecond timeout
+                String s = Serial.readString();
+                
+                // We need to convert the line to bytes, no more than 20 at this time
+                uint8_t sendbuffer[20];
+                s.getBytes(sendbuffer, 20);
+                char sendbuffersize = min(20, s.length());
+                
+                Serial.print(F("\n* Sending -> \"")); Serial.print((char *)sendbuffer); Serial.println("\"");
+                
+                // write the data
+                BTLEserial.write(sendbuffer, sendbuffersize);
+            }
+        }
+        
+#endif
     }
 }
