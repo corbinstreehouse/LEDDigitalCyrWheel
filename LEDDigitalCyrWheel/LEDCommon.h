@@ -77,6 +77,10 @@ Notes:
  Yellow flash 3 times, then delay: means no pattern, or the pattern file couldn't be read, or was corrupted, or out of date.
 
  Hold the button down when starting: Goes into calibration mode. Should flash pink. Rotate the wheel amongst each axist to calibrate. Push the button to end calibration and save the state. Turn it off to cancel.
+ ^^^ calibration now done differently...
+ 
+ Blue on start: initializing bluetooth
+ Blue flash three times on start: problem with bluetooth initialization
  
  If a file on the SD card called "record.txt" exists:
     Long click: Three green flashes: starting to save data to the card.

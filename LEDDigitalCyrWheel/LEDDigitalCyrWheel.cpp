@@ -24,7 +24,7 @@
 
 #include <SPI.h>
 #if BLUETOOTH
-#include "Adafruit_BLE_UART.h"
+#include "CDWheelBluetoothController.h"
 #endif
 
 
@@ -53,6 +53,9 @@
 
 static Button g_button = Button(BUTTON_PIN);
 static CWPatternSequenceManager g_sequenceManager;
+#if BLUETOOTH
+static CDWheelBluetoothController g_bluetoothController;
+#endif
 
 
 void buttonClicked(Button &b){
@@ -82,11 +85,6 @@ static float readBatteryVoltage() {
     return voltage;
 }
 
-#if BLUETOOTH
-Adafruit_BLE_UART BTLEserial = Adafruit_BLE_UART(ADAFRUITBLE_REQ, ADAFRUITBLE_RDY, ADAFRUITBLE_RST);
-#endif
-
-
 void setup() {
 #if DEBUG
     Serial.begin(9600);
@@ -97,10 +95,9 @@ void setup() {
     pinMode(SD_CARD_CS_PIN, OUTPUT);
     digitalWrite(SD_CARD_CS_PIN, HIGH);
     
-    
 #if BLUETOOTH
-    pinMode(ADAFRUITBLE_REQ, OUTPUT);
-    digitalWrite(ADAFRUITBLE_REQ, HIGH);
+    pinMode(BLUETOOTH_CS, OUTPUT);
+    digitalWrite(BLUETOOTH_CS, HIGH);
 #endif
     
     pinMode(g_batteryVoltagePin, INPUT);
@@ -117,35 +114,36 @@ void setup() {
     g_button.holdHandler(buttonHeld);
 
     g_button.process();
-    g_sequenceManager.init(g_button.isPressed());
+    g_sequenceManager.init();
+
+#if BLUETOOTH
+    g_bluetoothController.init(&g_sequenceManager, g_button.isPressed());
+#endif
+    
 
 #if DEBUG
-#if IGNORE_VOLTAGE
-    // Having this on could be bad..flash red
-    g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Red, 150);
-#else
-    g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Red);
+    #if IGNORE_VOLTAGE
+        // Having this on could be bad..flash red
+        g_sequenceManager.flashThreeTimes(CRGB::Red);
+    #else
+        g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Red);
+    #endif
 #endif
-#else
-    //    g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Maroon);
-#endif
+    
     if (g_sequenceManager.getCardInitPassed()) {
         // See if we read more than the default sequence
         if (g_sequenceManager.getNumberOfSequenceNames() > 1) {
             //flashNTimes(0, 255, 0, 1, 150); // Don't do anything..
         } else {
-            g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Violet, 150);
+            g_sequenceManager.flashThreeTimes(CRGB::Violet);
         }
     } else {
         // Flash the LEDs all red to indicate no card...
-        g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Orange, 150);
-        g_sequenceManager.loadDefaultSequence();
+        g_sequenceManager.flashThreeTimes(CRGB::Orange);
     }
-
-#if BLUETOOTH
-    BTLEserial.setDeviceName("cyrweel"); /* 7 characters max! */
-    BTLEserial.begin();
-#endif
+    
+    // Start the patterns by loading the first sequence
+    g_sequenceManager.loadFirstSequence();
 }
 
 
@@ -162,7 +160,7 @@ bool checkVoltage() {
             DEBUG_PRINTF("---------------------- LOW BATTERY VOLTAGE: %f\r\n", voltage);
             // half the max brightness...
             g_sequenceManager.setLowBatteryWarning();
-            g_sequenceManager.getLEDPatterns()->flashThreeTimesWithDelay(CRGB::Red, 150);
+            g_sequenceManager.getLEDPatterns()->flashThreeTimes(CRGB::Red, 150);
             
             delay(2000); // delay for 2 seconds to give the user time to react and turn it off
             return false;
@@ -171,68 +169,13 @@ bool checkVoltage() {
     return true;
 }
 
-#if BLUETOOTH
-aci_evt_opcode_t laststatus =  ACI_EVT_CONNECTED;
-#endif
-
-
 void loop() {
     g_button.process();
-    // Don't show the LED pattern if we have too low of voltage...
+#if BLUETOOTH
+    g_bluetoothController.process();
+#endif
+    // Don't show the LED pattern if we have too low of voltage; checkVoltage will slow down our processing with explicit delays
     if (checkVoltage()) {
         g_sequenceManager.process();
-#if BLUETOOTH
-        // Tell the nRF8001 to do whatever it should be working on.
-        BTLEserial.pollACI();
-        
-        // Ask what is our current status
-        aci_evt_opcode_t status = BTLEserial.getState();
-        // If the status changed....
-        if (status != laststatus) {
-            // print it out!
-            if (status == ACI_EVT_DEVICE_STARTED) {
-                Serial.println(F("* Advertising started"));
-            }
-            if (status == ACI_EVT_CONNECTED) {
-                Serial.println(F("* Connected!"));
-            }
-            if (status == ACI_EVT_DISCONNECTED) {
-                Serial.println(F("* Disconnected or advertising timed out"));
-            }
-            // OK set the last status change to this one
-            laststatus = status;
-        }
-        
-        if (status == ACI_EVT_CONNECTED) {
-            // Lets see if there's any data for us!
-            if (BTLEserial.available()) {
-                Serial.print("* "); Serial.print(BTLEserial.available()); Serial.println(F(" bytes available from BTLE"));
-            }
-            // OK while we still have something to read, get a character and print it out
-            while (BTLEserial.available()) {
-                char c = BTLEserial.read();
-                Serial.print(c);
-            }
-            
-            // Next up, see if we have any data to get from the Serial console
-            
-            if (Serial.available()) {
-                // Read a line from Serial
-                Serial.setTimeout(100); // 100 millisecond timeout
-                String s = Serial.readString();
-                
-                // We need to convert the line to bytes, no more than 20 at this time
-                uint8_t sendbuffer[20];
-                s.getBytes(sendbuffer, 20);
-                char sendbuffersize = min(20, s.length());
-                
-                Serial.print(F("\n* Sending -> \"")); Serial.print((char *)sendbuffer); Serial.println("\"");
-                
-                // write the data
-                BTLEserial.write(sendbuffer, sendbuffersize);
-            }
-        }
-        
-#endif
     }
 }

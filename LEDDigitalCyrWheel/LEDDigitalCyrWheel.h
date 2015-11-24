@@ -32,18 +32,10 @@ const int g_batteryVoltagePin = A3; // pin 17
 
 // Locations in EEPROM
 #define EEPROM_BRIGHTNESS_ADDRESS 10
-#define EEPROM_START_WIFI_AUTOMATICALLY_ADDRESS 12
+// NOTE: see EEPROM values in CDWheelBluetoothController.h and don't conflict with them
 #define EEPROM_MIN_MAX_IS_SAVED_ADDRESS 22 // rather abitrary
 #define MIN_EEPROM_ADDRESS 24 // rather abitrary
 #define EEPROM_ACCELEROMETER_MAX_ADDRESS (24+2*3)    // min value has a vector of 3 16-bit values; 16-bits is 2 bytes. 3*2 = 6 bytes for the prior read
-
-
-
-#if BLUETOOTH
-#define ADAFRUITBLE_REQ 6 //10 .//chip select pin
-#define ADAFRUITBLE_RDY 5 // 2     // This should be an interrupt pin, on Uno thats #2 or #3
-#define ADAFRUITBLE_RST 7
-#endif
 
 
 /* Teensy 3.1 wiring diagram 
@@ -95,6 +87,11 @@ const int g_batteryVoltagePin = A3; // pin 17
  Pins:
  Teensy        |     Wifi
  
+ Bluetooth pins (see CDWheelBluetoothController.cpp for latest values:
+    #define BLUETOOTH_CS 6 // chip select pin
+    #define BLUETOOTH_IRQ 5 // interrupt pin
+    #define BLUETOOTH_RST 7
+
  
  
 */

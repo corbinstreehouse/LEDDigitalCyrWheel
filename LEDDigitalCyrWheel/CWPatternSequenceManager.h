@@ -45,14 +45,6 @@
 
 #endif
 
-#if WIFI
-#include "Adafruit_CC3000.h"
-#include "LEDWebServer.h"
-#endif
-
-// TODO: make this generic
-#define WLAN_MACHINE_NAME "cyrwheel"
-
 class CWPatternSequenceManager {
 private:
     // all available sequences
@@ -86,10 +78,7 @@ private:
     uint32_t m_timedUsedBeforeCurrentPattern;
     
 #if WIFI
-    // State that we read on startup
-    uint8_t m_shouldStartWifiAutomatically;
     LEDWebServer m_webServer; // Running on port 80
-    void initWifi();
     bool processWebServer();
 #endif
     
@@ -141,16 +130,19 @@ public:
     ~CWPatternSequenceManager();
     void setCyrWheelView(CDCyrWheelView *view); // Binding..
 #endif
-    void init(bool buttonIsDown);
+    void init();
     
     void buttonClick();
     void buttonLongClick();
     
+    void loadFirstSequence();
     void loadNextSequence();
     void loadPriorSequence();
+    
     void restartCurrentSequence();
     void setCurrentSequenceAtIndex(int index);
     bool deleteSequenceAtIndex(int index);
+    
     bool getCardInitPassed() { return m_sdCardWorks; }
     
     void loadSequencesFromDisk();
@@ -164,6 +156,7 @@ public:
     void priorPatternItem();
     
     void setDynamicPatternWithHeader(CDPatternItemHeader *header);
+    void setDynamicPatternType(LEDPatternType type, CRGB color = CRGB::Red);
     
     void startCalibration();
     void endCalibration();
@@ -174,7 +167,8 @@ public:
     
     void process();
     
-    void makeSequenceFlashColor(uint32_t color);
+    void makeSequenceFlashColor(CRGB color);
+    void flashThreeTimes(CRGB color, uint32_t delayAmount = 150);
     
     const char *getSequencePath();
     

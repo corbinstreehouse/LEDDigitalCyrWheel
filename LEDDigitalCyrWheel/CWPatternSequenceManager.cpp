@@ -10,7 +10,9 @@
 #include "LEDPatterns.h"
 #include "LEDDigitalCyrWheel.h"
 #include "LEDCommon.h"
+#ifndef PATTERN_EDITOR
 #include "EEPROM.h"
+#endif
 
 #define RECORD_INDICATOR_FILENAME "RECORD.TXT" // If this file exists, we record data in other files.
 
@@ -171,7 +173,7 @@ int CWPatternSequenceManager::getIndexOfSequenceName(char *name) {
     return -1;
 }
 
-void CWPatternSequenceManager::makeSequenceFlashColor(uint32_t color) {
+void CWPatternSequenceManager::makeSequenceFlashColor(CRGB color) {
     freePatternItems();
     _numberOfPatternItems = 2;
     _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
@@ -186,6 +188,20 @@ void CWPatternSequenceManager::makeSequenceFlashColor(uint32_t color) {
     _patternItems[1].color = CRGB::Black;
     _patternItems[1].patternDuration = 500; // not used..
     _patternItems[1].patternEndCondition = CDPatternEndConditionAfterDuration;
+}
+
+void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, CRGB color) {
+    CDPatternItemHeader header;
+    header.patternType = type;
+    header.duration = 500;
+    header.patternDuration = 500;
+    header.color = color;
+    header.patternEndCondition = CDPatternEndConditionOnButtonClick;
+    setDynamicPatternWithHeader(&header);
+}
+
+void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount) {
+    m_ledPatterns.flashThreeTimes(color);
 }
 
 // mallocs memory if bufferSize isn't large enough
@@ -288,11 +304,11 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
             DEBUG_PRINTLN("DONE");
         } else {
             // We don't support this version... flash purple
-            makeSequenceFlashColor(0xFF00FF);
+            makeSequenceFlashColor(CRGB::Purple);
         }
     } else {
         // Bad data...flash yellow
-        makeSequenceFlashColor(0xFFFF00);
+        makeSequenceFlashColor(CRGB::Yellow);
     }
     sequenceFile.close();
     //
@@ -330,6 +346,12 @@ bool CWPatternSequenceManager::deleteSequenceAtIndex(int index) {
         }
     }
     return result;
+}
+
+void CWPatternSequenceManager::loadFirstSequence() {
+    setCurrentSequenceAtIndex(0);
+//    _currentSequenceIndex = 0;
+//    loadCurrentSequence(); // validates the index here
 }
 
 void CWPatternSequenceManager::setCurrentSequenceAtIndex(int index) {
@@ -436,41 +458,10 @@ bool CWPatternSequenceManager::initStrip() {
     return true;
 }
 
-#if WIFI
-void CWPatternSequenceManager::initWifi() {
-    DEBUG_PRINTLN("::initWifi");
-    m_wifiEnabled = true;
-    m_webServer.setSequenceManager(this);
-    
-    // show all blue while this is happening as the load is slow
-    m_ledPatterns.setNextPatternType(LEDPatternTypeSolidColor);
-    m_ledPatterns.setPatternColor(CRGB::Blue);
-    m_ledPatterns.show();
-    
-    // TODO: better ways to dynamically figure out the wifi configuration...
-    m_webServer.getWifiManager()->setDNSName(WLAN_MACHINE_NAME);
-    m_webServer.getWifiManager()->setNetworkName(WLAN_SSID, WLAN_PASS, WLAN_SECURITY);
-    
-    DEBUG_PRINTLN("starting the web server,,,");
-    m_webServer.begin();
-    DEBUG_PRINTLN("ok, done starting");
-    
-    resetStartingTime();
-    loadCurrentSequence();// reset the pattern..
-    processWebServer();
-}
-#endif
-
 void CWPatternSequenceManager::loadSettings() {
 #if !PATTERN_EDITOR
     // TODO: how to burn the initial state??
     // TODO: make the state settable via bluetooth
-#if WIFI
-    EEPROM.get(EEPROM_START_WIFI_AUTOMATICALLY_ADDRESS, m_shouldStartWifiAutomatically);
-    if (m_shouldStartWifiAutomatically != 0 && m_shouldStartWifiAutomatically != 1) {
-        m_shouldStartWifiAutomatically = true;
-    }
-#endif
     EEPROM.get(EEPROM_BRIGHTNESS_ADDRESS, m_savedBrightness);
     if (m_savedBrightness < MIN_BRIGHTNESS || m_savedBrightness > MAX_BRIGHTNESS) {
         m_savedBrightness = DEFAULT_BRIGHTNESS;
@@ -535,7 +526,7 @@ void CWPatternSequenceManager::loadSequencesFromDisk() {
         _numberOfAvailableSequences++;
         
         if (m_shouldRecordData) {
-            m_ledPatterns.flashThreeTimesWithDelay(CRGB(30,30,30), 150);
+            m_ledPatterns.flashThreeTimes(CRGB(30,30,30));
         }
         
         // TODO: Read the last sequence we were on to start from there again...but make this optional...
@@ -546,11 +537,11 @@ void CWPatternSequenceManager::loadSequencesFromDisk() {
         _sequenceNames[0] = g_defaultFilename;
         
     }
-    _currentSequenceIndex = 0;
-    loadCurrentSequence();
+    
+    loadFirstSequence();
 }
 
-void CWPatternSequenceManager::init(bool buttonIsDown) {
+void CWPatternSequenceManager::init() {
     DEBUG_PRINTLN("::init");
     m_shouldRecordData = false;
     
@@ -566,17 +557,11 @@ void CWPatternSequenceManager::init(bool buttonIsDown) {
     DEBUG_PRINTLN("done init sd card");
     
     loadSequencesFromDisk();
-    
-#if WIFI
-    if (m_shouldStartWifiAutomatically || buttonIsDown) {
-        initWifi();
-    }
-#endif
 }
 
 void CWPatternSequenceManager::startRecordingData() {
     if (!m_orientation.isSavingData()) {
-        m_ledPatterns.flashThreeTimesWithDelay(CRGB::Green, 150);
+        m_ledPatterns.flashThreeTimes(CRGB::Green);
         m_orientation.beginSavingData();
     }
 }
@@ -584,7 +569,7 @@ void CWPatternSequenceManager::startRecordingData() {
 void CWPatternSequenceManager::endRecordingData() {
     if (m_orientation.isSavingData()) {
         m_orientation.endSavingData();
-        m_ledPatterns.flashThreeTimesWithDelay(CRGB::Blue, 150);
+        m_ledPatterns.flashThreeTimes(CRGB::Blue);
     }
 }
 
@@ -604,7 +589,7 @@ void CWPatternSequenceManager::endCalibration() {
     if (m_orientation.isCalibrating()) {
         m_orientation.endCalibration();
         // Flash to let you know it is done
-        m_ledPatterns.flashThreeTimesWithDelay(CRGB::Green, 150);
+        m_ledPatterns.flashThreeTimes(CRGB::Green);
         firstPatternItem();
     } else {
         DEBUG_PRINTLN("not calibration!!!");
@@ -707,7 +692,7 @@ bool CWPatternSequenceManager::processWebServer() {
         if (state == AFWifiStateTimedOut) {
             // Not sure if we should restart or try to reconnect automatically
             m_webServer.getWifiManager()->stop(); // stopping should allow it to restart (i need to test this..)
-            m_ledPatterns.flashThreeTimesWithDelay(CRGB::Red, 150);
+            m_ledPatterns.flashThreeTimes(CRGB::Red);
         }
         
         // Show some loading feedback...
@@ -726,12 +711,6 @@ void CWPatternSequenceManager::process() {
 //    float time = millis()-m_timedPatternStartTime;
 //    time = time / 1000.0;
 //    Serial.println(time);
-
-#if WIFI
-    if (!processWebServer()) {
-        return; // It is loading the webserver still..
-    }
-#endif
     
     m_orientation.process();
     if (m_orientation.isCalibrating()) {
@@ -742,7 +721,7 @@ void CWPatternSequenceManager::process() {
 
     if (_numberOfPatternItems == 0) {
         DEBUG_PRINTLN("No pattern items to show!");
-        m_ledPatterns.flashThreeTimesWithDelay(CRGB::Yellow, 150);
+        m_ledPatterns.flashThreeTimes(CRGB::Yellow);
         delay(1000);
         return;
     }
