@@ -46,7 +46,12 @@ typedef enum {
 #define kLEDWheelCharSendCommandUUID_AdaFruit "4F-6E-71-B6-55-F9-4E-D8-97-20-FA-BC-1B-4B-8C-FD"
 
 #define kLEDWheelCharRequestSequencesUUID "86DEF442-3770-4C2E-BB7E-0735311FA99A" //When sent out, expect to recieve an answer on kLEDWheelCharRecieveSequencesUUID
-#define kLEDWheelCharRecieveSequencesUUID "86DEF442-3770-4C2E-BB7E-0735311FA99B"
+
+#define kLEDWheelBrightnessCharacteristicUUID "796DEF442-3770-4C2E-BB7E-0735311FA99B"
+#define kLEDWheelCharGetSequencesUUID "86DEF442-3770-4C2E-BB7E-0735311FA99B"
+
+#define kLEDWheelDeleteCharacteristicUUID "96DEF442-3770-4C2E-BB7E-0735311FA99B"
+
 
 
 
