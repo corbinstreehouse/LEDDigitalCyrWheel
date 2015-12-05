@@ -169,7 +169,6 @@
 		9DDC61C91938488E00C602BC /* LSM303.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC60061938488D00C602BC /* LSM303.cpp */; };
 		9DDC61CA1938488E00C602BC /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC60171938488D00C602BC /* File.cpp */; };
 		9DDC61CB1938488E00C602BC /* SD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC601A1938488D00C602BC /* SD.cpp */; };
-		9DE7EBFD19EAE82700C1DCB6 /* LEDWebServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7EBFB19EAE82700C1DCB6 /* LEDWebServer.cpp */; };
 		9DE7ECF719EB6EFF00C1DCB6 /* istream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7ECCF19EB6EFF00C1DCB6 /* istream.cpp */; };
 		9DE7ECF819EB6EFF00C1DCB6 /* MinimumSerial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7ECD119EB6EFF00C1DCB6 /* MinimumSerial.cpp */; };
 		9DE7ECF919EB6EFF00C1DCB6 /* ostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DE7ECD319EB6EFF00C1DCB6 /* ostream.cpp */; };
@@ -1476,6 +1475,7 @@
 		9D472E1B1902F1590076281A /* CDOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDOrientation.cpp; sourceTree = "<group>"; };
 		9D472E1C1902F1590076281A /* CDOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDOrientation.h; sourceTree = "<group>"; };
 		9D4FCB29193BB3A40000DE28 /* LEDCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEDCommon.h; sourceTree = "<group>"; };
+		9D683E2D1C1139000058EFA0 /* CDPatternSequenceManagerShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDPatternSequenceManagerShared.h; sourceTree = "<group>"; };
 		9D6BC8281938CBC400E21E1C /* block_clockless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = block_clockless.h; sourceTree = "<group>"; };
 		9D6BC8291938CBC400E21E1C /* chipsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chipsets.h; sourceTree = "<group>"; };
 		9D6BC82A1938CBC400E21E1C /* clockless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clockless.h; sourceTree = "<group>"; };
@@ -1576,8 +1576,6 @@
 		9DDC60191938488D00C602BC /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		9DDC601A1938488D00C602BC /* SD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SD.cpp; sourceTree = "<group>"; };
 		9DDC601B1938488D00C602BC /* SD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SD.h; sourceTree = "<group>"; };
-		9DE7EBFB19EAE82700C1DCB6 /* LEDWebServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LEDWebServer.cpp; sourceTree = "<group>"; };
-		9DE7EBFC19EAE82700C1DCB6 /* LEDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDWebServer.h; sourceTree = "<group>"; };
 		9DE7EC7C19EB6EFF00C1DCB6 /* ArduinoStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArduinoStream.h; sourceTree = "<group>"; };
 		9DE7EC7D19EB6EFF00C1DCB6 /* bufstream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bufstream.h; sourceTree = "<group>"; };
 		9DE7ECCD19EB6EFF00C1DCB6 /* ios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ios.h; sourceTree = "<group>"; };
@@ -4534,6 +4532,7 @@
 				9D142EEC1C02B14D0085A377 /* CDWheelBluetoothController.h */,
 				9D142EEB1C02B14D0085A377 /* CDWheelBluetoothController.cpp */,
 				9D1234C11889AC3B00A97482 /* CDPatternData.h */,
+				9D683E2D1C1139000058EFA0 /* CDPatternSequenceManagerShared.h */,
 				9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */,
 				9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */,
 				9DBE92C818AA7ED000154550 /* CDOctoWS2811.h */,
@@ -4543,8 +4542,6 @@
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,
 				9D3A0DAC188A0EBD001AD553 /* Button.cpp */,
 				9D3A0DAD188A0EBD001AD553 /* Button.h */,
-				9DE7EBFB19EAE82700C1DCB6 /* LEDWebServer.cpp */,
-				9DE7EBFC19EAE82700C1DCB6 /* LEDWebServer.h */,
 				9D8ED2D417C01F7F001E1C06 /* Makefiles */,
 			);
 			name = LEDCyrWheel;
@@ -5116,7 +5113,6 @@
 				9DDC61CB1938488E00C602BC /* SD.cpp in Sources */,
 				9DE7ECFF19EB6EFF00C1DCB6 /* SdFatUtil.cpp in Sources */,
 				9D0EF1A31BFC3787002C687E /* istream.tcc in Sources */,
-				9DE7EBFD19EAE82700C1DCB6 /* LEDWebServer.cpp in Sources */,
 				9D0EEC541BFC372F002C687E /* usb_mtp.c in Sources */,
 				9D0EEC551BFC372F002C687E /* usb_rawhid.c in Sources */,
 				9D0EED551BFC3747002C687E /* Makefile in Sources */,

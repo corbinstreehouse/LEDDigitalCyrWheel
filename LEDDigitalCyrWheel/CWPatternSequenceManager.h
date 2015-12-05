@@ -21,6 +21,7 @@
 #include "CDOrientation.h"
 #include "LEDCommon.h"
 #include "LEDPatterns.h"
+#include "CDPatternSequenceManagerShared.h"
 
 #define PATTERN_FILE_EXTENSION "PAT"
 #define PATTERN_FILE_EXTENSION_LC "pat" // stupid non case sensative
@@ -55,7 +56,6 @@ private:
     // Current sequence information
     CDPatternItemHeader *_patternItems;
     uint32_t _numberOfPatternItems;
-    uint32_t _pixelCount; // What was designed against
 
     // Current pattern item information
     int _currentPatternItemIndex;
@@ -64,9 +64,6 @@ private:
     
     uint32_t m_shouldRecordData:1;
     uint32_t m_shouldIgnoreButtonClickWhenTimed:1;
-#if WIFI
-    uint32_t m_wifiEnabled:1;
-#endif
     uint32_t m_sdCardWorks:1;
     uint32_t m_dynamicMode:1;
     uint32_t __reserved:27;
@@ -76,12 +73,11 @@ private:
 
     uint32_t m_timedPatternStartTime; // In milliseconds; the time that all the current run of timed patterns starts, so we can accurately generate a full duration for all of them
     uint32_t m_timedUsedBeforeCurrentPattern;
-    
-#if WIFI
-    LEDWebServer m_webServer; // Running on port 80
-    bool processWebServer();
+    CDWheelState m_state;
+#if PATTERN_EDITOR
+    NSURL *m_baseURL;
+    NSURL *m_patternDirectoryURL;
 #endif
-    
     void loadSettings();
     
     bool initSDCard();
@@ -92,6 +88,7 @@ private:
     void loadSequenceNamed(const char *filename);
     
     void updateBrightness();
+    const char *getRootDirectory();
     
     inline CDPatternItemHeader *getCurrentItemHeader() {
         return &_patternItems[_currentPatternItemIndex];
@@ -124,11 +121,15 @@ private:
     CDPatternItemHeader makeFlashPatternItem(CRGB color);
     
     void loadCurrentPatternItem();
+    char *getFullpathName(const char *name, char *buffer, int bufferSize);
+    
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
     ~CWPatternSequenceManager();
     void setCyrWheelView(CDCyrWheelView *view); // Binding..
+    void setBaseURL(NSURL *url);
+    void setPatternDirectoryURL(NSURL *url);
 #endif
     void init();
     
@@ -155,6 +156,8 @@ public:
     void firstPatternItem();
     void priorPatternItem();
     
+    void processCommand(CDWheelCommand command);
+    
     void setDynamicPatternWithHeader(CDPatternItemHeader *header);
     void setDynamicPatternType(LEDPatternType type, CRGB color = CRGB::Red);
     
@@ -165,12 +168,12 @@ public:
     void startRecordingData();
     void endRecordingData();
     
+    CDWheelState getWheelState() { return m_state; }
+    
     void process();
     
     void makeSequenceFlashColor(CRGB color);
     void flashThreeTimes(CRGB color, uint32_t delayAmount = 150);
-    
-    const char *getSequencePath();
     
     int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
     void setLowBatteryWarning();
@@ -188,7 +191,6 @@ public:
     uint32_t getPatternTimePassed() { return millis() - m_timedPatternStartTime - m_timedUsedBeforeCurrentPattern; };
     uint32_t getPatternTimePassedFromFirstTimedPattern() { return millis() - m_timedPatternStartTime; };
 
-    uint32_t getPixelCount() { return _pixelCount; }
     uint32_t getNumberOfPatternItems() { return _numberOfPatternItems; }
     uint32_t getCurrentPatternItemIndex() { return _currentPatternItemIndex; }
     CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &_patternItems[index]; }
@@ -199,6 +201,11 @@ public:
             return NULL;
         }
     }
+    
+    void play() { m_ledPatterns.play(); }
+    void pause() { m_ledPatterns.pause(); }
+    bool isPaused() { return m_ledPatterns.isPaused(); }
+
 };
 
 

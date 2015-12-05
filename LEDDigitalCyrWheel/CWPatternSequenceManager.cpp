@@ -20,17 +20,10 @@
     #warning "DEBUG Code is on!!"
 #endif
 
-#if WIFI
-// TODO: make these determined adhoc via iphone app...
-// Your WiFi SSID and password
-#define WLAN_SSID       "MonkeyPlayground"
-#define WLAN_PASS       "unicycle"
-#define WLAN_SECURITY   AFWifiSecurityModeWPA2
-#endif
-
-
 static char *g_defaultFilename = "DEFAULT"; // We compare to this address to know if it is the default pattern
+#if !PATTERN_EDITOR
 static const char *g_sequencePath = "/"; // warning..changing this may require different buffers
+#endif
 
 static char *getExtension(char *filename) {
     char *ext = strchr(filename, '.');
@@ -42,21 +35,11 @@ static char *getExtension(char *filename) {
     }
 }
 
-const char *CWPatternSequenceManager::getSequencePath() {
-    return g_sequencePath;
-}
-
-CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH)
-#if WIFI
-, m_webServer("", 80)
-#endif
+CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH), m_state(CDWheelStatePlaying)
 {
     _patternItems = NULL;
     _sequenceNames = NULL;
     m_dynamicMode = false;
-#if WIFI
-    m_wifiEnabled = false;
-#endif
     m_shouldIgnoreButtonClickWhenTimed = true; // TODO: make this an option per sequence...
     ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // make sure I don't screw stuff up by chaning the size and not updating things again
 }
@@ -76,6 +59,8 @@ void CWPatternSequenceManager::freeSequenceNames() {
 
 #if PATTERN_EDITOR
 CWPatternSequenceManager::~CWPatternSequenceManager() {
+    m_baseURL = nil;
+    m_patternDirectoryURL = nil;
     freePatternItems();
     freeSequenceNames();
 }
@@ -84,6 +69,13 @@ void CWPatternSequenceManager::setCyrWheelView(CDCyrWheelView *view) {
     m_ledPatterns.setCyrWheelView(view);
 }
 
+void CWPatternSequenceManager::setBaseURL(NSURL *url) {
+    m_baseURL = url;
+}
+
+void CWPatternSequenceManager::setPatternDirectoryURL(NSURL *url) {
+    m_patternDirectoryURL = url;
+}
 
 #endif
 
@@ -91,7 +83,6 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     DEBUG_PRINTLN("       --- loading default sequence because the name was NULL --- ");
     freePatternItems();
 
-    _pixelCount = 300; // Well..whatever;it is too late at this point, and I don't even use it..
     _numberOfPatternItems = LEDPatternTypeMax;
     m_shouldIgnoreButtonClickWhenTimed = false;
     
@@ -205,9 +196,15 @@ void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount)
 }
 
 // mallocs memory if bufferSize isn't large enough
-static char *getFullpathName(const char *name, char *buffer, int bufferSize) {
-    size_t pathLength = strlen(g_sequencePath);
+char *CWPatternSequenceManager::getFullpathName(const char *name, char *buffer, int bufferSize) {
+    const char *rootDir = getRootDirectory();
+    size_t pathLength = strlen(rootDir);
+    bool needsSep = pathLength > 1 && rootDir[pathLength - 1] != '/';
+    
     size_t filenameAndPathSize = pathLength + strlen(name) + 1; // NULL terminator
+    if (needsSep) {
+        filenameAndPathSize++;
+    }
     char *filename;
     if (filenameAndPathSize <= bufferSize) {
         filename = buffer;
@@ -215,14 +212,18 @@ static char *getFullpathName(const char *name, char *buffer, int bufferSize) {
         filename = (char *)malloc(sizeof(char) * filenameAndPathSize);
     }
     // Copy in the path to the file
-    strcpy(filename, g_sequencePath);
+    strcpy(filename, rootDir);
+    if (needsSep) {
+        filename[pathLength] = '/';
+        pathLength++; // Go past it..
+    }
     strcpy(&filename[pathLength], name);
     return filename;
 }
 
+
 void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
     ASSERT(name != NULL);
-    ASSERT(g_sequencePath != NULL);
     
     freePatternItems();
     
@@ -256,14 +257,14 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
             // Free existing stuff
             ASSERT(_patternItems == NULL);
             // Then read in and store the stock info
-            _pixelCount = patternHeader.pixelCount;
+//            _pixelCount = patternHeader.pixelCount;
             
             // TODO: I could eliminate several variables and just store these
             _numberOfPatternItems = patternHeader.patternCount;
             m_shouldIgnoreButtonClickWhenTimed = patternHeader.ignoreButtonForTimedPatterns;
             
             ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // MAKE SURE IT IS RIGHT..
-            DEBUG_PRINTF("pixelCount: %d, now reading %d items, headerSize: %d\r\n", _pixelCount, _numberOfPatternItems, sizeof(CDPatternItemHeader));
+            DEBUG_PRINTF("now reading %d items, headerSize: %d\r\n", _numberOfPatternItems, sizeof(CDPatternItemHeader));
             
             // After the header each item follows
             int numBytes = _numberOfPatternItems * sizeof(CDPatternItemHeader);
@@ -474,11 +475,20 @@ void CWPatternSequenceManager::loadSettings() {
 #endif
 }
 
+const char *CWPatternSequenceManager::getRootDirectory() {
+#if PATTERN_EDITOR
+    NSCAssert(m_baseURL != nil, @"need the base URL");
+    return [m_baseURL fileSystemRepresentation];
+#else
+    return g_sequencePath;
+#endif
+}
+
 void CWPatternSequenceManager::loadSequencesFromDisk() {
     if (m_sdCardWorks) {
         DEBUG_PRINTLN("opening sd card to read it");
         // Load up the names of available patterns
-        File rootDir = SD.open(g_sequencePath);
+        File rootDir = SD.open(getRootDirectory());
         rootDir.moveToStartOfDirectory();
         _numberOfAvailableSequences = 0;
         // Loop twice; first time count, second time allocate and store
@@ -633,16 +643,18 @@ void CWPatternSequenceManager::loadPriorSequence() {
 }
 
 void CWPatternSequenceManager::buttonClick() {
-#if WIFI
-    if (m_wifiEnabled) {
-        // See if we should cancel wifi
-        if (m_webServer.getWifiManager()->getState() != AFWifiStateReady) {
-            m_wifiEnabled = false;
-            m_webServer.getWifiManager()->stop();
-            return; // handled
-        }
+    
+#if DEBUG
+    if (isPaused()) {
+        play();
+        nextPatternItem();
+    } else {
+        pause();
     }
+    
 #endif
+    
+    
     if (m_orientation.isCalibrating()) {
         m_orientation.endCalibration();
         firstPatternItem();
@@ -678,33 +690,6 @@ void CWPatternSequenceManager::buttonLongClick() {
         }
     }
 }
-
-#if WIFI
-bool CWPatternSequenceManager::processWebServer() {
-    if (m_wifiEnabled) {
-        m_webServer.process();
-        // If we are waiting for it to load...then show dots
-        AFWifiState state = m_webServer.getWifiManager()->getState();
-        if (state == AFWifiStateReady) {
-            // good to go!
-            return true;
-        }
-        if (state == AFWifiStateTimedOut) {
-            // Not sure if we should restart or try to reconnect automatically
-            m_webServer.getWifiManager()->stop(); // stopping should allow it to restart (i need to test this..)
-            m_ledPatterns.flashThreeTimes(CRGB::Red);
-        }
-        
-        // Show some loading feedback...
-        float progress = (float)(millis() - m_timedPatternStartTime) / 10000.0; // 10 second progress to fill the entire wheel
-        m_ledPatterns.showProgress(progress, CRGB::DarkBlue);
-        
-        return false;
-    } else {
-        return true;
-    }
-}
-#endif
 
 void CWPatternSequenceManager::process() {
     
@@ -766,12 +751,10 @@ void CWPatternSequenceManager::updateBrightness() {
 void CWPatternSequenceManager::setLowBatteryWarning() {
     m_savedBrightness = 64; // Lower brightness so we can see it get low! it is updated on the update pass
 
-    // Turn off wifi to save power
-#if WIFI
-    if (m_wifiEnabled) {
-        m_wifiEnabled = false;
-        m_webServer.getWifiManager()->stop();
-    }
+    // Turn off bluetooth to save power
+#if BLUETOOTH
+     // TODO:...
+    
 #endif
 }
 
@@ -854,6 +837,63 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     }
     
     m_orientation.setFirstPass(true); // why do I need this??
+}
+
+void CWPatternSequenceManager::processCommand(CDWheelCommand command) {
+    switch (command) {
+        case CDWheelCommandNextPattern: {
+            nextPatternItem();
+            break;
+        }
+        case CDWheelCommandPriorPattern: {
+            priorPatternItem();
+            break;
+        }
+        case CDWheelCommandNextSequence: {
+            loadNextSequence();
+            break;
+        }
+        case CDWheelCommandPriorSequence: {
+            loadPriorSequence();
+            break;
+        }
+        case CDWheelCommandRestartSequence: {
+            restartCurrentSequence();
+            break;
+        }
+        case CDWheelCommandStartCalibrating: {
+            startCalibration();
+            break;
+        }
+        case CDWheelCommandEndCalibrating: {
+            endCalibration();
+            break;
+        }
+        case CDWheelCommandCancelCalibrating: {
+            cancelCalibration();
+            break;
+        }
+        case CDWheelCommandStartSavingGyroData: {
+            startRecordingData();
+            break;
+        }
+        case CDWheelCommandEndSavingGyroData: {
+            endRecordingData();
+            break;
+        }
+        case CDWheelCommandPlay: {
+            play();
+            break;
+        }
+        case CDWheelCommandPause: {
+            pause();
+            break;
+        }
+            
+        default: {
+            // Ignore unknown things
+        }
+    }
 }
 
 
