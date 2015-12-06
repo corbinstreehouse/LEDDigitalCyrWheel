@@ -86,6 +86,7 @@ private:
     void freePatternItems();
     void freeSequenceNames();
     void loadSequenceNamed(const char *filename);
+//    void loadPatternBitmapNamed(const char *filename);
     
     void updateBrightness();
     const char *getRootDirectory();
@@ -123,6 +124,10 @@ private:
     void loadCurrentPatternItem();
     char *getFullpathName(const char *name, char *buffer, int bufferSize);
     
+    void loadSequencesFromDirectory(const char *directory);
+    void loadSequencesFromRootDirectory();
+    //    bool deleteSequenceAtIndex(int index); // TODO: probably take a name, and find that file to delete it...
+
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
@@ -142,11 +147,9 @@ public:
     
     void restartCurrentSequence();
     void setCurrentSequenceAtIndex(int index);
-    bool deleteSequenceAtIndex(int index);
     
     bool getCardInitPassed() { return m_sdCardWorks; }
     
-    void loadSequencesFromDisk();
     
     void loadDefaultSequence();
     void loadCurrentSequence(); // loads the default sequence if there is no current one..

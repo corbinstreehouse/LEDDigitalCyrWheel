@@ -318,36 +318,37 @@ void CWPatternSequenceManager::loadSequenceNamed(const char *name) {
     }
 }
 
-bool CWPatternSequenceManager::deleteSequenceAtIndex(int index) {
-    bool result = false;
-    int lastIndex = _currentSequenceIndex;
-    if (index >= 0 && index < _numberOfAvailableSequences) {
-        char *name = getSequenceNameAtIndex(index);
-        if (name != g_defaultFilename) {
-#define STACK_BUFFER_SIZE 32
-            char stackBuffer[STACK_BUFFER_SIZE];
-            char *filename = getFullpathName(name, stackBuffer, STACK_BUFFER_SIZE);
-            DEBUG_PRINTF("deleting %s\n", filename);
-            
-            result = SD.remove(filename);
-            
-            if (filename != stackBuffer) {
-                free(filename);
-            }
-            if (lastIndex >= index) {
-                lastIndex--;
-            }
-        }
-    }
-    
-    if (result) {
-        loadSequencesFromDisk();
-        if (_currentSequenceIndex != lastIndex) {
-            loadCurrentSequence();
-        }
-    }
-    return result;
-}
+// TODO: rewrite this
+//bool CWPatternSequenceManager::deleteSequenceAtIndex(int index) {
+//    bool result = false;
+//    int lastIndex = _currentSequenceIndex;
+//    if (index >= 0 && index < _numberOfAvailableSequences) {
+//        char *name = getSequenceNameAtIndex(index);
+//        if (name != g_defaultFilename) {
+//#define STACK_BUFFER_SIZE 32
+//            char stackBuffer[STACK_BUFFER_SIZE];
+//            char *filename = getFullpathName(name, stackBuffer, STACK_BUFFER_SIZE);
+//            DEBUG_PRINTF("deleting %s\n", filename);
+//            
+//            result = SD.remove(filename);
+//            
+//            if (filename != stackBuffer) {
+//                free(filename);
+//            }
+//            if (lastIndex >= index) {
+//                lastIndex--;
+//            }
+//        }
+//    }
+//    
+//    if (result) {
+//        loadSequencesFromRootDirectory();
+//        if (_currentSequenceIndex != lastIndex) {
+//            loadCurrentSequence();
+//        }
+//    }
+//    return result;
+//}
 
 void CWPatternSequenceManager::loadFirstSequence() {
     setCurrentSequenceAtIndex(0);
@@ -443,9 +444,12 @@ bool CWPatternSequenceManager::initSDCard() {
     return result;
 }
 
-static inline bool isPatternFile(char *filename) {
+static inline bool isSequenceOrPatternFile(char *filename) {
     char *ext = getExtension(filename);
     if (ext) {
+        if (strcmp(ext, SEQUENCE_FILE_EXTENSION) == 0 || strcmp(ext, SEQUENCE_FILE_EXTENSION_LC) == 0) {
+            return true;
+        }
         if (strcmp(ext, PATTERN_FILE_EXTENSION) == 0 || strcmp(ext, PATTERN_FILE_EXTENSION_LC) == 0) {
             return true;
         }
@@ -484,24 +488,37 @@ const char *CWPatternSequenceManager::getRootDirectory() {
 #endif
 }
 
-void CWPatternSequenceManager::loadSequencesFromDisk() {
+void CWPatternSequenceManager::loadSequencesFromRootDirectory() {
+    loadSequencesFromDirectory(getRootDirectory());
+}
+
+void CWPatternSequenceManager::loadSequencesFromDirectory(const char *directory) {
     if (m_sdCardWorks) {
         DEBUG_PRINTLN("opening sd card to read it");
         // Load up the names of available patterns
-        File rootDir = SD.open(getRootDirectory());
+        File rootDir = SD.open(directory);
         rootDir.moveToStartOfDirectory();
         _numberOfAvailableSequences = 0;
         // Loop twice; first time count, second time allocate and store
         char filenameBuffer[PATH_COMPONENT_BUFFER_LEN];
         while (rootDir.getNextFilename(filenameBuffer)) {
-            if (isPatternFile(filenameBuffer)) {
+            if (isSequenceOrPatternFile(filenameBuffer)) {
                 _numberOfAvailableSequences++;
                 DEBUG_PRINTF("found pattern: %s\r\n", filenameBuffer);
             } else if (strcmp(filenameBuffer, RECORD_INDICATOR_FILENAME) == 0) {
                 DEBUG_PRINTF("found record file name: %s\r\n", filenameBuffer);
                 m_shouldRecordData = true;
             } else {
-                DEBUG_PRINTF("found unknown file name: %s\r\n", filenameBuffer);
+                // We open it to see if it is a directory..
+                File tmp = SD.open(filenameBuffer);
+                // TODO: directory support here!!
+                if (false && tmp.isDirectory()) {
+                    _numberOfAvailableSequences++;
+                    DEBUG_PRINTF("found directory: %s\r\n", filenameBuffer);
+                } else {
+                    DEBUG_PRINTF("found unknown file name: %s\r\n", filenameBuffer);
+                }
+                tmp.close();
             }
         }
         DEBUG_PRINTF("Found %d sequences on SD Card\r\n", _numberOfAvailableSequences);
@@ -514,7 +531,9 @@ void CWPatternSequenceManager::loadSequencesFromDisk() {
             _currentSequenceIndex = 0;
             rootDir.moveToStartOfDirectory();
             while (rootDir.getNextFilename(filenameBuffer)) {
-                if (isPatternFile(filenameBuffer)) {
+                // TODO: include the path...
+                
+                if (isSequenceOrPatternFile(filenameBuffer)) {
                     // allocate and store the name so we can easily load it later. --  + 1 is for the null terminator, and the extra +1 is for the "/"
                     char *mallocedName = (char *)malloc(sizeof(char) * strlen(filenameBuffer) + 1);
                     _sequenceNames[_currentSequenceIndex] = mallocedName;
@@ -522,6 +541,8 @@ void CWPatternSequenceManager::loadSequencesFromDisk() {
                     DEBUG_PRINTF("copied name: %s len: %d\r\n", _sequenceNames[_currentSequenceIndex], strlen(_sequenceNames[_currentSequenceIndex]));
                     
                     _currentSequenceIndex++;
+                } else {
+                    // TODO: directory support here!!
                 }
             }
         } else {
@@ -566,7 +587,7 @@ void CWPatternSequenceManager::init() {
     m_sdCardWorks = initSDCard();
     DEBUG_PRINTLN("done init sd card");
     
-    loadSequencesFromDisk();
+    loadSequencesFromRootDirectory();
 }
 
 void CWPatternSequenceManager::startRecordingData() {
