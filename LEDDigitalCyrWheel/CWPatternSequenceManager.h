@@ -23,8 +23,8 @@
 #include "LEDPatterns.h"
 #include "CDPatternSequenceManagerShared.h"
 
-#define PATTERN_FILE_EXTENSION "PAT"
-#define PATTERN_FILE_EXTENSION_LC "pat" // stupid non case sensative
+#define SEQUENCE_FILE_EXTENSION "PAT"
+#define SEQUENCE_FILE_EXTENSION_LC "pat" // stupid non case sensative
 
 
 #if PATTERN_EDITOR
@@ -46,17 +46,36 @@
 
 #endif
 
+typedef enum {
+    CDPatternFileTypeSequenceFile, // .pat
+    CDPatternFileTypePatternFile, // .bmp / bitmap
+    CDPatternFileTypeDirectory,
+    CDPatternFileTypeDefaultSequence, // special
+    CDPatternFileTypeUnknown,
+} CDPatternFileType;
+
+// Keeping a struct will allow me to sort it, if I want
+typedef struct _CDPatternFileInfo {
+    char *filename;
+    CDPatternFileType patternFileType;
+    // TODO: pack these bytes^
+//    uint32_t childrenInited;
+//    uint32_t __reserved:30;
+    
+    _CDPatternFileInfo *children;
+    int numberOfChildren;
+    _CDPatternFileInfo *parent;
+    int indexInParent;
+} CDPatternFileInfo;
+
 class CWPatternSequenceManager {
 private:
-    // all available sequences
-    int _numberOfAvailableSequences;
-    char **_sequenceNames;
-    int _currentSequenceIndex;
+    CDPatternFileInfo m_rootFileInfo;
+    CDPatternFileInfo *m_currentFileInfo; // May be ignored during dynamic patterns
     
     // Current sequence information
     CDPatternItemHeader *_patternItems;
     uint32_t _numberOfPatternItems;
-
     // Current pattern item information
     int _currentPatternItemIndex;
 
@@ -65,7 +84,7 @@ private:
     uint32_t m_shouldRecordData:1;
     uint32_t m_shouldIgnoreButtonClickWhenTimed:1;
     uint32_t m_sdCardWorks:1;
-    uint32_t m_dynamicMode:1;
+//    uint32_t m_currentPatternItemsAreDynamic:1; // maybe not needed
     uint32_t __reserved:27;
     
     LED_PATTERNS_CLASS m_ledPatterns;
@@ -84,12 +103,20 @@ private:
     bool initOrientation();
     bool initStrip();
     void freePatternItems();
-    void freeSequenceNames();
-    void loadSequenceNamed(const char *filename);
-//    void loadPatternBitmapNamed(const char *filename);
+    void freeRootFileInfo();
+    
+    CDPatternFileInfo *_findFirstLoadable(CDPatternFileInfo *fileInfo, bool forwards);
+    CDPatternFileInfo *_findFirstLoadableChild(CDPatternFileInfo *fileInfo, bool forwards);
+    CDPatternFileInfo *_findNextLoadableChild(CDPatternFileInfo *fromChild, bool forwards);
+    
+    void _ensureCurrentFileInfo();
+    void _loadPatternFileInfo(CDPatternFileInfo *fileInfo);
+    void _loadSequenceFile(File *file);
+    void _loadPatternBmpFile(File *file);
     
     void updateBrightness();
-    const char *getRootDirectory();
+    const char *_getRootDirectory();
+    
     
     inline CDPatternItemHeader *getCurrentItemHeader() {
         return &_patternItems[_currentPatternItemIndex];
@@ -122,10 +149,10 @@ private:
     CDPatternItemHeader makeFlashPatternItem(CRGB color);
     
     void loadCurrentPatternItem();
-    char *getFullpathName(const char *name, char *buffer, int bufferSize);
+//    char *getFullpathName(const char *name, char *buffer, int bufferSize);
     
-    void loadSequencesFromDirectory(const char *directory);
     void loadSequencesFromRootDirectory();
+    void loadPatternFileInfoChildren(CDPatternFileInfo *parent);
     //    bool deleteSequenceAtIndex(int index); // TODO: probably take a name, and find that file to delete it...
 
 public:
@@ -146,7 +173,7 @@ public:
     void loadPriorSequence();
     
     void restartCurrentSequence();
-    void setCurrentSequenceAtIndex(int index);
+    void setCurrentSequenceAtIndex(int index); // index in the parent
     
     bool getCardInitPassed() { return m_sdCardWorks; }
     
@@ -178,19 +205,20 @@ public:
     void makeSequenceFlashColor(CRGB color);
     void flashThreeTimes(CRGB color, uint32_t delayAmount = 150);
     
-    int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
+//    int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
     void setLowBatteryWarning();
     inline LEDPatterns *getLEDPatterns() { return &m_ledPatterns; }
-    char *getSequenceNameAtIndex(int index) {
-        if (index >= 0 && index <= _numberOfAvailableSequences)
-            return _sequenceNames[index];
-        else
-            return NULL;
-    }
-    int getIndexOfSequenceName(char *name);
-    bool isSequenceEditableAtIndex(int index);
-    char *getCurrentSequenceName() { return _sequenceNames[_currentSequenceIndex]; };
-    int getCurrentSequenceIndex() { return _currentSequenceIndex; }
+//    char *getSequenceNameAtIndex(int index) {
+//        if (index >= 0 && index <= _numberOfAvailableSequences)
+//            return _sequenceNames[index];
+//        else
+//            return NULL;
+//    }
+
+    char *getCurrentPatternFileName() { return m_currentFileInfo ? m_currentFileInfo->filename : NULL; };
+    int getRootNumberOfSequenceFilenames() { return m_rootFileInfo.numberOfChildren; };
+    
+//    int getCurrentSequenceIndex() { return _currentSequenceIndex; }
     uint32_t getPatternTimePassed() { return millis() - m_timedPatternStartTime - m_timedUsedBeforeCurrentPattern; };
     uint32_t getPatternTimePassedFromFirstTimedPattern() { return millis() - m_timedPatternStartTime; };
 
