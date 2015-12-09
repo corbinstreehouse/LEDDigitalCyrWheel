@@ -217,7 +217,7 @@ void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, CRGB c
     header.patternDuration = 500;
     header.color = color;
     header.patternEndCondition = CDPatternEndConditionOnButtonClick;
-    setDynamicPatternWithHeader(&header);
+    setSingleItemPatternHeader(&header);
 }
 
 void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount) {
@@ -274,12 +274,55 @@ char *_getFullpathName(CDPatternFileInfo *fileInfo, char *buffer, int stackBuffe
     return filename;
 }
 
-void CWPatternSequenceManager::_loadSequenceFile(File *sequenceFile) {
+void CWPatternSequenceManager::updateLEDPatternBitmapFilename() {
+    char *fullFilenamePath = _getFullpathName(m_currentFileInfo, NULL, 0);
+    m_ledPatterns.setBitmapFilename(fullFilenamePath); // bitmap copies it (yeah, stupid waste of allocation/free)
+    free(fullFilenamePath);
+}
+
+void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo) {
+    updateLEDPatternBitmapFilename();
+    
+    if (m_ledPatterns.getBitmap() == NULL || !m_ledPatterns.getBitmap()->getIsValid()) {
+        // Invalid bitmap..
+        makeSequenceFlashColor(CRGB::DarkMagenta);
+    } else {
+        CDPatternItemHeader header;
+        header.patternType = LEDPatternTypeBitmap;
+        header.duration = 500;
+        header.patternDuration = 500;
+        header.color = 0;
+        header.patternEndCondition = CDPatternEndConditionOnButtonClick;
+        setSingleItemPatternHeader(&header);
+    }
+}
+
+void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInfo) {
+    ASSERT(fileInfo->patternFileType == CDPatternFileTypeSequenceFile);
+    
+#define STACK_BUFFER_SIZE 64 // A bit bigger now that I support directories
+    char stackBuffer[64];
+    char *fullFilenamePath = _getFullpathName(fileInfo, stackBuffer, STACK_BUFFER_SIZE);
+#undef STACK_BUFFER_SIZE
+    
+    DEBUG_PRINTF("  loadAsSequenceFileInfo: %s at %s\r\n", fileInfo->filename, fullFilenamePath);
+    
+    // open the file
+    File sequenceFile = SD.open(fullFilenamePath);
+    DEBUG_PRINTF(" OPENED file: %s\r\n", sequenceFile.name());
+    
+    if (!sequenceFile.available()) {
+        sequenceFile.close(); // well, shouldn't be needed
+        // Try again??? Frequently I have to try twice.. this is stupid, but the SD card isn't consistent
+        sequenceFile = SD.open(fullFilenamePath);
+        DEBUG_PRINTF(" try again!! file: %s\r\n", sequenceFile.name());
+    }
+    
     // This is reading the file format I created..
     // Header first
     CDPatternSequenceHeader patternHeader;
-    if (sequenceFile->available()) {
-        sequenceFile->readBytes((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
+    if (sequenceFile.available()) {
+        sequenceFile.readBytes((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
     } else {
         patternHeader.version = 0; // Fail
     }
@@ -301,13 +344,12 @@ void CWPatternSequenceManager::_loadSequenceFile(File *sequenceFile) {
             DEBUG_PRINTF("now reading %d items, headerSize: %d\r\n", _numberOfPatternItems, sizeof(CDPatternItemHeader));
             
             // After the header each item follows
-            int numBytes = _numberOfPatternItems * sizeof(CDPatternItemHeader);
-            _patternItems = (CDPatternItemHeader *)malloc(numBytes);
-            memset(_patternItems, 0, numBytes); // shouldn't be needed, but do it anyways
+            _patternItems = (CDPatternItemHeader *)calloc(_numberOfPatternItems, sizeof(CDPatternItemHeader));
+            //            memset(_patternItems, 0, numBytes); // shouldn't be needed, but do it anyways
             
             for (int i = 0; i < _numberOfPatternItems; i++ ){
                 DEBUG_PRINTF("reading item %d\r\n", i);
-                sequenceFile->readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
+                sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
                 DEBUG_PRINTF("Header, type: %d, duration: %d, patternDuration %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].patternDuration);
                 // Verify it
                 bool validData = _patternItems[i].patternType >= LEDPatternTypeMin && _patternItems[i].patternType < LEDPatternTypeMax;
@@ -323,12 +365,12 @@ void CWPatternSequenceManager::_loadSequenceFile(File *sequenceFile) {
                         DEBUG_PRINTF("we have %d data\r\n", dataLength);
                         // Read in the data that is following the header, and put it in the data pointer...
                         // 65536 kb of ram..more than 20,000 pixels would overflow...which i'm now hitting w/larger images. darn it..i have to chunk these and dynamically load each one ;(
-                        _patternItems[i].dataOffset = sequenceFile->position();
+                        _patternItems[i].dataOffset = sequenceFile.position();
                         //                        _patternItems[i].dataFilename = filename; // idiot..this points to stuff on the stack now!
                         //                _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
-                        //                sequenceFile->readBytes((char*)_patternItems[i].data, dataLength);
+                        //                sequenceFile.readBytes((char*)_patternItems[i].data, dataLength);
                         // seek past the data
-                        sequenceFile->seek(sequenceFile->position() + dataLength);
+                        sequenceFile.seek(sequenceFile.position() + dataLength);
                     } else {
                         // data pointer should always be NULL
                         _patternItems[i].dataOffset = 0;
@@ -345,52 +387,35 @@ void CWPatternSequenceManager::_loadSequenceFile(File *sequenceFile) {
         // Bad data...flash yellow
         makeSequenceFlashColor(CRGB::Yellow);
     }
+    
+    sequenceFile.close();
+    // Deal withs tack memory, if necessary
+    if (fullFilenamePath != stackBuffer) {
+        free(fullFilenamePath);
+    }
 }
 
-void CWPatternSequenceManager::_loadPatternBmpFile(File *file) {
-#warning corbin, implement
-}
-
-void CWPatternSequenceManager::_loadPatternFileInfo(CDPatternFileInfo *fileInfo) {
+void CWPatternSequenceManager::loadFileInfo(CDPatternFileInfo *fileInfo) {
     ASSERT(fileInfo != NULL);
     ASSERT(fileInfo->patternFileType != CDPatternFileTypeDirectory);
 
 //    m_currentPatternItemsAreDynamic = false;
     
     // NULL filename, or the root is the default sequence
-    if (fileInfo->filename == NULL || fileInfo == &m_rootFileInfo || fileInfo->patternFileType == CDPatternFileTypeDefaultSequence) {
+    if (fileInfo->filename == NULL || fileInfo == &m_rootFileInfo) {
         loadDefaultSequence();
         return;
     }
     
     freePatternItems();
     
-    
-#define STACK_BUFFER_SIZE 64 // A bit bigger now that I support directories
-    char stackBuffer[64];
-    char *fullFilenamePath = _getFullpathName(fileInfo, stackBuffer, STACK_BUFFER_SIZE);
-#undef STACK_BUFFER_SIZE
-    
-    DEBUG_PRINTF("  _loadPatternFileInfo: %s at %s\r\n", fileInfo->filename, fullFilenamePath);
-    
-    // open the file
-    File sequenceFile = SD.open(fullFilenamePath);
-    DEBUG_PRINTF(" OPENED file: %s\r\n", sequenceFile.name());
-    
-    if (!sequenceFile.available()) {
-        sequenceFile.close(); // well, shouldn't be needed
-        // Try again??? Frequently I have to try twice.. this is stupid, but the SD card isn't consistent
-        sequenceFile = SD.open(fullFilenamePath);
-        DEBUG_PRINTF(" try again!! file: %s\r\n", sequenceFile.name());
-    }
-    
     switch (fileInfo->patternFileType) {
         case CDPatternFileTypeSequenceFile: {
-            _loadSequenceFile(&sequenceFile);
+            loadAsSequenceFileInfo(fileInfo);
             break;
         }
         case CDPatternFileTypePatternFile: {
-            _loadPatternBmpFile(&sequenceFile);
+            loadAsBitmapFileInfo(fileInfo);
             break;
         }
         case CDPatternFileTypeDefaultSequence: {
@@ -401,12 +426,6 @@ void CWPatternSequenceManager::_loadPatternFileInfo(CDPatternFileInfo *fileInfo)
             makeSequenceFlashColor(CRGB::Red); // error of some sort
             break;
         }
-    }
-    
-    sequenceFile.close();
-    // Deal withs tack memory, if necessary
-    if (fullFilenamePath != stackBuffer) {
-        free(fullFilenamePath);
     }
 }
 
@@ -535,7 +554,29 @@ void CWPatternSequenceManager::setCurrentSequenceAtIndex(int index) {
     loadCurrentSequence();
 }
 
-void CWPatternSequenceManager::setDynamicPatternWithHeader(CDPatternItemHeader *header) {
+static CDPatternFileInfo *_findInfoWithName(CDPatternFileInfo *info, const char *name) {
+    // TODO: "full path" name compare search...
+    if (strcmp(info->filename, name) == 0) {
+        return info;
+    }
+
+    if (info->children != NULL) {
+        for (int i = 0; i < info->numberOfChildren; i++) {
+            CDPatternFileInfo *tmp = _findInfoWithName(&info->children[i], name);
+            if (tmp) {
+                return tmp;
+            }
+        }
+    }
+    return NULL;
+}
+
+void CWPatternSequenceManager::setCurrentSequenceWithName(const char *name) {
+    m_currentFileInfo = _findInfoWithName(&m_rootFileInfo, name);
+    loadCurrentSequence();
+}
+
+void CWPatternSequenceManager::setSingleItemPatternHeader(CDPatternItemHeader *header) {
 //    m_currentFileInfo = NULL;
 //    m_currentPatternItemsAreDynamic = true;
 
@@ -551,7 +592,7 @@ void CWPatternSequenceManager::loadCurrentSequence() {
     _ensureCurrentFileInfo();
     
     // If it is still NULL, load the default info.
-    _loadPatternFileInfo(m_currentFileInfo);
+    loadFileInfo(m_currentFileInfo);
     
     firstPatternItem();
 }
@@ -598,6 +639,8 @@ static CDPatternFileType _getPatternFileType(File *file) {
     if (filename) {
         char *ext = getExtension(filename);
         if (ext) {
+            // strcasecmp available??
+            // corbin!!!
             if (strcmp(ext, SEQUENCE_FILE_EXTENSION) == 0 || strcmp(ext, SEQUENCE_FILE_EXTENSION_LC) == 0) {
                 return CDPatternFileTypeSequenceFile;
             }
@@ -1022,8 +1065,20 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     m_ledPatterns.setPatternColor(itemHeader->color);
     // Assume it is the current file..
     
-    char *fullFilenamePath = _getFullpathName(m_currentFileInfo, NULL, 0);
-    m_ledPatterns.setDataInfo(fullFilenamePath, itemHeader->dataLength);
+#if SD_CARD_SUPPORT
+    if (itemHeader->patternType == LEDPatternTypeBitmap) {
+        updateLEDPatternBitmapFilename();
+    } else if (itemHeader->patternType == LEDPatternTypeImageLinearFade || itemHeader->patternType == LEDPatternTypeImageEntireStrip) {
+        char *fullFilenamePath = _getFullpathName(m_currentFileInfo, NULL, 0);
+        m_ledPatterns.setDataInfo(fullFilenamePath, itemHeader->dataLength); // datainfo retains the memory
+        m_ledPatterns.setBitmapFilename(NULL);
+    } else {
+        m_ledPatterns.setDataInfo(NULL, 0);
+        m_ledPatterns.setBitmapFilename(NULL);
+    }
+#endif
+    
+    
 #if DEBUG
     DEBUG_PRINTF("--------- Next pattern Item (patternType: %d): %d of %d, %d long\r\n", itemHeader->patternType, _currentPatternItemIndex, _numberOfPatternItems, itemHeader->duration);
 #endif

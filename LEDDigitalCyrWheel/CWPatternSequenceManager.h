@@ -110,9 +110,10 @@ private:
     CDPatternFileInfo *_findNextLoadableChild(CDPatternFileInfo *fromChild, bool forwards);
     
     void _ensureCurrentFileInfo();
-    void _loadPatternFileInfo(CDPatternFileInfo *fileInfo);
-    void _loadSequenceFile(File *file);
-    void _loadPatternBmpFile(File *file);
+    void updateLEDPatternBitmapFilename();
+    void loadFileInfo(CDPatternFileInfo *fileInfo); // Divies to the appropriate method below
+    void loadAsSequenceFileInfo(CDPatternFileInfo *fileInfo);
+    void loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo);
     
     void updateBrightness();
     const char *_getRootDirectory();
@@ -174,6 +175,7 @@ public:
     
     void restartCurrentSequence();
     void setCurrentSequenceAtIndex(int index); // index in the parent
+    void setCurrentSequenceWithName(const char *name);
     
     bool getCardInitPassed() { return m_sdCardWorks; }
     
@@ -188,7 +190,7 @@ public:
     
     void processCommand(CDWheelCommand command);
     
-    void setDynamicPatternWithHeader(CDPatternItemHeader *header);
+    void setSingleItemPatternHeader(CDPatternItemHeader *header);
     void setDynamicPatternType(LEDPatternType type, CRGB color = CRGB::Red);
     
     void startCalibration();
