@@ -19,9 +19,6 @@
 [submodule "Libraries/ArduinoJson"]
 	path = Libraries/ArduinoJson
 	url = git@github.com:bblanchon/ArduinoJson.git
-[submodule "Libraries/SdFat"]
-	path = Libraries/SdFat
-	url = git@github.com:greiman/SdFat-beta.git
 [submodule "Libraries/aJson"]
 	path = Libraries/aJson
 	url = git@github.com:interactive-matter/aJson.git
