@@ -289,8 +289,8 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
     } else {
         CDPatternItemHeader header;
         header.patternType = LEDPatternTypeBitmap;
-        header.duration = 500;
-        header.patternDuration = 500;
+        header.duration = 1000;
+        header.patternDuration = 1000;
         header.color = 0;
         header.patternEndCondition = CDPatternEndConditionOnButtonClick;
         setSingleItemPatternHeader(&header);
@@ -414,7 +414,7 @@ void CWPatternSequenceManager::loadFileInfo(CDPatternFileInfo *fileInfo) {
             loadAsSequenceFileInfo(fileInfo);
             break;
         }
-        case CDPatternFileTypePatternFile: {
+        case CDPatternFileTypeBitmapImage: {
             loadAsBitmapFileInfo(fileInfo);
             break;
         }
@@ -534,6 +534,11 @@ CDPatternFileInfo *CWPatternSequenceManager::_findNextLoadableChild(CDPatternFil
     return result;
 }
 
+void CWPatternSequenceManager::loadNextDirectory() {
+    m_currentFileInfo = _findNextLoadableChild(m_currentFileInfo->parent, true);
+    loadCurrentSequence();
+}
+
 void CWPatternSequenceManager::_ensureCurrentFileInfo() {
     if (m_currentFileInfo == NULL) {
         m_currentFileInfo = _findFirstLoadableChild(&m_rootFileInfo, true);
@@ -645,7 +650,7 @@ static CDPatternFileType _getPatternFileType(File *file) {
                 return CDPatternFileTypeSequenceFile;
             }
             if (strcmp(ext, PATTERN_FILE_EXTENSION) == 0 || strcmp(ext, PATTERN_FILE_EXTENSION_LC) == 0) {
-                return CDPatternFileTypePatternFile;
+                return CDPatternFileTypeBitmapImage;
             }
         }
     }
@@ -890,23 +895,14 @@ void CWPatternSequenceManager::loadPriorSequence() {
 }
 
 void CWPatternSequenceManager::buttonClick() {
-    
-#if DEBUG
-    if (isPaused()) {
-        play();
-        nextPatternItem();
-    } else {
-        pause();
-    }
-    
-#endif
-    
-    
     if (m_orientation.isCalibrating()) {
         m_orientation.endCalibration();
         firstPatternItem();
     } else {
-        if (m_shouldIgnoreButtonClickWhenTimed) {
+        // bitmap images just go to the next sequence..
+        if (m_currentFileInfo && m_currentFileInfo->patternFileType == CDPatternFileTypeBitmapImage) {
+            loadNextSequence();
+        } else if (m_shouldIgnoreButtonClickWhenTimed) {
             // Only go to next if it isn't timed; this helps me avoid switching the pattern accidentally when stepping on it.
             CDPatternItemHeader *itemHeader = getCurrentItemHeader();
             if (itemHeader == NULL || itemHeader->patternEndCondition == CDPatternEndConditionOnButtonClick) {
@@ -926,7 +922,9 @@ void CWPatternSequenceManager::buttonLongClick() {
             endRecordingData();
         }
     } else {
-        if (m_shouldIgnoreButtonClickWhenTimed) {
+        if (m_currentFileInfo && m_currentFileInfo->patternFileType == CDPatternFileTypeBitmapImage) {
+            loadNextDirectory();
+        } else if (m_shouldIgnoreButtonClickWhenTimed) {
             // Only go to next if it isn't timed; this helps me avoid switching the pattern accidentally when stepping on it.
             CDPatternItemHeader *itemHeader = getCurrentItemHeader();
             if (itemHeader == NULL || itemHeader->patternEndCondition == CDPatternEndConditionOnButtonClick) {

@@ -157,6 +157,7 @@
 		9D3A0DA81889BE64001AD553 /* LEDDigitalCyrWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */; };
 		9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DAC188A0EBD001AD553 /* Button.cpp */; };
 		9D472E1D1902F1590076281A /* CDOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D472E1B1902F1590076281A /* CDOrientation.cpp */; };
+		9D684AC81C17E9BD0058EFA0 /* CDLazyBitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D684AC61C17E9BD0058EFA0 /* CDLazyBitmap.cpp */; };
 		9D6BC86E1938CBC400E21E1C /* colorutils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8301938CBC400E21E1C /* colorutils.cpp */; };
 		9D6BC86F1938CBC400E21E1C /* FastLED.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8541938CBC400E21E1C /* FastLED.cpp */; };
 		9D6BC8701938CBC400E21E1C /* hsv2rgb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8631938CBC400E21E1C /* hsv2rgb.cpp */; };
@@ -1476,6 +1477,8 @@
 		9D472E1C1902F1590076281A /* CDOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDOrientation.h; sourceTree = "<group>"; };
 		9D4FCB29193BB3A40000DE28 /* LEDCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEDCommon.h; sourceTree = "<group>"; };
 		9D683E2D1C1139000058EFA0 /* CDPatternSequenceManagerShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDPatternSequenceManagerShared.h; sourceTree = "<group>"; };
+		9D684AC61C17E9BD0058EFA0 /* CDLazyBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDLazyBitmap.cpp; sourceTree = "<group>"; };
+		9D684AC71C17E9BD0058EFA0 /* CDLazyBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDLazyBitmap.h; sourceTree = "<group>"; };
 		9D6BC8281938CBC400E21E1C /* block_clockless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = block_clockless.h; sourceTree = "<group>"; };
 		9D6BC8291938CBC400E21E1C /* chipsets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chipsets.h; sourceTree = "<group>"; };
 		9D6BC82A1938CBC400E21E1C /* clockless.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = clockless.h; sourceTree = "<group>"; };
@@ -4614,6 +4617,8 @@
 				9DA685AE19401D3B003631F6 /* OctoWS2811LEDPatterns.h */,
 				9DA685AF194021D8003631F6 /* FastLEDPatterns.h */,
 				9DD1E671193EC47100290878 /* README.md */,
+				9D684AC61C17E9BD0058EFA0 /* CDLazyBitmap.cpp */,
+				9D684AC71C17E9BD0058EFA0 /* CDLazyBitmap.h */,
 			);
 			name = LEDPatterns;
 			path = Libraries/LEDPatterns;
@@ -5076,6 +5081,7 @@
 				9D0EEC521BFC372F002C687E /* usb_midi.c in Sources */,
 				9DE7ECFD19EB6EFF00C1DCB6 /* SdFat.cpp in Sources */,
 				9D0EEC411BFC372F002C687E /* nonstd.c in Sources */,
+				9D684AC81C17E9BD0058EFA0 /* CDLazyBitmap.cpp in Sources */,
 				9D0EED541BFC3747002C687E /* Makefile in Sources */,
 				9D0EED561BFC3747002C687E /* Makefile in Sources */,
 				9D0EEC4B1BFC372F002C687E /* usb_desc.c in Sources */,

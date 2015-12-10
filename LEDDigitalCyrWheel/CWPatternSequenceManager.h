@@ -48,7 +48,7 @@
 
 typedef enum {
     CDPatternFileTypeSequenceFile, // .pat
-    CDPatternFileTypePatternFile, // .bmp / bitmap
+    CDPatternFileTypeBitmapImage, // .bmp / bitmap
     CDPatternFileTypeDirectory,
     CDPatternFileTypeDefaultSequence, // special
     CDPatternFileTypeUnknown,
@@ -156,6 +156,7 @@ private:
     void loadPatternFileInfoChildren(CDPatternFileInfo *parent);
     //    bool deleteSequenceAtIndex(int index); // TODO: probably take a name, and find that file to delete it...
 
+    void loadNextDirectory();
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
