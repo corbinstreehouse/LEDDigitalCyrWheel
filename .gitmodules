@@ -24,4 +24,4 @@
 	url= https://github.com/adafruit/Adafruit_BluefruitLE_nRF51.git
 [submodule "Libraries/SdFat"]
 	path = Libraries/SdFat
-	url = https://github.com/greiman/SdFat.git
+	url = git@github.com:corbinstreehouse/SdFat.git
