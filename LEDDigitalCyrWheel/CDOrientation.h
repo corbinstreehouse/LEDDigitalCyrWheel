@@ -28,7 +28,7 @@
 #include <LSM303.h>
 #endif
 
-#include "SD.h"
+#include "SdFat.h"
 
 #ifndef MAX_COMPONENT_LEN
     #define MAX_COMPONENT_LEN 12 //dos
@@ -40,9 +40,9 @@
 
 class CDOrientation {
 private:
-    bool _shouldSaveDataToFile;
-    bool _calibrating;
-    char _filenameBuffer[PATH_COMPONENT_BUFFER_LEN+1];
+    bool m_shouldSaveDataToFile;
+    bool m_calibrating;
+    char _filenameBuffer[PATH_COMPONENT_BUFFER_LEN+2];
     bool m_gyroInitialized;
     bool m_compassInitialized;
 
@@ -148,12 +148,12 @@ public:
     void process();
     void print();
     
-    bool isCalibrating() { return _calibrating; }
+    bool isCalibrating() { return m_calibrating; }
     void beginCalibration();
     void endCalibration();
     void cancelCalibration();
     
-    bool isSavingData() { return _shouldSaveDataToFile; }
+    bool isSavingData() { return m_shouldSaveDataToFile; }
     void beginSavingData();
     void endSavingData();
     

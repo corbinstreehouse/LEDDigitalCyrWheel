@@ -15,15 +15,19 @@
 #include "EEPROM.h"
 #endif
 
-#define RECORD_INDICATOR_FILENAME "RECORD.TXT" // If this file exists, we record data in other files.
-#define PATTERN_FILE_EXTENSION "BMP"
-#define PATTERN_FILE_EXTENSION_LC "bmp"
+#define RECORD_INDICATOR_FILENAME "record.txt" // If this file exists, we record data in other files.
+#define BITMAP_FILE_EXTENSION "bmp"
 
 #if DEBUG
     #warning "DEBUG Code is on!!"
+#include "SdFatUtil.h"
 #endif
 
-static const char *g_defaultFilename = "Default"; // We compare to this address to know if it is the default pattern
+#define MAX_PATH  260 // yeah, copy windows
+
+#define FILENAME_MAX_LENGTH MAX_PATH
+
+
 #if !PATTERN_EDITOR
 static const char *g_sequencePath = "/"; // warning..changing this may require different buffers
 #endif
@@ -57,13 +61,6 @@ static void freePatternFileInfoAndChildren(CDPatternFileInfo *fileInfo) {
             free(fileInfo->children);
 #if DEBUG
             fileInfo->children = NULL;
-#endif
-        }
-        // Don't delete the default filename!
-        if (fileInfo->filename) {
-            free(fileInfo->filename);
-#if DEBUG
-            fileInfo->filename = NULL;
 #endif
         }
     }
@@ -224,60 +221,57 @@ void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount)
     m_ledPatterns.flashThreeTimes(color);
 }
 
-// mallocs memory if bufferSize isn't large enough
 // if stackBufferSize == 0, it always allocates (yeah, bad mem mangement techniques)
 // This walks to the parent, adds its path, and then adds the child's path to get a complete path
-char *_getFullpathName(CDPatternFileInfo *fileInfo, char *buffer, int stackBufferSize) {
-    // Find the size by walking the chain once
-    size_t filenameLength = strlen(fileInfo->filename);
-    size_t totalCountNeeded = filenameLength;
-    CDPatternFileInfo *directory = fileInfo->parent;
-    while (directory) {
-        size_t length = strlen(directory->filename);
-        bool needsSep = directory->filename[length - 1] != '/';
-        if (needsSep) {
-            length++;
-        }
-        totalCountNeeded += length;
-        directory = directory->parent;
+// returns SFN
+int _recursiveGetFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, int size, int startingOffset) {
+    if (fileInfo->parent) {
+        startingOffset = _recursiveGetFullpathName(rootDirName, fileInfo->parent, buffer, size, startingOffset);
+    }
+    // Add in our path, include seperators
+    if (startingOffset > 0 && buffer[startingOffset-1] != '/') {
+        buffer[startingOffset] = '/';
+        startingOffset++;
+        buffer[startingOffset] = 0; // So we can open it...
     }
     
-    totalCountNeeded++; // NULL terminator
-    
-    char *filename;
-    if (totalCountNeeded <= stackBufferSize) {
-        filename = buffer;
+    char *nameLocation = &buffer[startingOffset];
+    if (fileInfo->parent == NULL) {
+        // Root
+        strcpy(nameLocation, rootDirName);
     } else {
-        filename = (char *)malloc(sizeof(char) * totalCountNeeded);
-    }
-    
-    // Now copy it, starting from the end working to the front
-    size_t offset = totalCountNeeded - filenameLength - 1; // -1 goes past the NULL terminator
-    strcpy(&filename[offset], fileInfo->filename); // adds NULL
-    
-    directory = fileInfo->parent;
-    while (directory) {
-        size_t length = strlen(directory->filename);
-        bool needsSep = directory->filename[length - 1] != '/';
-        if (needsSep) {
-            offset--;
-            filename[offset] = '/';
+        FatFile parentDirectory = FatFile(buffer, O_READ);
+        FatFile file;
+        if (file.open(&parentDirectory, fileInfo->dirIndex, O_READ)) {
+//    #if DEBUG
+//            DEBUG_PRINTF("  opened and copying the name. buffer: %s, name: ", buffer);
+//            file.printName();
+//            DEBUG_PRINTLN(" <-- name printed");
+//    #endif
+            if (!file.getSFN(nameLocation)) {
+            } else {
+            }
+            file.close();
+        } else {
+            DEBUG_PRINTLN("  open failed");
         }
-        
-        offset -= length;
-        strncpy(&filename[offset], directory->filename, length); // Doesn't include the NULL terminator
-        directory = directory->parent;
+        parentDirectory.close();
     }
-    // We should be at the start
-    ASSERT(offset == 0);
+    return startingOffset + strlen(nameLocation);
+}
 
-    return filename;
+
+void _getFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, int size) {
+    buffer[0] = 0;
+//    DEBUG_PRINTF(" start to get name for dir: %d \r\n", fileInfo->dirIndex);
+    _recursiveGetFullpathName(rootDirName, fileInfo, buffer, size, 0);
+//    DEBUG_PRINTF(" computed filename: %s\r\n", buffer);
 }
 
 void CWPatternSequenceManager::updateLEDPatternBitmapFilename() {
-    char *fullFilenamePath = _getFullpathName(m_currentFileInfo, NULL, 0);
-    m_ledPatterns.setBitmapFilename(fullFilenamePath); // bitmap copies it (yeah, stupid waste of allocation/free)
-    free(fullFilenamePath);
+    char fullFilenamePath[MAX_PATH];
+    _getFullpathName(_getRootDirectory(), m_currentFileInfo, fullFilenamePath, MAX_PATH);
+    m_ledPatterns.setBitmapFilename(fullFilenamePath);
 }
 
 void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo) {
@@ -289,8 +283,13 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
     } else {
         CDPatternItemHeader header;
         header.patternType = LEDPatternTypeBitmap;
-        header.duration = 1000;
-        header.patternDuration = 1000;
+        header.duration = 50;
+        // How long between each update
+        if (m_ledPatterns.getBitmap()->getHeight() == 1) {
+            header.patternDuration = 15; // Chasing patterns look better faster
+        } else {
+            header.patternDuration = 35;
+        }
         header.color = 0;
         header.patternEndCondition = CDPatternEndConditionOnButtonClick;
         setSingleItemPatternHeader(&header);
@@ -300,29 +299,31 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
 void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInfo) {
     ASSERT(fileInfo->patternFileType == CDPatternFileTypeSequenceFile);
     
-#define STACK_BUFFER_SIZE 64 // A bit bigger now that I support directories
-    char stackBuffer[64];
-    char *fullFilenamePath = _getFullpathName(fileInfo, stackBuffer, STACK_BUFFER_SIZE);
-#undef STACK_BUFFER_SIZE
+    char fullFilenamePath[MAX_PATH];
+    _getFullpathName(_getRootDirectory(), fileInfo, fullFilenamePath, MAX_PATH);
     
-    DEBUG_PRINTF("  loadAsSequenceFileInfo: %s at %s\r\n", fileInfo->filename, fullFilenamePath);
+    DEBUG_PRINTF("  loadAsSequenceFileInfo: %d at %s\r\n", fileInfo->dirIndex, fullFilenamePath);
     
     // open the file
-    File sequenceFile = SD.open(fullFilenamePath);
-    DEBUG_PRINTF(" OPENED file: %s\r\n", sequenceFile.name());
+    SdFile sequenceFile = SdFile(fullFilenamePath, O_READ);
+#if DEBUG
+    DEBUG_PRINTF(" OPENED file:");
+    sequenceFile.printName();
+    DEBUG_PRINTLN();
+#endif
     
-    if (!sequenceFile.available()) {
-        sequenceFile.close(); // well, shouldn't be needed
-        // Try again??? Frequently I have to try twice.. this is stupid, but the SD card isn't consistent
-        sequenceFile = SD.open(fullFilenamePath);
-        DEBUG_PRINTF(" try again!! file: %s\r\n", sequenceFile.name());
-    }
+//    if (!sequenceFile.available()) {
+//        sequenceFile.close(); // well, shouldn't be needed
+//        // Try again??? Frequently I have to try twice.. this is stupid, but the SD card isn't consistent
+//        sequenceFile = SD.open(fullFilenamePath);
+//        DEBUG_PRINTF(" try again!! file: %s\r\n", sequenceFile.name());
+//    }
     
     // This is reading the file format I created..
     // Header first
     CDPatternSequenceHeader patternHeader;
     if (sequenceFile.available()) {
-        sequenceFile.readBytes((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
+        sequenceFile.read((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
     } else {
         patternHeader.version = 0; // Fail
     }
@@ -349,7 +350,7 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
             
             for (int i = 0; i < _numberOfPatternItems; i++ ){
                 DEBUG_PRINTF("reading item %d\r\n", i);
-                sequenceFile.readBytes((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
+                sequenceFile.read((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
                 DEBUG_PRINTF("Header, type: %d, duration: %d, patternDuration %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].patternDuration);
                 // Verify it
                 bool validData = _patternItems[i].patternType >= LEDPatternTypeMin && _patternItems[i].patternType < LEDPatternTypeMax;
@@ -365,12 +366,12 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
                         DEBUG_PRINTF("we have %d data\r\n", dataLength);
                         // Read in the data that is following the header, and put it in the data pointer...
                         // 65536 kb of ram..more than 20,000 pixels would overflow...which i'm now hitting w/larger images. darn it..i have to chunk these and dynamically load each one ;(
-                        _patternItems[i].dataOffset = sequenceFile.position();
+                        _patternItems[i].dataOffset = sequenceFile.curPosition();
                         //                        _patternItems[i].dataFilename = filename; // idiot..this points to stuff on the stack now!
                         //                _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
                         //                sequenceFile.readBytes((char*)_patternItems[i].data, dataLength);
                         // seek past the data
-                        sequenceFile.seek(sequenceFile.position() + dataLength);
+                        sequenceFile.seekCur(dataLength);
                     } else {
                         // data pointer should always be NULL
                         _patternItems[i].dataOffset = 0;
@@ -389,10 +390,6 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
     }
     
     sequenceFile.close();
-    // Deal withs tack memory, if necessary
-    if (fullFilenamePath != stackBuffer) {
-        free(fullFilenamePath);
-    }
 }
 
 void CWPatternSequenceManager::loadFileInfo(CDPatternFileInfo *fileInfo) {
@@ -400,9 +397,8 @@ void CWPatternSequenceManager::loadFileInfo(CDPatternFileInfo *fileInfo) {
     ASSERT(fileInfo->patternFileType != CDPatternFileTypeDirectory);
 
 //    m_currentPatternItemsAreDynamic = false;
-    
-    // NULL filename, or the root is the default sequence
-    if (fileInfo->filename == NULL || fileInfo == &m_rootFileInfo) {
+    // in case we get the root for some reason (shouldn't happen!)
+    if (fileInfo == &m_rootFileInfo) {
         loadDefaultSequence();
         return;
     }
@@ -561,6 +557,9 @@ void CWPatternSequenceManager::setCurrentSequenceAtIndex(int index) {
 
 static CDPatternFileInfo *_findInfoWithName(CDPatternFileInfo *info, const char *name) {
     // TODO: "full path" name compare search...
+#warning broken
+    /*
+    
     if (strcmp(info->filename, name) == 0) {
         return info;
     }
@@ -573,6 +572,7 @@ static CDPatternFileInfo *_findInfoWithName(CDPatternFileInfo *info, const char 
             }
         }
     }
+     */
     return NULL;
 }
 
@@ -602,6 +602,8 @@ void CWPatternSequenceManager::loadCurrentSequence() {
     firstPatternItem();
 }
 
+#if SD_CARD_SUPPORT
+
 bool CWPatternSequenceManager::initSDCard() {
     DEBUG_PRINTLN("initSD Card");
 #if 0 // DEBUG
@@ -611,7 +613,9 @@ bool CWPatternSequenceManager::initSDCard() {
 //    pinMode(SD_CARD_CS_PIN, OUTPUT); // Any pin can be used as SS, but it must remain low
 //    digitalWrite(SD_CARD_CS_PIN, LOW);
 //    delay(10); // sd card is flipping touchy!!
-    bool result = SD.begin(SPI_HALF_SPEED, SD_CARD_CS_PIN); //  was SPI_FULL_SPEED
+//    bool result = SD.begin(SPI_HALF_SPEED, SD_CARD_CS_PIN); //  was SPI_FULL_SPEED
+    bool result = m_sd.begin(SD_CARD_CS_PIN, SPI_FULL_SPEED); //  was SPI_FULL_SPEED
+    
     int i = 0;
 #if DEBUG
     if (!result) {
@@ -619,7 +623,7 @@ bool CWPatternSequenceManager::initSDCard() {
     }
 #endif
     while (!result) {
-        result = SD.begin(SPI_HALF_SPEED, SD_CARD_CS_PIN); // was SPI_HALF_SPEED...
+        result = m_sd.begin(SD_CARD_CS_PIN, SPI_HALF_SPEED); // was SPI_HALF_SPEED...
         i++;
         if (i == 1) {
             break; // give it 3 more chances??.. (it is slow to init for some reason...)
@@ -636,26 +640,7 @@ bool CWPatternSequenceManager::initSDCard() {
     return result;
 }
 
-static CDPatternFileType _getPatternFileType(File *file) {
-    if (file->isDirectory()) {
-        return CDPatternFileTypeDirectory;
-    }
-    char *filename = file->name();
-    if (filename) {
-        char *ext = getExtension(filename);
-        if (ext) {
-            // strcasecmp available??
-            // corbin!!!
-            if (strcmp(ext, SEQUENCE_FILE_EXTENSION) == 0 || strcmp(ext, SEQUENCE_FILE_EXTENSION_LC) == 0) {
-                return CDPatternFileTypeSequenceFile;
-            }
-            if (strcmp(ext, PATTERN_FILE_EXTENSION) == 0 || strcmp(ext, PATTERN_FILE_EXTENSION_LC) == 0) {
-                return CDPatternFileTypeBitmapImage;
-            }
-        }
-    }
-    return CDPatternFileTypeUnknown;
-}
+#endif
 
 bool CWPatternSequenceManager::initStrip() {
     m_ledPatterns.begin();
@@ -688,8 +673,8 @@ const char *CWPatternSequenceManager::_getRootDirectory() {
 #endif
 }
 
-static void _setupFileInfo(CDPatternFileInfo *info, CDPatternFileInfo *parent, int indexInParent, const char *filename, CDPatternFileType type) {
-    info->filename = strdup(filename);
+static void _setupFileInfo(CDPatternFileInfo *info, CDPatternFileInfo *parent, int indexInParent, uint16_t dirIndex, CDPatternFileType type) {
+    info->dirIndex = dirIndex;
     info->patternFileType = type;
     info->children = NULL;
     info->numberOfChildren = 0;
@@ -700,11 +685,13 @@ static void _setupFileInfo(CDPatternFileInfo *info, CDPatternFileInfo *parent, i
 void CWPatternSequenceManager::loadSequencesFromRootDirectory() {
     freeRootFileInfo();
     
-    _setupFileInfo(&m_rootFileInfo, NULL, -1, _getRootDirectory(), CDPatternFileTypeDefaultSequence);
+    _setupFileInfo(&m_rootFileInfo, NULL, -1, 0, CDPatternFileTypeDirectory);
     loadPatternFileInfoChildren(&m_rootFileInfo);
-
-    // That has side effect sfor the root, so check the other state it set
-    if (m_shouldRecordData) {
+    
+    // check for the record filename when loading the root
+    m_sd.chdir(_getRootDirectory());
+    if (m_sd.exists(RECORD_INDICATOR_FILENAME)) {
+        m_shouldRecordData = true;
         m_ledPatterns.flashThreeTimes(CRGB(30,30,30));
     }
     
@@ -713,91 +700,106 @@ void CWPatternSequenceManager::loadSequencesFromRootDirectory() {
 
 void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *parent) {
     ASSERT(parent);
-    ASSERT(parent->filename);
     bool isRoot = parent == &m_rootFileInfo;
-    if (m_sdCardWorks) {
+    if (m_sdCardWorks && parent->patternFileType == CDPatternFileTypeDirectory) {
+        DEBUG_PRINTF("loadPatternFileInfoChildren start\r\n");
+
+// corbin, better name getting..
 #define STACK_BUFFER_SIZE PATH_COMPONENT_BUFFER_LEN
-        char filenameBuffer[STACK_BUFFER_SIZE];
+        char filenameBuffer[FILENAME_MAX_LENGTH];
         //  parent directory needs a larger buffer, and does dynamic malloc if needed
-        char *parentDirectoryPath = _getFullpathName(parent, filenameBuffer, STACK_BUFFER_SIZE);
+        _getFullpathName(_getRootDirectory(), parent, filenameBuffer, FILENAME_MAX_LENGTH);
 #undef STACK_BUFFER_SIZE
+        DEBUG_PRINTF("loadPatternFileInfoChildren: %s\r\n", filenameBuffer);
         
-        DEBUG_PRINTF("loadPatternFileInfoChildren: %s\r\n", parentDirectoryPath);
-        File parentFile = SD.open(parentDirectoryPath); // strcpy's it
-        if (parentDirectoryPath != filenameBuffer) {
-            free(parentDirectoryPath);
-        }
-        parentDirectoryPath = NULL; // Done; copied by SD if needed
-        
-        parentFile.moveToStartOfDirectory();
-        // filenameBuffer doesn't have to be as large because it is just the filename, and really is limted to DOS
+        FatFile directoryFile = FatFile(filenameBuffer, O_READ);
+ 
+//        char shortFilenameBuffer[13]; // 8.3 Short file name (SFN)
+        char *shortFilenameBuffer = filenameBuffer; // reuse the same buffer for now
+
+        CDPatternFileInfo *potentialChildren = NULL;
+        int potentialChildrenSize = 0;
+#define CHILDREN_GROW_SIZE 16 // 16 entries at a time. too much? extra memory?
         int childCount = 0;
-        while (true) {
-            File f = parentFile.openNextFile();
-            if (!f.isValid()) {
-                break;
-            }
-            CDPatternFileType fileType = _getPatternFileType(&f);
-            if (fileType != CDPatternFileTypeUnknown) {
-                childCount++;
+
+        SdFile file;
+        while (file.openNext(&directoryFile, O_READ)) {
+            CDPatternFileType patternFileType = CDPatternFileTypeUnknown;
+            if (file.isHidden()) {
+                // Ignore hidden files
+            } else if (file.isDir()) {
+                patternFileType = CDPatternFileTypeDirectory;
             } else {
-                // Check to see if it is the record file..
-                if (isRoot) {
-                    if (strcmp(f.name(), RECORD_INDICATOR_FILENAME) == 0) {
-                        m_shouldRecordData = true; // Strange to do this here..but I don't want to do another pass over the files on startup
+                // Record it..don't record the type! figure that out when we load it!!
+                if (file.getSFN(shortFilenameBuffer)) {
+                    char *ext = getExtension(shortFilenameBuffer);
+                    if (ext) {
+                        // strcasecmp available??
+                        if (strcasecmp(ext, SEQUENCE_FILE_EXTENSION) == 0) {
+                            patternFileType = CDPatternFileTypeSequenceFile;
+                        } else if (strcasecmp(ext, BITMAP_FILE_EXTENSION) == 0) {
+                            patternFileType = CDPatternFileTypeBitmapImage;
+                        }
                     }
                 }
             }
-            f.close();
+            
+            if (patternFileType != CDPatternFileTypeUnknown) {
+#if DEBUG
+                DEBUG_PRINTF("Found file/folder: ");
+                file.printName();
+                DEBUG_PRINTLN("");
+#endif
+
+                // Save it!
+                if (potentialChildren == NULL) {
+                    potentialChildrenSize = CHILDREN_GROW_SIZE;
+                    potentialChildren = (CDPatternFileInfo *)malloc(sizeof(CDPatternFileInfo) * potentialChildrenSize);
+                } else if (childCount >= potentialChildrenSize) {
+                    DEBUG_PRINTF("reallocing children, childCount: %d, free: %d\r\n", childCount, SdFatUtil::FreeRam());
+                    potentialChildrenSize += CHILDREN_GROW_SIZE;
+                    potentialChildren = (CDPatternFileInfo *)realloc(potentialChildren, sizeof(CDPatternFileInfo) * potentialChildrenSize);
+                    DEBUG_PRINTF("  -- done children, childCount: %d, free: %d\r\n", childCount, SdFatUtil::FreeRam());
+                }
+                _setupFileInfo(&potentialChildren[childCount], parent, childCount, file.dirIndex(), patternFileType);
+
+                childCount++;
+            }
+            file.close();
         }
         
         DEBUG_PRINTF("Found %d sequences/files/dirs on SD Card\r\n", childCount);
-        
+
         // Add one for the default sequence
         if (isRoot) {
+            // Make space for it, and set it up
+            if (potentialChildren == NULL) {
+                potentialChildrenSize = 1;
+                potentialChildren = (CDPatternFileInfo *)malloc(sizeof(CDPatternFileInfo) * potentialChildrenSize);
+            } else if (childCount >= potentialChildrenSize) {
+                potentialChildrenSize += 1;
+                potentialChildren = (CDPatternFileInfo *)realloc(potentialChildren, sizeof(CDPatternFileInfo) * potentialChildrenSize);
+            }
+            // setup the default item for the root item
+            _setupFileInfo(&potentialChildren[childCount], parent, childCount, -1/*not used*/, CDPatternFileTypeDefaultSequence);
             childCount++;
         }
         
         freePatternFileInfoChildren(parent);
-        
-        int childIndex = 0;
-        if (childCount > 0) {
-            parent->children = (CDPatternFileInfo *)malloc(sizeof(CDPatternFileInfo) * childCount);
-            
-            parentFile.moveToStartOfDirectory();
-            while (true) {
-                File f = parentFile.openNextFile();
-                if (!f.isValid() || childCount == 0) {
-                    break;
-                }
-                CDPatternFileType fileType = _getPatternFileType(&f);
-                if (fileType != CDPatternFileTypeUnknown) {
-                    CDPatternFileInfo *child = &parent->children[childIndex];
-                    _setupFileInfo(child, parent, childIndex, f.name(), fileType);
-
-                    DEBUG_PRINTF("copied name: %s len: %d\r\n", f.name(), strlen(f.name()));
-                    childCount--; // Makes sure we don't blow the total count if something changed on the file system (shouldn't happen)
-                    childIndex++;
-                }
-            }
+        // realloc array to save memory if we have a lot of extra space.. I'm not sure if this is worth it..
+        if (potentialChildren && childCount <= (potentialChildrenSize /*+2*/)) {
+            potentialChildren = (CDPatternFileInfo *)realloc(potentialChildren, sizeof(CDPatternFileInfo) * childCount);
         }
         
-        if (isRoot && childCount > 0) {
-            // Always add in the default item
-            CDPatternFileInfo *child = &parent->children[childIndex];
-            _setupFileInfo(child, parent, childIndex, g_defaultFilename, CDPatternFileTypeDefaultSequence);
-            childIndex++;
-        }
+        parent->children = potentialChildren;
+        parent->numberOfChildren = childCount;
         
-        parent->numberOfChildren = childIndex;
-        
-        parentFile.close();
-        
+        directoryFile.close();
     } else if (isRoot) {
         // Add one child..for the default sequence
         parent->numberOfChildren = 1;
         parent->children = (CDPatternFileInfo *)malloc(sizeof(CDPatternFileInfo));
-        _setupFileInfo(&parent->children[0], parent, 0, g_defaultFilename, CDPatternFileTypeDefaultSequence);
+        _setupFileInfo(&parent->children[0], parent, 0, -1/*not used*/, CDPatternFileTypeDefaultSequence);
     } else {
         parent->numberOfChildren = 0;
         parent->children = NULL;
@@ -816,8 +818,12 @@ void CWPatternSequenceManager::init() {
     initStrip();
     DEBUG_PRINTLN("done init strip, starting to init SD Card");
     
+#if SD_CARD_SUPPORT
     m_sdCardWorks = initSDCard();
     DEBUG_PRINTLN("done init sd card");
+#else
+    m_sdCardWorks = false;
+#endif
     
     loadSequencesFromRootDirectory();
 }
@@ -1067,7 +1073,8 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     if (itemHeader->patternType == LEDPatternTypeBitmap) {
         updateLEDPatternBitmapFilename();
     } else if (itemHeader->patternType == LEDPatternTypeImageLinearFade || itemHeader->patternType == LEDPatternTypeImageEntireStrip) {
-        char *fullFilenamePath = _getFullpathName(m_currentFileInfo, NULL, 0);
+        char fullFilenamePath[MAX_PATH];
+        _getFullpathName(_getRootDirectory(), m_currentFileInfo, fullFilenamePath, MAX_PATH);
         m_ledPatterns.setDataInfo(fullFilenamePath, itemHeader->dataLength); // datainfo retains the memory
         m_ledPatterns.setBitmapFilename(NULL);
     } else {
@@ -1078,7 +1085,7 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     
     
 #if DEBUG
-    DEBUG_PRINTF("--------- Next pattern Item (patternType: %d): %d of %d, %d long\r\n", itemHeader->patternType, _currentPatternItemIndex, _numberOfPatternItems, itemHeader->duration);
+    DEBUG_PRINTF("--------- loadCurrentPatternItem (patternType: %d): %d of %d, %d long\r\n", itemHeader->patternType, _currentPatternItemIndex + 1, _numberOfPatternItems, itemHeader->duration);
 #endif
     
     // Crossfade patterns need to know the next one!

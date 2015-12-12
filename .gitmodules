@@ -25,3 +25,6 @@
 [submodule "Libraries/Adafruit_BluefruitLE_nRF51"]
 	path = Libraries/Adafruit_BluefruitLE_nRF51
 	url= https://github.com/adafruit/Adafruit_BluefruitLE_nRF51.git
+[submodule "Libraries/SdFat"]
+	path = Libraries/SdFat
+	url = https://github.com/greiman/SdFat.git

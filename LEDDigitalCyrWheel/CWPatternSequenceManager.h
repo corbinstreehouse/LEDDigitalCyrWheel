@@ -15,7 +15,7 @@
 #include "Arduino.h"
 
 #if SD_CARD_SUPPORT
-#include "SD.h"
+    #include "SdFat.h"
 #endif
 
 #include "CDOrientation.h"
@@ -23,8 +23,7 @@
 #include "LEDPatterns.h"
 #include "CDPatternSequenceManagerShared.h"
 
-#define SEQUENCE_FILE_EXTENSION "PAT"
-#define SEQUENCE_FILE_EXTENSION_LC "pat" // stupid non case sensative
+#define SEQUENCE_FILE_EXTENSION "pat"
 
 
 #if PATTERN_EDITOR
@@ -56,12 +55,8 @@ typedef enum {
 
 // Keeping a struct will allow me to sort it, if I want
 typedef struct _CDPatternFileInfo {
-    char *filename;
+    uint16_t dirIndex;
     CDPatternFileType patternFileType;
-    // TODO: pack these bytes^
-//    uint32_t childrenInited;
-//    uint32_t __reserved:30;
-    
     _CDPatternFileInfo *children;
     int numberOfChildren;
     _CDPatternFileInfo *parent;
@@ -72,6 +67,10 @@ class CWPatternSequenceManager {
 private:
     CDPatternFileInfo m_rootFileInfo;
     CDPatternFileInfo *m_currentFileInfo; // May be ignored during dynamic patterns
+    // TODO: maybe hold the current directory open for better perf?
+#if SD_CARD_SUPPORT
+    SdFat m_sd;
+#endif
     
     // Current sequence information
     CDPatternItemHeader *_patternItems;
@@ -218,7 +217,10 @@ public:
 //            return NULL;
 //    }
 
-    char *getCurrentPatternFileName() { return m_currentFileInfo ? m_currentFileInfo->filename : NULL; };
+//    char *getCurrentPatternFileName() {
+//        return m_currentFileInfo ? m_currentFileInfo->filename : NULL;
+//    };
+    
     int getRootNumberOfSequenceFilenames() { return m_rootFileInfo.numberOfChildren; };
     
 //    int getCurrentSequenceIndex() { return _currentSequenceIndex; }

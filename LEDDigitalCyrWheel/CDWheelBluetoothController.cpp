@@ -42,7 +42,10 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
 
     DEBUG_PRINTLN("initializing bluetooth");
 
-    m_initialized = m_ble.begin(DEBUG);
+//    m_initialized = m_ble.begin(DEBUG);
+    // corbin!!
+    m_initialized = false;
+    
     if (!m_initialized) {
         DEBUG_PRINTLN("bluetoothf failed to init");
         // failed to init bluetooth
@@ -71,7 +74,7 @@ bool CDWheelBluetoothController::servicesAreRegistered() {
     // EEPROM.get(EEPROM_START_BLUETOOTH_AUTOMATICALLY_ADDRESS, tmp);
     bool result = false;
     m_ble.println("AT+GATTLIST");
-    while (m_ble.readline()) {
+    while (m_ble.available() && m_ble.readline()) {
         if (currentResponseCode() != BTResponseCodeUnknown) {
             DEBUG_PRINTLN(m_ble.buffer);
         } else {

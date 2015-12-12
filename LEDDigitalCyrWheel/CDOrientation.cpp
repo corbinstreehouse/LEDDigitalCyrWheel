@@ -63,7 +63,6 @@ uint8_t CDOrientation::getRotationalVelocityBrightness(uint8_t currentBrightness
 #include "LEDDigitalCyrWheel.h" // For EEPROM_ADDRESS....i could make this settable.
 #include "EEPROM.h"
 
-
 // LSM303 magnetometer calibration constants; use the Calibrate example from  the Pololu LSM303 library to find the right values for your board
 #define PRINT_DCM 0     //Will print the whole direction cosine matrix
 #define PRINT_ANALOGS 0 //Will print the analog raw data
@@ -194,7 +193,8 @@ void Matrix_Multiply(float a[3][3], float b[3][3],float mat[3][3])
 
 
 CDOrientation::CDOrientation() {
-    _shouldSaveDataToFile = false;
+    m_shouldSaveDataToFile = false;
+    m_calibrating = false;
     m_startBrightness = 0;
     m_gyroInitialized = false;
     m_compassInitialized = false;
@@ -794,7 +794,7 @@ void CDOrientation::_internalProcess() {
     //    print();
     #endif
         
-        if (_shouldSaveDataToFile) {
+        if (m_shouldSaveDataToFile) {
             writeStatusToFile();
         }
     }
@@ -802,7 +802,7 @@ void CDOrientation::_internalProcess() {
 
 
 void CDOrientation::process() {
-    if (_calibrating) {
+    if (m_calibrating) {
         _calibrate();
     } else if ((millis()-timer)>=20) {   // Main loop runs at 50Hz
         _internalProcess();
@@ -814,7 +814,7 @@ void CDOrientation::beginCalibration() {
     _calibrationMax = {INT16_MIN, INT16_MIN, INT16_MIN};
     _compass.m_min = _calibrationMin;
     _compass.m_max = _calibrationMax;
-    _calibrating = true;
+    m_calibrating = true;
 }
 
 void CDOrientation::_calibrate() {
@@ -846,12 +846,12 @@ void CDOrientation::_calibrate() {
 
 void CDOrientation::cancelCalibration() {
     DEBUG_PRINTLN("cancel calibration called");
-    _calibrating = false;
+    m_calibrating = false;
 }
 
 void CDOrientation::endCalibration() {
     DEBUG_PRINTLN("endCalibration called");
-    _calibrating = false;
+    m_calibrating = false;
     // TODO: maybe average it with the last calibration I did???
     
     _compass.m_min = _calibrationMin;
@@ -893,27 +893,29 @@ double CDOrientation::getRotationalVelocity() {
 }
 
 void CDOrientation::beginSavingData() {
-    _shouldSaveDataToFile = true;
+    m_shouldSaveDataToFile = true;
     // figure out a new filename to try
     int v = 0;
-    sprintf(_filenameBuffer, "/Gyro%d.txt", v);
-    while (SD.exists(_filenameBuffer)) {
+    SdFile rootDir = SdFile("/", O_READ);
+    sprintf(_filenameBuffer, "Gyro%d.txt", v);
+    
+    while (rootDir.exists(_filenameBuffer)) {
         v++;
-        sprintf(_filenameBuffer, "/Gyro%d.txt", v);
+        sprintf(_filenameBuffer, "Gyro%d.txt", v);
         if (v > 1024) {
             // Too many files...
             break;
         }
     }
+    rootDir.close();
 }
 
 void CDOrientation::endSavingData() {
-    _shouldSaveDataToFile = false;
+    m_shouldSaveDataToFile = false;
 }
 
 void CDOrientation::writeStatusToFile() {
-    
-    File file = SD.open(_filenameBuffer, FILE_WRITE/*|O_APPEND*/); // O_APPEND is implied..
+    SdFile file = SdFile(_filenameBuffer, O_WRITE|O_APPEND);
     file.printf("%.0f,\t%.0f,\t%.0f,\t  RotationalVelocityDPS:%.1f\r\n",   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z), getRotationalVelocity());
     file.close();
 }
