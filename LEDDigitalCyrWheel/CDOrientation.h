@@ -26,27 +26,23 @@
 #include <Wire.h>
 #include <L3G.h>
 #include <LSM303.h>
+
+#define SHORT_FILENAME_LENGTH 13 // 12 + 1 for NULL, and needs to be 256 or so for the simulator if I use it there!
+
 #endif
 
 #include "SdFat.h"
 
-#ifndef MAX_COMPONENT_LEN
-    #define MAX_COMPONENT_LEN 12 //dos
-#endif
-
-#ifndef PATH_COMPONENT_BUFFER_LEN
-    #define PATH_COMPONENT_BUFFER_LEN MAX_COMPONENT_LEN+1
-#endif
 
 class CDOrientation {
 private:
     bool m_shouldSaveDataToFile;
     bool m_calibrating;
-    char _filenameBuffer[PATH_COMPONENT_BUFFER_LEN+2];
     bool m_gyroInitialized;
     bool m_compassInitialized;
 
 #if !PATTERN_EDITOR
+    char _filenameBuffer[SHORT_FILENAME_LENGTH+1]; // +1 for root path 
     L3G _gyro;
     LSM303 _compass;
     

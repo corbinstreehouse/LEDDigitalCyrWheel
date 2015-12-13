@@ -11,6 +11,8 @@
 #include "LEDPatterns.h"
 #include "LEDDigitalCyrWheel.h"
 #include "LEDCommon.h"
+#include "SdFat.h"
+
 #ifndef PATTERN_EDITOR
 #include "EEPROM.h"
 #endif
@@ -22,8 +24,6 @@
     #warning "DEBUG Code is on!!"
 #include "SdFatUtil.h"
 #endif
-
-#define MAX_PATH  260 // yeah, copy windows
 
 #define FILENAME_MAX_LENGTH MAX_PATH
 
@@ -224,7 +224,7 @@ void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount)
 // if stackBufferSize == 0, it always allocates (yeah, bad mem mangement techniques)
 // This walks to the parent, adds its path, and then adds the child's path to get a complete path
 // returns SFN
-int _recursiveGetFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, int size, int startingOffset) {
+size_t _recursiveGetFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, size_t size, size_t startingOffset) {
     if (fileInfo->parent) {
         startingOffset = _recursiveGetFullpathName(rootDirName, fileInfo->parent, buffer, size, startingOffset);
     }
@@ -261,7 +261,7 @@ int _recursiveGetFullpathName(const char *rootDirName, CDPatternFileInfo *fileIn
 }
 
 
-void _getFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, int size) {
+void _getFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, size_t size) {
     buffer[0] = 0;
 //    DEBUG_PRINTF(" start to get name for dir: %d \r\n", fileInfo->dirIndex);
     _recursiveGetFullpathName(rootDirName, fileInfo, buffer, size, 0);
@@ -305,7 +305,7 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
     DEBUG_PRINTF("  loadAsSequenceFileInfo: %d at %s\r\n", fileInfo->dirIndex, fullFilenamePath);
     
     // open the file
-    SdFile sequenceFile = SdFile(fullFilenamePath, O_READ);
+    FatFile sequenceFile = FatFile(fullFilenamePath, O_READ);
 #if DEBUG
     DEBUG_PRINTF(" OPENED file:");
     sequenceFile.printName();
@@ -602,6 +602,23 @@ void CWPatternSequenceManager::loadCurrentSequence() {
     firstPatternItem();
 }
 
+bool CWPatternSequenceManager::getCurrentPatternFileName(char *buffer, size_t bufferSize) {
+    _ensureCurrentFileInfo();
+    
+    bool result;
+    if (m_currentFileInfo->patternFileType == CDPatternFileTypeDefaultSequence) {
+        strcpy(buffer, "Default Sequence");
+        result = true;
+    } else {
+        _getFullpathName(_getRootDirectory(), m_currentFileInfo, buffer, bufferSize);
+        FatFile file = FatFile(buffer, O_READ);
+        result = file.getName(buffer, bufferSize);
+        file.close();
+    }
+    return result;
+}
+
+
 #if SD_CARD_SUPPORT
 
 bool CWPatternSequenceManager::initSDCard() {
@@ -700,7 +717,7 @@ void CWPatternSequenceManager::loadSequencesFromRootDirectory() {
 
 void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *parent) {
     ASSERT(parent);
-    bool isRoot = parent == &m_rootFileInfo;
+    bool isRoot = isRootFileInfo(parent);
     if (m_sdCardWorks && parent->patternFileType == CDPatternFileTypeDirectory) {
         DEBUG_PRINTF("loadPatternFileInfoChildren start\r\n");
 
@@ -714,15 +731,16 @@ void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *pa
         
         FatFile directoryFile = FatFile(filenameBuffer, O_READ);
  
-//        char shortFilenameBuffer[13]; // 8.3 Short file name (SFN)
-        char *shortFilenameBuffer = filenameBuffer; // reuse the same buffer for now
+        // #define SHORT_FILENAME_LENGTH 13 // 12 + 1 for NULL, and needs to be 256 or so for the simulator!!
+//        char shortFilenameBuffer[SHORT_FILENAME_LENGTH]; // 8.3 Short file name (SFN)
+        char *shortFilenameBuffer = filenameBuffer; // reuse the same buffer for now. NOTE: This must be larger than 13 for the sim, which needs the full path stored!!
 
         CDPatternFileInfo *potentialChildren = NULL;
         int potentialChildrenSize = 0;
 #define CHILDREN_GROW_SIZE 16 // 16 entries at a time. too much? extra memory?
         int childCount = 0;
 
-        SdFile file;
+        FatFile file;
         while (file.openNext(&directoryFile, O_READ)) {
             CDPatternFileType patternFileType = CDPatternFileTypeUnknown;
             if (file.isHidden()) {

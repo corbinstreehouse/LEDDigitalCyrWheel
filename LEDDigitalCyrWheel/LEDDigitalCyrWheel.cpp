@@ -132,12 +132,11 @@ void setup() {
     
     if (g_sequenceManager.getCardInitPassed()) {
         // See if we read more than the default sequence
-        // corbin!!!!
-//        if (g_sequenceManager.getNumberOfSequenceNames() > 1) {
-//            //flashNTimes(0, 255, 0, 1, 150); // Don't do anything..
-//        } else {
-//            g_sequenceManager.flashThreeTimes(CRGB::Violet);
-//        }
+        if (g_sequenceManager.getRootNumberOfSequenceFilenames() > 1) {
+            //flashNTimes(0, 255, 0, 1, 150); // Don't do anything..
+        } else {
+            g_sequenceManager.flashThreeTimes(CRGB::Violet);
+        }
     } else {
         // Flash the LEDs all red to indicate no card...
         g_sequenceManager.flashThreeTimes(CRGB::Orange);

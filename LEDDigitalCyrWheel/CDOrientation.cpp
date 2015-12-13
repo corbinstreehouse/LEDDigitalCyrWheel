@@ -9,6 +9,7 @@
 
 #include "CDOrientation.h"
 #include "LEDCommon.h"
+#include "SdFat.h"
 
 #if PATTERN_EDITOR
 
@@ -896,7 +897,7 @@ void CDOrientation::beginSavingData() {
     m_shouldSaveDataToFile = true;
     // figure out a new filename to try
     int v = 0;
-    SdFile rootDir = SdFile("/", O_READ);
+    FatFile rootDir = FatFile("/", O_READ);
     sprintf(_filenameBuffer, "Gyro%d.txt", v);
     
     while (rootDir.exists(_filenameBuffer)) {

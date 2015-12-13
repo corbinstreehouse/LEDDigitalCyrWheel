@@ -25,11 +25,11 @@
 
 #define SEQUENCE_FILE_EXTENSION "pat"
 
-
 #if PATTERN_EDITOR
     #include "CDSimulatorLEDPatterns.h"
     #define LED_PATTERNS_CLASS CDSimulatorLEDPatterns
     @class CDCyrWheelView;
+    #define MAX_PATH  1024 // larger for the desktop; this is created on the stack...
 #else
     #if USE_OCTO // doesn't work
         #include "OctoWS2811.h"
@@ -43,6 +43,7 @@
         #define LED_PATTERNS_CLASS FastLEDPatterns
     #endif
 
+    #define MAX_PATH  260 // yeah, copy windows
 #endif
 
 typedef enum {
@@ -156,6 +157,8 @@ private:
     //    bool deleteSequenceAtIndex(int index); // TODO: probably take a name, and find that file to delete it...
 
     void loadNextDirectory();
+    
+    inline bool isRootFileInfo(CDPatternFileInfo *info) { return info == &m_rootFileInfo; }
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
@@ -217,10 +220,8 @@ public:
 //            return NULL;
 //    }
 
-//    char *getCurrentPatternFileName() {
-//        return m_currentFileInfo ? m_currentFileInfo->filename : NULL;
-//    };
-    
+    bool getCurrentPatternFileName(char *buffer, size_t bufferSize);
+
     int getRootNumberOfSequenceFilenames() { return m_rootFileInfo.numberOfChildren; };
     
 //    int getCurrentSequenceIndex() { return _currentSequenceIndex; }
