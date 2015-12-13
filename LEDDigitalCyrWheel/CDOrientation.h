@@ -42,7 +42,7 @@ private:
     bool m_compassInitialized;
 
 #if !PATTERN_EDITOR
-    char _filenameBuffer[SHORT_FILENAME_LENGTH+1]; // +1 for root path 
+    char _filenameBuffer[SHORT_FILENAME_LENGTH+1]; // +1 for root path
     L3G _gyro;
     LSM303 _compass;
     

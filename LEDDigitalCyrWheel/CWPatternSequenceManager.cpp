@@ -1089,7 +1089,9 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     
 #if SD_CARD_SUPPORT
     if (itemHeader->patternType == LEDPatternTypeBitmap) {
-        updateLEDPatternBitmapFilename();
+        if (m_ledPatterns.getBitmap() == NULL){
+            updateLEDPatternBitmapFilename();
+        }
     } else if (itemHeader->patternType == LEDPatternTypeImageLinearFade || itemHeader->patternType == LEDPatternTypeImageEntireStrip) {
         char fullFilenamePath[MAX_PATH];
         _getFullpathName(_getRootDirectory(), m_currentFileInfo, fullFilenamePath, MAX_PATH);
