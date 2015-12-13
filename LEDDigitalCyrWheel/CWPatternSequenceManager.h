@@ -78,6 +78,8 @@ private:
     uint32_t _numberOfPatternItems;
     // Current pattern item information
     int _currentPatternItemIndex;
+    
+    CDPatternItemHeader m_defaultBitmapHeader; // For loading BMP files; allows me to dynamically change the duration or the pattern or how it behaves
 
     uint8_t m_savedBrightness;
     

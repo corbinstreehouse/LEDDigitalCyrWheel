@@ -49,6 +49,14 @@ CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGT
     m_currentFileInfo = NULL;
     m_shouldIgnoreButtonClickWhenTimed = true; // TODO: make this an option per sequence...
     ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // make sure I don't screw stuff up by chaning the size and not updating things again
+    ASSERT(sizeof(LEDPatternOptions) == PATTERN_OPTIONS_SIZE_v0); // make sure I don't screw stuff up by chaning the size and not updating things again
+    
+    bzero(&m_defaultBitmapHeader, sizeof(CDPatternItemHeader));
+    m_defaultBitmapHeader.patternType = LEDPatternTypeBitmap;
+    m_defaultBitmapHeader.duration = 50;
+    m_defaultBitmapHeader.patternDuration = 35;
+    m_defaultBitmapHeader.patternEndCondition = CDPatternEndConditionOnButtonClick;
+    m_defaultBitmapHeader.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(true, false));
 }
 
 static void freePatternFileInfoAndChildren(CDPatternFileInfo *fileInfo) {
@@ -281,18 +289,7 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
         // Invalid bitmap..
         makeSequenceFlashColor(CRGB::DarkMagenta);
     } else {
-        CDPatternItemHeader header;
-        header.patternType = LEDPatternTypeBitmap;
-        header.duration = 50;
-        // How long between each update
-        if (m_ledPatterns.getBitmap()->getHeight() == 1) {
-            header.patternDuration = 15; // Chasing patterns look better faster
-        } else {
-            header.patternDuration = 35;
-        }
-        header.color = 0;
-        header.patternEndCondition = CDPatternEndConditionOnButtonClick;
-        setSingleItemPatternHeader(&header);
+        setSingleItemPatternHeader(&m_defaultBitmapHeader);
     }
 }
 
@@ -1085,6 +1082,7 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     }
     m_ledPatterns.setPatternDuration(duration);
     m_ledPatterns.setPatternColor(itemHeader->color);
+    m_ledPatterns.setPatternOptions(itemHeader->patternOptions);
     // Assume it is the current file..
     
 #if SD_CARD_SUPPORT

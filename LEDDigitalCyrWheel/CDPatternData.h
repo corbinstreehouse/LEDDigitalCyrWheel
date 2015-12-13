@@ -37,6 +37,7 @@ typedef enum ENUM_SIZE {
 // Update v3: 36 bytes...what happened??
 // Update v4: 40??
 #define PATTERN_HEADER_SIZE_v0 40
+#define PATTERN_OPTIONS_SIZE_v0 4
 typedef struct  __attribute__((__packed__)) {
     LEDPatternType patternType; // 2 (was 1...but went past 16, so it went to 2 bytes)
 #if !PATTERN_EDITOR
@@ -44,24 +45,26 @@ typedef struct  __attribute__((__packed__)) {
 #endif
     uint32_t duration; //4
     uint32_t patternDuration; //4 -- not used by all patterns, but how "fast" each interval in the pattern should run if it has some variable in how fast it runs
-    int32_t patternOptions; //4 -- not used by all patterns
+    LEDPatternOptions patternOptions; //4 -- not used by all patterns -- if I change the size, PATTERN_OPTIONS_SIZE_v0 has to be incremnted..
     
     CDPatternEndCondition patternEndCondition; //1 (2 on desktop)
 #if !PATTERN_EDITOR
     char __buffer2;// 1
 #endif
     CRGB color; // 3 // TODO: wait, did this fuck up the ref of the offsets?
-    uint8_t __buffer3; // 1
+    uint8_t __buffer3; // 1 - I guess the compiler isn't packing, and is aligning on 4 byte boundaries..
     
     uint32_t dataLength; // how long the data is following // 4
     uint32_t dataOffset; // When loaded, points to the offset in the file where we should load from.
     uint32_t shouldSetBrightnessByRotationalVelocity:1; // (and next) 4
     uint32_t _unused:31;
+    // ^^ TODO: move thse to patternOptions
     
     union {
 //        const char *dataFilename;  // A reference to the string....we don't own it! // NO longer needing this..
         uint64_t __unused_size; // creates 64-bits pointer size; so I can use the same struct size in 32-bit and 64-bit // 8
     };
+    // ^^ eliminate if I make a new version
 
 } CDPatternItemHeader;
 
