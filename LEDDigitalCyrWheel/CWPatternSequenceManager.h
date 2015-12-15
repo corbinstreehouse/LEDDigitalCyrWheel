@@ -94,7 +94,7 @@ private:
 
     uint32_t m_timedPatternStartTime; // In milliseconds; the time that all the current run of timed patterns starts, so we can accurately generate a full duration for all of them
     uint32_t m_timedUsedBeforeCurrentPattern;
-    CDWheelState m_state;
+//    CDWheelState m_state;
 #if PATTERN_EDITOR
     NSURL *m_baseURL;
     NSURL *m_patternDirectoryURL;
@@ -159,8 +159,13 @@ private:
     //    bool deleteSequenceAtIndex(int index); // TODO: probably take a name, and find that file to delete it...
 
     void loadNextDirectory();
+    void loadPriorDirectory();
     
     inline bool isRootFileInfo(CDPatternFileInfo *info) { return info == &m_rootFileInfo; }
+    inline bool currentFileInfoIsBitmapImage() {
+        return  (m_currentFileInfo && m_currentFileInfo->patternFileType == CDPatternFileTypeBitmapImage);
+    }
+
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
@@ -205,7 +210,7 @@ public:
     void startRecordingData();
     void endRecordingData();
     
-    CDWheelState getWheelState() { return m_state; }
+//    CDWheelState getWheelState() { return m_state; }
     
     void process();
     
@@ -244,6 +249,8 @@ public:
     void play() { m_ledPatterns.play(); }
     void pause() { m_ledPatterns.pause(); }
     bool isPaused() { return m_ledPatterns.isPaused(); }
+    CDWheelState getWheelState() { return m_ledPatterns.isPaused() ? CDWheelStatePaused : CDWheelStatePlaying; }
+    // TODO: some handler for when the wheel state changes to update bluetooth..... or maybe it just knows..
 
 };
 

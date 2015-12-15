@@ -25,6 +25,8 @@
 #include "SdFatUtil.h"
 #endif
 
+#define ACCELEROMETER 1
+
 #define FILENAME_MAX_LENGTH MAX_PATH
 
 
@@ -42,7 +44,7 @@ static char *getExtension(char *filename) {
     }
 }
 
-CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH), m_state(CDWheelStatePlaying)
+CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH)
 {
     _patternItems = NULL;
     bzero(&m_rootFileInfo, sizeof(CDPatternFileInfo));
@@ -284,7 +286,7 @@ void CWPatternSequenceManager::updateLEDPatternBitmapFilename() {
 
 void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo) {
     updateLEDPatternBitmapFilename();
-    
+    m_shouldIgnoreButtonClickWhenTimed = false; // This could be made an option that is settable/dynamically changable.
     if (m_ledPatterns.getBitmap() == NULL || !m_ledPatterns.getBitmap()->getIsValid()) {
         // Invalid bitmap..
         makeSequenceFlashColor(CRGB::DarkMagenta);
@@ -531,6 +533,12 @@ void CWPatternSequenceManager::loadNextDirectory() {
     m_currentFileInfo = _findNextLoadableChild(m_currentFileInfo->parent, true);
     loadCurrentSequence();
 }
+
+void CWPatternSequenceManager::loadPriorDirectory() {
+    m_currentFileInfo = _findNextLoadableChild(m_currentFileInfo->parent, false);
+    loadCurrentSequence();
+}
+
 
 void CWPatternSequenceManager::_ensureCurrentFileInfo() {
     if (m_currentFileInfo == NULL) {
@@ -826,9 +834,10 @@ void CWPatternSequenceManager::init() {
     m_shouldRecordData = false;
     
     loadSettings();
-
+#if ACCELEROMETER
     DEBUG_PRINTLN("init orientation");
     initOrientation();
+#endif
     DEBUG_PRINTLN("init strip");
     initStrip();
     DEBUG_PRINTLN("done init strip, starting to init SD Card");
@@ -920,8 +929,11 @@ void CWPatternSequenceManager::buttonClick() {
         m_orientation.endCalibration();
         firstPatternItem();
     } else {
+        // TODO: Maybe a "start on button click" option...in addition to m_shouldIgnoreButtonClickWhenTimed
+        // Then, I could just call the next command..
+        
         // bitmap images just go to the next sequence..
-        if (m_currentFileInfo && m_currentFileInfo->patternFileType == CDPatternFileTypeBitmapImage) {
+        if (currentFileInfoIsBitmapImage()) {
             loadNextSequence();
         } else if (m_shouldIgnoreButtonClickWhenTimed) {
             // Only go to next if it isn't timed; this helps me avoid switching the pattern accidentally when stepping on it.
@@ -943,7 +955,7 @@ void CWPatternSequenceManager::buttonLongClick() {
             endRecordingData();
         }
     } else {
-        if (m_currentFileInfo && m_currentFileInfo->patternFileType == CDPatternFileTypeBitmapImage) {
+        if (currentFileInfoIsBitmapImage()) {
             loadNextDirectory();
         } else if (m_shouldIgnoreButtonClickWhenTimed) {
             // Only go to next if it isn't timed; this helps me avoid switching the pattern accidentally when stepping on it.
@@ -1124,21 +1136,39 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
 }
 
 void CWPatternSequenceManager::processCommand(CDWheelCommand command) {
+    // The commands are handled slightly differently depending on the current pattern we are playing.
     switch (command) {
         case CDWheelCommandNextPattern: {
-            nextPatternItem();
+            // Bitmaps can't really do a next item; there is only one, so they do the next sequence in the directory
+            if (currentFileInfoIsBitmapImage()) {
+                loadNextSequence();
+            } else {
+                nextPatternItem();
+            }
             break;
         }
         case CDWheelCommandPriorPattern: {
-            priorPatternItem();
+            if (currentFileInfoIsBitmapImage()) {
+                loadPriorSequence();
+            } else {
+                priorPatternItem();
+            }
             break;
         }
         case CDWheelCommandNextSequence: {
-            loadNextSequence();
+            if (currentFileInfoIsBitmapImage()) {
+                loadNextDirectory();
+            } else {
+                loadNextSequence();
+            }
             break;
         }
         case CDWheelCommandPriorSequence: {
-            loadPriorSequence();
+            if (currentFileInfoIsBitmapImage()) {
+                loadPriorDirectory();
+            } else {
+                loadPriorSequence();
+            }
             break;
         }
         case CDWheelCommandRestartSequence: {

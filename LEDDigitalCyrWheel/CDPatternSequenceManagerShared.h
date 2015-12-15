@@ -9,9 +9,10 @@
 #ifndef CDPatternSequenceManagerShared_h
 #define CDPatternSequenceManagerShared_h
 
+#include <stdint.h>
 
 // Stuff shared with the app side of things
-typedef enum {
+typedef enum : int16_t {
     CDWheelCommandFirst = 0,
     
     CDWheelCommandNextPattern = CDWheelCommandFirst,
@@ -32,7 +33,7 @@ typedef enum {
     CDWheelCommandCount = CDWheelCommandLast + 1,
 } CDWheelCommand;
 
-typedef enum {
+typedef enum : int16_t {
     CDWheelStatePlaying,
     CDWheelStatePaused,
     
