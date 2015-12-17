@@ -12,10 +12,7 @@
 #include "LEDDigitalCyrWheel.h"
 #include "LEDCommon.h"
 #include "SdFat.h"
-
-#ifndef PATTERN_EDITOR
 #include "EEPROM.h"
-#endif
 
 #define RECORD_INDICATOR_FILENAME "record.txt" // If this file exists, we record data in other files.
 #define BITMAP_FILE_EXTENSION "bmp"
@@ -44,7 +41,7 @@ static char *getExtension(char *filename) {
     }
 }
 
-CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH)
+CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH), m_changeHandler(NULL)
 {
     _patternItems = NULL;
     bzero(&m_rootFileInfo, sizeof(CDPatternFileInfo));
@@ -59,6 +56,8 @@ CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGT
     m_defaultBitmapHeader.patternDuration = 35;
     m_defaultBitmapHeader.patternEndCondition = CDPatternEndConditionOnButtonClick;
     m_defaultBitmapHeader.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(true, false));
+    
+    m_lowBattery = false;
 }
 
 static void freePatternFileInfoAndChildren(CDPatternFileInfo *fileInfo) {
@@ -666,25 +665,23 @@ bool CWPatternSequenceManager::initSDCard() {
 
 bool CWPatternSequenceManager::initStrip() {
     m_ledPatterns.begin();
-    m_ledPatterns.setBrightness(m_savedBrightness);
+    m_ledPatterns.setBrightness(m_brightness);
     return true;
 }
 
 void CWPatternSequenceManager::loadSettings() {
-#if !PATTERN_EDITOR
     // TODO: how to burn the initial state??
     // TODO: make the state settable via bluetooth
-    EEPROM.get(EEPROM_BRIGHTNESS_ADDRESS, m_savedBrightness);
-    if (m_savedBrightness < MIN_BRIGHTNESS || m_savedBrightness > MAX_BRIGHTNESS) {
-        m_savedBrightness = DEFAULT_BRIGHTNESS;
+    EEPROM.get(EEPROM_BRIGHTNESS_ADDRESS, m_brightness);
+    if (m_brightness < MIN_BRIGHTNESS || m_brightness > MAX_BRIGHTNESS) {
+        m_brightness = DEFAULT_BRIGHTNESS;
         DEBUG_PRINTF("SAVED BRIGHTNESS setting to default..out of band\r\n");
     } else {
-        DEBUG_PRINTF("SAVED BRIGHTNESS: %d\r\n", m_savedBrightness);
+        DEBUG_PRINTF("SAVED BRIGHTNESS: %d\r\n", m_brightness);
     }
-#else
-    m_savedBrightness = DEFAULT_BRIGHTNESS; // Default value?? this is still super bright. maybe the algorithm is wrong..
-#endif
 }
+
+
 
 const char *CWPatternSequenceManager::_getRootDirectory() {
 #if PATTERN_EDITOR
@@ -1011,28 +1008,40 @@ void CWPatternSequenceManager::process() {
 
 
 void CWPatternSequenceManager::updateBrightness() {
-    CDPatternItemHeader *itemHeader = getCurrentItemHeader();
-    if (itemHeader->shouldSetBrightnessByRotationalVelocity) {
-        uint8_t brightness = m_orientation.getRotationalVelocityBrightness(m_ledPatterns.getBrightness());
-#if DEBUG
-        if (brightness < 10){
-            DEBUG_PRINTLN("low brightness from velocity based updateBrightness");
-        }
-#endif
-        
-        m_ledPatterns.setBrightness(brightness);
+    if (m_lowBattery) {
+        // Harcoded to have a low brightness
+        m_ledPatterns.setBrightness(64);
     } else {
-        m_ledPatterns.setBrightness(m_savedBrightness);
+        CDPatternItemHeader *itemHeader = getCurrentItemHeader();
+        if (itemHeader->shouldSetBrightnessByRotationalVelocity) {
+            uint8_t brightness = m_orientation.getRotationalVelocityBrightness(m_ledPatterns.getBrightness());
+    #if DEBUG
+            if (brightness < 10){
+                DEBUG_PRINTLN("low brightness from velocity based updateBrightness");
+            }
+    #endif
+            
+            m_ledPatterns.setBrightness(brightness);
+        } else {
+            m_ledPatterns.setBrightness(m_brightness);
+        }
+    }
+}
+
+void CWPatternSequenceManager::setBrightness(uint8_t brightness) {
+    if (m_brightness != brightness) {
+        m_brightness = brightness;
+        updateBrightness();
+        sendWheelChanged(CDWheelChangeReasonBrightnessChanged);
+        EEPROM.get(EEPROM_BRIGHTNESS_ADDRESS, m_brightness);
     }
 }
 
 void CWPatternSequenceManager::setLowBatteryWarning() {
-    m_savedBrightness = 64; // Lower brightness so we can see it get low! it is updated on the update pass
-
-    // Turn off bluetooth to save power
+    m_lowBattery = true;
+    updateBrightness();
 #if BLUETOOTH
-     // TODO:...
-    
+     // TODO: maybe turn off bluetooth to save energy??
 #endif
 }
 

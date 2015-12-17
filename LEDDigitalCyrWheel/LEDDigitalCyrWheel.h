@@ -31,7 +31,7 @@ const int g_batteryVoltagePin = A3; // pin 17
 
 
 // Locations in EEPROM
-#define EEPROM_BRIGHTNESS_ADDRESS 10
+#define EEPROM_BRIGHTNESS_ADDRESS 10 // 1 byte value stored
 // NOTE: see EEPROM values in CDWheelBluetoothController.h and don't conflict with them
 #define EEPROM_MIN_MAX_IS_SAVED_ADDRESS 22 // rather abitrary
 #define MIN_EEPROM_ADDRESS 24 // rather abitrary

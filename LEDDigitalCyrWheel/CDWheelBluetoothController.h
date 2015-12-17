@@ -23,6 +23,7 @@
 #define BLUETOOTH_EEPROM_WHEEL_SERVICE (BLUETOOTH_EEPROM_AUTOSTART+1) // int32_t value, ending: 17
 #define BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR (BLUETOOTH_EEPROM_WHEEL_SERVICE+4) // int32_t value, ending: 21
 #define BLUETOOTH_EEPROM_WHEEL_STATE_CHAR (BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR+4) // int32_t value, ending: 21
+#define BLUETOOTH_EEPROM_BRIGHTNESS_CHAR (BLUETOOTH_EEPROM_WHEEL_STATE_CHAR+4) // int32_t value, ending: 21
 
 typedef enum {
     BTResponseCodeOK = 0,
@@ -38,7 +39,8 @@ private:
     int32_t m_wheelServiceID;
     int32_t m_wheelCommandCharactersticID;
     int32_t m_wheelStateID;
-
+    int32_t m_brightnessID;
+    
     bool servicesAreRegistered();
     bool registerServices();
     // properties can be NULL, and it isn't sent
@@ -49,7 +51,7 @@ private:
     
     void setName(char *name);
     
-    void setCharacteristicValue(const int cmdID, const int value);
+    void setCharacteristic16BitValue(const int cmdID, const uint16_t value);
     
     BTResponseCode currentResponseCode() {
         if ( strcmp(m_ble.buffer, "OK") == 0 ) return BTResponseCodeOK;
@@ -57,10 +59,14 @@ private:
         return BTResponseCodeUnknown;
     }
     
+    void _addCharacteristic(const char *characteristicStr, int propertyType, int eepromLocation, int32_t *characteristicID, int value);
+
 public:
     CDWheelBluetoothController();
     void init(CWPatternSequenceManager *manager, bool buttonIsDown);
     void process();
+    
+    void wheelChanged(CDWheelChangeReason reason);
 };
 
 

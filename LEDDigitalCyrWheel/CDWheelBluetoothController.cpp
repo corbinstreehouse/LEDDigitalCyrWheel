@@ -27,6 +27,59 @@ CDWheelBluetoothController::CDWheelBluetoothController() : m_ble(BLUETOOTH_CS, B
     
 }
 
+// Abstract code that isn't going to depend on the BT backend
+void _WheelChangedHandler(CDWheelChangeReason reason, void *data) {
+    DEBUG_PRINTF("wheel changes\r\n");
+    ((CDWheelBluetoothController*)data)->wheelChanged(reason);
+}
+
+void CDWheelBluetoothController::wheelChanged(CDWheelChangeReason reason) {
+    switch (reason) {
+        case CDWheelChangeReasonStateChanged: {
+            setCharacteristic16BitValue(m_wheelStateID, m_manager->getWheelState());
+            break;
+        }
+        case CDWheelChangeReasonBrightnessChanged: {
+            setCharacteristic16BitValue(m_brightnessID, m_manager->getBrightness());
+        }
+    }
+}
+
+//0x02 - Read
+//0x04 - Write Without Response
+//0x08 - Write
+//0x10 - Notify
+//0x20 - Indicate
+
+#define CHAR_PROP_READ 0x02
+#define CHAR_PROP_WRITE_WITHOUT_RESPONSE 0x04
+#define CHAR_PROP_WRITE 0x08
+#define CHAR_PROP_NOTIFY 0x10
+#define CHAR_PROP_INDICATE 0x20
+
+
+// Sort of generic..
+void CDWheelBluetoothController::registerWheelCharacteristics() {
+    DEBUG_PRINTLN("Registering cyr wheel characteristics");
+    
+    // only write seems to work!!
+    _addCharacteristic(kLEDWheelCharSendCommandUUID_AdaFruit, CHAR_PROP_WRITE, BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR, &m_wheelCommandCharactersticID, -1); // -1 means not set
+    _addCharacteristic(kLEDWheelCharGetWheelStateUUID_AdaFruit, CHAR_PROP_READ|CHAR_PROP_NOTIFY, BLUETOOTH_EEPROM_WHEEL_STATE_CHAR, &m_wheelStateID, m_manager->getWheelState());
+    
+    _addCharacteristic(kLEDWheelBrightnessCharacteristicUUID_AdaFruit, CHAR_PROP_READ|CHAR_PROP_WRITE_WITHOUT_RESPONSE, BLUETOOTH_EEPROM_BRIGHTNESS_CHAR, &m_brightnessID, m_manager->getBrightness());
+}
+
+
+
+
+// specific to adafruit be
+
+static const char *kAddServiceCmd = "AT+GATTADDSERVICE";
+//static const char *kAddCharacteristicCmd = "AT+GATTADDCHAR";
+static const char *kUUID128 = "UUID128=";
+static const char *kClearCmd = "AT+GATTCLEAR";
+static const char *kCharacteristicCmd = "AT+GATTCHAR";
+
 void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool buttonIsDown) {
     m_manager = manager;
     
@@ -52,6 +105,7 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
 
     DEBUG_PRINTLN("initializing bluetooth");
 
+    // Ugh, they hardcoded this to wait a second!
     m_initialized = m_ble.begin(VERBOSE_MODE);
     
     if (!m_initialized) {
@@ -60,6 +114,8 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
         m_manager->flashThreeTimes(CRGB::Blue);
         return;
     }
+    
+    m_manager->setWheelChangeHandler(_WheelChangedHandler, this);
     
     DEBUG_PRINTLN("bluetooth initialized, seeing if we have to burn in initial state");
     
@@ -86,6 +142,7 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
 }
 
 bool CDWheelBluetoothController::servicesAreRegistered() {
+#warning this always returns false for now....
     return false;
     DEBUG_PRINTLN("Requesting services");
 //    m_ble.sendCommandCheckOK("AT+GATTLIST");
@@ -136,12 +193,6 @@ bool CDWheelBluetoothController::servicesAreRegistered() {
      */
 }
 
-static const char *kAddServiceCmd = "AT+GATTADDSERVICE";
-//static const char *kAddCharacteristicCmd = "AT+GATTADDCHAR";
-static const char *kUUID128 = "UUID128=";
-static const char *kClearCmd = "AT+GATTCLEAR";
-static const char *kCharacteristicCmd = "AT+GATTCHAR";
-
 void CDWheelBluetoothController::sendCommandWithUUID128(const char *cmd, const char *uuid, const char *properties, int32_t *serviceID, int eepromIndex) {
     m_ble.printf("%s=UUID128=%s%s\r\n", cmd, uuid, properties ? properties : "");
     if (m_ble.sendCommandWithIntReply("", serviceID)) {
@@ -167,48 +218,20 @@ void CDWheelBluetoothController::registerWheelLEDService() {
     m_ble.sendCommandCheckOK("AT+GAPSETADVDATA=11-06-"kLEDWheelServiceUUID_AdaFruit_INVERTED);
 }
 
-//0x02 - Read
-//0x04 - Write Without Response
-//0x08 - Write
-//0x10 - Notify
-//0x20 - Indicate
-
-#define CHAR_PROP_READ 0x02
-#define CHAR_PROP_WRITE_WITHOUT_RESPONSE 0x04
-#define CHAR_PROP_WRITE 0x08
-#define CHAR_PROP_NOTIFY 0x10
-#define CHAR_PROP_INDICATE 0x20
-
 static const char *kAddCharacteristicFormat = "AT+GATTADDCHAR=UUID128=%s,PROPERTIES=0x%x,MIN_LEN=2,MAX_LEN=2,VALUE=%d\r\n";
 
-
-static bool _addCharacteristic(Adafruit_BluefruitLE_SPI *ble, const char *characteristicStr, int propertyType, int eepromLocation, int32_t *characteristicID, int value) {
-    
+void CDWheelBluetoothController::_addCharacteristic(const char *characteristicStr, int propertyType, int eepromLocation, int32_t *characteristicID, int value) {
     DEBUG_PRINTF(kAddCharacteristicFormat, characteristicStr, propertyType, value);
-    
-    ble->printf(kAddCharacteristicFormat, characteristicStr, propertyType, value);
-    
-    if (ble->sendCommandWithIntReply("", characteristicID)) {
-        // save in EEPROM for later
+    m_ble.printf(kAddCharacteristicFormat, characteristicStr, propertyType, value);
+    if (m_ble.sendCommandWithIntReply("", characteristicID)) {
+        // save in EEPROM for later (once I am done..)
         EEPROM.put(eepromLocation, *characteristicID);
         DEBUG_PRINTF("   %s: succeeded register, id: %d\r\n", characteristicStr, *characteristicID);
-        return true;
+    } else {
+        // any one failing makes us not initialized...
+        DEBUG_PRINTLN("BT CHAR FAILED TO INIT!");
+        m_initialized = false;
     }
-    return false;
-}
-
-
-void CDWheelBluetoothController::registerWheelCharacteristics() {
-    DEBUG_PRINTLN("Registering cyr wheel characteristics");
-
-    // write only property for the command characteristic
-//    const char *properties = ",PROPERTIES=" CHAR_PROP_WRITE ",MIN_LEN=2,MAX_LEN=2,VALUE=-1"; // Command starts out as -1, meaning not set
-//    sendCommandWithUUID128(kAddCharacteristicCmd, kLEDWheelCharSendCommandUUID_AdaFruit, properties, &m_wheelCommandCharactersticID, BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR);
-
-    // only write seems to work!!
-    m_initialized = _addCharacteristic(&m_ble, kLEDWheelCharSendCommandUUID_AdaFruit, CHAR_PROP_WRITE, BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR, &m_wheelCommandCharactersticID, -1); // -1 means not set
-    
-    m_initialized = m_initialized && _addCharacteristic(&m_ble, kLEDWheelCharGetWheelState_AdaFruit, CHAR_PROP_READ, BLUETOOTH_EEPROM_WHEEL_STATE_CHAR, &m_wheelStateID, m_manager->getWheelState());
 }
 
 // this only has to be done once for initialiation of the chip
@@ -241,12 +264,14 @@ void CDWheelBluetoothController::setName(char *name) {
     }
 }
 
-void CDWheelBluetoothController::setCharacteristicValue(const int cmdID, const int value) {
-    m_ble.printf("%s=%d,%d\r\n", kCharacteristicCmd, cmdID, value);
+void CDWheelBluetoothController::setCharacteristic16BitValue(const int cmdID, const uint16_t value) {
+    DEBUG_PRINTF("%s=%d,0x%x\r\n", kCharacteristicCmd, cmdID, value);
+    m_ble.printf("%s=%d,0x%x\r\n", kCharacteristicCmd, cmdID, value);
     m_ble.waitForOK();
 }
 
 void CDWheelBluetoothController::process() {
+    
     if (!m_initialized) {
         return;
     }
@@ -278,6 +303,9 @@ void CDWheelBluetoothController::process() {
                 endPtr++; // go past the dash..
             }
             i++;
+            if (i == 2) {
+                break; // Well, we read it all..don't infinite loop
+            }
         }
         
         if (commandAsInt == -1) {
@@ -285,12 +313,10 @@ void CDWheelBluetoothController::process() {
         } else if (commandAsInt >= CDWheelCommandFirst && commandAsInt < CDWheelCommandCount) {
             DEBUG_PRINTF("   command given: %d\r\n", commandAsInt);
             // Reset the value to -1
-            m_manager->processCommand((CDWheelCommand)commandAsInt);
+            CDWheelCommand command = (CDWheelCommand)commandAsInt;
+            m_manager->processCommand(command);
             // reset the value, so we stop processing it
-            setCharacteristicValue(m_wheelCommandCharactersticID, -1);
-            // update the wheel status
-            setCharacteristicValue(m_wheelStateID, m_manager->getWheelState());
-            
+            setCharacteristic16BitValue(m_wheelCommandCharactersticID, -1);
         } else {
             // out of band error
             DEBUG_PRINTF("   bad command number: %d\r\n", commandAsInt);

@@ -64,6 +64,13 @@ typedef struct _CDPatternFileInfo {
     int indexInParent;
 } CDPatternFileInfo;
 
+typedef enum {
+    CDWheelChangeReasonStateChanged,
+    CDWheelChangeReasonBrightnessChanged,
+} CDWheelChangeReason;
+
+typedef void (CDWheelChangedHandler)(CDWheelChangeReason changeReason, void *data);
+
 class CWPatternSequenceManager {
 private:
     CDPatternFileInfo m_rootFileInfo;
@@ -81,11 +88,12 @@ private:
     
     CDPatternItemHeader m_defaultBitmapHeader; // For loading BMP files; allows me to dynamically change the duration or the pattern or how it behaves
 
-    uint8_t m_savedBrightness;
+    uint8_t m_brightness;
     
     uint32_t m_shouldRecordData:1;
     uint32_t m_shouldIgnoreButtonClickWhenTimed:1;
     uint32_t m_sdCardWorks:1;
+    uint32_t m_lowBattery:1;
 //    uint32_t m_currentPatternItemsAreDynamic:1; // maybe not needed
     uint32_t __reserved:27;
     
@@ -94,11 +102,15 @@ private:
 
     uint32_t m_timedPatternStartTime; // In milliseconds; the time that all the current run of timed patterns starts, so we can accurately generate a full duration for all of them
     uint32_t m_timedUsedBeforeCurrentPattern;
-//    CDWheelState m_state;
 #if PATTERN_EDITOR
     NSURL *m_baseURL;
     NSURL *m_patternDirectoryURL;
 #endif
+    
+    
+    CDWheelChangedHandler *m_changeHandler;
+    void *m_changeHandlerData;
+    
     void loadSettings();
     
     bool initSDCard();
@@ -165,6 +177,12 @@ private:
     inline bool currentFileInfoIsBitmapImage() {
         return  (m_currentFileInfo && m_currentFileInfo->patternFileType == CDPatternFileTypeBitmapImage);
     }
+    
+    inline void sendWheelChanged(CDWheelChangeReason reason) {
+        if (m_changeHandler != NULL) {
+            (*m_changeHandler)(reason, m_changeHandlerData);
+        }
+    }
 
 public:
     CWPatternSequenceManager();
@@ -210,28 +228,18 @@ public:
     void startRecordingData();
     void endRecordingData();
     
-//    CDWheelState getWheelState() { return m_state; }
-    
     void process();
     
     void makeSequenceFlashColor(CRGB color);
     void flashThreeTimes(CRGB color, uint32_t delayAmount = 150);
     
-//    int getNumberOfSequenceNames() { return _numberOfAvailableSequences; };
     void setLowBatteryWarning();
     inline LEDPatterns *getLEDPatterns() { return &m_ledPatterns; }
-//    char *getSequenceNameAtIndex(int index) {
-//        if (index >= 0 && index <= _numberOfAvailableSequences)
-//            return _sequenceNames[index];
-//        else
-//            return NULL;
-//    }
 
     bool getCurrentPatternFileName(char *buffer, size_t bufferSize);
 
     int getRootNumberOfSequenceFilenames() { return m_rootFileInfo.numberOfChildren; };
     
-//    int getCurrentSequenceIndex() { return _currentSequenceIndex; }
     uint32_t getPatternTimePassed() { return millis() - m_timedPatternStartTime - m_timedUsedBeforeCurrentPattern; };
     uint32_t getPatternTimePassedFromFirstTimedPattern() { return millis() - m_timedPatternStartTime; };
 
@@ -246,11 +254,16 @@ public:
         }
     }
     
-    void play() { m_ledPatterns.play(); }
-    void pause() { m_ledPatterns.pause(); }
+    void play() { m_ledPatterns.play(); sendWheelChanged(CDWheelChangeReasonStateChanged); }
+    void pause() { m_ledPatterns.pause(); sendWheelChanged(CDWheelChangeReasonStateChanged); }
     bool isPaused() { return m_ledPatterns.isPaused(); }
     CDWheelState getWheelState() { return m_ledPatterns.isPaused() ? CDWheelStatePaused : CDWheelStatePlaying; }
-    // TODO: some handler for when the wheel state changes to update bluetooth..... or maybe it just knows..
+
+    void setWheelChangeHandler(CDWheelChangedHandler *handler, void *data) { m_changeHandler = handler; m_changeHandlerData = data; }
+    
+    
+    uint8_t getBrightness() { return m_brightness; }
+    void setBrightness(uint8_t brightness);
 
 };
 
