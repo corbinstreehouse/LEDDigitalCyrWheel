@@ -181,7 +181,6 @@
 		9D6BC8711938CBC400E21E1C /* lib8tion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8671938CBC400E21E1C /* lib8tion.cpp */; };
 		9D7D42FA1C2900FE008F76E5 /* Adafruit_DotStar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D7D42F21C2900FE008F76E5 /* Adafruit_DotStar.cpp */; };
 		9D7D42FB1C2900FE008F76E5 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 9D7D42F91C2900FE008F76E5 /* README.md */; };
-		9D7D42FE1C290127008F76E5 /* DotStarLEDPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D7D42FC1C290127008F76E5 /* DotStarLEDPatterns.cpp */; };
 		9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */; };
 		9DD1E672193EC47100290878 /* LEDPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD1E66E193EC47100290878 /* LEDPatterns.cpp */; };
 		9DD655D3193582100017BDAA /* CDOctoWS2811.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD655D2193582100017BDAA /* CDOctoWS2811.cpp */; };
@@ -1632,7 +1631,6 @@
 		9D7D42F71C2900FE008F76E5 /* strandtest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = strandtest.ino; sourceTree = "<group>"; };
 		9D7D42F81C2900FE008F76E5 /* library.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = library.properties; sourceTree = "<group>"; };
 		9D7D42F91C2900FE008F76E5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		9D7D42FC1C290127008F76E5 /* DotStarLEDPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DotStarLEDPatterns.cpp; sourceTree = "<group>"; };
 		9D7D42FD1C290127008F76E5 /* DotStarLEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DotStarLEDPatterns.h; sourceTree = "<group>"; };
 		9D8ED2C517C01F7F001E1C06 /* Arduino Leonardo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino Leonardo.xcconfig"; sourceTree = "<group>"; };
 		9D8ED2C617C01F7F001E1C06 /* Arduino mega2560.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino mega2560.xcconfig"; sourceTree = "<group>"; };
@@ -5151,7 +5149,6 @@
 				9DD1E671193EC47100290878 /* README.md */,
 				9D684AC61C17E9BD0058EFA0 /* CDLazyBitmap.cpp */,
 				9D684AC71C17E9BD0058EFA0 /* CDLazyBitmap.h */,
-				9D7D42FC1C290127008F76E5 /* DotStarLEDPatterns.cpp */,
 				9D7D42FD1C290127008F76E5 /* DotStarLEDPatterns.h */,
 			);
 			name = LEDPatterns;
@@ -5446,7 +5443,6 @@
 				9D0C1D1419CF3CE0004E027E /* delay.h in Sources */,
 				9D0C1D1519CF3CE0004E027E /* dmx.h in Sources */,
 				9D7D42FA1C2900FE008F76E5 /* Adafruit_DotStar.cpp in Sources */,
-				9D7D42FE1C290127008F76E5 /* DotStarLEDPatterns.cpp in Sources */,
 				9D0EF1C01BFC3787002C687E /* random.tcc in Sources */,
 				9D0EEC4D1BFC372F002C687E /* usb_flightsim.cpp in Sources */,
 				9D684B641C1941690058EFA0 /* FmtNumber.cpp in Sources */,
