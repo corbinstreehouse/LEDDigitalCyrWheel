@@ -58,8 +58,8 @@
     #endif
 #endif
 
-#define MIN_BRIGHTNESS 64 // abitrary..
-#define MAX_BRIGHTNESS 200 // usually 128
+#define MIN_BRIGHTNESS 2 // abitrary..
+#define MAX_BRIGHTNESS 255
 #define DEFAULT_BRIGHTNESS 128
 
 

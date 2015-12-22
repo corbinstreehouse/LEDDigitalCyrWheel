@@ -36,8 +36,12 @@
         #include "OctoWS2811LEDPatterns.h"
         #define LED_PATTERNS_CLASS OctoWS2811LEDPatterns
     #elif USE_ADAFRUIT
-        #include "NeoPixelLEDPatterns.h"
-        #define LED_PATTERNS_CLASS NeoPixelLEDPatterns
+
+//        #include "NeoPixelLEDPatterns.h"
+//        #define LED_PATTERNS_CLASS NeoPixelLEDPatterns
+        #include "DotStarLEDPatterns.h"
+        #define LED_PATTERNS_CLASS DotStarLEDPatterns
+
     #else
         #include "FastLEDPatterns.h"
         #define LED_PATTERNS_CLASS FastLEDPatterns

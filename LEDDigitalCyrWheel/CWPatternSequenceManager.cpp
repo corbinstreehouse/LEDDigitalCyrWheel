@@ -323,7 +323,7 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
     if (sequenceFile.available()) {
         sequenceFile.read((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
     } else {
-        patternHeader.version = 0; // Fail
+        bzero(&patternHeader, sizeof(CDPatternSequenceHeader));
     }
     
     // Verify it
@@ -670,9 +670,8 @@ bool CWPatternSequenceManager::initStrip() {
 }
 
 void CWPatternSequenceManager::loadSettings() {
-    // TODO: how to burn the initial state??
-    // TODO: make the state settable via bluetooth
-    EEPROM.get(EEPROM_BRIGHTNESS_ADDRESS, m_brightness);
+    // Maybe reset to the default if the button is held down?
+    m_brightness = EEPROM.read(EEPROM_BRIGHTNESS_ADDRESS);
     if (m_brightness < MIN_BRIGHTNESS || m_brightness > MAX_BRIGHTNESS) {
         m_brightness = DEFAULT_BRIGHTNESS;
         DEBUG_PRINTF("SAVED BRIGHTNESS setting to default..out of band\r\n");
@@ -1030,10 +1029,11 @@ void CWPatternSequenceManager::updateBrightness() {
 
 void CWPatternSequenceManager::setBrightness(uint8_t brightness) {
     if (m_brightness != brightness) {
+        DEBUG_PRINTF("old bright: %d, new: %d\r\n", m_brightness, brightness);
         m_brightness = brightness;
         updateBrightness();
         sendWheelChanged(CDWheelChangeReasonBrightnessChanged);
-        EEPROM.get(EEPROM_BRIGHTNESS_ADDRESS, m_brightness);
+        EEPROM.write(EEPROM_BRIGHTNESS_ADDRESS, m_brightness);
     }
 }
 

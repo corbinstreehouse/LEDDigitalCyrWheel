@@ -87,8 +87,8 @@ static float readBatteryVoltage() {
 
 void setup() {
 #if DEBUG
-    Serial.begin(9600);
-    delay(1000);
+    Serial.begin(19200);
+    delay(5);
     Serial.println("--- begin serial --- (WARNING: delay on start!!)");
 #endif
     // we NEED to do this to avoid conflicting with the other chip selects. TODO: set the OTHER ones I use on SPI as neccessary. This is REQUIRED. Wifi had it missing, and could have been an issue.

@@ -179,6 +179,9 @@
 		9D6BC86F1938CBC400E21E1C /* FastLED.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8541938CBC400E21E1C /* FastLED.cpp */; };
 		9D6BC8701938CBC400E21E1C /* hsv2rgb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8631938CBC400E21E1C /* hsv2rgb.cpp */; };
 		9D6BC8711938CBC400E21E1C /* lib8tion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D6BC8671938CBC400E21E1C /* lib8tion.cpp */; };
+		9D7D42FA1C2900FE008F76E5 /* Adafruit_DotStar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D7D42F21C2900FE008F76E5 /* Adafruit_DotStar.cpp */; };
+		9D7D42FB1C2900FE008F76E5 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 9D7D42F91C2900FE008F76E5 /* README.md */; };
+		9D7D42FE1C290127008F76E5 /* DotStarLEDPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D7D42FC1C290127008F76E5 /* DotStarLEDPatterns.cpp */; };
 		9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */; };
 		9DD1E672193EC47100290878 /* LEDPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD1E66E193EC47100290878 /* LEDPatterns.cpp */; };
 		9DD655D3193582100017BDAA /* CDOctoWS2811.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD655D2193582100017BDAA /* CDOctoWS2811.cpp */; };
@@ -1420,7 +1423,7 @@
 		9D1234C11889AC3B00A97482 /* CDPatternData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDPatternData.h; sourceTree = "<group>"; };
 		9D142EA51C0245900085A377 /* Adafruit_BLE.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_BLE.cpp; sourceTree = "<group>"; };
 		9D142EA61C0245900085A377 /* Adafruit_BLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_BLE.h; sourceTree = "<group>"; };
-		9D142EA71C0245900085A377 /* Adafruit_BluefruitLE_SPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_BluefruitLE_SPI.cpp; sourceTree = "<group>"; };
+		9D142EA71C0245900085A377 /* Adafruit_BluefruitLE_SPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_BluefruitLE_SPI.cpp; sourceTree = "<group>"; tabWidth = 2; };
 		9D142EA81C0245900085A377 /* Adafruit_BluefruitLE_SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_BluefruitLE_SPI.h; sourceTree = "<group>"; };
 		9D142EAD1C0245900085A377 /* atcommand.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = atcommand.ino; sourceTree = "<group>"; };
 		9D142EAE1C0245900085A377 /* BluefruitConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BluefruitConfig.h; sourceTree = "<group>"; };
@@ -1623,6 +1626,14 @@
 		9D6BC86B1938CBC400E21E1C /* preview_changes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = preview_changes.txt; sourceTree = "<group>"; };
 		9D6BC86C1938CBC400E21E1C /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		9D77CB9D1589994A0089EB0A /* Index */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Index; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D7D42F21C2900FE008F76E5 /* Adafruit_DotStar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_DotStar.cpp; sourceTree = "<group>"; };
+		9D7D42F31C2900FE008F76E5 /* Adafruit_DotStar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_DotStar.h; sourceTree = "<group>"; };
+		9D7D42F41C2900FE008F76E5 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING; sourceTree = "<group>"; };
+		9D7D42F71C2900FE008F76E5 /* strandtest.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = strandtest.ino; sourceTree = "<group>"; };
+		9D7D42F81C2900FE008F76E5 /* library.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = library.properties; sourceTree = "<group>"; };
+		9D7D42F91C2900FE008F76E5 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9D7D42FC1C290127008F76E5 /* DotStarLEDPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DotStarLEDPatterns.cpp; sourceTree = "<group>"; };
+		9D7D42FD1C290127008F76E5 /* DotStarLEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DotStarLEDPatterns.h; sourceTree = "<group>"; };
 		9D8ED2C517C01F7F001E1C06 /* Arduino Leonardo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino Leonardo.xcconfig"; sourceTree = "<group>"; };
 		9D8ED2C617C01F7F001E1C06 /* Arduino mega2560.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino mega2560.xcconfig"; sourceTree = "<group>"; };
 		9D8ED2C717C01F7F001E1C06 /* Arduino mini pro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino mini pro.xcconfig"; sourceTree = "<group>"; };
@@ -5014,6 +5025,36 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		9D7D42F11C2900FE008F76E5 /* Adafruit_DotStar */ = {
+			isa = PBXGroup;
+			children = (
+				9D7D42F21C2900FE008F76E5 /* Adafruit_DotStar.cpp */,
+				9D7D42F31C2900FE008F76E5 /* Adafruit_DotStar.h */,
+				9D7D42F41C2900FE008F76E5 /* COPYING */,
+				9D7D42F51C2900FE008F76E5 /* examples */,
+				9D7D42F81C2900FE008F76E5 /* library.properties */,
+				9D7D42F91C2900FE008F76E5 /* README.md */,
+			);
+			name = Adafruit_DotStar;
+			path = Libraries/Adafruit_DotStar;
+			sourceTree = SOURCE_ROOT;
+		};
+		9D7D42F51C2900FE008F76E5 /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				9D7D42F61C2900FE008F76E5 /* strandtest */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		9D7D42F61C2900FE008F76E5 /* strandtest */ = {
+			isa = PBXGroup;
+			children = (
+				9D7D42F71C2900FE008F76E5 /* strandtest.ino */,
+			);
+			path = strandtest;
+			sourceTree = "<group>";
+		};
 		9D8ED2C217C01F7F001E1C06 /* LEDCyrWheel */ = {
 			isa = PBXGroup;
 			children = (
@@ -5086,6 +5127,7 @@
 		9DCC75F61589A3D300564CB8 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				9D7D42F11C2900FE008F76E5 /* Adafruit_DotStar */,
 				9D142EA41C02458F0085A377 /* Adafruit_BluefruitLE_nRF51 */,
 				9DD1E66D193EC47100290878 /* LEDPatterns */,
 				9D6BC8271938CBC400E21E1C /* FastLED */,
@@ -5109,6 +5151,8 @@
 				9DD1E671193EC47100290878 /* README.md */,
 				9D684AC61C17E9BD0058EFA0 /* CDLazyBitmap.cpp */,
 				9D684AC71C17E9BD0058EFA0 /* CDLazyBitmap.h */,
+				9D7D42FC1C290127008F76E5 /* DotStarLEDPatterns.cpp */,
+				9D7D42FD1C290127008F76E5 /* DotStarLEDPatterns.h */,
 			);
 			name = LEDPatterns;
 			path = Libraries/LEDPatterns;
@@ -5401,6 +5445,8 @@
 				9D0C1D1319CF3CE0004E027E /* controller.h in Sources */,
 				9D0C1D1419CF3CE0004E027E /* delay.h in Sources */,
 				9D0C1D1519CF3CE0004E027E /* dmx.h in Sources */,
+				9D7D42FA1C2900FE008F76E5 /* Adafruit_DotStar.cpp in Sources */,
+				9D7D42FE1C290127008F76E5 /* DotStarLEDPatterns.cpp in Sources */,
 				9D0EF1C01BFC3787002C687E /* random.tcc in Sources */,
 				9D0EEC4D1BFC372F002C687E /* usb_flightsim.cpp in Sources */,
 				9D684B641C1941690058EFA0 /* FmtNumber.cpp in Sources */,
@@ -5413,6 +5459,7 @@
 				9D0EED681BFC3747002C687E /* SPI.cpp in Sources */,
 				9D0C1D1819CF3CE0004E027E /* fastpin_arm_k20.h in Sources */,
 				9D0C1D1919CF3CE0004E027E /* fastpin_arm_sam.h in Sources */,
+				9D7D42FB1C2900FE008F76E5 /* README.md in Sources */,
 				9D142EED1C02B14D0085A377 /* CDWheelBluetoothController.cpp in Sources */,
 				9D0C1D1A19CF3CE0004E027E /* fastpin_avr.h in Sources */,
 				9D0EF1AE1BFC3787002C687E /* valarray_array.tcc in Sources */,
@@ -5604,6 +5651,11 @@
 					__MK20DX256__,
 					"ARDUINO=101",
 				);
+				OTHER_CFLAGS = (
+					"-D__arm__",
+					"-DTEENSYDUINO",
+					"-DKINETISK",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -5611,6 +5663,11 @@
 		9D77CDF21589994B0089EB0A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_CFLAGS = (
+					"-D__arm__",
+					"-DTEENSYDUINO",
+					"-DKINETISK",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
