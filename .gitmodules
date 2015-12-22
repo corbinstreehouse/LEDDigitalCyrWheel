@@ -21,7 +21,7 @@
 	url = git@github.com:interactive-matter/aJson.git
 [submodule "Libraries/Adafruit_BluefruitLE_nRF51"]
 	path = Libraries/Adafruit_BluefruitLE_nRF51
-	url= https://github.com/adafruit/Adafruit_BluefruitLE_nRF51.git
+	url= git@github.com:corbinstreehouse/Adafruit_BluefruitLE_nRF51.git
 [submodule "Libraries/SdFat"]
 	path = Libraries/SdFat
 	url = git@github.com:corbinstreehouse/SdFat.git
