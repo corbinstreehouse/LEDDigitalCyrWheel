@@ -65,12 +65,12 @@ void CDWheelBluetoothController::registerWheelCharacteristics() {
     // only write seems to work!!
     _addCharacteristic(kLEDWheelCharSendCommandUUID_AdaFruit, CHAR_PROP_WRITE, BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR, &m_wheelCommandCharactersticID, -1); // -1 means not set
     _addCharacteristic(kLEDWheelCharGetWheelStateUUID_AdaFruit, CHAR_PROP_READ|CHAR_PROP_NOTIFY, BLUETOOTH_EEPROM_WHEEL_STATE_CHAR, &m_wheelStateID, m_manager->getWheelState());
+    _addCharacteristic(kLEDWheelBrightnessCharacteristicReadUUID_AdaFruit, CHAR_PROP_READ, BLUETOOTH_EEPROM_BRIGHTNESS_CHAR, &m_brightnessID, m_manager->getBrightness());
+
+    // CHAR_PROP_WRITE_WITHOUT_RESPONSE fails
+    _addCharacteristic(kLEDWheelBrightnessCharacteristicWriteUUID_AdaFruit, CHAR_PROP_WRITE, BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR, &m_brightnessWriteID, m_manager->getBrightness());
     
-    _addCharacteristic(kLEDWheelBrightnessCharacteristicUUID_AdaFruit, CHAR_PROP_READ|CHAR_PROP_WRITE_WITHOUT_RESPONSE, BLUETOOTH_EEPROM_BRIGHTNESS_CHAR, &m_brightnessID, m_manager->getBrightness());
 }
-
-
-
 
 // specific to adafruit be
 
@@ -123,6 +123,8 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
     // Enable echo
     m_ble.echo(false);
     m_ble.sendCommandCheckOK("ATI"); // print version information
+
+    
 #else
     m_ble.echo(false);
 #endif
@@ -218,9 +220,9 @@ void CDWheelBluetoothController::registerWheelLEDService() {
     m_ble.sendCommandCheckOK("AT+GAPSETADVDATA=11-06-"kLEDWheelServiceUUID_AdaFruit_INVERTED);
 }
 
-static const char *kAddCharacteristicFormat = "AT+GATTADDCHAR=UUID128=%s,PROPERTIES=0x%x,MIN_LEN=2,MAX_LEN=2,VALUE=%d\r\n";
+static const char *kAddCharacteristicFormat = "AT+GATTADDCHAR=UUID128=%s,PROPERTIES=0x%x,MIN_LEN=2,MAX_LEN=2,VALUE=0x%x\r\n";
 
-void CDWheelBluetoothController::_addCharacteristic(const char *characteristicStr, int propertyType, int eepromLocation, int32_t *characteristicID, int value) {
+void CDWheelBluetoothController::_addCharacteristic(const char *characteristicStr, int propertyType, int eepromLocation, int32_t *characteristicID, uint16_t value) {
     DEBUG_PRINTF(kAddCharacteristicFormat, characteristicStr, propertyType, value);
     m_ble.printf(kAddCharacteristicFormat, characteristicStr, propertyType, value);
     if (m_ble.sendCommandWithIntReply("", characteristicID)) {
@@ -246,6 +248,18 @@ bool CDWheelBluetoothController::registerServices() {
     // Add the cyr wheel service first
     registerWheelLEDService();
     registerWheelCharacteristics();
+
+    // TODO: register gap intervals. default: 20,100,100,30
+//     Minimum connection interval (in milliseconds) Maximum connection interval (in milliseconds) Advertising interval (in milliseconds) Advertising timeout (in milliseconds)
+    /// SEee https://developer.mbed.org/forum/team-63-Bluetooth-Low-Energy-community/topic/5082/
+    // They recommend to try min 20, max 100, bu tthat is already being used!
+//    m_ble.sendCommandCheckOK("AT+GAPINTERVALS=20,100,100,30"));
+//
+//    while ( m_ble.readline() ) {
+//        if ( !strcmp(m_ble.buffer, "OK") || !strcmp(m_ble.buffer, "ERROR")  ) break;
+//        SerialDebug.println(m_ble.buffer);
+//    }
+
     
     m_ble.reset();
 
@@ -270,6 +284,42 @@ void CDWheelBluetoothController::setCharacteristic16BitValue(const int cmdID, co
     m_ble.waitForOK();
 }
 
+bool CDWheelBluetoothController::readChar16BitValue(int index, int16_t *result) {
+    // See if we have a wheel command
+    m_ble.printf("%s=%d\r\n", kCharacteristicCmd, index);
+    m_ble.readline(); // Read the response
+    // if we didn't get "OK" or "ERROR", then we got data.
+    if (currentResponseCode() == BTResponseCodeUnknown) {
+//        DEBUG_PRINTF(" got buffer: %s\r\n", m_ble.buffer);
+        // god damn stupid..
+        
+        // parse the buffer for the int. it is in the hex/byte format: "FF-FF"
+        char *endPtr = m_ble.buffer;
+        
+        int16_t commandAsInt = strtol(endPtr, &endPtr, 16);
+//        DEBUG_PRINTF("    read v: %d\r\n", commandAsInt);
+        if (*endPtr == '-') {
+            endPtr++; // go past the dash..
+        }
+        commandAsInt = (commandAsInt << 8) | strtol(endPtr, &endPtr, 16);
+        
+        *result = commandAsInt;
+        
+#if DEBUG
+//        if (index == 3) {
+//            DEBUG_PRINTF(" got buffer: %s\r\n", m_ble.buffer);
+//        }
+#endif
+        
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+
+
 void CDWheelBluetoothController::process() {
     
     if (!m_initialized) {
@@ -282,135 +332,87 @@ void CDWheelBluetoothController::process() {
         return;
     }
 
-
-    // See if we have a wheel command
-    m_ble.printf("%s=%d\r\n", kCharacteristicCmd, m_wheelCommandCharactersticID);
-    m_ble.readline(); // Read the response
-    // if we didn't get "OK" or "ERROR", then we got data.
-    if (currentResponseCode() == BTResponseCodeUnknown) {
-//        DEBUG_PRINTF(" got buffer: %s\r\n", m_ble.buffer);
-        // god damn stupid..
-        
-        int16_t commandAsInt = 0;
-        // parse the buffer for the int. it is in the hex/byte format: "FF-FF"
-        char *endPtr = m_ble.buffer;
-        int i = 0;
-        while (*endPtr) {
-            int tmp = strtol(endPtr, &endPtr, 16);
-//            DEBUG_PRINTF(" read v: %d\r\n", tmp);
-            commandAsInt = commandAsInt | (tmp << (8*i));
-            if (*endPtr == '-') {
-                endPtr++; // go past the dash..
-            }
-            i++;
-            if (i == 2) {
-                break; // Well, we read it all..don't infinite loop
-            }
-        }
-        
-        if (commandAsInt == -1) {
+    int16_t result;
+    if (readChar16BitValue(m_wheelCommandCharactersticID, &result)) {
+        if (result == -1) {
             // No command set; we set it to -1 initially, and also after we process a command given
-        } else if (commandAsInt >= CDWheelCommandFirst && commandAsInt < CDWheelCommandCount) {
-            DEBUG_PRINTF("   command given: %d\r\n", commandAsInt);
+        } else if (result >= CDWheelCommandFirst && result < CDWheelCommandCount) {
+            DEBUG_PRINTF("   command given: %d\r\n", result);
             // Reset the value to -1
-            CDWheelCommand command = (CDWheelCommand)commandAsInt;
+            CDWheelCommand command = (CDWheelCommand)result;
             m_manager->processCommand(command);
             // reset the value, so we stop processing it
             setCharacteristic16BitValue(m_wheelCommandCharactersticID, -1);
         } else {
             // out of band error
-            DEBUG_PRINTF("   bad command number: %d\r\n", commandAsInt);
+            DEBUG_PRINTF("   bad command number: %d\r\n", result);
+            setCharacteristic16BitValue(m_wheelCommandCharactersticID, -1);
         }
     }
     
-    
-    
-    /*
-    bool hasChanged = false;
-    
-    
-    //check writable characteristic for a new color
-    ble.println("AT+GATTCHAR=2");
-    ble.readline();
-    if (strcmp(ble.buffer, "OK") == 0) {
-        // no data
-        return;
+    if (readChar16BitValue(m_brightnessWriteID, &result)) {
+        m_manager->setBrightness(result);
     }
-    // Some data was found, its in the buffer
-    Serial.print(F("[Recv] "));
-    Serial.println(ble.buffer); //format FF-FF-FF R-G-B
     
-    String buffer = String(ble.buffer);
-    //check if the color should be changed
-    if(buffer!=currentColorValue){
-        hasChanged = true;
-        currentColorValue = buffer;
-        String redBuff = buffer.substring(0,2);
-        String greenBuff = buffer.substring(3,5);
-        String blueBuff = buffer.substring(6);
-        const char* red = redBuff.c_str();
-        const char* green =greenBuff.c_str();
-        const char* blue = blueBuff.c_str();
-        redVal = strtoul(red,NULL,16);
-        greenVal = strtoul(green, NULL, 16);
-        blueVal = strtoul(blue,NULL,16);
-        setPixelColor();
-    }
-    ble.waitForOK();
-    
-    if(hasChanged){
-        Serial.println("Notify of color change");
-        //write to notifiable characteristic
-        String notifyCommand = "AT+GATTCHAR=1,"+ currentColorValue;
-        ble.println( notifyCommand );
-        if ( !ble.waitForOK() )
-        {
-            error(F("Failed to get response from notify property update"));
-        }
+#define BT_FILE_READ_TIMEOUT 500 // ms
+    m_ble.flush();
+    m_ble.setMode(BLUEFRUIT_MODE_DATA);
+    // TODO: drive the LEDs while we are loading this..
+    if (m_ble.available()) {
+        int count = 0;
+        uint32_t start = millis();
+        // Read in the size
+        int32_t totalBytes = 0;
+        int i = 0;
+        m_ble.readBytes((char*)&totalBytes, sizeof(totalBytes)); // skanky!
         
-        //write to readable characteristic for current color
-        String readableCommand = "AT+GATTCHAR=3,"+ currentColorValue;
-        ble.println(readableCommand);
+#define bufferSize 1024
+        uint8_t buffer[bufferSize];
         
-        if ( !ble.waitForOK() )
-        {
-            error(F("Failed to get response from readable property update"));
+        DEBUG_PRINTF("totalBytes: %d\r\n", totalBytes);
+        if (totalBytes > 0) {
+            int sizeLeft = totalBytes;
+            uint32_t lastReadTime = millis();
+            while (sizeLeft > 0) {
+                while (!m_ble.available()) {
+//                    DEBUG_PRINTF("busy wait..., %d\r\n", millis());
+                    if (millis() - lastReadTime > BT_FILE_READ_TIMEOUT) {
+                        DEBUG_PRINTF("timeout! read: %d/%d\r\n", count, totalBytes);
+                        sizeLeft = 0;
+                        break;
+                        // TODO: errors
+                    }
+                }
+//                DEBUG_PRINTF("available......, %d\r\n", millis());
+
+                int read = 0;
+                while (m_ble.available()) {
+                    int amountToRead = min(sizeLeft, bufferSize);
+                    int amountRead = m_ble.readBytes(buffer, amountToRead);
+                    
+//                    DEBUG_PRINTF("%c", m_ble.read());
+                    count += amountRead;
+                    sizeLeft -= amountRead;
+                    lastReadTime = millis();
+                    read += amountRead;
+                }
+                
+//                DEBUG_PRINTF("  %d READ: %d/%d \r\n", i, read, count);
+//                if (read != 20 && count != totalBytes) {
+//                    DEBUG_PRINTLN("                 BAD FOOD!!!!!!!!!!!!!!!!!!");
+//                }
+                i++;
+            }
         }
+        uint32_t time = millis() - start;
+        DEBUG_PRINTF("  read %d, time took: %d ms, %g s\r\n", count, time, time /1000.0 );
     }
-    delay(1000);
-     */
+    
+    
+
+    m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
+    
 }
-
-
-/*
- // first, create the service
-String serviceString = "AT+GATTADDSERVICE=";
-serviceString += "UUID=0x6900";
-
-int serviceID = BLE_print_with_reply(serviceString, 200);
-
-// second, create the characteristic
-String charString = "AT+GATTADDCHAR=";
-charString += "UUID=0x1110";
-charString += ", PROPERTIES=0x02"; // read only
-charString += ", MIN_LEN=1";
-charString += ", MAX_LEN=20";
-charString += ", VALUE=hello";
-
-int charID = BLE_print_with_reply(charString, 200);
-
-// below is a helper function to send dynamic strings to the module
-// and return the integer value sent back
-
-int BLE_print_with_reply(String msg, int delayTime) {
-  delay(delayTime); // optional delay, because it seemed to help communication
-  uint32_t reply = -1;
-  ble.println(msg);
-  ble.sendCommandWithIntReply(F(""), &reply);
-  return reply;
-}
- */
-
 
 #endif
 
