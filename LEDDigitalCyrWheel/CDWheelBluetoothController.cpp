@@ -254,6 +254,7 @@ bool CDWheelBluetoothController::registerServices() {
     /// SEee https://developer.mbed.org/forum/team-63-Bluetooth-Low-Energy-community/topic/5082/
     // They recommend to try min 20, max 100, bu tthat is already being used!
 //    m_ble.sendCommandCheckOK("AT+GAPINTERVALS=20,100,100,30"));
+        m_ble.sendCommandCheckOK("AT+GAPINTERVALS=20,40,25,30");
 //
 //    while ( m_ble.readline() ) {
 //        if ( !strcmp(m_ble.buffer, "OK") || !strcmp(m_ble.buffer, "ERROR")  ) break;
@@ -268,7 +269,7 @@ bool CDWheelBluetoothController::registerServices() {
 
 void CDWheelBluetoothController::setName(char *name) {
     if (name == NULL) {
-        name = "LED Cyr Wheel";
+        name = "LED Cyr Wheel AFv3";
     }
     m_ble.print("AT+GAPDEVNAME=");
     m_ble.println(name);
