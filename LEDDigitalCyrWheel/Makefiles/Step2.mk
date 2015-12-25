@@ -197,7 +197,7 @@ endif
 
 CXXFLAGS      = -fno-exceptions
 ASFLAGS       = -$(MCU_FLAG_NAME)=$(MCU) -x assembler-with-cpp
-LDFLAGS       = -$(MCU_FLAG_NAME)=$(MCU) -Wl,-gc-sections,-u,main -Os $(EXTRA_LDFLAGS)
+LDFLAGS       = -$(MCU_FLAG_NAME)=$(MCU) -Wl,-gc-sections,--relax,--defsym=__rtc_localtime=1450980950,-u,main -Os $(EXTRA_LDFLAGS)
 
 ifndef OBJCOPYFLAGS
 OBJCOPYFLAGS  = -O ihex -R .eeprom
