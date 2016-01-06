@@ -107,7 +107,7 @@ private:
     uint32_t m_timedUsedBeforeCurrentPattern;
 #if PATTERN_EDITOR
     NSURL *m_baseURL;
-    NSURL *m_patternDirectoryURL;
+//    NSURL *m_patternDirectoryURL; // not used yet
 #endif
     
     
@@ -193,7 +193,7 @@ public:
     ~CWPatternSequenceManager();
     void setCyrWheelView(CDCyrWheelView *view); // Binding..
     void setBaseURL(NSURL *url);
-    void setPatternDirectoryURL(NSURL *url);
+//    void setPatternDirectoryURL(NSURL *url);
 #endif
     void init();
     
@@ -249,7 +249,9 @@ public:
     uint32_t getNumberOfPatternItems() { return _numberOfPatternItems; }
     uint32_t getCurrentPatternItemIndex() { return _currentPatternItemIndex; }
     CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &_patternItems[index]; }
-    CDPatternItemHeader *getCurrentPatternItemHeader() {
+
+    // TODO: eliminate this... instead, have a hook for when the patternItem changes so we can do something..
+    CDPatternItemHeader *getCurrentPatternItemHeaderXX() {
         if (_currentPatternItemIndex >= 0 && _currentPatternItemIndex < _numberOfPatternItems) {
             return &_patternItems[_currentPatternItemIndex];
         } else {

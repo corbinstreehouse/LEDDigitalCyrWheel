@@ -95,7 +95,7 @@ void CWPatternSequenceManager::freeRootFileInfo() {
 #if PATTERN_EDITOR
 CWPatternSequenceManager::~CWPatternSequenceManager() {
     m_baseURL = nil;
-    m_patternDirectoryURL = nil;
+//    m_patternDirectoryURL = nil;
     freePatternItems();
     freeRootFileInfo();
 }
@@ -106,11 +106,12 @@ void CWPatternSequenceManager::setCyrWheelView(CDCyrWheelView *view) {
 
 void CWPatternSequenceManager::setBaseURL(NSURL *url) {
     m_baseURL = url;
+    loadSequencesFromRootDirectory();
 }
 
-void CWPatternSequenceManager::setPatternDirectoryURL(NSURL *url) {
-    m_patternDirectoryURL = url;
-}
+//void CWPatternSequenceManager::setPatternDirectoryURL(NSURL *url) {
+//    m_patternDirectoryURL = url;
+//}
 
 #endif
 
@@ -684,8 +685,11 @@ void CWPatternSequenceManager::loadSettings() {
 
 const char *CWPatternSequenceManager::_getRootDirectory() {
 #if PATTERN_EDITOR
-    NSCAssert(m_baseURL != nil, @"need the base URL");
-    return [m_baseURL fileSystemRepresentation];
+    if (m_baseURL != nil) {
+        return [m_baseURL fileSystemRepresentation];
+    } else {
+        return "/var/tmp/.patternEditor/"; // Just something that doesn't exist
+    }
 #else
     return g_sequencePath;
 #endif

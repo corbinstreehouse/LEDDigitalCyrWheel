@@ -58,7 +58,7 @@ typedef struct  __attribute__((__packed__)) {
     uint32_t dataOffset; // When loaded, points to the offset in the file where we should load from.
     uint32_t shouldSetBrightnessByRotationalVelocity:1; // (and next) 4
     uint32_t _unused:31;
-    // ^^ TODO: move thse to patternOptions
+    // ^^ TODO: move these to patternOptions
     
     union {
 //        const char *dataFilename;  // A reference to the string....we don't own it! // NO longer needing this..
