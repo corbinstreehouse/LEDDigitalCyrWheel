@@ -70,6 +70,8 @@ typedef struct _CDPatternFileInfo {
 typedef enum {
     CDWheelChangeReasonStateChanged,
     CDWheelChangeReasonBrightnessChanged,
+    CDWheelChangeReasonPatternChanged,
+    CDWheelChangeReasonSequenceChanged,
 } CDWheelChangeReason;
 
 typedef void (CDWheelChangedHandler)(CDWheelChangeReason changeReason, void *data);
@@ -193,6 +195,7 @@ public:
     ~CWPatternSequenceManager();
     void setCyrWheelView(CDCyrWheelView *view); // Binding..
     void setBaseURL(NSURL *url);
+    NSURL *getBaseURL() {return m_baseURL; }
 //    void setPatternDirectoryURL(NSURL *url);
 #endif
     void init();
@@ -250,14 +253,15 @@ public:
     uint32_t getCurrentPatternItemIndex() { return _currentPatternItemIndex; }
     CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &_patternItems[index]; }
 
-    // TODO: eliminate this... instead, have a hook for when the patternItem changes so we can do something..
-    CDPatternItemHeader *getCurrentPatternItemHeaderXX() {
+#if PATTERN_EDITOR
+    CDPatternItemHeader *getCurrentPatternItemHeader() {
         if (_currentPatternItemIndex >= 0 && _currentPatternItemIndex < _numberOfPatternItems) {
             return &_patternItems[_currentPatternItemIndex];
         } else {
             return NULL;
         }
     }
+#endif
     
     void play() { m_ledPatterns.play(); sendWheelChanged(CDWheelChangeReasonStateChanged); }
     void pause() { m_ledPatterns.pause(); sendWheelChanged(CDWheelChangeReasonStateChanged); }

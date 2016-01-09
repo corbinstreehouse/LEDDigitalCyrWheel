@@ -422,6 +422,8 @@ void CWPatternSequenceManager::loadFileInfo(CDPatternFileInfo *fileInfo) {
             break;
         }
     }
+    // Send the changed note at the end
+    sendWheelChanged(CDWheelChangeReasonSequenceChanged);
 }
 
 // TODO: rewrite this
@@ -1146,6 +1148,7 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     }
     
     m_orientation.setFirstPass(true); // why do I need this??
+    sendWheelChanged(CDWheelChangeReasonPatternChanged);
 }
 
 void CWPatternSequenceManager::processCommand(CDWheelCommand command) {

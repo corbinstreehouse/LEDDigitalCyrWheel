@@ -10,7 +10,35 @@
 #define CyrWheelPatternEditor_CDPatternData_h
 
 #include <stdint.h>
-#include "LEDPatterns.h"
+#include "LEDPatternType.h"
+
+#if __cplusplus
+
+#include "FastLED.h"
+
+#else
+
+typedef struct CRGB {
+    union {
+        struct {
+            union {
+                uint8_t r;
+                uint8_t red;
+            };
+            union {
+                uint8_t g;
+                uint8_t green;
+            };
+            union {
+                uint8_t b;
+                uint8_t blue;
+            };
+        };
+        uint8_t raw[3];
+    };
+} CRGB;
+
+#endif
 
 // stuff shared with the editor
 
