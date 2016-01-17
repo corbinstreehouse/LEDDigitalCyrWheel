@@ -13,12 +13,8 @@
 // warning!! debug on
 
 #if PATTERN_EDITOR
-    #define USE_ADAFRUIT 0
-    #define WIFI 0
     #define BLUETOOTH 0
 #else
-    #define USE_ADAFRUIT 1// 0 uses fast LED
-    #define WIFI 0 // disabled!!
     #define BLUETOOTH 1
 #endif
 

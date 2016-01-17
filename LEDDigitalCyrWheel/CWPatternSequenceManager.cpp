@@ -51,11 +51,12 @@ CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGT
     ASSERT(sizeof(LEDPatternOptions) == PATTERN_OPTIONS_SIZE_v0); // make sure I don't screw stuff up by chaning the size and not updating things again
     
     bzero(&m_defaultBitmapHeader, sizeof(CDPatternItemHeader));
-    m_defaultBitmapHeader.patternType = LEDPatternTypeBitmap;
+    m_defaultBitmapHeader.patternType = LEDPatternTypeBitmap; // Easy testing: LEDPatternTypeTheaterChase;
+    m_defaultBitmapHeader.color = CRGB::Red;
     m_defaultBitmapHeader.duration = 50;
-    m_defaultBitmapHeader.patternDuration = 35;
+    m_defaultBitmapHeader.patternDuration = 0; // as fast as it can go.. 35;
     m_defaultBitmapHeader.patternEndCondition = CDPatternEndConditionOnButtonClick;
-    m_defaultBitmapHeader.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(true, false));
+    m_defaultBitmapHeader.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, false));
     
     m_lowBattery = false;
 }

@@ -238,11 +238,13 @@ void CDWheelBluetoothController::_addCharacteristic(const char *characteristicSt
 
 // this only has to be done once for initialiation of the chip
 bool CDWheelBluetoothController::registerServices() {
+    DEBUG_PRINTF("   registering all services..setting the name\r\n");
     m_initialized = true; // Set to false on errors
     // First time initialization
     // Set the initial name
     setName(NULL);
     
+    DEBUG_PRINTF("  name set; sending clear\r\n");
     m_ble.sendCommandCheckOK(kClearCmd);
     
     // Add the cyr wheel service first

@@ -31,21 +31,8 @@
     @class CDCyrWheelView;
     #define MAX_PATH  1024 // larger for the desktop; this is created on the stack...
 #else
-    #if USE_OCTO // doesn't work
-        #include "OctoWS2811.h"
-        #include "OctoWS2811LEDPatterns.h"
-        #define LED_PATTERNS_CLASS OctoWS2811LEDPatterns
-    #elif 0 // USE_ADAFRUIT
-        #include "NeoPixelLEDPatterns.h"
-        #define LED_PATTERNS_CLASS NeoPixelLEDPatterns
-//        #include "DotStarLEDPatterns.h"
-//        #define LED_PATTERNS_CLASS DotStarLEDPatterns
-
-    #else
-        #include "FastLEDPatterns.h"
-        #define LED_PATTERNS_CLASS FastLEDPatterns
-    #endif
-
+    #include "CyrWheelLEDPatterns.h"
+    #define LED_PATTERNS_CLASS CyrWheelLEDPatterns
     #define MAX_PATH  260 // yeah, copy windows
 #endif
 
@@ -99,7 +86,6 @@ private:
     uint32_t m_shouldIgnoreButtonClickWhenTimed:1;
     uint32_t m_sdCardWorks:1;
     uint32_t m_lowBattery:1;
-//    uint32_t m_currentPatternItemsAreDynamic:1; // maybe not needed
     uint32_t __reserved:27;
     
     LED_PATTERNS_CLASS m_ledPatterns;

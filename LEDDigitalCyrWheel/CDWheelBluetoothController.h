@@ -17,7 +17,7 @@
 
 #define BLUETOOTH_CS 6 // chip select pin
 #define BLUETOOTH_IRQ 5 // interrupt pin
-#define BLUETOOTH_RST 7
+#define BLUETOOTH_RST 4
 
 #define BLUETOOTH_EEPROM_AUTOSTART 12  //not used yet, make sure i read one byte only!
 #define BLUETOOTH_EEPROM_WHEEL_SERVICE (BLUETOOTH_EEPROM_AUTOSTART+1) // int32_t value, ending: 17
