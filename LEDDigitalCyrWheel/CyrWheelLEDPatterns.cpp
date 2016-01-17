@@ -134,11 +134,10 @@ void CyrWheelLEDPatterns::_spiEnd() {
 
 void CyrWheelLEDPatterns::internalShow() {
 #if USE_FAST_LED
-    
+    _spiBegin();
     FastLED.show();
 //    Serial.printf("FPS: %d\r\n", FastLED.getFPS());
-    
-
+    _spiEnd();
 #elif USE_MANUAL_SPI
     _spiBegin();
     show2();
@@ -157,7 +156,7 @@ CyrWheelLEDPatterns::CyrWheelLEDPatterns(uint32_t ledCount) :
     // clock pin: 14
     // 24mhz would be ideal, but it flickers... in tests
     // 12mhz kills other things. It is really strange..I just can't get fastLED to work right
-  FastLED.addLeds<APA102, APA102_LED_DATA_PIN, APA102_LED_CLOCK_PIN, BGR, DATA_RATE_MHZ(12)>(m_leds, ledCount).setCorrection(TypicalLEDStrip);
+//  FastLED.addLeds<APA102, APA102_LED_DATA_PIN, APA102_LED_CLOCK_PIN, BGR, DATA_RATE_MHZ(12)>(m_leds, ledCount).setCorrection(TypicalLEDStrip);
     
     static CD_APA102Controller<APA102_LED_DATA_PIN, APA102_LED_CLOCK_PIN, BGR, DATA_RATE_MHZ(24)> c;
     FastLED.addLeds(&c, m_leds, ledCount, 0);
