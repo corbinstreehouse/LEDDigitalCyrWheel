@@ -90,7 +90,7 @@ const int g_batteryVoltagePin = A3; // pin 17
  Bluetooth pins (see CDWheelBluetoothController.cpp for latest values:
     #define BLUETOOTH_CS 6 // chip select pin
     #define BLUETOOTH_IRQ 5 // interrupt pin
-    #define BLUETOOTH_RST 7
+    #define BLUETOOTH_RST 4 // reset pin
 
  
  
