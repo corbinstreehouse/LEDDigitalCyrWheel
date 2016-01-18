@@ -1104,11 +1104,7 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     // Reset the stuff based on the new header
     m_ledPatterns.setPatternType(itemHeader->patternType);
     // Migration help..
-    uint32_t duration = itemHeader->patternDuration;
-    if (duration == 0) {
-        duration = itemHeader->duration;
-    }
-    m_ledPatterns.setPatternDuration(duration);
+    m_ledPatterns.setPatternDuration(itemHeader->patternDuration);
     m_ledPatterns.setPatternColor(itemHeader->color);
     m_ledPatterns.setPatternOptions(itemHeader->patternOptions);
     // Assume it is the current file..
