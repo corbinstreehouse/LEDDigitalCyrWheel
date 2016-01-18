@@ -13,27 +13,16 @@
 
 #if USE_FAST_LED
 
-template <uint8_t DATA_PIN, uint8_t CLOCK_PIN, EOrder RGB_ORDER = BGR, uint8_t SPI_SPEED = DATA_RATE_MHZ(24)>
+template <uint8_t DATA_PIN, uint8_t CLOCK_PIN, EOrder RGB_ORDER = BGR>
 class CD_APA102Controller : public CLEDController {
-//    typedef SPIOutput<DATA_PIN, CLOCK_PIN, SPI_SPEED> SPI;
-//    SPI mSPI;
-    
-//    void startBoundary() { mSPI.writeWord(0); mSPI.writeWord(0); }
-//    void endBoundary(int nLeds) { int nBytes = (nLeds/32); do { mSPI.writeByte(0xFF); mSPI.writeByte(0x00); mSPI.writeByte(0x00); mSPI.writeByte(0x00); } while(nBytes--); }
-    
-//    inline void writeLed(uint8_t b0, uint8_t b1, uint8_t b2) __attribute__((always_inline)) {
-//        mSPI.writeByte(0xFF); mSPI.writeByte(b0); mSPI.writeByte(b1); mSPI.writeByte(b2);
-//    }
-    
 public:
     CD_APA102Controller() {}
     
     virtual void init() {
-//        mSPI.init();
     }
     
     virtual void clearLeds(int nLeds) {
-//        showColor(CRGB(0,0,0), nLeds, CRGB(0,0,0));
+        showColor(CRGB(0,0,0), nLeds, CRGB(0,0,0));
     }
     
 protected:
@@ -111,7 +100,8 @@ protected:
 
 #endif
 
-
+// 12Mhz // 12000000 is clock div 2
+// Try 24? -- see issues..
 static SPISettings m_spiSettings = SPISettings(12000000, MSBFIRST, SPI_MODE0);
 
 void CyrWheelLEDPatterns::_spiBegin() {
@@ -136,7 +126,7 @@ void CyrWheelLEDPatterns::internalShow() {
 #if USE_FAST_LED
     _spiBegin();
     FastLED.show();
-//    Serial.printf("FPS: %d\r\n", FastLED.getFPS());
+    Serial.printf("FPS: %d\r\n", FastLED.getFPS());
     _spiEnd();
 #elif USE_MANUAL_SPI
     _spiBegin();
@@ -155,10 +145,7 @@ CyrWheelLEDPatterns::CyrWheelLEDPatterns(uint32_t ledCount) :
     // datapin 7 data/MOSI
     // clock pin: 14
     // 24mhz would be ideal, but it flickers... in tests
-    // 12mhz kills other things. It is really strange..I just can't get fastLED to work right
-//  FastLED.addLeds<APA102, APA102_LED_DATA_PIN, APA102_LED_CLOCK_PIN, BGR, DATA_RATE_MHZ(12)>(m_leds, ledCount).setCorrection(TypicalLEDStrip);
-    
-    static CD_APA102Controller<APA102_LED_DATA_PIN, APA102_LED_CLOCK_PIN, BGR, DATA_RATE_MHZ(24)> c;
+    static CD_APA102Controller<APA102_LED_DATA_PIN, APA102_LED_CLOCK_PIN, BGR> c;
     FastLED.addLeds(&c, m_leds, ledCount, 0);
     
 #elif USE_MANUAL_SPI
