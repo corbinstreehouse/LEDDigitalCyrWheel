@@ -74,12 +74,11 @@ private:
     
     // Current sequence information
     CDPatternItemHeader *_patternItems;
+    
     uint32_t _numberOfPatternItems;
     // Current pattern item information
     int _currentPatternItemIndex;
     
-    CDPatternItemHeader m_defaultBitmapHeader; // For loading BMP files; allows me to dynamically change the duration or the pattern or how it behaves
-
     uint8_t m_brightness;
     
     uint32_t m_shouldRecordData:1;
@@ -95,7 +94,7 @@ private:
     uint32_t m_timedUsedBeforeCurrentPattern;
 #if PATTERN_EDITOR
     NSURL *m_baseURL;
-//    NSURL *m_patternDirectoryURL; // not used yet
+    NSURL *m_patternDirectoryURL;
 #endif
     
     
@@ -115,13 +114,13 @@ private:
     CDPatternFileInfo *_findNextLoadableChild(CDPatternFileInfo *fromChild, bool forwards);
     
     void _ensureCurrentFileInfo();
-    void updateLEDPatternBitmapFilename();
     void loadFileInfo(CDPatternFileInfo *fileInfo); // Divies to the appropriate method below
     void loadAsSequenceFileInfo(CDPatternFileInfo *fileInfo);
     void loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo);
     
     void updateBrightness();
     const char *_getRootDirectory();
+    const char *_getPatternDirectory();
     
     
     inline CDPatternItemHeader *getCurrentItemHeader() {
@@ -153,6 +152,8 @@ private:
     }
     
     CDPatternItemHeader makeFlashPatternItem(CRGB color);
+    void makePatternsBlinkColor(CRGB color);
+    
     
     void loadCurrentPatternItem();
 //    char *getFullpathName(const char *name, char *buffer, int bufferSize);
@@ -182,7 +183,7 @@ public:
     void setCyrWheelView(CDCyrWheelView *view); // Binding..
     void setBaseURL(NSURL *url);
     NSURL *getBaseURL() {return m_baseURL; }
-//    void setPatternDirectoryURL(NSURL *url);
+    void setPatternDirectoryURL(NSURL *url) { m_patternDirectoryURL = url; }
 #endif
     void init();
     
@@ -195,7 +196,7 @@ public:
     
     void restartCurrentSequence();
     void setCurrentSequenceAtIndex(int index); // index in the parent
-    void setCurrentSequenceWithName(const char *name);
+//    void setCurrentSequenceWithName(const char *name); // broken..
     
     bool getCardInitPassed() { return m_sdCardWorks; }
     

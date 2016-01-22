@@ -41,22 +41,23 @@ static char *getExtension(char *filename) {
     }
 }
 
-CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH), m_changeHandler(NULL)
+static CDPatternItemHeader g_defaultBitmapHeader = {
+    .patternType = LEDPatternTypeBitmap, // Easy testing: LEDPatternTypeTheaterChase;
+    .color = CRGB::Red,
+    .duration = 50,
+    .patternDuration = 0, // as fast as it can go.. 35;
+    .patternEndCondition = CDPatternEndConditionOnButtonClick,
+    .patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, false)),
+    .filename = NULL
+};
+
+CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH), m_changeHandler(NULL), _patternItems(NULL), _numberOfPatternItems(0)
 {
-    _patternItems = NULL;
     bzero(&m_rootFileInfo, sizeof(CDPatternFileInfo));
     m_currentFileInfo = NULL;
     m_shouldIgnoreButtonClickWhenTimed = true; // TODO: make this an option per sequence...
-    ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // make sure I don't screw stuff up by chaning the size and not updating things again
-    ASSERT(sizeof(LEDPatternOptions) == PATTERN_OPTIONS_SIZE_v0); // make sure I don't screw stuff up by chaning the size and not updating things again
-    
-    bzero(&m_defaultBitmapHeader, sizeof(CDPatternItemHeader));
-    m_defaultBitmapHeader.patternType = LEDPatternTypeBitmap; // Easy testing: LEDPatternTypeTheaterChase;
-    m_defaultBitmapHeader.color = CRGB::Red;
-    m_defaultBitmapHeader.duration = 50;
-    m_defaultBitmapHeader.patternDuration = 0; // as fast as it can go.. 35;
-    m_defaultBitmapHeader.patternEndCondition = CDPatternEndConditionOnButtonClick;
-    m_defaultBitmapHeader.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, false));
+    ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v5); // make sure I don't screw stuff up by chaning the size and not updating things again
+    ASSERT(sizeof(LEDPatternOptions) == PATTERN_OPTIONS_SIZE_v5); // make sure I don't screw stuff up by chaning the size and not updating things again
     
     m_lowBattery = false;
 }
@@ -154,19 +155,20 @@ void CWPatternSequenceManager::loadDefaultSequence() {
 
 static inline bool verifyHeader(CDPatternSequenceHeader *h) {
     // header, and version 0
-    DEBUG_PRINTF("checking header, v: %d , expected :%d\r\n", h->version, SEQUENCE_VERSION);
+    DEBUG_PRINTF("checking header, v: %d , expected :%d\r\n", h->version, SEQUENCE_VERSION_v5);
     return h->marker[0] == 'S' && h->marker[1] == 'Q' && h->marker[2] == 'C';
 }
 
 void CWPatternSequenceManager::freePatternItems() {
     if (_patternItems) {
         DEBUG_PRINTLN(" --- free pattern Items");
-//        for (int i = 0; i < _numberOfPatternItems; i++) {
-//            // If it has data, we have to free it
-//            if (_patternItems[i].dataLength && _patternItems[i].data) {
-//                free(_patternItems[i].data);
-//            }
-//        }
+        for (int i = 0; i < _numberOfPatternItems; i++) {
+            // If it has data, we have to free it
+            if (_patternItems[i].filename) {
+                DEBUG_PRINTF("FREEING filename: %s\r\n", _patternItems[i].filename);
+                free(_patternItems[i].filename);
+            }
+        }
         free(_patternItems);
         _patternItems = NULL;
         _numberOfPatternItems = 0; // can be removed
@@ -181,28 +183,13 @@ CDPatternItemHeader CWPatternSequenceManager::makeFlashPatternItem(CRGB color) {
     result.patternDuration = 500;
     result.color = color;
     result.patternEndCondition = CDPatternEndConditionOnButtonClick;
+    result.filename = NULL;
     return result;
 }
 
-//bool CWPatternSequenceManager::isSequenceEditableAtIndex(int index) {
-//    if (index >= 0 && index <= _numberOfAvailableSequences) {
-//        return _sequenceNames[index] != g_defaultFilename;
-//    } else {
-//        return false;
-//    }
-//}
-
-//int CWPatternSequenceManager::getIndexOfSequenceName(char *name) {
-//    for (int i = 0; i < _numberOfAvailableSequences; i++) {
-//        if (strcmp(name, getSequenceNameAtIndex(i)) == 0) {
-//            return i;
-//        }
-//    }
-//    return -1;
-//}
-
 void CWPatternSequenceManager::makeSequenceFlashColor(CRGB color) {
     freePatternItems();
+    /*
     _numberOfPatternItems = 2;
     _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
     _patternItems[0].patternType = LEDPatternTypeSolidColor;
@@ -210,12 +197,28 @@ void CWPatternSequenceManager::makeSequenceFlashColor(CRGB color) {
     _patternItems[0].patternDuration = 500; // Not used
     _patternItems[0].color = color;
     _patternItems[0].patternEndCondition = CDPatternEndConditionAfterDuration;
+    _patternItems[0].filename = NULL;
     
     _patternItems[1].patternType = LEDPatternTypeSolidColor;
     _patternItems[1].duration = 500;
     _patternItems[1].color = CRGB::Black;
     _patternItems[1].patternDuration = 500; // not used..
     _patternItems[1].patternEndCondition = CDPatternEndConditionAfterDuration;
+    _patternItems[1].filename = NULL;
+    */
+    
+    _numberOfPatternItems = 1;
+    _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
+    _patternItems[0] = makeFlashPatternItem(color);
+
+    _currentPatternItemIndex = 0;
+}
+
+// Almost the same as the above..
+void CWPatternSequenceManager::makePatternsBlinkColor(CRGB color) {
+    m_ledPatterns.setPatternDuration(500);
+    m_ledPatterns.setPatternColor(color);
+    m_ledPatterns.setPatternType(LEDPatternTypeBlink);
 }
 
 void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, CRGB color) {
@@ -225,6 +228,7 @@ void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, CRGB c
     header.patternDuration = 500;
     header.color = color;
     header.patternEndCondition = CDPatternEndConditionOnButtonClick;
+    header.filename = NULL;
     setSingleItemPatternHeader(&header);
 }
 
@@ -272,28 +276,30 @@ size_t _recursiveGetFullpathName(const char *rootDirName, CDPatternFileInfo *fil
 }
 
 
-void _getFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, size_t size) {
+static void _getFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, size_t size) {
     buffer[0] = 0;
 //    DEBUG_PRINTF(" start to get name for dir: %d \r\n", fileInfo->dirIndex);
     _recursiveGetFullpathName(rootDirName, fileInfo, buffer, size, 0);
 //    DEBUG_PRINTF(" computed filename: %s\r\n", buffer);
 }
 
-void CWPatternSequenceManager::updateLEDPatternBitmapFilename() {
-    char fullFilenamePath[MAX_PATH];
-    _getFullpathName(_getRootDirectory(), m_currentFileInfo, fullFilenamePath, MAX_PATH);
-    m_ledPatterns.setBitmapFilename(fullFilenamePath);
+static void _appendFilename(const char *rootDirName, const char *filename, char *fullFilenamePath, size_t size) {
+    char *nameLocation = fullFilenamePath;
+    // copy the directory for the patterns
+    strcpy(nameLocation, rootDirName);
+    nameLocation += strlen(rootDirName);
+    if (nameLocation[-1] != '/') {
+        nameLocation[0] = '/';
+        nameLocation++;
+    }
+    strcpy(nameLocation, filename);
+    nameLocation += strlen(filename);
+    nameLocation[0] = NULL;
 }
 
 void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo) {
-    updateLEDPatternBitmapFilename();
+    setSingleItemPatternHeader(&g_defaultBitmapHeader);
     m_shouldIgnoreButtonClickWhenTimed = false; // This could be made an option that is settable/dynamically changable.
-    if (m_ledPatterns.getBitmap() == NULL || !m_ledPatterns.getBitmap()->getIsValid()) {
-        // Invalid bitmap..
-        makeSequenceFlashColor(CRGB::DarkMagenta);
-    } else {
-        setSingleItemPatternHeader(&m_defaultBitmapHeader);
-    }
 }
 
 void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInfo) {
@@ -330,18 +336,14 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
     
     // Verify it
     if (verifyHeader(&patternHeader)) {
-        // Only version 4 now
-        if (patternHeader.version == SEQUENCE_VERSION) {
+        if (patternHeader.version == SEQUENCE_VERSION_v5) {
             // Free existing stuff
             ASSERT(_patternItems == NULL);
-            // Then read in and store the stock info
-            //            _pixelCount = patternHeader.pixelCount;
             
-            // TODO: I could eliminate several variables and just store these
             _numberOfPatternItems = patternHeader.patternCount;
             m_shouldIgnoreButtonClickWhenTimed = patternHeader.ignoreButtonForTimedPatterns;
             
-            ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v0); // MAKE SURE IT IS RIGHT..
+            ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v5); // MAKE SURE IT IS RIGHT..
             DEBUG_PRINTF("now reading %d items, headerSize: %d\r\n", _numberOfPatternItems, sizeof(CDPatternItemHeader));
             
             // After the header each item follows
@@ -361,21 +363,17 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
                 } else {
                     ASSERT(_patternItems[i].duration > 0);
                     // After the header, is the (optional) image data
-                    uint32_t dataLength = _patternItems[i].dataLength;
-                    if (dataLength > 0) {
-                        DEBUG_PRINTF("we have %d data\r\n", dataLength);
-                        // Read in the data that is following the header, and put it in the data pointer...
-                        // 65536 kb of ram..more than 20,000 pixels would overflow...which i'm now hitting w/larger images. darn it..i have to chunk these and dynamically load each one ;(
-                        _patternItems[i].dataOffset = sequenceFile.curPosition();
-                        //                        _patternItems[i].dataFilename = filename; // idiot..this points to stuff on the stack now!
-                        //                _patternItems[i].data = (uint8_t *)malloc(sizeof(uint8_t) * dataLength);
-                        //                sequenceFile.readBytes((char*)_patternItems[i].data, dataLength);
-                        // seek past the data
-                        sequenceFile.seekCur(dataLength);
+                    
+                    // Read in the filename, if it is there..
+                    uint32_t filenameLength = _patternItems[i].filenameLength; // We use a union, so we have to save the length first
+                    if (filenameLength > 0) {
+                        ASSERT(filenameLength <= MAX_PATH);
+                        size_t filenameSize = sizeof(char) * filenameLength + 1; // Space for the name plus one for the NULL
+                        _patternItems[i].filename = (char*)malloc(filenameSize);
+                        // Read into the filename buffer we allocated
+                        sequenceFile.read(_patternItems[i].filename, filenameSize);
                     } else {
-                        // data pointer should always be NULL
-                        _patternItems[i].dataOffset = 0;
-                        //                        _patternItems[i].dataFilename = NULL;
+                        _patternItems[i].filename = NULL; //
                     }
                 }
             }
@@ -584,10 +582,10 @@ static CDPatternFileInfo *_findInfoWithName(CDPatternFileInfo *info, const char 
     return NULL;
 }
 
-void CWPatternSequenceManager::setCurrentSequenceWithName(const char *name) {
-    m_currentFileInfo = _findInfoWithName(&m_rootFileInfo, name);
-    loadCurrentSequence();
-}
+//void CWPatternSequenceManager::setCurrentSequenceWithName(const char *name) {
+//    m_currentFileInfo = _findInfoWithName(&m_rootFileInfo, name);
+//    loadCurrentSequence();
+//}
 
 void CWPatternSequenceManager::setSingleItemPatternHeader(CDPatternItemHeader *header) {
 //    m_currentFileInfo = NULL;
@@ -684,8 +682,6 @@ void CWPatternSequenceManager::loadSettings() {
     }
 }
 
-
-
 const char *CWPatternSequenceManager::_getRootDirectory() {
 #if PATTERN_EDITOR
     if (m_baseURL != nil) {
@@ -697,6 +693,20 @@ const char *CWPatternSequenceManager::_getRootDirectory() {
     return g_sequencePath;
 #endif
 }
+
+const char *CWPatternSequenceManager::_getPatternDirectory() {
+#if PATTERN_EDITOR
+    if (m_patternDirectoryURL != nil) {
+        return [m_patternDirectoryURL fileSystemRepresentation];
+    } else {
+        ASSERT(false); // we need it .
+        return "";
+    }
+#else
+    return g_sequencePath;
+#endif
+}
+
 
 static void _setupFileInfo(CDPatternFileInfo *info, CDPatternFileInfo *parent, int indexInParent, uint16_t dirIndex, CDPatternFileType type) {
     info->dirIndex = dirIndex;
@@ -874,9 +884,7 @@ void CWPatternSequenceManager::startCalibration() {
     if (!m_orientation.isCalibrating()) {
         m_orientation.beginCalibration();
         // Override the default sequence to blink
-        m_ledPatterns.setPatternDuration(600);
-        m_ledPatterns.setPatternColor(CRGB::Pink);
-        m_ledPatterns.setPatternType(LEDPatternTypeBlink);
+        makePatternsBlinkColor(CRGB::Pink);
     }
 }
 
@@ -1111,16 +1119,34 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     
 #if SD_CARD_SUPPORT
     if (itemHeader->patternType == LEDPatternTypeBitmap) {
-        if (m_ledPatterns.getBitmap() == NULL){
-            updateLEDPatternBitmapFilename();
-        }
-    } else if (itemHeader->patternType == LEDPatternTypeImageLinearFade || itemHeader->patternType == LEDPatternTypeImageEntireStrip) {
+        // The filename is the bitmap we are set to play back
         char fullFilenamePath[MAX_PATH];
         _getFullpathName(_getRootDirectory(), m_currentFileInfo, fullFilenamePath, MAX_PATH);
-        m_ledPatterns.setDataInfo(fullFilenamePath, itemHeader->dataLength); // datainfo retains the memory
-        m_ledPatterns.setBitmapFilename(NULL);
+        m_ledPatterns.setBitmapFilename(fullFilenamePath);
+        
+        // If the bitmap was invalid, then we flip to a flashing sequence
+        if (m_ledPatterns.getBitmap() == NULL || !m_ledPatterns.getBitmap()->getIsValid()) {
+            // Invalid bitmap; flash magenta
+            makePatternsBlinkColor(CRGB::DarkMagenta);
+        }
+    } else if (itemHeader->patternType == LEDPatternTypeImageLinearFade || itemHeader->patternType == LEDPatternTypeImageEntireStrip) {
+        
+        // Make sure we have a filename!
+        if (itemHeader->filename) {
+            char fullFilenamePath[MAX_PATH];
+            _appendFilename(_getPatternDirectory(), itemHeader->filename, fullFilenamePath, MAX_PATH);
+            m_ledPatterns.setBitmapFilename(fullFilenamePath);
+            
+            // Check if it is valid..
+            if (m_ledPatterns.getBitmap() == NULL || !m_ledPatterns.getBitmap()->getIsValid()) {
+                // Invalid bitmap; flash magenta
+                makePatternsBlinkColor(CRGB::DarkMagenta);
+            }
+        } else {
+            // programming or data error, no filename
+            makePatternsBlinkColor(CRGB::DarkMagenta);
+        }
     } else {
-        m_ledPatterns.setDataInfo(NULL, 0);
         m_ledPatterns.setBitmapFilename(NULL);
     }
 #endif
