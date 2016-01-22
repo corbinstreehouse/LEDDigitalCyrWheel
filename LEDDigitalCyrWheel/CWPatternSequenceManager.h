@@ -117,7 +117,8 @@ private:
     void loadFileInfo(CDPatternFileInfo *fileInfo); // Divies to the appropriate method below
     void loadAsSequenceFileInfo(CDPatternFileInfo *fileInfo);
     void loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo);
-    
+    void loadAsSequenceFromFatFile(FatFile *sequenceFile);
+
     void updateBrightness();
     const char *_getRootDirectory();
     const char *_getPatternDirectory();
@@ -239,6 +240,8 @@ public:
     uint32_t getNumberOfPatternItems() { return _numberOfPatternItems; }
     uint32_t getCurrentPatternItemIndex() { return _currentPatternItemIndex; }
     CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &_patternItems[index]; }
+
+    void loadSequenceInMemoryFromFatFile(FatFile *sequenceFile);
 
 #if PATTERN_EDITOR
     CDPatternItemHeader *getCurrentPatternItemHeader() {

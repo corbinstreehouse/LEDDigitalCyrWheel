@@ -302,34 +302,14 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
     m_shouldIgnoreButtonClickWhenTimed = false; // This could be made an option that is settable/dynamically changable.
 }
 
-void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInfo) {
-    ASSERT(fileInfo->patternFileType == CDPatternFileTypeSequenceFile);
-    
-    char fullFilenamePath[MAX_PATH];
-    _getFullpathName(_getRootDirectory(), fileInfo, fullFilenamePath, MAX_PATH);
-    
-    DEBUG_PRINTF("  loadAsSequenceFileInfo: %d at %s\r\n", fileInfo->dirIndex, fullFilenamePath);
-    
-    // open the file
-    FatFile sequenceFile = FatFile(fullFilenamePath, O_READ);
-#if DEBUG
-    DEBUG_PRINTF(" OPENED file:");
-    sequenceFile.printName();
-    DEBUG_PRINTLN();
-#endif
-    
-//    if (!sequenceFile.available()) {
-//        sequenceFile.close(); // well, shouldn't be needed
-//        // Try again??? Frequently I have to try twice.. this is stupid, but the SD card isn't consistent
-//        sequenceFile = SD.open(fullFilenamePath);
-//        DEBUG_PRINTF(" try again!! file: %s\r\n", sequenceFile.name());
-//    }
-    
+
+void CWPatternSequenceManager::loadAsSequenceFromFatFile(FatFile *sequenceFile) {
+    freePatternItems();
     // This is reading the file format I created..
     // Header first
     CDPatternSequenceHeader patternHeader;
-    if (sequenceFile.available()) {
-        sequenceFile.read((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
+    if (sequenceFile->available()) {
+        sequenceFile->read((char*)&patternHeader, sizeof(CDPatternSequenceHeader));
     } else {
         bzero(&patternHeader, sizeof(CDPatternSequenceHeader));
     }
@@ -352,7 +332,7 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
             
             for (int i = 0; i < _numberOfPatternItems; i++ ){
                 DEBUG_PRINTF("reading item %d\r\n", i);
-                sequenceFile.read((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
+                sequenceFile->read((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
                 DEBUG_PRINTF("Header, type: %d, duration: %d, patternDuration %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].patternDuration);
                 // Verify it
                 bool validData = _patternItems[i].patternType >= LEDPatternTypeMin && _patternItems[i].patternType < LEDPatternTypeMax;
@@ -371,7 +351,7 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
                         size_t filenameSize = sizeof(char) * filenameLength + 1; // Space for the name plus one for the NULL
                         _patternItems[i].filename = (char*)malloc(filenameSize);
                         // Read into the filename buffer we allocated
-                        sequenceFile.read(_patternItems[i].filename, filenameSize);
+                        sequenceFile->read(_patternItems[i].filename, filenameSize);
                     } else {
                         _patternItems[i].filename = NULL; //
                     }
@@ -386,9 +366,35 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
         // Bad data...flash yellow
         makeSequenceFlashColor(CRGB::Yellow);
     }
+}
+
+void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInfo) {
+    ASSERT(fileInfo->patternFileType == CDPatternFileTypeSequenceFile);
+    
+    char fullFilenamePath[MAX_PATH];
+    _getFullpathName(_getRootDirectory(), fileInfo, fullFilenamePath, MAX_PATH);
+    
+    DEBUG_PRINTF("  loadAsSequenceFileInfo: %d at %s\r\n", fileInfo->dirIndex, fullFilenamePath);
+    
+    // open the file
+    FatFile sequenceFile = FatFile(fullFilenamePath, O_READ);
+#if DEBUG
+    DEBUG_PRINTF(" OPENED file:");
+    sequenceFile.printName();
+    DEBUG_PRINTLN();
+#endif
+
+    loadAsSequenceFromFatFile(&sequenceFile);
     
     sequenceFile.close();
 }
+
+void CWPatternSequenceManager::loadSequenceInMemoryFromFatFile(FatFile *sequenceFile) {
+    loadAsSequenceFromFatFile(sequenceFile);
+    sendWheelChanged(CDWheelChangeReasonSequenceChanged);
+    firstPatternItem();
+}
+
 
 void CWPatternSequenceManager::loadFileInfo(CDPatternFileInfo *fileInfo) {
     ASSERT(fileInfo != NULL);
