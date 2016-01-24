@@ -54,6 +54,7 @@ static CDPatternItemHeader g_defaultBitmapHeader = {
 CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH), m_changeHandler(NULL), _patternItems(NULL), _numberOfPatternItems(0)
 {
     bzero(&m_rootFileInfo, sizeof(CDPatternFileInfo));
+    m_currentPatternItemIndex = -1;
     m_currentFileInfo = NULL;
     m_shouldIgnoreButtonClickWhenTimed = true; // TODO: make this an option per sequence...
     ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v5); // make sure I don't screw stuff up by chaning the size and not updating things again
@@ -129,7 +130,7 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     
     int i = 0;
     for (int p = LEDPatternTypeMin; p < LEDPatternTypeMax; p++) {
-        if (p == LEDPatternTypeDoNothing || p == LEDPatternTypeFadeIn || p == LEDPatternTypeImageLinearFade || p == LEDPatternTypeImageEntireStrip || p == LEDPatternTypeCrossfade) {
+        if (p == LEDPatternTypeDoNothing || p == LEDPatternTypeFadeIn || p == LEDPatternTypeImageReferencedBitmap || p == LEDPatternTypeImageEntireStrip_UNUSED) {
             continue; // skip a few
         }
         bzero(&_patternItems[i], sizeof(CDPatternItemHeader));
@@ -211,7 +212,7 @@ void CWPatternSequenceManager::makeSequenceFlashColor(CRGB color) {
     _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
     _patternItems[0] = makeFlashPatternItem(color);
 
-    _currentPatternItemIndex = 0;
+    m_currentPatternItemIndex = 0;
 }
 
 // Almost the same as the above..
@@ -390,6 +391,7 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
 }
 
 void CWPatternSequenceManager::loadSequenceInMemoryFromFatFile(FatFile *sequenceFile) {
+    m_currentPatternItemIndex = -1; // Set this first so that the sendWheelChanged doesn't allow the caller to acccess anything
     loadAsSequenceFromFatFile(sequenceFile);
     sendWheelChanged(CDWheelChangeReasonSequenceChanged);
     firstPatternItem();
@@ -753,90 +755,133 @@ void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *pa
 #undef STACK_BUFFER_SIZE
         DEBUG_PRINTF("loadPatternFileInfoChildren: %s\r\n", filenameBuffer);
         
-        FatFile directoryFile = FatFile(filenameBuffer, O_READ);
  
         // #define SHORT_FILENAME_LENGTH 13 // 12 + 1 for NULL, and needs to be 256 or so for the simulator!!
 //        char shortFilenameBuffer[SHORT_FILENAME_LENGTH]; // 8.3 Short file name (SFN)
         char *shortFilenameBuffer = filenameBuffer; // reuse the same buffer for now. NOTE: This must be larger than 13 for the sim, which needs the full path stored!!
 
-        CDPatternFileInfo *potentialChildren = NULL;
+        CDPatternFileInfo *children = NULL;
         int potentialChildrenSize = 0;
 #define CHILDREN_GROW_SIZE 16 // 16 entries at a time. too much? extra memory?
         int childCount = 0;
 
-        FatFile file;
-        while (file.openNext(&directoryFile, O_READ)) {
-            CDPatternFileType patternFileType = CDPatternFileTypeUnknown;
-            if (file.isHidden()) {
-                // Ignore hidden files
-            } else if (file.isDir()) {
-                patternFileType = CDPatternFileTypeDirectory;
-            } else {
-                // Record it..don't record the type! figure that out when we load it!!
-                if (file.getSFN(shortFilenameBuffer)) {
-                    char *ext = getExtension(shortFilenameBuffer);
-                    if (ext) {
-                        // strcasecmp available??
-                        if (strcasecmp(ext, SEQUENCE_FILE_EXTENSION) == 0) {
-                            patternFileType = CDPatternFileTypeSequenceFile;
-                        } else if (strcasecmp(ext, BITMAP_FILE_EXTENSION) == 0) {
-                            patternFileType = CDPatternFileTypeBitmapImage;
+        bool foundPatternFile = false;
+        {
+            FatFile directoryFile = FatFile(filenameBuffer, O_READ);
+            FatFile file;
+            while (file.openNext(&directoryFile, O_READ)) {
+                CDPatternFileType patternFileType = CDPatternFileTypeUnknown;
+                if (file.isHidden()) {
+                    // Ignore hidden files
+                } else if (file.isDir()) {
+                    patternFileType = CDPatternFileTypeDirectory;
+                } else {
+                    if (file.getSFN(shortFilenameBuffer)) {
+                        char *ext = getExtension(shortFilenameBuffer);
+                        if (ext) {
+                            if (strcasecmp(ext, SEQUENCE_FILE_EXTENSION) == 0) {
+                                patternFileType = CDPatternFileTypeSequenceFile;
+                                foundPatternFile = true;
+                            } else if (strcasecmp(ext, BITMAP_FILE_EXTENSION) == 0) {
+                                patternFileType = CDPatternFileTypeBitmapImage;
+                            }
                         }
                     }
                 }
-            }
-            
-            if (patternFileType != CDPatternFileTypeUnknown) {
-#if DEBUG
-                DEBUG_PRINTF("Found file/folder: ");
-                file.printName();
-                DEBUG_PRINTLN("");
-#endif
+                
+                if (patternFileType != CDPatternFileTypeUnknown) {
+    #if DEBUG
+//                    DEBUG_PRINTF("Found file/folder: ");
+                    file.printName();
+                    DEBUG_PRINTLN("");
+    #endif
 
-                // Save it!
-                if (potentialChildren == NULL) {
-                    potentialChildrenSize = CHILDREN_GROW_SIZE;
-                    potentialChildren = (CDPatternFileInfo *)malloc(sizeof(CDPatternFileInfo) * potentialChildrenSize);
-                } else if (childCount >= potentialChildrenSize) {
-                    DEBUG_PRINTF("reallocing children, childCount: %d, free: %d\r\n", childCount, SdFatUtil::FreeRam());
-                    potentialChildrenSize += CHILDREN_GROW_SIZE;
-                    potentialChildren = (CDPatternFileInfo *)realloc(potentialChildren, sizeof(CDPatternFileInfo) * potentialChildrenSize);
-                    DEBUG_PRINTF("  -- done children, childCount: %d, free: %d\r\n", childCount, SdFatUtil::FreeRam());
+                    // Save it!
+                    if (children == NULL) {
+                        potentialChildrenSize = CHILDREN_GROW_SIZE;
+                        children = (CDPatternFileInfo *)malloc(sizeof(CDPatternFileInfo) * potentialChildrenSize);
+                    } else if (childCount >= potentialChildrenSize) {
+                        DEBUG_PRINTF("reallocing children, childCount: %d, free: %d\r\n", childCount, SdFatUtil::FreeRam());
+                        potentialChildrenSize += CHILDREN_GROW_SIZE;
+                        children = (CDPatternFileInfo *)realloc(children, sizeof(CDPatternFileInfo) * potentialChildrenSize);
+                        DEBUG_PRINTF("  -- done children, childCount: %d, free: %d\r\n", childCount, SdFatUtil::FreeRam());
+                    }
+                    _setupFileInfo(&children[childCount], parent, childCount, file.dirIndex(), patternFileType);
+
+                    childCount++;
                 }
-                _setupFileInfo(&potentialChildren[childCount], parent, childCount, file.dirIndex(), patternFileType);
-
-                childCount++;
+                file.close();
             }
-            file.close();
+            directoryFile.close();
         }
+        
         
         DEBUG_PRINTF("Found %d sequences/files/dirs on SD Card\r\n", childCount);
 
         // Add one for the default sequence
         if (isRoot) {
+            // Sort it so the patterns are at the start
+            if (foundPatternFile) {
+                bool didAMove = false;
+                for (int i = 0; i < childCount; i++) {
+                    // We want sequence files at the start
+                    if (children[i].patternFileType == CDPatternFileTypeSequenceFile) {
+                        continue; // It is good..
+                    } else {
+                        // Not a sequence file; if there are any sequence files after us, move them before us.
+                        bool done = true;
+                        for (int j = i + 1; j < childCount; j++) {
+                            if (children[j].patternFileType == CDPatternFileTypeSequenceFile) {
+                                // We found one..we want to swap it to where i is located and move everything starting at i to j one to the right.
+                                CDPatternFileInfo tmp = children[j];
+                                // Move them one to the right; this overrites the item at j that is saved
+                                memmove(&children[i+1], &children[i], (j - i)*sizeof(CDPatternFileInfo));
+                                // Now put j in this spot
+                                children[i] = tmp;
+                                // i is now good; we can repeat again...
+                                done = false;
+                                didAMove = true;
+                                break;
+                            }
+                        }
+                        if (done) {
+                            break; // We hit the end of the array and didn't move so we are done.
+                        }
+                    }
+                }
+                // Fixup the indexes in the parent with another pass
+                if (didAMove) {
+                    for (int i = 0; i < childCount; i++) {
+                        children[i].indexInParent = i;
+                    }
+                }
+            }
+            
+            
             // Make space for it, and set it up
-            if (potentialChildren == NULL) {
+            if (children == NULL) {
                 potentialChildrenSize = 1;
-                potentialChildren = (CDPatternFileInfo *)malloc(sizeof(CDPatternFileInfo) * potentialChildrenSize);
+                children = (CDPatternFileInfo *)malloc(sizeof(CDPatternFileInfo) * potentialChildrenSize);
             } else if (childCount >= potentialChildrenSize) {
                 potentialChildrenSize += 1;
-                potentialChildren = (CDPatternFileInfo *)realloc(potentialChildren, sizeof(CDPatternFileInfo) * potentialChildrenSize);
+                children = (CDPatternFileInfo *)realloc(children, sizeof(CDPatternFileInfo) * potentialChildrenSize);
             }
             // setup the default item for the root item
-            _setupFileInfo(&potentialChildren[childCount], parent, childCount, -1/*not used*/, CDPatternFileTypeDefaultSequence);
+            _setupFileInfo(&children[childCount], parent, childCount, -1/*not used*/, CDPatternFileTypeDefaultSequence);
             childCount++;
+            
+            // Sort so that we have pattern files at the start before folders..
         }
         
         freePatternFileInfoChildren(parent);
         // realloc array to save memory if we have a lot of extra space.. I'm not sure if this is worth it..
-        if (potentialChildren && childCount <= (potentialChildrenSize /*+2*/)) {
-            potentialChildren = (CDPatternFileInfo *)realloc(potentialChildren, sizeof(CDPatternFileInfo) * childCount);
+        if (children && childCount <= (potentialChildrenSize /*+2*/)) {
+            children = (CDPatternFileInfo *)realloc(children, sizeof(CDPatternFileInfo) * childCount);
         }
         
-        parent->children = potentialChildren;
+        parent->children = children;
         parent->numberOfChildren = childCount;
         
-        directoryFile.close();
     } else if (isRoot) {
         // Add one child..for the default sequence
         parent->numberOfChildren = 1;
@@ -1013,7 +1058,7 @@ void CWPatternSequenceManager::process() {
     
     // This updates how much time has passed since the pattern started and how many full intervals have run through.
     // See if we should go to the next pattern
-    CDPatternItemHeader *itemHeader = &_patternItems[_currentPatternItemIndex];
+    CDPatternItemHeader *itemHeader = &_patternItems[m_currentPatternItemIndex];
     // See if we should go to the next pattern if enough time passed
     if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
         // subtract out how much time has passed from our initial pattern, and when we actually started the first timed pattern. This gives more accurate timings.
@@ -1067,17 +1112,17 @@ void CWPatternSequenceManager::setLowBatteryWarning() {
 }
 
 void CWPatternSequenceManager::firstPatternItem() {
-    _currentPatternItemIndex = 0;
+    m_currentPatternItemIndex = 0;
     loadCurrentPatternItem();
 }
 
 void CWPatternSequenceManager::priorPatternItem() {
-    _currentPatternItemIndex--;
+    m_currentPatternItemIndex--;
     loadCurrentPatternItem();
 }
 
 void CWPatternSequenceManager::nextPatternItem() {
-    _currentPatternItemIndex++;
+    m_currentPatternItemIndex++;
     loadCurrentPatternItem();
 }
 
@@ -1085,18 +1130,18 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     ASSERT(_numberOfPatternItems > 0);
     
     // Ensure we always have good data
-    if (_currentPatternItemIndex < 0) {
-        _currentPatternItemIndex = _numberOfPatternItems - 1;
-    } else if (_currentPatternItemIndex >= _numberOfPatternItems) {
+    if (m_currentPatternItemIndex < 0) {
+        m_currentPatternItemIndex = _numberOfPatternItems - 1;
+    } else if (m_currentPatternItemIndex >= _numberOfPatternItems) {
         // Loop around
-        _currentPatternItemIndex = 0;
+        m_currentPatternItemIndex = 0;
     }
     
     CDPatternItemHeader *itemHeader = getCurrentItemHeader();
     // if we are the first timed pattern, then reset m_timedPatternStartTime and how many timed patterns have gone before us
     if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
         // We are the first timed one, or the only one, then we have to reset everything
-        if (_currentPatternItemIndex == 0 || _numberOfPatternItems == 1) {
+        if (m_currentPatternItemIndex == 0 || _numberOfPatternItems == 1) {
             resetStartingTime();
         } else if (getPreviousItemHeader()->patternEndCondition != CDPatternEndConditionAfterDuration) {
             // The last one was NOT timed, so we need to reset, as this is the first timed pattern after a button click, and all timed ones need to go off the start of this one so we get accurate full length timing
@@ -1111,14 +1156,21 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
             }
         }
         
-    } else if (_currentPatternItemIndex == 0) {
+    } else if (m_currentPatternItemIndex == 0) {
         resetStartingTime();
     }
     
     // Reset the stuff based on the new header
     m_ledPatterns.setPatternType(itemHeader->patternType);
-    // Migration help..
-    m_ledPatterns.setPatternDuration(itemHeader->patternDuration);
+    
+    // For some, we want the duration to be equal to the item's entire run/length
+    if (LEDPatterns::PatternDurationShouldBeEqualToSegmentDuration(itemHeader->patternType)) {
+        m_ledPatterns.setPatternDuration(itemHeader->patternDuration);
+    } else {
+        // The duration affects the "speed" about how fast it repeats
+        m_ledPatterns.setPatternDuration(itemHeader->patternDuration);
+    }
+    
     m_ledPatterns.setPatternColor(itemHeader->color);
     m_ledPatterns.setPatternOptions(itemHeader->patternOptions);
     // Assume it is the current file..
@@ -1135,7 +1187,7 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
             // Invalid bitmap; flash magenta
             makePatternsBlinkColor(CRGB::DarkMagenta);
         }
-    } else if (itemHeader->patternType == LEDPatternTypeImageLinearFade || itemHeader->patternType == LEDPatternTypeImageEntireStrip) {
+    } else if (itemHeader->patternType == LEDPatternTypeImageReferencedBitmap || itemHeader->patternType == LEDPatternTypeImageEntireStrip_UNUSED) {
         
         // Make sure we have a filename!
         if (itemHeader->filename) {
@@ -1159,7 +1211,7 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     
     
 #if DEBUG
-    DEBUG_PRINTF("--------- loadCurrentPatternItem (patternType: %d): %d of %d, %d long\r\n", itemHeader->patternType, _currentPatternItemIndex + 1, _numberOfPatternItems, itemHeader->duration);
+    DEBUG_PRINTF("--------- loadCurrentPatternItem (patternType: %d): %d of %d, dur: %d patDur: %d\r\n", itemHeader->patternType, m_currentPatternItemIndex + 1, _numberOfPatternItems, itemHeader->duration, itemHeader->patternDuration);
 #endif
     
     // Crossfade patterns need to know the next one!

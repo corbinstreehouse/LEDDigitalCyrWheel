@@ -76,8 +76,8 @@ private:
     CDPatternItemHeader *_patternItems;
     
     uint32_t _numberOfPatternItems;
-    // Current pattern item information
-    int _currentPatternItemIndex;
+    // Current pattern item; -1 means nothing is current at the time
+    int32_t m_currentPatternItemIndex;
     
     uint8_t m_brightness;
     
@@ -125,12 +125,12 @@ private:
     
     
     inline CDPatternItemHeader *getCurrentItemHeader() {
-        return &_patternItems[_currentPatternItemIndex];
+        return &_patternItems[m_currentPatternItemIndex];
     }
     
     // for crossfade
     inline CDPatternItemHeader *getNextItemHeader() {
-        int tmp = _currentPatternItemIndex;
+        int tmp = m_currentPatternItemIndex;
         tmp++;
         if (tmp >= _numberOfPatternItems) {
             tmp = 0;
@@ -139,7 +139,7 @@ private:
     }
     
     inline CDPatternItemHeader *getPreviousItemHeader() {
-        int tmp = _currentPatternItemIndex;
+        int tmp = m_currentPatternItemIndex;
         tmp--;
         if (tmp < 0) {
             tmp = _numberOfPatternItems - 1;
@@ -238,15 +238,15 @@ public:
     uint32_t getPatternTimePassedFromFirstTimedPattern() { return millis() - m_timedPatternStartTime; };
 
     uint32_t getNumberOfPatternItems() { return _numberOfPatternItems; }
-    uint32_t getCurrentPatternItemIndex() { return _currentPatternItemIndex; }
+    int32_t getCurrentPatternItemIndex() { return m_currentPatternItemIndex; } // -1 means nothing is current
     CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &_patternItems[index]; }
 
     void loadSequenceInMemoryFromFatFile(FatFile *sequenceFile);
 
 #if PATTERN_EDITOR
     CDPatternItemHeader *getCurrentPatternItemHeader() {
-        if (_currentPatternItemIndex >= 0 && _currentPatternItemIndex < _numberOfPatternItems) {
-            return &_patternItems[_currentPatternItemIndex];
+        if (m_currentPatternItemIndex >= 0 && m_currentPatternItemIndex < _numberOfPatternItems) {
+            return &_patternItems[m_currentPatternItemIndex];
         } else {
             return NULL;
         }
