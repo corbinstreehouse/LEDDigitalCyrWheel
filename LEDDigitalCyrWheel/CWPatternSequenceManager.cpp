@@ -1127,7 +1127,14 @@ void CWPatternSequenceManager::nextPatternItem() {
 }
 
 void CWPatternSequenceManager::loadCurrentPatternItem() {
-    ASSERT(_numberOfPatternItems > 0);
+    // The simulator can have 0 items. We should blink if we aren't in the sim
+    if (_numberOfPatternItems == 0) {
+        m_currentPatternItemIndex = -1;
+#if 1 //!PATTERN_SIMULATOR
+        makePatternsBlinkColor(CRGB::Red);
+#endif
+        return;
+    }
     
     // Ensure we always have good data
     if (m_currentPatternItemIndex < 0) {
@@ -1165,7 +1172,7 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     
     // For some, we want the duration to be equal to the item's entire run/length
     if (LEDPatterns::PatternDurationShouldBeEqualToSegmentDuration(itemHeader->patternType)) {
-        m_ledPatterns.setPatternDuration(itemHeader->patternDuration);
+        m_ledPatterns.setPatternDuration(itemHeader->duration);
     } else {
         // The duration affects the "speed" about how fast it repeats
         m_ledPatterns.setPatternDuration(itemHeader->patternDuration);
