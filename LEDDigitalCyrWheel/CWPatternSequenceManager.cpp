@@ -122,14 +122,14 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     DEBUG_PRINTLN("       --- loading default sequence because the name was NULL --- ");
     freePatternItems();
 
-    _numberOfPatternItems = LEDPatternTypeMax;
+    _numberOfPatternItems = LEDPatternTypeCount;
     m_shouldIgnoreButtonClickWhenTimed = false;
     
     // After the header each item follows
     _patternItems = (CDPatternItemHeader *)malloc(_numberOfPatternItems * sizeof(CDPatternItemHeader));
     
     int i = 0;
-    for (int p = LEDPatternTypeMin; p < LEDPatternTypeMax; p++) {
+    for (int p = LEDPatternTypeMin; p < LEDPatternTypeCount; p++) {
         if (p == LEDPatternTypeDoNothing || p == LEDPatternTypeFadeIn || p == LEDPatternTypeImageReferencedBitmap || p == LEDPatternTypeImageEntireStrip_UNUSED) {
             continue; // skip a few
         }
@@ -336,7 +336,7 @@ void CWPatternSequenceManager::loadAsSequenceFromFatFile(FatFile *sequenceFile) 
                 sequenceFile->read((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
                 DEBUG_PRINTF("Header, type: %d, duration: %d, patternDuration %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].patternDuration);
                 // Verify it
-                bool validData = _patternItems[i].patternType >= LEDPatternTypeMin && _patternItems[i].patternType < LEDPatternTypeMax;
+                bool validData = _patternItems[i].patternType >= LEDPatternTypeMin && _patternItems[i].patternType < LEDPatternTypeCount;
                 ASSERT(validData);
                 if (!validData) {
                     // fill it in with something..
