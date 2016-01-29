@@ -41,16 +41,6 @@ static char *getExtension(char *filename) {
     }
 }
 
-static CDPatternItemHeader g_defaultBitmapHeader = {
-    .patternType = LEDPatternTypeBitmap, // Easy testing: LEDPatternTypeTheaterChase;
-    .color = CRGB::Red,
-    .duration = 50,
-    .patternDuration = 0, // as fast as it can go.. 35;
-    .patternEndCondition = CDPatternEndConditionOnButtonClick,
-    .patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, false)),
-    .filename = NULL
-};
-
 CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH), m_changeHandler(NULL), _patternItems(NULL), _numberOfPatternItems(0)
 {
     bzero(&m_rootFileInfo, sizeof(CDPatternFileInfo));
@@ -299,7 +289,16 @@ static void _appendFilename(const char *rootDirName, const char *filename, char 
 }
 
 void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo) {
-    setSingleItemPatternHeader(&g_defaultBitmapHeader);
+    CDPatternItemHeader result;
+    result.patternType = LEDPatternTypeBitmap; // Easy testing: LEDPatternTypeTheaterChase;
+    result.color = CRGB::Red;
+    result.duration = 50;
+    result.patternDuration = 0; // as fast as it can go.. 35;
+    result.patternEndCondition = CDPatternEndConditionOnButtonClick;
+    result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, false));
+    result.filename = NULL;
+    
+    setSingleItemPatternHeader(&result);
     m_shouldIgnoreButtonClickWhenTimed = false; // This could be made an option that is settable/dynamically changable.
 }
 
@@ -643,9 +642,9 @@ bool CWPatternSequenceManager::initSDCard() {
 #endif
 //    pinMode(SD_CARD_CS_PIN, OUTPUT); // Any pin can be used as SS, but it must remain low
 //    digitalWrite(SD_CARD_CS_PIN, LOW);
-//    delay(10); // sd card is flipping touchy!!
-//    bool result = SD.begin(SPI_HALF_SPEED, SD_CARD_CS_PIN); //  was SPI_FULL_SPEED
-    bool result = m_sd.begin(SD_CARD_CS_PIN, SPI_FULL_SPEED); //  was SPI_FULL_SPEED
+// ^ done way earlier
+    
+    bool result = m_sd.begin(SD_CARD_CS_PIN, SPI_FULL_SPEED); //  was SPI_HALF_SPEED
     
     int i = 0;
 #if DEBUG
@@ -822,6 +821,7 @@ void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *pa
         if (isRoot) {
             // Sort it so the patterns are at the start
             if (foundPatternFile) {
+                DEBUG_PRINTF("Sorting, because found a pattern file\r\n", childCount);
                 bool didAMove = false;
                 for (int i = 0; i < childCount; i++) {
                     // We want sequence files at the start
@@ -856,7 +856,8 @@ void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *pa
                     }
                 }
             }
-            
+            DEBUG_PRINTF("Okay, sorted\r\n", childCount);
+
             
             // Make space for it, and set it up
             if (children == NULL) {
@@ -881,7 +882,8 @@ void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *pa
         
         parent->children = children;
         parent->numberOfChildren = childCount;
-        
+        DEBUG_PRINTF("Done loading\r\n", childCount);
+
     } else if (isRoot) {
         // Add one child..for the default sequence
         parent->numberOfChildren = 1;
@@ -902,15 +904,27 @@ void CWPatternSequenceManager::init() {
     DEBUG_PRINTLN("init orientation");
     initOrientation();
 #endif
-    DEBUG_PRINTLN("init strip");
-    initStrip();
-    DEBUG_PRINTLN("done init strip, starting to init SD Card");
     
-#if SD_CARD_SUPPORT
+#if DEBUG
+//    delay(1000);
+#endif
+    
+#if  SD_CARD_SUPPORT
     m_sdCardWorks = initSDCard();
     DEBUG_PRINTLN("done init sd card");
 #else
     m_sdCardWorks = false;
+#endif
+
+    // Not ideall, but init the strip after the SD card to avoid conflicts..
+    DEBUG_PRINTLN("init strip");
+    initStrip();
+    DEBUG_PRINTLN("done init strip, starting to init SD Card");
+
+
+    
+#if DEBUG
+//    delay(1000);
 #endif
     
     loadSequencesFromRootDirectory();

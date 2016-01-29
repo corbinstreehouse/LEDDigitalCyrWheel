@@ -5919,6 +5919,7 @@
 					"-D__arm__",
 					"-DTEENSYDUINO",
 					"-DKINETISK",
+					"-DF_CPU=20000000",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -5931,6 +5932,7 @@
 					"-D__arm__",
 					"-DTEENSYDUINO",
 					"-DKINETISK",
+					"-DF_CPU=20000000",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

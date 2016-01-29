@@ -7,6 +7,7 @@
 //
 
 #include "CyrWheelLEDPatterns.h"
+#include "LEDCommon.h"
 
 #define USE_FAST_LED 1
 #define USE_MANUAL_SPI 0
@@ -126,7 +127,7 @@ void CyrWheelLEDPatterns::internalShow() {
 #if USE_FAST_LED
     _spiBegin();
     FastLED.show();
-    Serial.printf("FPS: %d\r\n", FastLED.getFPS());
+//    Serial.printf("FPS: %d\r\n", FastLED.getFPS());
     _spiEnd();
 #elif USE_MANUAL_SPI
     _spiBegin();
@@ -213,7 +214,8 @@ void CyrWheelLEDPatterns::show2() {
     
 }
 void CyrWheelLEDPatterns::begin() {
-#if DEBUG
-    Serial.print("CyrWheelLEDPatterns::begin\r\n");
-#endif
+    DEBUG_PRINTLN("CyrWheelLEDPatterns::begin\r\n");
+    // start all off..
+    fill_solid(m_leds, getLEDCount(), CRGB::Black);
+    internalShow();
 }

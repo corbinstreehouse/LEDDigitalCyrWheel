@@ -40,41 +40,33 @@ typedef struct CRGB {
 
 #endif
 
-// stuff shared with the editor
-
-#if PATTERN_EDITOR
-    #define ENUM_SIZE : int16_t
-#else
-    #define ENUM_SIZE
-#endif
-// TODO: make sure the enum size for the teensy matches
-
-typedef enum ENUM_SIZE {
+typedef CD_ENUM(uint32_t, CDPatternEndCondition) {
     CDPatternEndConditionAfterDuration,
     CDPatternEndConditionOnButtonClick,
-} CDPatternEndCondition;
+};
 
 #define SEQUENCE_VERSION_v5 5
 #define SEQUENCE_VERSION_SIZE 10
 
-#define PATTERN_HEADER_SIZE_v5 28
+#define PATTERN_HEADER_SIZE_v5 36
 #define PATTERN_OPTIONS_SIZE_v5 4
+
+// Okay, going for 32-bit alignment here.. (4 bytes)
 typedef struct  __attribute__((__packed__)) {
-    LEDPatternType patternType; // 2 
+    LEDPatternType patternType; // 4
 
     // time is in milliseconds (ms)
     uint32_t duration; //4
     uint32_t patternDuration; //4 -- not used by all patterns, but how "fast" each interval in the pattern should run if it has some variable in how fast it runs
-    LEDPatternOptions patternOptions; // 4 -- not used by all patterns -- if I change the size, PATTERN_OPTIONS_SIZE_v0 has to be incremnted..
+    LEDPatternOptions patternOptions; // 4 -- not used by all patterns -- if I change the size, PATTERN_OPTIONS_SIZE_v0 has to be incremented..
     
-    CDPatternEndCondition patternEndCondition; //1 (2 on desktop)
-#if !PATTERN_EDITOR
-    char __patternEndConditionBuffer; // buffer because I have it declared as a 16 bits, but the arm compiler doesn't support that..s
-#endif
+    CDPatternEndCondition patternEndCondition; //
     
-    CRGB color; // 3 //
-    uint8_t shouldSetBrightnessByRotationalVelocity:1; //
-    uint8_t __reservedOptions:7; // Required padding, which I use as shared options
+    CRGB color;
+    uint8_t _colorAlignment;
+    
+    uint32_t shouldSetBrightnessByRotationalVelocity:1;
+    uint32_t __reservedOptions:30;
 
     // 8 bytes (64-bit value always for pointers to work out)
     union {
