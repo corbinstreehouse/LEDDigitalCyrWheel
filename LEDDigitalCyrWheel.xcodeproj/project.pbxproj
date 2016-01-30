@@ -1514,7 +1514,7 @@
 		9D684B311C1941690058EFA0 /* SdFatUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdFatUtil.h; sourceTree = "<group>"; };
 		9D684B321C1941690058EFA0 /* SdInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdInfo.h; sourceTree = "<group>"; };
 		9D684B331C1941690058EFA0 /* SdSpi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdSpi.h; sourceTree = "<group>"; };
-		9D684B341C1941690058EFA0 /* SdSpiCard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdSpiCard.cpp; sourceTree = "<group>"; };
+		9D684B341C1941690058EFA0 /* SdSpiCard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; path = SdSpiCard.cpp; sourceTree = "<group>"; tabWidth = 2; };
 		9D684B351C1941690058EFA0 /* SdSpiCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SdSpiCard.h; sourceTree = "<group>"; };
 		9D684B361C1941690058EFA0 /* SdSpiSAM3X.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdSpiSAM3X.cpp; sourceTree = "<group>"; };
 		9D684B371C1941690058EFA0 /* SdSpiSTM32F1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SdSpiSTM32F1.cpp; sourceTree = "<group>"; };
