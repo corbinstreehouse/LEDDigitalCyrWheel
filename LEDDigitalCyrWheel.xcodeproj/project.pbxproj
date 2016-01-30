@@ -1566,6 +1566,7 @@
 		9D8ED2D517C01F7F001E1C06 /* Arduino.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Arduino.mk; sourceTree = "<group>"; };
 		9D8ED2DD17C01F7F001E1C06 /* Step1.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step1.mk; sourceTree = "<group>"; };
 		9D8ED2DE17C01F7F001E1C06 /* Step2.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step2.mk; sourceTree = "<group>"; usesTabs = 1; };
+		9D908D981C5D630500908670 /* LEDPatternType.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = LEDPatternType.h; sourceTree = "<group>"; };
 		9D922F0C17C711630097A027 /* Arduino micro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino micro.xcconfig"; sourceTree = "<group>"; };
 		9DAF744B1C2CD8A200B43F75 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		9DAF744C1C2CD8A200B43F75 /* bitswap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitswap.h; sourceTree = "<group>"; };
@@ -5438,6 +5439,7 @@
 		9DD1E66D193EC47100290878 /* LEDPatterns */ = {
 			isa = PBXGroup;
 			children = (
+				9D908D981C5D630500908670 /* LEDPatternType.h */,
 				9DD1E66F193EC47100290878 /* LEDPatterns.h */,
 				9DD1E66E193EC47100290878 /* LEDPatterns.cpp */,
 				9DD1E671193EC47100290878 /* README.md */,

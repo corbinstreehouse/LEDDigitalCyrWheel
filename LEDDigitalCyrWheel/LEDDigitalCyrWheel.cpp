@@ -123,7 +123,7 @@ void setup() {
 
 #if DEBUG
     #if IGNORE_VOLTAGE
-        // Having this on could be bad..flash red
+        // Having this on could be bad..flash red just to let me know...
         g_sequenceManager.flashThreeTimes(CRGB::Red);
     #else
         g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Red);
@@ -141,9 +141,10 @@ void setup() {
         // Flash the LEDs all red to indicate no card...
         g_sequenceManager.flashThreeTimes(CRGB::Orange);
     }
-    
-    // Start the patterns by loading the first sequence
-    g_sequenceManager.loadFirstSequence();
+
+    // Start the patterns by loading the first sequence, if it didn't work
+    // NOTE: the loading already did this. This just reloads, which is stupid.
+//    g_sequenceManager.loadFirstSequence();
 }
 
 

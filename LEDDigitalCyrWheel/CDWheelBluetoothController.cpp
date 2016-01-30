@@ -100,13 +100,19 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
         return;
     }
     
-    m_manager->setDynamicPatternType(LEDPatternTypeSolidColor, CRGB::Blue);
-    m_manager->process(); // Shows blue while we are loading bluetooth
-
     DEBUG_PRINTLN("initializing bluetooth");
 
     // Ugh, they hardcoded this to wait a second!
     m_initialized = m_ble.begin(VERBOSE_MODE);
+
+    // 1 second post-boot wait; I removed the delay in begin so we can show progress..
+    uint32_t start = millis();
+    while ((millis() - start) < 1000) {
+        m_manager->incBootProgress();
+        delay(100);
+    }
+    
+    m_manager->incBootProgress();
     
     if (!m_initialized) {
         DEBUG_PRINTLN("bluetooth failed to init");
@@ -129,7 +135,10 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
     m_ble.echo(false);
 #endif
     
+    m_manager->incBootProgress();
+    
     if (servicesAreRegistered()) {
+        m_manager->incBootProgress();
         // Attempt to read in existing values for m_wheelServiceID...
         EEPROM.get(BLUETOOTH_EEPROM_WHEEL_SERVICE, m_wheelServiceID);
         EEPROM.get(BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR, m_wheelCommandCharactersticID);
@@ -137,8 +146,11 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
         DEBUG_PRINTF("restored: m_wheelServiceID %d, m_wheelCommandCharactersticID: %d\r\n", m_wheelServiceID, m_wheelCommandCharactersticID);
         
     } else {
-        if (!registerServices()) {
+        bool registered = registerServices();
+        // Show some failure state
+        if (!registered) {
             m_manager->flashThreeTimes(CRGB::BlueViolet);
+            m_manager->incBootProgress();
         }
     }
 }
@@ -246,17 +258,31 @@ bool CDWheelBluetoothController::registerServices() {
     
     DEBUG_PRINTF("  name set; sending clear\r\n");
     m_ble.sendCommandCheckOK(kClearCmd);
-    
+    m_manager->incBootProgress();
+
     // Add the cyr wheel service first
     registerWheelLEDService();
+    m_manager->incBootProgress();
+    
     registerWheelCharacteristics();
+    m_manager->incBootProgress();
+
 
 //    m_ble.sendCommandCheckOK("AT+GAPINTERVALS=16,32,25,500"); // much slower w/these values
     // Lower doesn't help much; getting ~1.17s w/ these values for 1kb:
     m_ble.sendCommandCheckOK("AT+GAPINTERVALS=8,15,25,500"); // This is, actually quite a bit faster...
     m_ble.sendCommandCheckOK("AT+BLEPOWERLEVEL=4"); // Highest transmit power (0 might work well too). Doesn't affect speed, but might affect range.
     
+    m_manager->incBootProgress();
     m_ble.reset();
+    
+    // 1 second delay after reset...(i removed it in BT so we can show progress)
+    uint32_t start = millis();
+    while ((millis() - start) < 1000) {
+        m_manager->incBootProgress();
+        delay(100);
+    }
+    
 
     return m_initialized;
 }

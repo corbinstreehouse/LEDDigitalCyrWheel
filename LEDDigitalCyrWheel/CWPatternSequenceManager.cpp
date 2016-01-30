@@ -679,8 +679,15 @@ bool CWPatternSequenceManager::initStrip() {
 }
 
 void CWPatternSequenceManager::loadSettings() {
+    // initial state burn in ability.. uncomment and run once.
+#if DEBUG
+//    EEPROM.write(EEPROM_SHOULD_SHOW_BOOT_PROGRESS, 1); // burn in initial state??
+#endif
     // Maybe reset to the default if the button is held down?
     m_brightness = EEPROM.read(EEPROM_BRIGHTNESS_ADDRESS);
+
+    // Make sure we don't overflow the bitset
+    m_shouldShowBootProgress = EEPROM.read(EEPROM_SHOULD_SHOW_BOOT_PROGRESS) ? 1 : 0;
     if (m_brightness < MIN_BRIGHTNESS || m_brightness > MAX_BRIGHTNESS) {
         m_brightness = DEFAULT_BRIGHTNESS;
         DEBUG_PRINTF("SAVED BRIGHTNESS setting to default..out of band\r\n");
@@ -688,6 +695,14 @@ void CWPatternSequenceManager::loadSettings() {
         DEBUG_PRINTF("SAVED BRIGHTNESS: %d\r\n", m_brightness);
     }
 }
+
+void CWPatternSequenceManager::setShouldShowBootProgress(bool value) {
+    if (m_shouldShowBootProgress != value) {
+        m_shouldShowBootProgress = value;
+        EEPROM.write(EEPROM_SHOULD_SHOW_BOOT_PROGRESS, m_shouldShowBootProgress ? 1 : 0);
+    }
+}
+
 
 const char *CWPatternSequenceManager::_getRootDirectory() {
 #if PATTERN_EDITOR
@@ -729,7 +744,8 @@ void CWPatternSequenceManager::loadSequencesFromRootDirectory() {
     
     _setupFileInfo(&m_rootFileInfo, NULL, -1, 0, CDPatternFileTypeDirectory);
     loadPatternFileInfoChildren(&m_rootFileInfo);
-    
+    incBootProgress();
+
     // check for the record filename when loading the root
     m_sd.chdir(_getRootDirectory());
     if (m_sd.exists(RECORD_INDICATOR_FILENAME)) {
@@ -894,35 +910,57 @@ void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *pa
         parent->numberOfChildren = 0;
         parent->children = NULL;
     }
+
+
+}
+
+void CWPatternSequenceManager::setupBootProgress() {
+    if (m_shouldShowBootProgress) {
+        m_bootProgress = .01;
+        m_ledPatterns.setBrightness(40);
+    }
+}
+
+void CWPatternSequenceManager::incBootProgress()  {
+    if (m_shouldShowBootProgress) {
+//        DEBUG_PRINTLN(" ... boot ...");
+        m_bootProgress += 0.01;
+        m_ledPatterns.showProgress(m_bootProgress, CRGB::Green);
+    } else {
+//        DEBUG_PRINTLN(" ... boot [no led progress]...");
+    }
 }
 
 void CWPatternSequenceManager::init() {
     DEBUG_PRINTLN("::init");
     m_shouldRecordData = false;
     
+    // Settings need to be loaded before we init the strip (saves/restores brightness)
     loadSettings();
+    
+    DEBUG_PRINTLN("init strip");
+    initStrip();
+    DEBUG_PRINTLN("done init strip, starting to init SD Card");
+    
+    setupBootProgress();
+    
 #if ACCELEROMETER
     DEBUG_PRINTLN("init orientation");
     initOrientation();
 #endif
+    incBootProgress();
     
 #if DEBUG
 //    delay(1000);
 #endif
-    
+
 #if  SD_CARD_SUPPORT
     m_sdCardWorks = initSDCard();
     DEBUG_PRINTLN("done init sd card");
+    incBootProgress();
 #else
     m_sdCardWorks = false;
 #endif
-
-    // Not ideall, but init the strip after the SD card to avoid conflicts..
-    DEBUG_PRINTLN("init strip");
-    initStrip();
-    DEBUG_PRINTLN("done init strip, starting to init SD Card");
-
-
     
 #if DEBUG
 //    delay(1000);
@@ -1093,7 +1131,7 @@ void CWPatternSequenceManager::updateBrightness() {
         m_ledPatterns.setBrightness(64);
     } else {
         CDPatternItemHeader *itemHeader = getCurrentItemHeader();
-        if (itemHeader->shouldSetBrightnessByRotationalVelocity) {
+        if (itemHeader && itemHeader->shouldSetBrightnessByRotationalVelocity) {
             uint8_t brightness = m_orientation.getRotationalVelocityBrightness(m_ledPatterns.getBrightness());
     #if DEBUG
             if (brightness < 10){
@@ -1160,6 +1198,10 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     }
     
     CDPatternItemHeader *itemHeader = getCurrentItemHeader();
+    if (itemHeader == NULL) {
+        // Really bad state
+        makePatternsBlinkColor(CRGB::Red);
+    }
     // if we are the first timed pattern, then reset m_timedPatternStartTime and how many timed patterns have gone before us
     if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
         // We are the first timed one, or the only one, then we have to reset everything

@@ -81,11 +81,14 @@ private:
     
     uint8_t m_brightness;
     
+    float m_bootProgress;
+    
     uint32_t m_shouldRecordData:1;
     uint32_t m_shouldIgnoreButtonClickWhenTimed:1;
     uint32_t m_sdCardWorks:1;
     uint32_t m_lowBattery:1;
-    uint32_t __reserved:27;
+    uint32_t m_shouldShowBootProgress:1;
+    uint32_t __reserved:26;
     
     LED_PATTERNS_CLASS m_ledPatterns;
     CDOrientation m_orientation;
@@ -122,7 +125,6 @@ private:
     void updateBrightness();
     const char *_getRootDirectory();
     const char *_getPatternDirectory();
-    
     
     inline CDPatternItemHeader *getCurrentItemHeader() {
         return &_patternItems[m_currentPatternItemIndex];
@@ -176,7 +178,8 @@ private:
             (*m_changeHandler)(reason, m_changeHandlerData);
         }
     }
-
+    
+    void setupBootProgress();
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
@@ -200,7 +203,8 @@ public:
 //    void setCurrentSequenceWithName(const char *name); // broken..
     
     bool getCardInitPassed() { return m_sdCardWorks; }
-    
+
+    void incBootProgress();
     
     void loadDefaultSequence();
     void loadCurrentSequence(); // loads the default sequence if there is no current one..
@@ -263,6 +267,9 @@ public:
     
     uint8_t getBrightness() { return m_brightness; }
     void setBrightness(uint8_t brightness);
+    
+    bool shouldShowBootProgress() { return m_shouldShowBootProgress; }
+    void setShouldShowBootProgress(bool value);
 
 };
 
