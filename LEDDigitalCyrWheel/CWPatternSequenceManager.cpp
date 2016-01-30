@@ -761,6 +761,7 @@ void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *pa
 
         CDPatternFileInfo *children = NULL;
         int potentialChildrenSize = 0;
+#define INITIAL_CHILDREN_SIZE 16 // 32 entries at a time. too much? extra memory?
 #define CHILDREN_GROW_SIZE 16 // 16 entries at a time. too much? extra memory?
         int childCount = 0;
 
@@ -797,7 +798,7 @@ void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *pa
 
                     // Save it!
                     if (children == NULL) {
-                        potentialChildrenSize = CHILDREN_GROW_SIZE;
+                        potentialChildrenSize = INITIAL_CHILDREN_SIZE;
                         children = (CDPatternFileInfo *)malloc(sizeof(CDPatternFileInfo) * potentialChildrenSize);
                     } else if (childCount >= potentialChildrenSize) {
                         DEBUG_PRINTF("reallocing children, childCount: %d, free: %d\r\n", childCount, SdFatUtil::FreeRam());
