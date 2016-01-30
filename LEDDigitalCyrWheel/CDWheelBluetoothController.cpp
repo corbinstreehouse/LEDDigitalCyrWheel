@@ -29,7 +29,7 @@ CDWheelBluetoothController::CDWheelBluetoothController() : m_ble(BLUETOOTH_CS, B
 
 // Abstract code that isn't going to depend on the BT backend
 void _WheelChangedHandler(CDWheelChangeReason reason, void *data) {
-    DEBUG_PRINTF("wheel changes\r\n");
+    DEBUG_PRINTF("Pinging bluetooth: wheel changes\r\n");
     ((CDWheelBluetoothController*)data)->wheelChanged(reason);
 }
 
@@ -251,18 +251,10 @@ bool CDWheelBluetoothController::registerServices() {
     registerWheelLEDService();
     registerWheelCharacteristics();
 
-    // TODO: register gap intervals. default: 20,100,100,30
-//     Minimum connection interval (in milliseconds) Maximum connection interval (in milliseconds) Advertising interval (in milliseconds) Advertising timeout (in milliseconds)
-    /// SEee https://developer.mbed.org/forum/team-63-Bluetooth-Low-Energy-community/topic/5082/
-    // They recommend to try min 20, max 100, bu tthat is already being used!
-//    m_ble.sendCommandCheckOK("AT+GAPINTERVALS=20,100,100,30"));
-        m_ble.sendCommandCheckOK("AT+GAPINTERVALS=20,40,25,30");
-//
-//    while ( m_ble.readline() ) {
-//        if ( !strcmp(m_ble.buffer, "OK") || !strcmp(m_ble.buffer, "ERROR")  ) break;
-//        SerialDebug.println(m_ble.buffer);
-//    }
-
+//    m_ble.sendCommandCheckOK("AT+GAPINTERVALS=16,32,25,500"); // much slower w/these values
+    // Lower doesn't help much; getting ~1.17s w/ these values for 1kb:
+    m_ble.sendCommandCheckOK("AT+GAPINTERVALS=8,15,25,500"); // This is, actually quite a bit faster...
+    m_ble.sendCommandCheckOK("AT+BLEPOWERLEVEL=4"); // Highest transmit power (0 might work well too). Doesn't affect speed, but might affect range.
     
     m_ble.reset();
 
@@ -321,54 +313,82 @@ bool CDWheelBluetoothController::readChar16BitValue(int index, int16_t *result) 
 }
 
 
-
-
 void CDWheelBluetoothController::process() {
     
     if (!m_initialized) {
         return;
     }
     
+    
     // TODO: check ever X time interval to avoid slowing down other things.
 
-    if (!m_ble.isConnected()) {
-        return;
-    }
+//    m_ble.setTimeout(1);
+    // this alone drops it to 180 fps,
+    // ~400 or so if i don't check connected or values
+    // ~600 if we don't do anything..
+    
+    
+//    if (!m_ble.isConnected()) {
+//        return;
+//    }
+    
+//    return;
+    
+    m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
 
-    int16_t result;
-    if (readChar16BitValue(m_wheelCommandCharactersticID, &result)) {
-        if (result == -1) {
-            // No command set; we set it to -1 initially, and also after we process a command given
-        } else if (result >= CDWheelCommandFirst && result < CDWheelCommandCount) {
-            DEBUG_PRINTF("   command given: %d\r\n", result);
-            // Reset the value to -1
-            CDWheelCommand command = (CDWheelCommand)result;
-            m_manager->processCommand(command);
-            // reset the value, so we stop processing it
-            setCharacteristic16BitValue(m_wheelCommandCharactersticID, -1);
-        } else {
-            // out of band error
-            DEBUG_PRINTF("   bad command number: %d\r\n", result);
-            setCharacteristic16BitValue(m_wheelCommandCharactersticID, -1);
+    /*
+    if (m_ble.available()) {
+        int16_t result;
+        if (readChar16BitValue(m_wheelCommandCharactersticID, &result)) {
+            if (result == -1) {
+                // No command set; we set it to -1 initially, and also after we process a command given
+            } else if (result >= CDWheelCommandFirst && result < CDWheelCommandCount) {
+                DEBUG_PRINTF("   command given: %d\r\n", result);
+                // Reset the value to -1
+                CDWheelCommand command = (CDWheelCommand)result;
+                m_manager->processCommand(command);
+                // reset the value, so we stop processing it
+                setCharacteristic16BitValue(m_wheelCommandCharactersticID, -1);
+            } else {
+                // out of band error
+                DEBUG_PRINTF("   bad command number: %d\r\n", result);
+                setCharacteristic16BitValue(m_wheelCommandCharactersticID, -1);
+            }
+        }
+        
+        if (readChar16BitValue(m_brightnessWriteID, &result)) {
+            m_manager->setBrightness(result);
         }
     }
+     */
     
-    if (readChar16BitValue(m_brightnessWriteID, &result)) {
-        m_manager->setBrightness(result);
-    }
     
 #define BT_FILE_READ_TIMEOUT 500 // ms
+    
+    // quick check..sets IRQ when data is available
+//    m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
+//    if (!m_ble.available()) {
+//        return;
+//    }
+
+    
     m_ble.flush();
+    // slower check...
     m_ble.setMode(BLUEFRUIT_MODE_DATA);
+    
     // TODO: drive the LEDs while we are loading this..
     if (m_ble.available()) {
+        DEBUG_PRINTF("available!\r\n");
+        m_ble.setTimeout(500); // Larger timeout during this period of time..
+        
         int count = 0;
         uint32_t start = millis();
+
         // Read in the size
         int32_t totalBytes = 0;
         int i = 0;
         m_ble.readBytes((char*)&totalBytes, sizeof(totalBytes)); // skanky!
-        
+
 #define bufferSize 1024
         uint8_t buffer[bufferSize];
         
@@ -378,6 +398,7 @@ void CDWheelBluetoothController::process() {
             uint32_t lastReadTime = millis();
             while (sizeLeft > 0) {
                 while (!m_ble.available()) {
+//                    delay(50); // Give it some time; this is faster so we aren't making it do lots of SPI work??
 //                    DEBUG_PRINTF("busy wait..., %d\r\n", millis());
                     if (millis() - lastReadTime > BT_FILE_READ_TIMEOUT) {
                         DEBUG_PRINTF("timeout! read: %d/%d\r\n", count, totalBytes);
@@ -386,14 +407,15 @@ void CDWheelBluetoothController::process() {
                         // TODO: errors
                     }
                 }
-//                DEBUG_PRINTF("available......, %d\r\n", millis());
+                DEBUG_PRINTF("available at %d\r\n", millis());
 
                 int read = 0;
                 while (m_ble.available()) {
                     int amountToRead = min(sizeLeft, bufferSize);
                     int amountRead = m_ble.readBytes(buffer, amountToRead);
-                    
-//                    DEBUG_PRINTF("%c", m_ble.read());
+//                    for (int tt = 0; tt < amountRead; tt++) {
+//                        DEBUG_PRINTF("%c", buffer[tt]);
+//                    }
                     count += amountRead;
                     sizeLeft -= amountRead;
                     lastReadTime = millis();
@@ -413,7 +435,6 @@ void CDWheelBluetoothController::process() {
     
     
 
-    m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
     
 }
 
