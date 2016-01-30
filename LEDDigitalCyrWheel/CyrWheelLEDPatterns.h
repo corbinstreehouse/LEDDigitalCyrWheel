@@ -14,8 +14,9 @@
 #include "SPI.h"
 
 // NOTE: this class is rather hardcoded for these SPI pins. I could make it work with 11/13 (the standard pins) too.
-#define APA102_LED_DATA_PIN 7 //MOSI pin
-#define APA102_LED_CLOCK_PIN 14
+// XXXX: See CyrWheelLEDPatterns::_spiEnd if these are changed!
+#define APA102_LED_DATA_PIN 7 // alternate MOSI pin
+#define APA102_LED_CLOCK_PIN 14 // alternate CLK pin
 
 class CyrWheelLEDPatterns : public LEDPatterns {
 private:

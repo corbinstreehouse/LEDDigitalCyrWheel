@@ -109,8 +109,8 @@ void CyrWheelLEDPatterns::_spiBegin() {
     // DOUT/ MOSI on pin 7 for this
     // CLK moved to pin 14
     // and then back to the default
-    SPI.setMOSI(APA102_LED_DATA_PIN);
-    SPI.setSCK(APA102_LED_CLOCK_PIN);
+    SPI.setMOSI(APA102_LED_DATA_PIN); // 7
+    SPI.setSCK(APA102_LED_CLOCK_PIN); // 14
     SPI.begin(); // resets the pins
     SPI.beginTransaction(m_spiSettings);
 }
@@ -118,6 +118,12 @@ void CyrWheelLEDPatterns::_spiBegin() {
 void CyrWheelLEDPatterns::_spiEnd() {
     // back to the original (see teensy 3.1 chart)
     SPI.endTransaction();
+    // NOTE: see my post about this https://forum.pjrc.com/threads/32834-SPI-disable-not-working-correctly-with-setMOSI-setMISO-setSCK?p=94986#post94986
+    // If disable_pins is not fixed then we have to do more work. I'm going to just do what SPCRemulation.disable_pins() in avr_emulation.h *should* do in SPI end so we don't get random data to the LEDs when I use other devices.
+//    SPI.end();
+    CORE_PIN7_CONFIG = PORT_PCR_SRE | PORT_PCR_DSE | PORT_PCR_MUX(1);
+    CORE_PIN14_CONFIG = PORT_PCR_SRE | PORT_PCR_DSE | PORT_PCR_MUX(1);
+
     SPI.setMOSI(11);
     SPI.setSCK(13);
     SPI.begin(); // reset
