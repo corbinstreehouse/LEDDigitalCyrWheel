@@ -172,7 +172,7 @@ bool checkVoltage() {
 void loop() {
     g_button.process();
 #if BLUETOOTH
-//    g_bluetoothController.process();
+    g_bluetoothController.process();
 #endif
     // Don't show the LED pattern if we have too low of voltage; checkVoltage will slow down our processing with explicit delays
     if (checkVoltage()) {
