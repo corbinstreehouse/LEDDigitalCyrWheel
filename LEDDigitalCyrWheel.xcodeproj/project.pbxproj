@@ -158,7 +158,6 @@
 		9DAF74F21C2CD8A200B43F75 /* wiring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DAF74E71C2CD8A200B43F75 /* wiring.cpp */; };
 		9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */; };
 		9DD1E672193EC47100290878 /* LEDPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD1E66E193EC47100290878 /* LEDPatterns.cpp */; };
-		9DD655D3193582100017BDAA /* CDOctoWS2811.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD655D2193582100017BDAA /* CDOctoWS2811.cpp */; };
 		9DDC61C71938488E00C602BC /* Adafruit_NeoPixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC5FE81938488D00C602BC /* Adafruit_NeoPixel.cpp */; };
 		9DDC61C81938488E00C602BC /* L3G.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC5FF71938488D00C602BC /* L3G.cpp */; };
 		9DDC61C91938488E00C602BC /* LSM303.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC60061938488D00C602BC /* LSM303.cpp */; };
@@ -1687,12 +1686,10 @@
 		9DAF74E71C2CD8A200B43F75 /* wiring.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wiring.cpp; sourceTree = "<group>"; };
 		9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CWPatternSequenceManager.cpp; sourceTree = "<group>"; };
 		9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWPatternSequenceManager.h; sourceTree = "<group>"; };
-		9DBE92C818AA7ED000154550 /* CDOctoWS2811.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDOctoWS2811.h; sourceTree = "<group>"; };
 		9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDDigitalCyrWheel.h; sourceTree = "<group>"; };
 		9DD1E66E193EC47100290878 /* LEDPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LEDPatterns.cpp; sourceTree = "<group>"; };
 		9DD1E66F193EC47100290878 /* LEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDPatterns.h; sourceTree = "<group>"; };
 		9DD1E671193EC47100290878 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		9DD655D2193582100017BDAA /* CDOctoWS2811.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDOctoWS2811.cpp; sourceTree = "<group>"; };
 		9DD818DA188647B600AD92E2 /* Teensy31.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Teensy31.xcconfig; sourceTree = "<group>"; };
 		9DD818DB18864BD300AD92E2 /* Teensy.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Teensy.mk; sourceTree = "<group>"; };
 		9DD818EA18889DE900AD92E2 /* Avrdude.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Avrdude.mk; sourceTree = "<group>"; };
@@ -4919,8 +4916,6 @@
 				9D683E2D1C1139000058EFA0 /* CDPatternSequenceManagerShared.h */,
 				9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */,
 				9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */,
-				9DBE92C818AA7ED000154550 /* CDOctoWS2811.h */,
-				9DD655D2193582100017BDAA /* CDOctoWS2811.cpp */,
 				9D472E1C1902F1590076281A /* CDOrientation.h */,
 				9D472E1B1902F1590076281A /* CDOrientation.cpp */,
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,
@@ -5751,7 +5746,6 @@
 				9D142EE31C0245900085A377 /* Adafruit_BluefruitLE_SPI.cpp in Sources */,
 				9D0EF1AC1BFC3787002C687E /* sstream.tcc in Sources */,
 				9D684B5E1C1941690058EFA0 /* SdSpiTeensy3.cpp in Sources */,
-				9DD655D3193582100017BDAA /* CDOctoWS2811.cpp in Sources */,
 				9D0EED661BFC3747002C687E /* Servo.cpp in Sources */,
 				9D0EEC451BFC372F002C687E /* serial1.c in Sources */,
 				9D0EF1BC1BFC3787002C687E /* legendre_function.tcc in Sources */,

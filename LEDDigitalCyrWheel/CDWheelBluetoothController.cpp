@@ -10,18 +10,18 @@
 
 #if BLUETOOTH
 
-#if DEBUG
-
-#define VERBOSE_MODE 0 // 1 for debugging more stuff
-
-#else
-
-#define VERBOSE_MODE 0
-
-#endif
-
 #include "CDWheelBluetoothController.h"
 #include "EEPROM.h"
+
+#if DEBUG
+    #define VERBOSE_MODE 0 // 1 for debugging more stuff
+#else
+    #define VERBOSE_MODE 0
+#endif
+
+#define BT_REFRESH_RATE 20 // ever X ms
+
+
 
 CDWheelBluetoothController::CDWheelBluetoothController() : m_ble(BLUETOOTH_CS, BLUETOOTH_IRQ, BLUETOOTH_RST), m_initialized(false) {
     
@@ -129,8 +129,6 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
     // Enable echo
     m_ble.echo(false);
     m_ble.sendCommandCheckOK("ATI"); // print version information
-
-    
 #else
     m_ble.echo(false);
 #endif
@@ -140,11 +138,7 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
     if (servicesAreRegistered()) {
         m_manager->incBootProgress();
         // Attempt to read in existing values for m_wheelServiceID...
-        EEPROM.get(BLUETOOTH_EEPROM_WHEEL_SERVICE, m_wheelServiceID);
-        EEPROM.get(BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR, m_wheelCommandCharactersticID);
-        // TODO: validate m_wheelServiceID..
         DEBUG_PRINTF("restored: m_wheelServiceID %d, m_wheelCommandCharactersticID: %d\r\n", m_wheelServiceID, m_wheelCommandCharactersticID);
-        
     } else {
         bool registered = registerServices();
         // Show some failure state
@@ -156,55 +150,38 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
 }
 
 bool CDWheelBluetoothController::servicesAreRegistered() {
-#warning this always returns false for now....
-    return false;
-    DEBUG_PRINTLN("Requesting services");
-//    m_ble.sendCommandCheckOK("AT+GATTLIST");
-    m_ble.println("AT+GATTLIST");
-    while ( m_ble.readline() ) {
-        DEBUG_PRINTLN("..read...");
-        //SerialDebug.println(buffer);
-        if ( strcmp(m_ble.buffer, "OK") == 0 ) break;
-        if ( strcmp(m_ble.buffer, "ERROR") == 0 ) break;
-        DEBUG_PRINTF("buff: %s\n", m_ble.buffer);
+    uint8_t servicesAreRegistered = 0;
+    EEPROM.get(BLUETOOTH_EEPROM_SERVICES_ARE_REGISTERED, servicesAreRegistered);
+    
+    DEBUG_PRINTF("BT services are registered (EEPROM read): %d\r\n", servicesAreRegistered);
+
+    // Bad data..or initial state..
+    if (servicesAreRegistered != 0 && servicesAreRegistered != 1) {
+        return false;
     }
+
+    // Read values and validate
+    // TODO: validation...they seem to be incremented rather systematically.
+    EEPROM.get(BLUETOOTH_EEPROM_WHEEL_SERVICE, m_wheelServiceID);
+    EEPROM.get(BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR, m_wheelCommandCharactersticID);
+    EEPROM.get(BLUETOOTH_EEPROM_WHEEL_STATE_CHAR, m_wheelStateID);
+    EEPROM.get(BLUETOOTH_EEPROM_BRIGHTNESS_CHAR, m_brightnessID);
+    EEPROM.get(BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR, m_brightnessWriteID);
     
-    DEBUG_PRINTLN(" ----- corbin -");
-    DEBUG_PRINTF("buff: %s", m_ble.buffer);
+    DEBUG_PRINTF("EEPROM services/chars: m_wheelServiceID %d, m_wheelCommandCharactersticID %d, m_wheelStateID %d, m_brightnessID %d m_brightnessWriteID: %d\r\n", m_wheelServiceID, m_wheelCommandCharactersticID, m_wheelStateID, m_brightnessID, m_brightnessWriteID);
+
+    if (m_wheelServiceID < 0 || m_wheelServiceID > 10) {
+        return false;
+    } else if (m_wheelCommandCharactersticID < 0 || m_wheelCommandCharactersticID > 10) {
+        return false;
+    }
+    return true;
     
-//    m_ble.println("AT+GATTLIST");
-//
-//    while (1) {
-//        // wait for a response...
-//        while (m_ble.available() == 0) {
-//            delay(0);
-//        }
-//        if (m_ble.readline()) {
-//            if (currentResponseCode() != BTResponseCodeUnknown) {
-//                DEBUG_PRINTLN(m_ble.buffer);
-//            } else {
-//                break; // Got an OK or ERROR response
-//            }
-//        }
-//    }
-//    
-    return false;
+    
     /*
-    // maybe check eeprom for faster starting?
-    // EEPROM.get(EEPROM_START_BLUETOOTH_AUTOMATICALLY_ADDRESS, tmp);
-    bool result = false;
-    m_ble.println("AT+GATTLIST");
-    while (m_ble.available() && m_ble.readline()) {
-        if (currentResponseCode() != BTResponseCodeUnknown) {
-            DEBUG_PRINTLN(m_ble.buffer);
-        } else {
-            break; // Got an OK or ERROR response
-        }
-    }
-    // TODO: check the services string once I know the format
-    
-    return result;
-     */
+// parsing the GATTLIST seems a waste of time.. just store once if I did it, and re-flash if I need to do it again, and allow BT to reset the value so I can reflash it
+//    m_ble.sendCommandCheckOK("AT+GATTLIST");
+ */
 }
 
 void CDWheelBluetoothController::sendCommandWithUUID128(const char *cmd, const char *uuid, const char *properties, int32_t *serviceID, int eepromIndex) {
@@ -267,7 +244,6 @@ bool CDWheelBluetoothController::registerServices() {
     registerWheelCharacteristics();
     m_manager->incBootProgress();
 
-
 //    m_ble.sendCommandCheckOK("AT+GAPINTERVALS=16,32,25,500"); // much slower w/these values
     // Lower doesn't help much; getting ~1.17s w/ these values for 1kb:
     m_ble.sendCommandCheckOK("AT+GAPINTERVALS=8,15,25,500"); // This is, actually quite a bit faster...
@@ -283,6 +259,8 @@ bool CDWheelBluetoothController::registerServices() {
         delay(100);
     }
     
+    DEBUG_PRINTF("Writing to EEPROM that we are registerd\r\n");
+    EEPROM.write(BLUETOOTH_EEPROM_SERVICES_ARE_REGISTERED, (uint8_t)m_initialized);
 
     return m_initialized;
 }
@@ -345,6 +323,9 @@ void CDWheelBluetoothController::process() {
         return;
     }
     
+    if ((millis() - m_lastProcessTime) < BT_REFRESH_RATE) {
+        return;
+    }
     
     // TODO: check ever X time interval to avoid slowing down other things.
 
@@ -458,10 +439,7 @@ void CDWheelBluetoothController::process() {
         uint32_t time = millis() - start;
         DEBUG_PRINTF("  read %d, time took: %d ms, %g s\r\n", count, time, time /1000.0 );
     }
-    
-    
-
-    
+    m_lastProcessTime = millis();
 }
 
 #endif

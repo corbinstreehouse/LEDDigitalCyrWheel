@@ -22,9 +22,10 @@
 #define BLUETOOTH_EEPROM_AUTOSTART 12  //not used yet, make sure i read one byte only!
 #define BLUETOOTH_EEPROM_WHEEL_SERVICE (BLUETOOTH_EEPROM_AUTOSTART+1) // int32_t value, ending: 17
 #define BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR (BLUETOOTH_EEPROM_WHEEL_SERVICE+4) // int32_t value, ending: 21
-#define BLUETOOTH_EEPROM_WHEEL_STATE_CHAR (BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR+4) // int32_t value, ending: 21
-#define BLUETOOTH_EEPROM_BRIGHTNESS_CHAR (BLUETOOTH_EEPROM_WHEEL_STATE_CHAR+4) // int32_t value, ending: 21
-#define BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR (BLUETOOTH_EEPROM_BRIGHTNESS_CHAR+4) // int32_t value, ending: 21
+#define BLUETOOTH_EEPROM_WHEEL_STATE_CHAR (BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR+4) // int32_t value
+#define BLUETOOTH_EEPROM_BRIGHTNESS_CHAR (BLUETOOTH_EEPROM_WHEEL_STATE_CHAR+4) // int32_t value
+#define BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR (BLUETOOTH_EEPROM_BRIGHTNESS_CHAR+4) // int32_t value
+#define BLUETOOTH_EEPROM_SERVICES_ARE_REGISTERED (BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR+4) // 1 byte value
 
 typedef enum {
     BTResponseCodeOK = 0,
@@ -42,6 +43,7 @@ private:
     int32_t m_wheelStateID;
     int32_t m_brightnessID;
     int32_t m_brightnessWriteID;
+    uint32_t m_lastProcessTime;
     
     bool servicesAreRegistered();
     bool registerServices();

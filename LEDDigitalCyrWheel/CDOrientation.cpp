@@ -263,7 +263,7 @@ void CDOrientation::normalize()
         renorm_sqrt_count++;
 #endif
         
-#define PRINT_DEBUG 0
+#define PRINT_DEBUG 1
         
 #if PRINT_DEBUG != 0
         Serial.print("???SQT:1,RNM:");
@@ -643,16 +643,14 @@ bool CDOrientation::initAccel() {
             default: // DLM, DLH
                 _compass.writeReg(LSM303::CTRL_REG4_A, 0x30); // 8 g full scale: FS = 11
         }
-        // values I read from Calibrate for the given gain setting; I could have a program/mode to read/write these
-//        EEPROM.write(EEPROM_MIN_MAX_IS_SAVED_ADDRESS, false); // corbin: flash the chip with this once on new chips so they don't have random data in them
         
-        bool isMinMaxSaved = EEPROM.read(EEPROM_MIN_MAX_IS_SAVED_ADDRESS) != 0;
+        bool isMinMaxSaved = EEPROM.read(ORIENT_EEPROM_MIN_MAX_IS_SAVED_ADDRESS) != 0;
         if (isMinMaxSaved) {
             DEBUG_PRINTLN("loading saved compass calibration values");
             LSM303::vector<int16_t> savedMin;
             LSM303::vector<int16_t> savedMax;
-            EEPROM.get(MIN_EEPROM_ADDRESS, savedMin);
-            EEPROM.get(EEPROM_ACCELEROMETER_MAX_ADDRESS, savedMax);
+            EEPROM.get(ORIENT_EEPROM_MIN_CALIBRATION_VALUE, savedMin);
+            EEPROM.get(ORIENT_EEPROM_MAX_CALIBRATION_VALUE, savedMax);
             // Validate them before using them
             if (IS_VALID_MIN_COMPASS_VALUE(savedMin.x) && IS_VALID_MIN_COMPASS_VALUE(savedMin.y) && IS_VALID_MIN_COMPASS_VALUE(savedMin.z)) {
                 _compass.m_min = savedMin;
@@ -792,7 +790,7 @@ void CDOrientation::_internalProcess() {
         
     //    DEBUG_PRINTLN("--DONE");
     #if DEBUG
-    //    print();
+//        print();
     #endif
         
         if (m_shouldSaveDataToFile) {
@@ -857,9 +855,9 @@ void CDOrientation::endCalibration() {
     
     _compass.m_min = _calibrationMin;
     _compass.m_max = _calibrationMax;
-    EEPROM.write(EEPROM_MIN_MAX_IS_SAVED_ADDRESS, true);
-    EEPROM.put(MIN_EEPROM_ADDRESS, _calibrationMin);
-    EEPROM.put(EEPROM_ACCELEROMETER_MAX_ADDRESS, _calibrationMax);
+    EEPROM.write(ORIENT_EEPROM_MIN_MAX_IS_SAVED_ADDRESS, true);
+    EEPROM.put(ORIENT_EEPROM_MIN_CALIBRATION_VALUE, _calibrationMin);
+    EEPROM.put(ORIENT_EEPROM_MAX_CALIBRATION_VALUE, _calibrationMax);
 }
 
 double rawAccelToG(int16_t a) {
@@ -934,7 +932,6 @@ void CDOrientation::print()
     Serial.printf("Gyro: %.3f     %.3f      %.3f\r        ",   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z));
     
     //    }
-    return;
 //    Serial.print("!");
     
 #if PRINT_EULER == 1
@@ -944,16 +941,16 @@ void CDOrientation::print()
 
     // _compass.m.y really seems to be the physical x!!
     
-//    Serial.print("ANG:");
-//    Serial.print(ToDeg(roll));
-//    Serial.print(",");
-//    Serial.print(ToDeg(pitch));
-//    Serial.print(",");
-//    Serial.print(ToDeg(yaw));
+    Serial.print("ANG:");
+    Serial.print(ToDeg(roll));
+    Serial.print(",");
+    Serial.print(ToDeg(pitch));
+    Serial.print(",");
+    Serial.print(ToDeg(yaw));
     
     
     
-//    Serial.print(_compass.heading());
+    Serial.print(_compass.heading());
 #endif
 #if PRINT_ANALOGS==1
     Serial.print(",AN:");
@@ -995,7 +992,7 @@ void CDOrientation::print()
     Serial.print (",");
     Serial.print(convert_to_dec(DCM_Matrix[2][2]));
 #endif
-// Serial.println();
+ Serial.println();
     
 }
 

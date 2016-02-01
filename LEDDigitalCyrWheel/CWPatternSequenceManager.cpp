@@ -23,8 +23,8 @@
 #endif
 
 #define ACCELEROMETER 1
-
 #define FILENAME_MAX_LENGTH MAX_PATH
+#define BURN_INITIAL_STATE 0 // Set to 1 and run once
 
 
 #if !PATTERN_EDITOR
@@ -678,11 +678,24 @@ bool CWPatternSequenceManager::initStrip() {
     return true;
 }
 
-void CWPatternSequenceManager::loadSettings() {
-    // initial state burn in ability.. uncomment and run once.
+void CWPatternSequenceManager::burnInitialStateInEEPROM() {
+#if BURN_INITIAL_STATE
+    EEPROM.write(EEPROM_SHOULD_SHOW_BOOT_PROGRESS, 1); // true
+    EEPROM.write(EEPROM_BRIGHTNESS_ADDRESS, DEFAULT_BRIGHTNESS);
+    EEPROM.write(BLUETOOTH_EEPROM_SERVICES_ARE_REGISTERED, 0); // False
+    EEPROM.write(ORIENT_EEPROM_MIN_MAX_IS_SAVED_ADDRESS, 0);
+#else
 #if DEBUG
-//    EEPROM.write(EEPROM_SHOULD_SHOW_BOOT_PROGRESS, 1); // burn in initial state??
+    m_ledPatterns.flashThreeTimes(CRGB::Red); // Don't call this..
 #endif
+#endif
+}
+
+void CWPatternSequenceManager::loadSettings() {
+#if BURN_INITIAL_STATE
+    burnInitialStateInEEPROM();
+#endif
+    // initial state burn in ability.. uncomment and run once.
     // Maybe reset to the default if the button is held down?
     m_brightness = EEPROM.read(EEPROM_BRIGHTNESS_ADDRESS);
 
@@ -926,8 +939,6 @@ void CWPatternSequenceManager::incBootProgress()  {
 //        DEBUG_PRINTLN(" ... boot ...");
         m_bootProgress += 0.01;
         m_ledPatterns.showProgress(m_bootProgress, CRGB::Green);
-    } else {
-//        DEBUG_PRINTLN(" ... boot [no led progress]...");
     }
 }
 
@@ -941,6 +952,11 @@ void CWPatternSequenceManager::init() {
     DEBUG_PRINTLN("init strip");
     initStrip();
     DEBUG_PRINTLN("done init strip, starting to init SD Card");
+    
+#if BURN_INITIAL_STATE
+    // Warn the user THAT THIS IS ON!
+    m_ledPatterns.flashThreeTimes(CRGB::Red);
+#endif
     
     setupBootProgress();
     

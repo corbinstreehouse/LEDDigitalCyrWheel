@@ -180,6 +180,7 @@ private:
     }
     
     void setupBootProgress();
+    void burnInitialStateInEEPROM();
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
