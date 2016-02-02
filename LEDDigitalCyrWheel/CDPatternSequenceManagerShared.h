@@ -12,7 +12,25 @@
 #include <stdint.h>
 
 // Stuff shared with the app side of things
-typedef enum : int16_t {
+
+// Make this more portable with ARM compilers
+#ifndef __has_feature
+#define __has_feature(a) 0
+#endif
+
+#ifndef __has_extension
+#define __has_extension(a) 0
+#endif
+
+// TODO: share the enum defines..
+#if (__cplusplus && __cplusplus >= 201103L && (__has_extension(cxx_strong_enums) || __has_feature(objc_fixed_enum))) || (!__cplusplus && __has_feature(objc_fixed_enum))
+    #define CD_ENUM(_type, _name)     enum _name : _type _name; enum _name : _type // for swift..
+//    #define CD_ENUM(_type, _name)     enum _name : _type // for compiler to work in arduino
+#else
+    #define CD_ENUM(_type, _name)     enum _name : _type
+#endif
+
+typedef CD_ENUM(int16_t, CDWheelCommand)  {
     CDWheelCommandFirst = 0,
     
     CDWheelCommandNextPattern = CDWheelCommandFirst,
@@ -31,14 +49,24 @@ typedef enum : int16_t {
     
     CDWheelCommandLast = CDWheelCommandPause,
     CDWheelCommandCount = CDWheelCommandLast + 1,
-} CDWheelCommand;
+};
 
-typedef enum : int16_t {
+typedef CD_ENUM(int16_t, CDWheelState)  {
     CDWheelStatePlaying,
     CDWheelStatePaused,
     
-} CDWheelState;
+};
 
+// When sending data over serial UART, I first send a command, and then the rest of the data to be processed (ie: uploaded file)
+// It is much easier if this is an 8 bit byte; the UART command and wheel command can be set in one BLE packet.
+typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
+    CDWheelUARTCommandWheelCommand, //
+    CDWheelUARTCommandSetBrightness,
+    // Other things....like get a list of files or upload a new pattern, or "paint" pixels.
+    
+    CDWheelUARTCommandLastValue = CDWheelUARTCommandSetBrightness,
+
+};
 
 
 #endif /* CDPatternSequenceManagerShared_h */

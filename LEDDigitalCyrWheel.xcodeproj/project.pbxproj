@@ -121,6 +121,16 @@
 		9D142EE91C0245900085A377 /* SDEP.md in Sources */ = {isa = PBXBuildFile; fileRef = 9D142EDB1C0245900085A377 /* SDEP.md */; };
 		9D142EEA1C0245900085A377 /* Adafruit_FIFO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D142EDD1C0245900085A377 /* Adafruit_FIFO.cpp */; };
 		9D142EED1C02B14D0085A377 /* CDWheelBluetoothController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D142EEB1C02B14D0085A377 /* CDWheelBluetoothController.cpp */; };
+		9D1A122E1C604CA700633033 /* LEDCommon.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D4FCB29193BB3A40000DE28 /* LEDCommon.h */; };
+		9D1A122F1C604CA700633033 /* LEDDigitalCyrWheel.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */; };
+		9D1A12301C604CA700633033 /* CDWheelBluetoothShared.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D142EEE1C02B1A90085A377 /* CDWheelBluetoothShared.h */; };
+		9D1A12311C604CA700633033 /* CDWheelBluetoothController.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D142EEC1C02B14D0085A377 /* CDWheelBluetoothController.h */; };
+		9D1A12321C604CA700633033 /* CDPatternData.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D1234C11889AC3B00A97482 /* CDPatternData.h */; };
+		9D1A12331C604CA700633033 /* CDPatternSequenceManagerShared.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D683E2D1C1139000058EFA0 /* CDPatternSequenceManagerShared.h */; };
+		9D1A12341C604CA700633033 /* CWPatternSequenceManager.h in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */; };
+		9D1A12351C604CA700633033 /* CDOrientation.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D472E1C1902F1590076281A /* CDOrientation.h */; };
+		9D1A12361C604CA700633033 /* Button.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DAD188A0EBD001AD553 /* Button.h */; };
+		9D1A12371C604CA700633033 /* CyrWheelLEDPatterns.h in Sources */ = {isa = PBXBuildFile; fileRef = 9D677DEB1C4C0B74005030E8 /* CyrWheelLEDPatterns.h */; };
 		9D3A0DA81889BE64001AD553 /* LEDDigitalCyrWheel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */; };
 		9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D3A0DAC188A0EBD001AD553 /* Button.cpp */; };
 		9D472E1D1902F1590076281A /* CDOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D472E1B1902F1590076281A /* CDOrientation.cpp */; };
@@ -1438,8 +1448,8 @@
 		9D142EE01C0245900085A377 /* sdep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sdep.h; sourceTree = "<group>"; };
 		9D142EE11C0245900085A377 /* TimeoutTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeoutTimer.h; sourceTree = "<group>"; };
 		9D142EEB1C02B14D0085A377 /* CDWheelBluetoothController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDWheelBluetoothController.cpp; sourceTree = "<group>"; };
-		9D142EEC1C02B14D0085A377 /* CDWheelBluetoothController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDWheelBluetoothController.h; sourceTree = "<group>"; };
-		9D142EEE1C02B1A90085A377 /* CDWheelBluetoothShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDWheelBluetoothShared.h; sourceTree = "<group>"; };
+		9D142EEC1C02B14D0085A377 /* CDWheelBluetoothController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = CDWheelBluetoothController.h; sourceTree = "<group>"; };
+		9D142EEE1C02B1A90085A377 /* CDWheelBluetoothShared.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = CDWheelBluetoothShared.h; sourceTree = "<group>"; };
 		9D3A0DAC188A0EBD001AD553 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Button.cpp; sourceTree = "<group>"; };
 		9D3A0DAD188A0EBD001AD553 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Button.h; sourceTree = "<group>"; };
 		9D472E1B1902F1590076281A /* CDOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDOrientation.cpp; sourceTree = "<group>"; };
@@ -1447,7 +1457,7 @@
 		9D4FCB29193BB3A40000DE28 /* LEDCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LEDCommon.h; sourceTree = "<group>"; };
 		9D677DEA1C4C0B74005030E8 /* CyrWheelLEDPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyrWheelLEDPatterns.cpp; sourceTree = "<group>"; };
 		9D677DEB1C4C0B74005030E8 /* CyrWheelLEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyrWheelLEDPatterns.h; sourceTree = "<group>"; };
-		9D683E2D1C1139000058EFA0 /* CDPatternSequenceManagerShared.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDPatternSequenceManagerShared.h; sourceTree = "<group>"; };
+		9D683E2D1C1139000058EFA0 /* CDPatternSequenceManagerShared.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = CDPatternSequenceManagerShared.h; sourceTree = "<group>"; };
 		9D684AC61C17E9BD0058EFA0 /* CDLazyBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDLazyBitmap.cpp; sourceTree = "<group>"; };
 		9D684AC71C17E9BD0058EFA0 /* CDLazyBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDLazyBitmap.h; sourceTree = "<group>"; };
 		9D684ACD1C1941690058EFA0 /* AnalogLogger.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalogLogger.ino; sourceTree = "<group>"; };
@@ -5703,6 +5713,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D1A122E1C604CA700633033 /* LEDCommon.h in Sources */,
+				9D1A122F1C604CA700633033 /* LEDDigitalCyrWheel.h in Sources */,
+				9D1A12301C604CA700633033 /* CDWheelBluetoothShared.h in Sources */,
+				9D1A12311C604CA700633033 /* CDWheelBluetoothController.h in Sources */,
+				9D1A12321C604CA700633033 /* CDPatternData.h in Sources */,
+				9D1A12331C604CA700633033 /* CDPatternSequenceManagerShared.h in Sources */,
+				9D1A12341C604CA700633033 /* CWPatternSequenceManager.h in Sources */,
+				9D1A12351C604CA700633033 /* CDOrientation.h in Sources */,
+				9D142EED1C02B14D0085A377 /* CDWheelBluetoothController.cpp in Sources */,
+				9D1A12361C604CA700633033 /* Button.h in Sources */,
+				9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */,
+				9D1A12371C604CA700633033 /* CyrWheelLEDPatterns.h in Sources */,
 				9D684B601C1941690058EFA0 /* FatFileLFN.cpp in Sources */,
 				9D0EF1A81BFC3787002C687E /* ostream.tcc in Sources */,
 				9D0C1D0619CF3CE0004E027E /* LEDPatterns.h in Sources */,
@@ -5727,7 +5749,6 @@
 				9D0EED581BFC3747002C687E /* Firmata.cpp in Sources */,
 				9D0EED681BFC3747002C687E /* SPI.cpp in Sources */,
 				9D7D42FB1C2900FE008F76E5 /* README.md in Sources */,
-				9D142EED1C02B14D0085A377 /* CDWheelBluetoothController.cpp in Sources */,
 				9D0EF1AE1BFC3787002C687E /* valarray_array.tcc in Sources */,
 				9D0EEC361BFC372F002C687E /* HardwareSerial2.cpp in Sources */,
 				9D0EF1A51BFC3787002C687E /* locale_classes.tcc in Sources */,
@@ -5836,7 +5857,6 @@
 				9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */,
 				9D0EEC3B1BFC372F002C687E /* main.cpp in Sources */,
 				9D0EF19E1BFC3787002C687E /* basic_ios.tcc in Sources */,
-				9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */,
 				9D0EED491BFC3747002C687E /* EEPROM.cpp in Sources */,
 				9DDC61C91938488E00C602BC /* LSM303.cpp in Sources */,
 				9D0EEC4C1BFC372F002C687E /* usb_dev.c in Sources */,

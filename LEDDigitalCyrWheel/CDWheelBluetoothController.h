@@ -21,7 +21,7 @@
 
 #define BLUETOOTH_EEPROM_AUTOSTART 12  //not used yet, make sure i read one byte only!
 #define BLUETOOTH_EEPROM_WHEEL_SERVICE (BLUETOOTH_EEPROM_AUTOSTART+1) // int32_t value, ending: 17
-#define BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR (BLUETOOTH_EEPROM_WHEEL_SERVICE+4) // int32_t value, ending: 21
+#define BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR (BLUETOOTH_EEPROM_WHEEL_SERVICE+4) // int32_t value, ending: 21        // NOT USED
 #define BLUETOOTH_EEPROM_WHEEL_STATE_CHAR (BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR+4) // int32_t value
 #define BLUETOOTH_EEPROM_BRIGHTNESS_CHAR (BLUETOOTH_EEPROM_WHEEL_STATE_CHAR+4) // int32_t value
 #define BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR (BLUETOOTH_EEPROM_BRIGHTNESS_CHAR+4) // int32_t value
@@ -42,7 +42,7 @@ private:
     int32_t m_wheelCommandCharactersticID;
     int32_t m_wheelStateID;
     int32_t m_brightnessID;
-    int32_t m_brightnessWriteID;
+//    int32_t m_brightnessWriteID;
     uint32_t m_lastProcessTime;
     
     bool servicesAreRegistered();
@@ -64,7 +64,6 @@ private:
     }
     
     void _addCharacteristic(const char *characteristicStr, int propertyType, int eepromLocation, int32_t *characteristicID, uint16_t value);
-    bool readChar16BitValue(int index, int16_t *result);
 public:
     CDWheelBluetoothController();
     void init(CWPatternSequenceManager *manager, bool buttonIsDown);

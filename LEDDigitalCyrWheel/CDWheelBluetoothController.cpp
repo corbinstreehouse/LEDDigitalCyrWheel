@@ -8,10 +8,11 @@
 
 #include "LEDCommon.h" // defines BLUETOOTH
 
-#if BLUETOOTH
-
+#include "CDPatternSequenceManagerShared.h"
 #include "CDWheelBluetoothController.h"
 #include "EEPROM.h"
+
+#if BLUETOOTH
 
 #if DEBUG
     #define VERBOSE_MODE 0 // 1 for debugging more stuff
@@ -62,14 +63,11 @@ void CDWheelBluetoothController::wheelChanged(CDWheelChangeReason reason) {
 void CDWheelBluetoothController::registerWheelCharacteristics() {
     DEBUG_PRINTLN("Registering cyr wheel characteristics");
     
-    // only write seems to work!!
-    _addCharacteristic(kLEDWheelCharSendCommandUUID_AdaFruit, CHAR_PROP_WRITE, BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR, &m_wheelCommandCharactersticID, -1); // -1 means not set
     _addCharacteristic(kLEDWheelCharGetWheelStateUUID_AdaFruit, CHAR_PROP_READ|CHAR_PROP_NOTIFY, BLUETOOTH_EEPROM_WHEEL_STATE_CHAR, &m_wheelStateID, m_manager->getWheelState());
     _addCharacteristic(kLEDWheelBrightnessCharacteristicReadUUID_AdaFruit, CHAR_PROP_READ, BLUETOOTH_EEPROM_BRIGHTNESS_CHAR, &m_brightnessID, m_manager->getBrightness());
 
     // CHAR_PROP_WRITE_WITHOUT_RESPONSE fails
-    _addCharacteristic(kLEDWheelBrightnessCharacteristicWriteUUID_AdaFruit, CHAR_PROP_WRITE, BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR, &m_brightnessWriteID, m_manager->getBrightness());
-    
+//    _addCharacteristic(kLEDWheelBrightnessCharacteristicWriteUUID_AdaFruit, CHAR_PROP_WRITE, BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR, &m_brightnessWriteID, m_manager->getBrightness());
 }
 
 // specific to adafruit be
@@ -87,14 +85,7 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
     bool shouldInit = buttonIsDown;
     if (!shouldInit) {
         shouldInit = true;
-        // TODO: after initialized at least once store the init state...
-//        char tmp = 0;
-//        EEPROM.get(EEPROM_START_BLUETOOTH_AUTOMATICALLY_ADDRESS, tmp);
-//        if (tmp == 0 || tmp == 1) {
-//            shouldInit = tmp;
-//        } else {
-//            // ignore bad values
-//        }
+        // Make BLE an option to startup??
     }
     if (!shouldInit) {
         return;
@@ -163,12 +154,11 @@ bool CDWheelBluetoothController::servicesAreRegistered() {
     // Read values and validate
     // TODO: validation...they seem to be incremented rather systematically.
     EEPROM.get(BLUETOOTH_EEPROM_WHEEL_SERVICE, m_wheelServiceID);
-    EEPROM.get(BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR, m_wheelCommandCharactersticID);
     EEPROM.get(BLUETOOTH_EEPROM_WHEEL_STATE_CHAR, m_wheelStateID);
     EEPROM.get(BLUETOOTH_EEPROM_BRIGHTNESS_CHAR, m_brightnessID);
-    EEPROM.get(BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR, m_brightnessWriteID);
+//    EEPROM.get(BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR, m_brightnessWriteID);
     
-    DEBUG_PRINTF("EEPROM services/chars: m_wheelServiceID %d, m_wheelCommandCharactersticID %d, m_wheelStateID %d, m_brightnessID %d m_brightnessWriteID: %d\r\n", m_wheelServiceID, m_wheelCommandCharactersticID, m_wheelStateID, m_brightnessID, m_brightnessWriteID);
+    DEBUG_PRINTF("EEPROM services/chars: m_wheelServiceID %d, m_wheelCommandCharactersticID %d, m_wheelStateID %d, m_brightnessID %d\r\n", m_wheelServiceID, m_wheelCommandCharactersticID, m_wheelStateID, m_brightnessID);
 
     if (m_wheelServiceID < 0 || m_wheelServiceID > 10) {
         return false;
@@ -227,6 +217,7 @@ void CDWheelBluetoothController::_addCharacteristic(const char *characteristicSt
 
 // this only has to be done once for initialiation of the chip
 bool CDWheelBluetoothController::registerServices() {
+    m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
     DEBUG_PRINTF("   registering all services..setting the name\r\n");
     m_initialized = true; // Set to false on errors
     // First time initialization
@@ -266,6 +257,7 @@ bool CDWheelBluetoothController::registerServices() {
 }
 
 void CDWheelBluetoothController::setName(char *name) {
+    m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
     if (name == NULL) {
         name = "LED Cyr Wheel AFv3";
     }
@@ -278,44 +270,46 @@ void CDWheelBluetoothController::setName(char *name) {
 }
 
 void CDWheelBluetoothController::setCharacteristic16BitValue(const int cmdID, const uint16_t value) {
+    m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
     DEBUG_PRINTF("%s=%d,0x%x\r\n", kCharacteristicCmd, cmdID, value);
     m_ble.printf("%s=%d,0x%x\r\n", kCharacteristicCmd, cmdID, value);
     m_ble.waitForOK();
 }
 
-bool CDWheelBluetoothController::readChar16BitValue(int index, int16_t *result) {
-    // See if we have a wheel command
-    m_ble.printf("%s=%d\r\n", kCharacteristicCmd, index);
-    m_ble.readline(); // Read the response
-    // if we didn't get "OK" or "ERROR", then we got data.
-    if (currentResponseCode() == BTResponseCodeUnknown) {
-//        DEBUG_PRINTF(" got buffer: %s\r\n", m_ble.buffer);
-        // god damn stupid..
-        
-        // parse the buffer for the int. it is in the hex/byte format: "FF-FF"
-        char *endPtr = m_ble.buffer;
-        
-        int16_t commandAsInt = strtol(endPtr, &endPtr, 16);
-//        DEBUG_PRINTF("    read v: %d\r\n", commandAsInt);
-        if (*endPtr == '-') {
-            endPtr++; // go past the dash..
-        }
-        commandAsInt = (commandAsInt << 8) | strtol(endPtr, &endPtr, 16);
-        
-        *result = commandAsInt;
-        
-#if DEBUG
-//        if (index == 3) {
-//            DEBUG_PRINTF(" got buffer: %s\r\n", m_ble.buffer);
+// Reading a characteristic value every instance is just too stupid slow. We need a callback when it changes! So, all my chars are read only. 
+//bool CDWheelBluetoothController::readChar16BitValue(int index, int16_t *result) {
+//    // See if we have a wheel command
+//    m_ble.printf("%s=%d\r\n", kCharacteristicCmd, index);
+//    m_ble.readline(); // Read the response
+//    // if we didn't get "OK" or "ERROR", then we got data.
+//    if (currentResponseCode() == BTResponseCodeUnknown) {
+////        DEBUG_PRINTF(" got buffer: %s\r\n", m_ble.buffer);
+//        // god damn stupid..
+//        
+//        // parse the buffer for the int. it is in the hex/byte format: "FF-FF"
+//        char *endPtr = m_ble.buffer;
+//        
+//        int16_t commandAsInt = strtol(endPtr, &endPtr, 16);
+////        DEBUG_PRINTF("    read v: %d\r\n", commandAsInt);
+//        if (*endPtr == '-') {
+//            endPtr++; // go past the dash..
 //        }
-#endif
-        
-        return true;
-    } else {
-        return false;
-    }
-}
-
+//        commandAsInt = (commandAsInt << 8) | strtol(endPtr, &endPtr, 16);
+//        
+//        *result = commandAsInt;
+//        
+//#if DEBUG
+////        if (index == 3) {
+////            DEBUG_PRINTF(" got buffer: %s\r\n", m_ble.buffer);
+////        }
+//#endif
+//        
+//        return true;
+//    } else {
+//        return false;
+//    }
+//}
+//
 
 void CDWheelBluetoothController::process() {
     
@@ -323,26 +317,56 @@ void CDWheelBluetoothController::process() {
         return;
     }
     
+    // This refresh rate keeps my FPS at 600 or so. Otherwise we drop down to like 400 when just checkin isConnected(), and 180 when we check characteristics and such.
     if ((millis() - m_lastProcessTime) < BT_REFRESH_RATE) {
         return;
     }
-    
-    // TODO: check ever X time interval to avoid slowing down other things.
 
-//    m_ble.setTimeout(1);
-    // this alone drops it to 180 fps,
-    // ~400 or so if i don't check connected or values
-    // ~600 if we don't do anything..
-    
-    
-//    if (!m_ble.isConnected()) {
-//        return;
-//    }
-    
-//    return;
-    
-    m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
+    // So, I don't use command mode anymore except for setting characteristic values
+    m_ble.setMode(BLUEFRUIT_MODE_DATA);
+    // I also don't check if we are connected, and just read...
+    if (m_ble.available()) {
+        DEBUG_PRINTLN(" .. BTE data available");
+        // First read what the request is, and then do the request.
+        CDWheelUARTCommand command;
+        ASSERT(sizeof(command) <= 1);
+        // I could use read(), which returns the int8 as an int, but this is more size explicit
+        m_ble.readBytes((char*)&command, 1);
+        DEBUG_PRINTF("Command: %d\r\n", command);
+        if (command >= 0 && command <= CDWheelUARTCommandLastValue) {
+            switch (command) {
+                case CDWheelUARTCommandWheelCommand: {
+                    // Read the next 16-bits for the value..i wish the size was better than this hack (ie: sizeof so much easier and future proof)
+                    CDWheelCommand wheelCommand = (CDWheelCommand)-1;
+                    ASSERT(sizeof(CDWheelCommand) <= sizeof(uint16_t));
+                    m_ble.readBytes((char*)&wheelCommand, sizeof(uint16_t));
+                    DEBUG_PRINTF("wheel command: %d\r\n", wheelCommand);
+                    m_manager->processCommand(wheelCommand);
+                    break;
+                }
+                case CDWheelUARTCommandSetBrightness: {
+                    // 16 bit brightness
+                    uint16_t brightness = 0;
+                    m_ble.readBytes((char*)&brightness, sizeof(uint16_t));
+                    DEBUG_PRINTF("bright command: %d\r\n", brightness);
+                    // FOR NOW, this is an 8-bit value.
+                    if (brightness > MAX_BRIGHTNESS) {
+                        brightness = MAX_BRIGHTNESS;
+                    }
+                    m_manager->setBrightness(brightness);
+                    break;
+                }
+            }
+        } else {
+            // Invalid command; ugh..ignore it?
+            DEBUG_PRINTF("invalid command: %d", command);
+        }
+    }
+    m_ble.setMode(BLUEFRUIT_MODE_COMMAND); // needed?
 
+    
+    
+    // If characteristics were callbackable..I would do this.
     /*
     if (m_ble.available()) {
         int16_t result;
@@ -367,24 +391,15 @@ void CDWheelBluetoothController::process() {
             m_manager->setBrightness(result);
         }
     }
+     m_ble.flush();
+
      */
     
     
-#define BT_FILE_READ_TIMEOUT 500 // ms
-    
-    // quick check..sets IRQ when data is available
-//    m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
-//    if (!m_ble.available()) {
-//        return;
-//    }
-
-    
-    m_ble.flush();
-    // slower check...
+#if SPEED_TEST
     m_ble.setMode(BLUEFRUIT_MODE_DATA);
-    
-    // TODO: drive the LEDs while we are loading this..
     if (m_ble.available()) {
+#define BT_FILE_READ_TIMEOUT 500 // ms
         DEBUG_PRINTF("available!\r\n");
         m_ble.setTimeout(500); // Larger timeout during this period of time..
         
@@ -439,6 +454,10 @@ void CDWheelBluetoothController::process() {
         uint32_t time = millis() - start;
         DEBUG_PRINTF("  read %d, time took: %d ms, %g s\r\n", count, time, time /1000.0 );
     }
+#endif
+    
+    
+    
     m_lastProcessTime = millis();
 }
 
