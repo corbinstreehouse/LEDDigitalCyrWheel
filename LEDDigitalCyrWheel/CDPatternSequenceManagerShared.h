@@ -62,9 +62,11 @@ typedef CD_ENUM(int16_t, CDWheelState)  {
 typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
     CDWheelUARTCommandWheelCommand, //
     CDWheelUARTCommandSetBrightness,
+    CDWheelUARTCommandSetCurrentPatternSpeed,
+    
     // Other things....like get a list of files or upload a new pattern, or "paint" pixels.
     
-    CDWheelUARTCommandLastValue = CDWheelUARTCommandSetBrightness,
+    CDWheelUARTCommandLastValue = CDWheelUARTCommandSetCurrentPatternSpeed,
 
 };
 

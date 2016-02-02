@@ -356,6 +356,13 @@ void CDWheelBluetoothController::process() {
                     m_manager->setBrightness(brightness);
                     break;
                 }
+                case CDWheelUARTCommandSetCurrentPatternSpeed: {
+                    uint16_t speed = 32;
+                    m_ble.readBytes((char*)&speed, sizeof(uint16_t));
+                    DEBUG_PRINTF("speed command: %d\r\n", speed);
+                    m_manager->setCurrentPatternSpeed(speed);
+                    break;
+                }
             }
         } else {
             // Invalid command; ugh..ignore it?

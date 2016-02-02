@@ -127,7 +127,11 @@ private:
     const char *_getPatternDirectory();
     
     inline CDPatternItemHeader *getCurrentItemHeader() {
-        return &_patternItems[m_currentPatternItemIndex];
+        if (m_currentPatternItemIndex >= 0 && m_currentPatternItemIndex < _numberOfPatternItems) {
+            return  &_patternItems[m_currentPatternItemIndex];
+        } else {
+            return NULL;
+        }
     }
     
     // for crossfade
@@ -268,6 +272,10 @@ public:
     
     uint8_t getBrightness() { return m_brightness; }
     void setBrightness(uint8_t brightness);
+    
+    // In ms..
+    uint32_t getCurrentPatternSpeed();
+    void setCurrentPatternSpeed(uint32_t speedInMs);
     
     bool shouldShowBootProgress() { return m_shouldShowBootProgress; }
     void setShouldShowBootProgress(bool value);

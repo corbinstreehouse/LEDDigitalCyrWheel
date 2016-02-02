@@ -162,7 +162,10 @@ CyrWheelLEDPatterns::CyrWheelLEDPatterns(uint32_t ledCount) :
 }
 
 void CyrWheelLEDPatterns::setBrightness(uint8_t brightness) {
-    FastLED.setBrightness(brightness);
+    if (FastLED.getBrightness() != brightness) {
+        DEBUG_PRINTF("SET BRIGHTNESS: %d\r\n", brightness);
+        FastLED.setBrightness(brightness);
+    }
 }
 
 uint8_t CyrWheelLEDPatterns::getBrightness() {

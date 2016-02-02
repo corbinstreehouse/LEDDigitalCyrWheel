@@ -293,13 +293,44 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
     result.patternType = LEDPatternTypeBitmap; // Easy testing: LEDPatternTypeTheaterChase;
     result.color = CRGB::Red;
     result.duration = 50;
-    result.patternDuration = 0; // as fast as it can go.. 35;
+    // POV patterns will be as fast as they can go (value == 0)... but that looks terrible for non POV patterns
+    // Harcode certain directory names as being POV
+    // Load our parent directory name to find out
+    uint32_t defaultDuration = 32; // slowish
+    if (fileInfo->parent) {
+        // I could probably do this faster..
+        char filenameBuffer[FILENAME_MAX_LENGTH];
+        _getFullpathName(_getRootDirectory(), fileInfo->parent, filenameBuffer, FILENAME_MAX_LENGTH);
+        FatFile parentDirectory = FatFile(filenameBuffer, O_READ);
+        if (parentDirectory.getName(filenameBuffer, FILENAME_MAX_LENGTH)) {
+            if (strcmp(filenameBuffer, "Pictures") == 0) {
+                defaultDuration = 0; // POV duration
+            }
+        }
+    }
+    
+    result.patternDuration = defaultDuration;
+    
+//    result.patternDuration = 0; // as fast as it can go.. 35;
     result.patternEndCondition = CDPatternEndConditionOnButtonClick;
     result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, false));
     result.filename = NULL;
     
     setSingleItemPatternHeader(&result);
     m_shouldIgnoreButtonClickWhenTimed = false; // This could be made an option that is settable/dynamically changable.
+}
+
+uint32_t CWPatternSequenceManager::getCurrentPatternSpeed() {
+    CDPatternItemHeader *header = getCurrentItemHeader();
+    return header ? header->patternDuration : 0;
+}
+
+void CWPatternSequenceManager::setCurrentPatternSpeed(uint32_t speedInMs) {
+    CDPatternItemHeader *header = getCurrentItemHeader();
+    if (header) {
+        header->patternDuration = speedInMs;
+    }
+    m_ledPatterns.setPatternDuration(speedInMs);
 }
 
 
