@@ -75,43 +75,6 @@
 		9D0EED681BFC3747002C687E /* SPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EED321BFC3747002C687E /* SPI.cpp */; };
 		9D0EED691BFC3747002C687E /* twi.c in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EED441BFC3747002C687E /* twi.c */; };
 		9D0EED6A1BFC3747002C687E /* Wire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EED461BFC3747002C687E /* Wire.cpp */; };
-		9D0EF19E1BFC3787002C687E /* basic_ios.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEA61BFC3785002C687E /* basic_ios.tcc */; };
-		9D0EF19F1BFC3787002C687E /* basic_string.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEA81BFC3785002C687E /* basic_string.tcc */; };
-		9D0EF1A01BFC3787002C687E /* deque.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEB01BFC3785002C687E /* deque.tcc */; };
-		9D0EF1A11BFC3787002C687E /* forward_list.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEB41BFC3785002C687E /* forward_list.tcc */; };
-		9D0EF1A21BFC3787002C687E /* fstream.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEB51BFC3785002C687E /* fstream.tcc */; };
-		9D0EF1A31BFC3787002C687E /* istream.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEBF1BFC3785002C687E /* istream.tcc */; };
-		9D0EF1A41BFC3787002C687E /* list.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEC01BFC3785002C687E /* list.tcc */; };
-		9D0EF1A51BFC3787002C687E /* locale_classes.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEC21BFC3785002C687E /* locale_classes.tcc */; };
-		9D0EF1A61BFC3787002C687E /* locale_facets.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEC41BFC3785002C687E /* locale_facets.tcc */; };
-		9D0EF1A71BFC3787002C687E /* locale_facets_nonio.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEC61BFC3785002C687E /* locale_facets_nonio.tcc */; };
-		9D0EF1A81BFC3787002C687E /* ostream.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEECC1BFC3785002C687E /* ostream.tcc */; };
-		9D0EF1A91BFC3787002C687E /* random.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEED11BFC3785002C687E /* random.tcc */; };
-		9D0EF1AA1BFC3787002C687E /* regex_grep_matcher.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEED91BFC3785002C687E /* regex_grep_matcher.tcc */; };
-		9D0EF1AB1BFC3787002C687E /* regex_nfa.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEDB1BFC3785002C687E /* regex_nfa.tcc */; };
-		9D0EF1AC1BFC3787002C687E /* sstream.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEDF1BFC3785002C687E /* sstream.tcc */; };
-		9D0EF1AD1BFC3787002C687E /* streambuf.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEEFA1BFC3786002C687E /* streambuf.tcc */; };
-		9D0EF1AE1BFC3787002C687E /* valarray_array.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEF031BFC3786002C687E /* valarray_array.tcc */; };
-		9D0EF1AF1BFC3787002C687E /* vector.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEF051BFC3786002C687E /* vector.tcc */; };
-		9D0EF1B01BFC3787002C687E /* safe_iterator.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEF351BFC3786002C687E /* safe_iterator.tcc */; };
-		9D0EF1B11BFC3787002C687E /* safe_local_iterator.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEF371BFC3786002C687E /* safe_local_iterator.tcc */; };
-		9D0EF1B21BFC3787002C687E /* safe_sequence.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEF391BFC3786002C687E /* safe_sequence.tcc */; };
-		9D0EF1B31BFC3787002C687E /* safe_unordered_container.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EEF3C1BFC3786002C687E /* safe_unordered_container.tcc */; };
-		9D0EF1B41BFC3787002C687E /* random.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF06F1BFC3786002C687E /* random.tcc */; };
-		9D0EF1B51BFC3787002C687E /* vstring.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF07D1BFC3786002C687E /* vstring.tcc */; };
-		9D0EF1B61BFC3787002C687E /* bessel_function.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF0F11BFC3786002C687E /* bessel_function.tcc */; };
-		9D0EF1B71BFC3787002C687E /* beta_function.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF0F21BFC3786002C687E /* beta_function.tcc */; };
-		9D0EF1B81BFC3787002C687E /* ell_integral.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF1061BFC3786002C687E /* ell_integral.tcc */; };
-		9D0EF1B91BFC3787002C687E /* exp_integral.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF1071BFC3786002C687E /* exp_integral.tcc */; };
-		9D0EF1BA1BFC3787002C687E /* gamma.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF10C1BFC3786002C687E /* gamma.tcc */; };
-		9D0EF1BB1BFC3787002C687E /* hypergeometric.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF10F1BFC3786002C687E /* hypergeometric.tcc */; };
-		9D0EF1BC1BFC3787002C687E /* legendre_function.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF1111BFC3786002C687E /* legendre_function.tcc */; };
-		9D0EF1BD1BFC3787002C687E /* modified_bessel_func.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF1151BFC3786002C687E /* modified_bessel_func.tcc */; };
-		9D0EF1BE1BFC3787002C687E /* poly_hermite.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF1161BFC3786002C687E /* poly_hermite.tcc */; };
-		9D0EF1BF1BFC3787002C687E /* poly_laguerre.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF1171BFC3786002C687E /* poly_laguerre.tcc */; };
-		9D0EF1C01BFC3787002C687E /* random.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF11A1BFC3786002C687E /* random.tcc */; };
-		9D0EF1C11BFC3787002C687E /* riemann_zeta.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF11C1BFC3786002C687E /* riemann_zeta.tcc */; };
-		9D0EF1C21BFC3787002C687E /* bool_set.tcc in Sources */ = {isa = PBXBuildFile; fileRef = 9D0EF1301BFC3786002C687E /* bool_set.tcc */; };
 		9D142EE21C0245900085A377 /* Adafruit_BLE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D142EA51C0245900085A377 /* Adafruit_BLE.cpp */; };
 		9D142EE31C0245900085A377 /* Adafruit_BluefruitLE_SPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D142EA71C0245900085A377 /* Adafruit_BluefruitLE_SPI.cpp */; };
 		9D142EE51C0245900085A377 /* packetParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9D142EBB1C0245900085A377 /* packetParser.cpp */; };
@@ -1458,7 +1421,7 @@
 		9D677DEA1C4C0B74005030E8 /* CyrWheelLEDPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyrWheelLEDPatterns.cpp; sourceTree = "<group>"; };
 		9D677DEB1C4C0B74005030E8 /* CyrWheelLEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyrWheelLEDPatterns.h; sourceTree = "<group>"; };
 		9D683E2D1C1139000058EFA0 /* CDPatternSequenceManagerShared.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = CDPatternSequenceManagerShared.h; sourceTree = "<group>"; };
-		9D684AC61C17E9BD0058EFA0 /* CDLazyBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDLazyBitmap.cpp; sourceTree = "<group>"; };
+		9D684AC61C17E9BD0058EFA0 /* CDLazyBitmap.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = CDLazyBitmap.cpp; sourceTree = "<group>"; };
 		9D684AC71C17E9BD0058EFA0 /* CDLazyBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDLazyBitmap.h; sourceTree = "<group>"; };
 		9D684ACD1C1941690058EFA0 /* AnalogLogger.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalogLogger.ino; sourceTree = "<group>"; };
 		9D684ACF1C1941690058EFA0 /* append.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = append.ino; sourceTree = "<group>"; };
@@ -1575,7 +1538,7 @@
 		9D8ED2D517C01F7F001E1C06 /* Arduino.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Arduino.mk; sourceTree = "<group>"; };
 		9D8ED2DD17C01F7F001E1C06 /* Step1.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step1.mk; sourceTree = "<group>"; };
 		9D8ED2DE17C01F7F001E1C06 /* Step2.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Step2.mk; sourceTree = "<group>"; usesTabs = 1; };
-		9D908D981C5D630500908670 /* LEDPatternType.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = LEDPatternType.h; sourceTree = "<group>"; };
+		9D908D981C5D630500908670 /* LEDPatternType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDPatternType.h; sourceTree = "<group>"; };
 		9D922F0C17C711630097A027 /* Arduino micro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Arduino micro.xcconfig"; sourceTree = "<group>"; };
 		9DAF744B1C2CD8A200B43F75 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		9DAF744C1C2CD8A200B43F75 /* bitswap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitswap.h; sourceTree = "<group>"; };
@@ -1697,7 +1660,7 @@
 		9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CWPatternSequenceManager.cpp; sourceTree = "<group>"; };
 		9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWPatternSequenceManager.h; sourceTree = "<group>"; };
 		9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDDigitalCyrWheel.h; sourceTree = "<group>"; };
-		9DD1E66E193EC47100290878 /* LEDPatterns.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LEDPatterns.cpp; sourceTree = "<group>"; };
+		9DD1E66E193EC47100290878 /* LEDPatterns.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = LEDPatterns.cpp; sourceTree = "<group>"; };
 		9DD1E66F193EC47100290878 /* LEDPatterns.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDPatterns.h; sourceTree = "<group>"; };
 		9DD1E671193EC47100290878 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		9DD818DA188647B600AD92E2 /* Teensy31.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Teensy31.xcconfig; sourceTree = "<group>"; };
@@ -5726,21 +5689,15 @@
 				9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */,
 				9D1A12371C604CA700633033 /* CyrWheelLEDPatterns.h in Sources */,
 				9D684B601C1941690058EFA0 /* FatFileLFN.cpp in Sources */,
-				9D0EF1A81BFC3787002C687E /* ostream.tcc in Sources */,
 				9D0C1D0619CF3CE0004E027E /* LEDPatterns.h in Sources */,
 				9D0EEC4A1BFC372F002C687E /* touch.c in Sources */,
 				9D0EEC5A1BFC372F002C687E /* yield.cpp in Sources */,
-				9D0EF1A11BFC3787002C687E /* forward_list.tcc in Sources */,
 				9D0EEC341BFC372F002C687E /* eeprom.c in Sources */,
-				9D0EF1B71BFC3787002C687E /* beta_function.tcc in Sources */,
-				9D0EF1B31BFC3787002C687E /* safe_unordered_container.tcc in Sources */,
 				9D0EED591BFC3747002C687E /* readme.md in Sources */,
 				9D142EEA1C0245900085A377 /* Adafruit_FIFO.cpp in Sources */,
 				9D0EEC591BFC372F002C687E /* WString.cpp in Sources */,
-				9D0EF1A41BFC3787002C687E /* list.tcc in Sources */,
 				9D684B5D1C1941690058EFA0 /* SdSpiSTM32F1.cpp in Sources */,
 				9D7D42FA1C2900FE008F76E5 /* Adafruit_DotStar.cpp in Sources */,
-				9D0EF1C01BFC3787002C687E /* random.tcc in Sources */,
 				9D0EEC4D1BFC372F002C687E /* usb_flightsim.cpp in Sources */,
 				9D684B641C1941690058EFA0 /* FmtNumber.cpp in Sources */,
 				9D0EEC471BFC372F002C687E /* serial3.c in Sources */,
@@ -5749,46 +5706,29 @@
 				9D0EED581BFC3747002C687E /* Firmata.cpp in Sources */,
 				9D0EED681BFC3747002C687E /* SPI.cpp in Sources */,
 				9D7D42FB1C2900FE008F76E5 /* README.md in Sources */,
-				9D0EF1AE1BFC3787002C687E /* valarray_array.tcc in Sources */,
 				9D0EEC361BFC372F002C687E /* HardwareSerial2.cpp in Sources */,
-				9D0EF1A51BFC3787002C687E /* locale_classes.tcc in Sources */,
-				9D0EF1AB1BFC3787002C687E /* regex_nfa.tcc in Sources */,
 				9D0EEC3D1BFC372F002C687E /* math_helper.c in Sources */,
 				9D684B5A1C1941690058EFA0 /* SdFatUtil.cpp in Sources */,
-				9D0EF1AA1BFC3787002C687E /* regex_grep_matcher.tcc in Sources */,
 				9DAF74F21C2CD8A200B43F75 /* wiring.cpp in Sources */,
 				9D0EEC321BFC372F002C687E /* avr_emulation.cpp in Sources */,
-				9D0EF1B91BFC3787002C687E /* exp_integral.tcc in Sources */,
 				9D0EEC331BFC372F002C687E /* DMAChannel.cpp in Sources */,
 				9D142EE81C0245900085A377 /* README.md in Sources */,
 				9D3A0DA81889BE64001AD553 /* LEDDigitalCyrWheel.cpp in Sources */,
 				9D472E1D1902F1590076281A /* CDOrientation.cpp in Sources */,
-				9D0EF1B61BFC3787002C687E /* bessel_function.tcc in Sources */,
 				9D142EE31C0245900085A377 /* Adafruit_BluefruitLE_SPI.cpp in Sources */,
-				9D0EF1AC1BFC3787002C687E /* sstream.tcc in Sources */,
 				9D684B5E1C1941690058EFA0 /* SdSpiTeensy3.cpp in Sources */,
 				9D0EED661BFC3747002C687E /* Servo.cpp in Sources */,
 				9D0EEC451BFC372F002C687E /* serial1.c in Sources */,
-				9D0EF1BC1BFC3787002C687E /* legendre_function.tcc in Sources */,
 				9D0EEC371BFC372F002C687E /* HardwareSerial3.cpp in Sources */,
-				9D0EF1A01BFC3787002C687E /* deque.tcc in Sources */,
 				9D684B621C1941690058EFA0 /* FatFileSFN.cpp in Sources */,
 				9D0EED571BFC3747002C687E /* Makefile in Sources */,
-				9D0EF1B81BFC3787002C687E /* ell_integral.tcc in Sources */,
-				9D0EF1C11BFC3787002C687E /* riemann_zeta.tcc in Sources */,
-				9D0EF1B21BFC3787002C687E /* safe_sequence.tcc in Sources */,
-				9D0EF1A21BFC3787002C687E /* fstream.tcc in Sources */,
 				9D684B661C1941690058EFA0 /* istream.cpp in Sources */,
 				9D0EEC431BFC372F002C687E /* Print.cpp in Sources */,
 				9D684B651C1941690058EFA0 /* fstream.cpp in Sources */,
-				9D0EF19F1BFC3787002C687E /* basic_string.tcc in Sources */,
 				9D0EEC381BFC372F002C687E /* IntervalTimer.cpp in Sources */,
 				9D0EEC511BFC372F002C687E /* usb_mem.c in Sources */,
-				9D0EF1B01BFC3787002C687E /* safe_iterator.tcc in Sources */,
-				9D0EF1BF1BFC3787002C687E /* poly_laguerre.tcc in Sources */,
 				9D0EED481BFC3747002C687E /* Bounce.cpp in Sources */,
 				9D0EED511BFC3747002C687E /* w5100.cpp in Sources */,
-				9D0EF1B51BFC3787002C687E /* vstring.tcc in Sources */,
 				9DDC61C71938488E00C602BC /* Adafruit_NeoPixel.cpp in Sources */,
 				9D0EEC531BFC372F002C687E /* usb_mouse.c in Sources */,
 				9D0EEC391BFC372F002C687E /* IPAddress.cpp in Sources */,
@@ -5796,7 +5736,6 @@
 				9D0EEC491BFC372F002C687E /* Tone.cpp in Sources */,
 				9D142EE51C0245900085A377 /* packetParser.cpp in Sources */,
 				9D0EEC581BFC372F002C687E /* WMath.cpp in Sources */,
-				9D0EF1BE1BFC3787002C687E /* poly_hermite.tcc in Sources */,
 				9D0EEC521BFC372F002C687E /* usb_midi.c in Sources */,
 				9D0EEC411BFC372F002C687E /* nonstd.c in Sources */,
 				9DAF74EC1C2CD8A200B43F75 /* lib8tion.cpp in Sources */,
@@ -5811,7 +5750,6 @@
 				9D0EEC351BFC372F002C687E /* HardwareSerial1.cpp in Sources */,
 				9D142EE91C0245900085A377 /* SDEP.md in Sources */,
 				9D684B671C1941690058EFA0 /* ostream.cpp in Sources */,
-				9D0EF1AF1BFC3787002C687E /* vector.tcc in Sources */,
 				9D0EED691BFC3747002C687E /* twi.c in Sources */,
 				9D0EEC441BFC372F002C687E /* ser_print.c in Sources */,
 				9D0EED4F1BFC3747002C687E /* EthernetUdp.cpp in Sources */,
@@ -5819,7 +5757,6 @@
 				9D0EEC4E1BFC372F002C687E /* usb_inst.cpp in Sources */,
 				9D0EEC3E1BFC372F002C687E /* memcpy-armv7m.S in Sources */,
 				9D684B631C1941690058EFA0 /* FatVolume.cpp in Sources */,
-				9D0EF1BD1BFC3787002C687E /* modified_bessel_func.tcc in Sources */,
 				9D142EE61C0245900085A377 /* README.md in Sources */,
 				9D0EEC311BFC372F002C687E /* AudioStream.cpp in Sources */,
 				9D0EED4D1BFC3747002C687E /* EthernetClient.cpp in Sources */,
@@ -5827,43 +5764,33 @@
 				9D0EEC501BFC372F002C687E /* usb_keyboard.c in Sources */,
 				9D0EED671BFC3747002C687E /* SoftwareSerial.cpp in Sources */,
 				9D0EEC481BFC372F002C687E /* Stream.cpp in Sources */,
-				9D0EF1BB1BFC3787002C687E /* hypergeometric.tcc in Sources */,
 				9DDC61C81938488E00C602BC /* L3G.cpp in Sources */,
-				9D0EF1A91BFC3787002C687E /* random.tcc in Sources */,
 				9D0EEC3A1BFC372F002C687E /* keylayouts.c in Sources */,
 				9D677DEC1C4C0B74005030E8 /* CyrWheelLEDPatterns.cpp in Sources */,
 				9D684B591C1941690058EFA0 /* SdFatBase.cpp in Sources */,
 				9D0EEC4F1BFC372F002C687E /* usb_joystick.c in Sources */,
 				9D0EED521BFC3747002C687E /* Makefile in Sources */,
-				9D0EF1B11BFC3787002C687E /* safe_local_iterator.tcc in Sources */,
 				9D684B5C1C1941690058EFA0 /* SdSpiSAM3X.cpp in Sources */,
 				9D0EED531BFC3747002C687E /* Makefile in Sources */,
 				9DAF74E91C2CD8A200B43F75 /* colorutils.cpp in Sources */,
 				9D0EEC3F1BFC372F002C687E /* mk20dx128.c in Sources */,
 				9DAF74F01C2CD8A200B43F75 /* README.md in Sources */,
-				9D0EF1A31BFC3787002C687E /* istream.tcc in Sources */,
 				9D0EEC541BFC372F002C687E /* usb_mtp.c in Sources */,
 				9D0EEC551BFC372F002C687E /* usb_rawhid.c in Sources */,
 				9DAF74F11C2CD8A200B43F75 /* release_notes.md in Sources */,
 				9D0EED551BFC3747002C687E /* Makefile in Sources */,
 				9D0EED4E1BFC3747002C687E /* EthernetServer.cpp in Sources */,
-				9D0EF1A61BFC3787002C687E /* locale_facets.tcc in Sources */,
-				9D0EF1B41BFC3787002C687E /* random.tcc in Sources */,
-				9D0EF1A71BFC3787002C687E /* locale_facets_nonio.tcc in Sources */,
-				9D0EF1BA1BFC3787002C687E /* gamma.tcc in Sources */,
 				9D142EE71C0245900085A377 /* packetParser.cpp in Sources */,
 				9D142EE21C0245900085A377 /* Adafruit_BLE.cpp in Sources */,
 				9D0EEC571BFC372F002C687E /* usb_serial.c in Sources */,
 				9D3A0DAE188A0EBD001AD553 /* Button.cpp in Sources */,
 				9D0EEC3B1BFC372F002C687E /* main.cpp in Sources */,
-				9D0EF19E1BFC3787002C687E /* basic_ios.tcc in Sources */,
 				9D0EED491BFC3747002C687E /* EEPROM.cpp in Sources */,
 				9DDC61C91938488E00C602BC /* LSM303.cpp in Sources */,
 				9D0EEC4C1BFC372F002C687E /* usb_dev.c in Sources */,
 				9DAF74EE1C2CD8A200B43F75 /* PORTING.md in Sources */,
 				9DAF74EA1C2CD8A200B43F75 /* FastLED.cpp in Sources */,
 				9DAF74EB1C2CD8A200B43F75 /* hsv2rgb.cpp in Sources */,
-				9D0EF1C21BFC3787002C687E /* bool_set.tcc in Sources */,
 				9D0EEC421BFC372F002C687E /* pins_teensy.c in Sources */,
 				9DAF74ED1C2CD8A200B43F75 /* noise.cpp in Sources */,
 				9D0EED5A1BFC3747002C687E /* LiquidCrystal.cpp in Sources */,
@@ -5871,7 +5798,6 @@
 				9D0EED4C1BFC3747002C687E /* Ethernet.cpp in Sources */,
 				9D0EED501BFC3747002C687E /* socket.cpp in Sources */,
 				9D0EED6A1BFC3747002C687E /* Wire.cpp in Sources */,
-				9D0EF1AD1BFC3787002C687E /* streambuf.tcc in Sources */,
 				9D0EEC461BFC372F002C687E /* serial2.c in Sources */,
 				9D0EEC561BFC372F002C687E /* usb_seremu.c in Sources */,
 				9D0EEC3C1BFC372F002C687E /* Makefile in Sources */,
@@ -5888,6 +5814,8 @@
 			baseConfigurationReference = 9DD818DA188647B600AD92E2 /* Teensy31.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -5911,6 +5839,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -5930,12 +5860,14 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					__MK20DX256__,
 					"ARDUINO=101",
+					"__has_extension(cxx_strong_enums)=1",
+					"F_CPU=168000000",
 				);
 				OTHER_CFLAGS = (
 					"-D__arm__",
 					"-DTEENSYDUINO",
 					"-DKINETISK",
-					"-DF_CPU=20000000",
+					"-DF_CPU=168000000",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -5948,7 +5880,7 @@
 					"-D__arm__",
 					"-DTEENSYDUINO",
 					"-DKINETISK",
-					"-DF_CPU=20000000",
+					"-DF_CPU=168000000",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

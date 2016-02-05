@@ -11,24 +11,27 @@
 
 #include <stdint.h>
 
+#include "LEDPatternType.h"
+
 // Stuff shared with the app side of things
 
 // Make this more portable with ARM compilers
-#ifndef __has_feature
-#define __has_feature(a) 0
-#endif
-
-#ifndef __has_extension
-#define __has_extension(a) 0
-#endif
+//#ifndef __has_feature
+//#define __has_feature(a) 0
+//#endif
+//
+//#ifndef __has_extension
+//#define __has_extension(a) 0
+//#endif
 
 // TODO: share the enum defines..
-#if (__cplusplus && __cplusplus >= 201103L && (__has_extension(cxx_strong_enums) || __has_feature(objc_fixed_enum))) || (!__cplusplus && __has_feature(objc_fixed_enum))
-    #define CD_ENUM(_type, _name)     enum _name : _type _name; enum _name : _type // for swift..
-//    #define CD_ENUM(_type, _name)     enum _name : _type // for compiler to work in arduino
-#else
-    #define CD_ENUM(_type, _name)     enum _name : _type
-#endif
+//#if (__cplusplus && __cplusplus >= 201103L && (__has_extension(cxx_strong_enums) || __has_feature(objc_fixed_enum))) || (!__cplusplus && __has_feature(objc_fixed_enum))
+//    #define CD_ENUM(_type, _name)     enum _name : _type _name; enum _name : _type // for swift..
+////    #define CD_ENUM(_type, _name)     enum _name : _type // for compiler to work in arduino
+//#else
+//    #define CD_ENUM(_type, _name)     enum _name : _type
+//#endif
+
 
 typedef CD_ENUM(int16_t, CDWheelCommand)  {
     CDWheelCommandFirst = 0,
@@ -63,10 +66,11 @@ typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
     CDWheelUARTCommandWheelCommand, //
     CDWheelUARTCommandSetBrightness,
     CDWheelUARTCommandSetCurrentPatternSpeed,
+    CDWheelUARTCommandPlayProgrammedPattern,
     
     // Other things....like get a list of files or upload a new pattern, or "paint" pixels.
     
-    CDWheelUARTCommandLastValue = CDWheelUARTCommandSetCurrentPatternSpeed,
+    CDWheelUARTCommandLastValue = CDWheelUARTCommandPlayProgrammedPattern,
 
 };
 

@@ -45,6 +45,7 @@ typedef CD_ENUM(uint32_t, CDPatternEndCondition) {
     CDPatternEndConditionOnButtonClick,
 };
 
+
 #define SEQUENCE_VERSION_v5 5
 #define SEQUENCE_VERSION_SIZE 10
 
