@@ -23,11 +23,10 @@ private:
     void _spiBegin();
     void _spiEnd();
     void show2();
-protected:
-    virtual void internalShow();
 public:
     CyrWheelLEDPatterns(uint32_t ledCount);
 
+    virtual void internalShow();
     virtual void setBrightness(uint8_t brightness);
     uint8_t getBrightness();
     

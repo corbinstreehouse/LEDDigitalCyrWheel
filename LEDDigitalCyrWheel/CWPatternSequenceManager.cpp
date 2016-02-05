@@ -706,6 +706,7 @@ bool CWPatternSequenceManager::initSDCard() {
 bool CWPatternSequenceManager::initStrip() {
     m_ledPatterns.begin();
     m_ledPatterns.setBrightness(m_brightness);
+    
     return true;
 }
 
@@ -1195,11 +1196,16 @@ void CWPatternSequenceManager::updateBrightness() {
 
 void CWPatternSequenceManager::setBrightness(uint8_t brightness) {
     if (m_brightness != brightness) {
-        DEBUG_PRINTF("old bright: %d, new: %d\r\n", m_brightness, brightness);
+        CDPatternItemHeader *itemHeader = getCurrentItemHeader();
+        DEBUG_PRINTF("old bright: %d, new: %d, itemHeader->shouldSetBrightnessByRotationalVelocity: %d\r\n", m_brightness, brightness, itemHeader ? itemHeader->shouldSetBrightnessByRotationalVelocity : 0);
         m_brightness = brightness;
         updateBrightness();
         sendWheelChanged(CDWheelChangeReasonBrightnessChanged);
         EEPROM.write(EEPROM_BRIGHTNESS_ADDRESS, m_brightness);
+        if (isPaused()) {
+            // show it right now but without any other state..
+            m_ledPatterns.internalShow();
+        }
     }
 }
 
