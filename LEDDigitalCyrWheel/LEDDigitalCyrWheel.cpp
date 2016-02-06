@@ -101,6 +101,7 @@ void setup() {
 #endif
     
     pinMode(g_batteryVoltagePin, INPUT);
+#warning battery ref hooked up????
 //    pinMode(g_batteryRefPin, INPUT); // TODO: I just re-enabled this. Make sure it works again
 
     analogReadAveraging(16); // longer averaging of reads; drastically stabilizes my battery voltage read compared to the default of 4

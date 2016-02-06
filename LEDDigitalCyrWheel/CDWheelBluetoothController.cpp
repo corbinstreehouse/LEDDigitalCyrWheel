@@ -346,8 +346,8 @@ void CDWheelBluetoothController::process() {
                 case CDWheelUARTCommandWheelCommand: {
                     // Read the next 16-bits for the value..i wish the size was better than this hack (ie: sizeof so much easier and future proof)
                     CDWheelCommand wheelCommand = (CDWheelCommand)-1;
-                    ASSERT(sizeof(CDWheelCommand) <= sizeof(uint16_t));
-                    m_ble.readBytes((char*)&wheelCommand, sizeof(uint16_t));
+                    ASSERT(sizeof(CDWheelCommand) == sizeof(uint16_t));
+                    m_ble.readBytes((char*)&wheelCommand, sizeof(CDWheelCommand));
                     DEBUG_PRINTF("wheel command: %d\r\n", wheelCommand);
                     m_manager->processCommand(wheelCommand);
                     break;
@@ -387,6 +387,47 @@ void CDWheelBluetoothController::process() {
                     if (m_manager->isPaused()) {
                         m_manager->play();
                     }
+                    break;
+                }
+                case CDWheelUARTCommandPlayImagePattern: {
+                    DEBUG_PRINTF("PROGRAMMED PATTERN ...");
+                    
+                    // Read in the speed/duration
+                    uint32_t duration = 32;
+                    m_ble.readBytes((char*)&duration, sizeof(uint32_t));
+
+                    // Read in LEDBitmapPatternOptions
+                    ASSERT(sizeof(LEDPatternOptions) == 4);
+                    LEDPatternOptions options = 0;
+                    m_ble.readBytes((char*)&options, sizeof(LEDPatternOptions));
+                    
+                    // Read the 32-bit size of the filename to play (relative to root), and then read that in (including NULL terminator)
+                    uint32_t filenameSize = 0;
+                    m_ble.readBytes((char*)&filenameSize, sizeof(uint32_t));
+                    DEBUG_PRINTF("reading: %d bytes for filename\r\n", filenameSize); // includes NULL term in size sent..
+
+                    // Sanity check
+                    if (filenameSize <= MAX_PATH) {
+                        char filename[MAX_PATH];
+                        m_ble.readBytes(filename, filenameSize);
+                        DEBUG_PRINTF("setDynamicBitmapPatternType: %s  - duration: %d\r\n", filename, duration);
+                        m_manager->setDynamicBitmapPatternType(filename, duration, options);                        
+                        // start playing if we are paused
+                        if (m_manager->isPaused()) {
+                            m_manager->play();
+                        }
+                    } else {
+                        DEBUG_PRINTLN("BAD SIZE");
+                    }
+//                    if (m_ble.available()) {
+//                        DEBUG_PRINTLN("extra junk??");
+//
+//                    }
+//                    while (m_ble.available()) {
+//                        char c = m_ble.read();
+//                        DEBUG_PRINTF("%c", c);
+//                    }
+                    
                     break;
                 }
             }

@@ -231,6 +231,24 @@ void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, uint32
     loadCurrentPatternItem();
 }
 
+void CWPatternSequenceManager::setDynamicBitmapPatternType(char *filename, uint32_t patternDuration, LEDPatternOptions patternOptions) {
+    CDPatternItemHeader result;
+    result.patternType = LEDPatternTypeImageReferencedBitmap;
+    result.color = CRGB::Red;
+    result.duration = 50;
+    result.patternDuration = patternDuration;
+    result.patternEndCondition = CDPatternEndConditionOnButtonClick;
+    result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, false));
+    // filename is later freed automatically when not NULL
+    result.filename = (char*)malloc(strlen(filename) + 1);
+    strcpy(result.filename, filename);
+
+    setSingleItemPatternHeader(&result);
+    m_shouldIgnoreButtonClickWhenTimed = false; // This could be made an option that is settable/dynamically changable.
+    m_currentPatternItemIndex = 0;
+    loadCurrentPatternItem();
+}
+
 void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount) {
     m_ledPatterns.flashThreeTimes(color);
 }
@@ -318,8 +336,6 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
     }
     
     result.patternDuration = defaultDuration;
-    
-//    result.patternDuration = 0; // as fast as it can go.. 35;
     result.patternEndCondition = CDPatternEndConditionOnButtonClick;
     result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, false));
     result.filename = NULL;

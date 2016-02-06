@@ -88,7 +88,7 @@ private:
     uint32_t m_sdCardWorks:1;
     uint32_t m_lowBattery:1;
     uint32_t m_shouldShowBootProgress:1;
-    uint32_t __reserved:26;
+    uint32_t __reserved:27;
     
     LED_PATTERNS_CLASS m_ledPatterns;
     CDOrientation m_orientation;
@@ -223,6 +223,7 @@ public:
     
     void setSingleItemPatternHeader(CDPatternItemHeader *header);
     void setDynamicPatternType(LEDPatternType type, uint32_t patternDuration = 500, CRGB color = CRGB::Red);
+    void setDynamicBitmapPatternType(char *filename, uint32_t patternDuration, LEDPatternOptions patternOptions);
     
     void startCalibration();
     void endCalibration();
