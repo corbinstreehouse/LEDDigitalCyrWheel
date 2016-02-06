@@ -223,7 +223,7 @@ public:
     
     void setSingleItemPatternHeader(CDPatternItemHeader *header);
     void setDynamicPatternType(LEDPatternType type, uint32_t patternDuration = 500, CRGB color = CRGB::Red);
-    void setDynamicBitmapPatternType(char *filename, uint32_t patternDuration, LEDPatternOptions patternOptions);
+    void setDynamicBitmapPatternType(const char *filename, uint32_t patternDuration, LEDPatternOptions patternOptions);
     
     void startCalibration();
     void endCalibration();

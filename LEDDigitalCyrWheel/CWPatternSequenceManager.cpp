@@ -231,7 +231,7 @@ void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, uint32
     loadCurrentPatternItem();
 }
 
-void CWPatternSequenceManager::setDynamicBitmapPatternType(char *filename, uint32_t patternDuration, LEDPatternOptions patternOptions) {
+void CWPatternSequenceManager::setDynamicBitmapPatternType(const char *filename, uint32_t patternDuration, LEDPatternOptions patternOptions) {
     CDPatternItemHeader result;
     result.patternType = LEDPatternTypeImageReferencedBitmap;
     result.color = CRGB::Red;
