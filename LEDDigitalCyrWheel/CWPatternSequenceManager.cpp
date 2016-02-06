@@ -212,15 +212,23 @@ void CWPatternSequenceManager::makePatternsBlinkColor(CRGB color) {
     m_ledPatterns.setPatternType(LEDPatternTypeBlink);
 }
 
-void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, CRGB color) {
+void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, uint32_t patternDuration, CRGB color) {
     CDPatternItemHeader header;
     header.patternType = type;
-    header.duration = 500;
-    header.patternDuration = 500;
+    header.duration = patternDuration; // Ignored since we are to play till button click
+    header.patternDuration = patternDuration;
     header.color = color;
-    header.patternEndCondition = CDPatternEndConditionOnButtonClick;
+    // I want certain patterns to loop back to the start (here) and repeat after the tick; this allows "single use" patterns to repeat
+    if (LEDPatterns::PatternDurationShouldBeEqualToSegmentDuration(type)) {
+        header.patternEndCondition = CDPatternEndConditionAfterDuration;
+    } else {
+        // Just runs indefinitely...
+        header.patternEndCondition = CDPatternEndConditionOnButtonClick;
+    }
     header.filename = NULL;
     setSingleItemPatternHeader(&header);
+    m_currentPatternItemIndex = 0;
+    loadCurrentPatternItem();
 }
 
 void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount) {

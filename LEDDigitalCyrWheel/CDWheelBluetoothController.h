@@ -42,7 +42,6 @@ private:
     int32_t m_wheelCommandCharactersticID;
     int32_t m_wheelStateID;
     int32_t m_brightnessID;
-//    int32_t m_brightnessWriteID;
     uint32_t m_lastProcessTime;
     
     bool servicesAreRegistered();

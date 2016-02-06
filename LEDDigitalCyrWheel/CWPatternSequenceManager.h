@@ -222,7 +222,7 @@ public:
     void processCommand(CDWheelCommand command);
     
     void setSingleItemPatternHeader(CDPatternItemHeader *header);
-    void setDynamicPatternType(LEDPatternType type, CRGB color = CRGB::Red);
+    void setDynamicPatternType(LEDPatternType type, uint32_t patternDuration = 500, CRGB color = CRGB::Red);
     
     void startCalibration();
     void endCalibration();

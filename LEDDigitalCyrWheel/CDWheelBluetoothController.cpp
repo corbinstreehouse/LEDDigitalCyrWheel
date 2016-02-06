@@ -128,6 +128,14 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
     
     if (servicesAreRegistered()) {
         m_manager->incBootProgress();
+        
+        // Load initial state
+        setCharacteristic16BitValue(m_brightnessID, m_manager->getBrightness());
+        m_manager->incBootProgress();
+
+        setCharacteristic16BitValue(m_wheelStateID, m_manager->getWheelState());
+        m_manager->incBootProgress();
+        
         // Attempt to read in existing values for m_wheelServiceID...
         DEBUG_PRINTF("restored: m_wheelServiceID %d, m_wheelCommandCharactersticID: %d\r\n", m_wheelServiceID, m_wheelCommandCharactersticID);
     } else {
@@ -361,6 +369,24 @@ void CDWheelBluetoothController::process() {
                     m_ble.readBytes((char*)&speed, sizeof(uint16_t));
                     DEBUG_PRINTF("speed command: %d\r\n", speed);
                     m_manager->setCurrentPatternSpeed(speed);
+                    break;
+                }
+                case CDWheelUARTCommandPlayProgrammedPattern: {
+                    ASSERT(sizeof(LEDPatternType) == 4); // Make sure the size didn't change
+                    // Type, speed, color
+                    LEDPatternType patternType = LEDPatternTypeBlink;
+                    uint32_t duration = 100;
+                    CRGB color = CRGB::Red;
+                    m_ble.readBytes((char*)&patternType, sizeof(LEDPatternType));
+                    m_ble.readBytes((char*)&duration, sizeof(uint32_t));
+                    m_ble.readBytes((char*)&color, sizeof(CRGB));
+                    DEBUG_PRINTF("pattern type: %d\r\n", patternType);
+                    
+                    m_manager->setDynamicPatternType(patternType, duration, color);
+                    // start playing if we are paused
+                    if (m_manager->isPaused()) {
+                        m_manager->play();
+                    }
                     break;
                 }
             }
