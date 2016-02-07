@@ -180,23 +180,6 @@ CDPatternItemHeader CWPatternSequenceManager::makeFlashPatternItem(CRGB color) {
 
 void CWPatternSequenceManager::makeSequenceFlashColor(CRGB color) {
     freePatternItems();
-    /*
-    _numberOfPatternItems = 2;
-    _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
-    _patternItems[0].patternType = LEDPatternTypeSolidColor;
-    _patternItems[0].duration = 500;
-    _patternItems[0].patternDuration = 500; // Not used
-    _patternItems[0].color = color;
-    _patternItems[0].patternEndCondition = CDPatternEndConditionAfterDuration;
-    _patternItems[0].filename = NULL;
-    
-    _patternItems[1].patternType = LEDPatternTypeSolidColor;
-    _patternItems[1].duration = 500;
-    _patternItems[1].color = CRGB::Black;
-    _patternItems[1].patternDuration = 500; // not used..
-    _patternItems[1].patternEndCondition = CDPatternEndConditionAfterDuration;
-    _patternItems[1].filename = NULL;
-    */
     
     _numberOfPatternItems = 1;
     _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
@@ -214,6 +197,7 @@ void CWPatternSequenceManager::makePatternsBlinkColor(CRGB color) {
 
 void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, uint32_t patternDuration, CRGB color) {
     CDPatternItemHeader header;
+    bzero(&header, sizeof(CDPatternItemHeader));
     header.patternType = type;
     header.duration = patternDuration; // Ignored since we are to play till button click
     header.patternDuration = patternDuration;
@@ -233,6 +217,7 @@ void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, uint32
 
 void CWPatternSequenceManager::setDynamicBitmapPatternType(const char *filename, uint32_t patternDuration, LEDPatternOptions patternOptions) {
     CDPatternItemHeader result;
+    bzero(&result, sizeof(CDPatternItemHeader));
     result.patternType = LEDPatternTypeImageReferencedBitmap;
     result.color = CRGB::Red;
     result.duration = 50;
@@ -1115,6 +1100,9 @@ void CWPatternSequenceManager::buttonClick() {
     if (m_orientation.isCalibrating()) {
         m_orientation.endCalibration();
         firstPatternItem();
+    } else if (isPaused()) {
+        // Only the BT stuff can pause us... make the button click start us up again..
+        play();
     } else {
         // TODO: Maybe a "start on button click" option...in addition to m_shouldIgnoreButtonClickWhenTimed
         // Then, I could just call the next command..
@@ -1181,18 +1169,20 @@ void CWPatternSequenceManager::process() {
     // First, always do one pass through the update of the patterns; this updates the time
     m_ledPatterns.show();
     
-    // This updates how much time has passed since the pattern started and how many full intervals have run through.
-    // See if we should go to the next pattern
-    CDPatternItemHeader *itemHeader = &_patternItems[m_currentPatternItemIndex];
-    // See if we should go to the next pattern if enough time passed
-    if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
-        // subtract out how much time has passed from our initial pattern, and when we actually started the first timed pattern. This gives more accurate timings.
-        uint32_t timePassed = millis() - m_timedUsedBeforeCurrentPattern - m_timedPatternStartTime;
-        if (timePassed >= itemHeader->duration) {
-            nextPatternItem();
+    if (!isPaused()) {
+        // This updates how much time has passed since the pattern started and how many full intervals have run through.
+        // See if we should go to the next pattern
+        CDPatternItemHeader *itemHeader = &_patternItems[m_currentPatternItemIndex];
+        // See if we should go to the next pattern if enough time passed
+        if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
+            // subtract out how much time has passed from our initial pattern, and when we actually started the first timed pattern. This gives more accurate timings.
+            uint32_t timePassed = millis() - m_timedUsedBeforeCurrentPattern - m_timedPatternStartTime;
+            if (timePassed >= itemHeader->duration) {
+                nextPatternItem();
+            }
+        } else {
+            // It is waiting for some other condition before going to the next pattern (button click is the only condition now)
         }
-    } else {
-        // It is waiting for some other condition before going to the next pattern (button click is the only condition now)
     }
 }
 
@@ -1447,6 +1437,23 @@ void CWPatternSequenceManager::processCommand(CDWheelCommand command) {
         }
     }
 }
+
+void CWPatternSequenceManager::play() {
+    if (m_ledPatterns.isPaused()) {
+        resetStartingTime();
+        m_ledPatterns.play();
+        sendWheelChanged(CDWheelChangeReasonStateChanged);
+    }
+}
+
+void CWPatternSequenceManager::pause() {
+    if (!m_ledPatterns.isPaused()) {
+        m_ledPatterns.pause();
+        sendWheelChanged(CDWheelChangeReasonStateChanged);
+    }
+}
+
+
 
 
 

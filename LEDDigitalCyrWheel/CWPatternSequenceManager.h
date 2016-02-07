@@ -126,14 +126,6 @@ private:
     const char *_getRootDirectory();
     const char *_getPatternDirectory();
     
-    inline CDPatternItemHeader *getCurrentItemHeader() {
-        if (m_currentPatternItemIndex >= 0 && m_currentPatternItemIndex < _numberOfPatternItems) {
-            return  &_patternItems[m_currentPatternItemIndex];
-        } else {
-            return NULL;
-        }
-    }
-    
     // for crossfade
     inline CDPatternItemHeader *getNextItemHeader() {
         int tmp = m_currentPatternItemIndex;
@@ -253,19 +245,17 @@ public:
 
     void loadSequenceInMemoryFromFatFile(FatFile *sequenceFile);
 
-#if PATTERN_EDITOR
-    CDPatternItemHeader *getCurrentPatternItemHeader() {
+    inline CDPatternItemHeader *getCurrentItemHeader() {
         if (m_currentPatternItemIndex >= 0 && m_currentPatternItemIndex < _numberOfPatternItems) {
-            return &_patternItems[m_currentPatternItemIndex];
+            return  &_patternItems[m_currentPatternItemIndex];
         } else {
             return NULL;
         }
     }
-#endif
-    
-    void play() { m_ledPatterns.play(); sendWheelChanged(CDWheelChangeReasonStateChanged); }
-    void pause() { m_ledPatterns.pause(); sendWheelChanged(CDWheelChangeReasonStateChanged); }
-    bool isPaused() { return m_ledPatterns.isPaused(); }
+
+    void play(); 
+    void pause();
+    inline bool isPaused() { return m_ledPatterns.isPaused(); }
     CDWheelState getWheelState() { return m_ledPatterns.isPaused() ? CDWheelStatePaused : CDWheelStatePlaying; }
 
     void setWheelChangeHandler(CDWheelChangedHandler *handler, void *data) { m_changeHandler = handler; m_changeHandlerData = data; }
