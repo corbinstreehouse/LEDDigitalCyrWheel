@@ -319,6 +319,55 @@ void CDWheelBluetoothController::setCharacteristic16BitValue(const int cmdID, co
 //}
 //
 
+void CDWheelBluetoothController::_sendCurrentPatternInfo() {
+    char filename[MAX_PATH];
+    char *filenameToWrite = NULL;
+    DEBUG_PRINTLN(" **** sending pattern info...");
+
+    // Figre out what we want to write
+    CDPatternItemHeader header;
+    CDPatternItemHeader *headerPtr = m_manager->getCurrentItemHeader();
+    if (headerPtr != NULL) {
+        header = *headerPtr;
+        // We write out the filename
+        if (headerPtr->filename != NULL) {
+            filenameToWrite = headerPtr->filename;
+        } else if (header.patternType == LEDPatternTypeBitmap) {
+            // Non-referenced images; the file we are showing is what we are playing
+            m_manager->getCurrentPatternFileName(filename, MAX_PATH);
+            filenameToWrite = filename;
+        }
+        
+        if (filenameToWrite) {
+            header.filenameLength = strlen(filenameToWrite);
+        } else {
+            header.filenameLength = 0; // Just make sure
+        }
+        
+        DEBUG_PRINTF(" sending header.patternType: %d, filelength: %d\r\n", header.patternType, header.filenameLength);
+    } else {
+        DEBUG_PRINTLN(" no header???.");
+        // Write a header still indicating no pattern is playing by noting the count...
+        bzero(&header, sizeof(CDPatternItemHeader));
+        header.patternType = LEDPatternTypeCount;
+    }
+    
+    // Write to the BLE all at once
+    m_ble.setMode(BLUEFRUIT_MODE_DATA);
+    // Write the UART command we are sending
+    m_ble.write(CDWheelUARTRecieveCommandCurrentPatternInfo);
+    // Maybe write how much data we are going to write....
+    
+    // Write the header..then the filename (if available)
+    m_ble.write((char*)&header, sizeof(CDPatternItemHeader));
+    if (filenameToWrite != NULL) {
+        DEBUG_PRINTLN(" **** writing relative filename...");
+        m_ble.write(filenameToWrite, header.filenameLength + 1); // Includes NULL terminator in what we write.
+    }
+    
+    DEBUG_PRINTLN(" **** done sending pattern info...");
+}
+
 void CDWheelBluetoothController::process() {
     
     if (!m_initialized) {
@@ -340,7 +389,7 @@ void CDWheelBluetoothController::process() {
         ASSERT(sizeof(command) <= 1);
         // I could use read(), which returns the int8 as an int, but this is more size explicit
         m_ble.readBytes((char*)&command, 1);
-        DEBUG_PRINTF("Command: %d\r\n", command);
+        DEBUG_PRINTF("BLUETOOTH Command: %d\r\n", command);
         if (command >= 0 && command <= CDWheelUARTCommandLastValue) {
             switch (command) {
                 case CDWheelUARTCommandWheelCommand: {
@@ -411,7 +460,7 @@ void CDWheelBluetoothController::process() {
                         char filename[MAX_PATH];
                         m_ble.readBytes(filename, filenameSize);
                         DEBUG_PRINTF("setDynamicBitmapPatternType: %s  - duration: %d\r\n", filename, duration);
-                        m_manager->setDynamicBitmapPatternType(filename, duration, options);                        
+                        m_manager->setDynamicBitmapPatternType((const char*)filename, duration, options);
                         // start playing if we are paused
                         if (m_manager->isPaused()) {
                             m_manager->play();
@@ -428,6 +477,11 @@ void CDWheelBluetoothController::process() {
 //                        DEBUG_PRINTF("%c", c);
 //                    }
                     
+                    break;
+                }
+                case CDWheelUARTCommandRequestPatternInfo: {
+                    // Nothing else is sent; we start sending back the pattern info..
+                    _sendCurrentPatternInfo();
                     break;
                 }
             }
