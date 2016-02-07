@@ -177,6 +177,7 @@ private:
     
     void setupBootProgress();
     void burnInitialStateInEEPROM();
+    void sequenceChanged();
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR

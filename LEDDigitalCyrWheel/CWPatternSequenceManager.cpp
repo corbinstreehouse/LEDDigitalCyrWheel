@@ -141,7 +141,7 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     }
     _numberOfPatternItems = i;
     DEBUG_PRINTF(" --- default pattern count _numberOfPatternItems: %d\r\n", _numberOfPatternItems);
-    
+    sequenceChanged();
 }
 
 static inline bool verifyHeader(CDPatternSequenceHeader *h) {
@@ -178,6 +178,11 @@ CDPatternItemHeader CWPatternSequenceManager::makeFlashPatternItem(CRGB color) {
     return result;
 }
 
+void CWPatternSequenceManager::sequenceChanged() {
+    // Send the changed note at the end
+    sendWheelChanged(CDWheelChangeReasonSequenceChanged);
+}
+
 void CWPatternSequenceManager::makeSequenceFlashColor(CRGB color) {
     freePatternItems();
     
@@ -186,6 +191,8 @@ void CWPatternSequenceManager::makeSequenceFlashColor(CRGB color) {
     _patternItems[0] = makeFlashPatternItem(color);
 
     m_currentPatternItemIndex = 0;
+    
+    sequenceChanged();
 }
 
 // Almost the same as the above..
@@ -327,6 +334,7 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
     
     setSingleItemPatternHeader(&result);
     m_shouldIgnoreButtonClickWhenTimed = false; // This could be made an option that is settable/dynamically changable.
+    sequenceChanged();
 }
 
 uint32_t CWPatternSequenceManager::getCurrentPatternSpeed() {
@@ -406,6 +414,7 @@ void CWPatternSequenceManager::loadAsSequenceFromFatFile(FatFile *sequenceFile) 
         // Bad data...flash yellow
         makeSequenceFlashColor(CRGB::Yellow);
     }
+    sequenceChanged();
 }
 
 void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInfo) {
@@ -465,11 +474,10 @@ void CWPatternSequenceManager::loadFileInfo(CDPatternFileInfo *fileInfo) {
         }
         default: {
             makeSequenceFlashColor(CRGB::Red); // error of some sort
+            sequenceChanged();
             break;
         }
     }
-    // Send the changed note at the end
-    sendWheelChanged(CDWheelChangeReasonSequenceChanged);
 }
 
 // TODO: rewrite this
@@ -643,6 +651,8 @@ void CWPatternSequenceManager::setSingleItemPatternHeader(CDPatternItemHeader *h
 
     _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
     _patternItems[0] = *header;
+    
+    sequenceChanged();
 }
 
 void CWPatternSequenceManager::loadCurrentSequence() {

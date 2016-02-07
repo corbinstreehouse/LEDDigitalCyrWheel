@@ -42,6 +42,18 @@ void CDWheelBluetoothController::wheelChanged(CDWheelChangeReason reason) {
         }
         case CDWheelChangeReasonBrightnessChanged: {
             setCharacteristic16BitValue(m_brightnessID, m_manager->getBrightness());
+            break;
+        }
+        case CDWheelChangeReasonPatternChanged: {
+            // TODO: make sure this doesn't slow down things....
+            if (m_ble.isConnected()) {
+                _sendCurrentPatternInfo();
+            }
+            break;
+        }
+        case CDWheelChangeReasonSequenceChanged: {
+            
+            break;
         }
     }
 }
@@ -351,6 +363,17 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
         bzero(&header, sizeof(CDPatternItemHeader));
         header.patternType = LEDPatternTypeCount;
     }
+    
+    DEBUG_PRINTF(" sending bytes: %x - ", CDWheelUARTRecieveCommandCurrentPatternInfo);
+    char *c = (char*)&header;
+    for (int i = 0; i < sizeof(CDPatternItemHeader); i++ ) {
+        DEBUG_PRINTF("%x", *c);
+        c++;
+        if ((i %4) == 0) {
+            DEBUG_PRINTF(" ");
+        }
+    }
+    DEBUG_PRINTF("\r\n");
     
     // Write to the BLE all at once
     m_ble.setMode(BLUEFRUIT_MODE_DATA);

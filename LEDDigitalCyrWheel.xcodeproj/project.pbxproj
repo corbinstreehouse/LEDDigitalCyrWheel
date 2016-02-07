@@ -1367,7 +1367,7 @@
 		9D0EF19C1BFC3787002C687E /* wctype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wctype.h; sourceTree = "<group>"; };
 		9D0EF19D1BFC3787002C687E /* wordexp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wordexp.h; sourceTree = "<group>"; };
 		9D1234C11889AC3B00A97482 /* CDPatternData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CDPatternData.h; sourceTree = "<group>"; };
-		9D142EA51C0245900085A377 /* Adafruit_BLE.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_BLE.cpp; sourceTree = "<group>"; };
+		9D142EA51C0245900085A377 /* Adafruit_BLE.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_BLE.cpp; sourceTree = "<group>"; tabWidth = 2; };
 		9D142EA61C0245900085A377 /* Adafruit_BLE.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_BLE.h; sourceTree = "<group>"; };
 		9D142EA71C0245900085A377 /* Adafruit_BluefruitLE_SPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_BluefruitLE_SPI.cpp; sourceTree = "<group>"; tabWidth = 2; };
 		9D142EA81C0245900085A377 /* Adafruit_BluefruitLE_SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_BluefruitLE_SPI.h; sourceTree = "<group>"; };

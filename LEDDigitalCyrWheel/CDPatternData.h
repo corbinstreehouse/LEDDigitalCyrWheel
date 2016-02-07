@@ -54,14 +54,17 @@ typedef struct  __attribute__((__packed__)) {
     uint8_t _colorAlignment;
     
     uint32_t shouldSetBrightnessByRotationalVelocity:1;
-    uint32_t __reservedOptions:30;
+    uint32_t __reservedOptions:31;
 
+    // TODO: Hack for swift.. I need to re-do this to not use a union because Swift doesn't like it, and I could make this a few bytes smaller, but require a double array for filenames..which requires more management
+    
     // 8 bytes (64-bit value always for pointers to work out)
     union {
-        uint32_t filenameLength; // When writing to a file, the filenameLength is written, and then following the struct is the filename
+        uint32_t filenameLength; // When writing to a file, the filenameLength is written, and then following the struct is the filename. Excludes NULL terminator.
         char *filename; // After reading, the filename is allocated and copied here (it MUST be freed!)
         uint64_t __pointerSize; // Fixes pointers for 32/64-bit
     };
+
 } CDPatternItemHeader; // Following the header is the filename to reference, if filenameLength != 0
 
 
@@ -73,5 +76,6 @@ typedef struct  __attribute__((__packed__)) {
     uint32_t ignoreButtonForTimedPatterns:1;
     uint32_t _unused:31;
 } CDPatternSequenceHeader; // maybe rename to "CDPatternFileHeader"
+
 
 #endif
