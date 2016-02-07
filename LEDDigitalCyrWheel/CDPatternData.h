@@ -1,5 +1,5 @@
 //
-//  CWPatternData.h
+//  CDPatternData.h
 //  CyrWheelPatternEditor
 //
 //  Created by Corbin Dunn on 1/16/14 .
