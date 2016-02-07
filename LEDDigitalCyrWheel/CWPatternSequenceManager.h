@@ -233,7 +233,7 @@ public:
     void setLowBatteryWarning();
     inline LEDPatterns *getLEDPatterns() { return &m_ledPatterns; }
 
-    bool getCurrentPatternFileName(char *buffer, size_t bufferSize);
+    bool getCurrentPatternFileName(char *buffer, size_t bufferSize, bool useSFN = true);
 
     int getRootNumberOfSequenceFilenames() { return m_rootFileInfo.numberOfChildren; };
     

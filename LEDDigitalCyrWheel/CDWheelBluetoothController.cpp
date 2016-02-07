@@ -345,8 +345,8 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
         if (headerPtr->filename != NULL) {
             filenameToWrite = headerPtr->filename;
         } else if (header.patternType == LEDPatternTypeBitmap) {
-            // Non-referenced images; the file we are showing is what we are playing
-            m_manager->getCurrentPatternFileName(filename, MAX_PATH);
+            // Non-referenced images; the file we are showing is what we are playing. We want the full filename..
+            m_manager->getCurrentPatternFileName(filename, MAX_PATH, false);
             filenameToWrite = filename;
         }
         
@@ -358,22 +358,21 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
         
         DEBUG_PRINTF(" sending header.patternType: %d, filelength: %d\r\n", header.patternType, header.filenameLength);
     } else {
-        DEBUG_PRINTLN(" no header???.");
         // Write a header still indicating no pattern is playing by noting the count...
         bzero(&header, sizeof(CDPatternItemHeader));
         header.patternType = LEDPatternTypeCount;
     }
     
-    DEBUG_PRINTF(" sending bytes: %x - ", CDWheelUARTRecieveCommandCurrentPatternInfo);
-    char *c = (char*)&header;
-    for (int i = 0; i < sizeof(CDPatternItemHeader); i++ ) {
-        DEBUG_PRINTF("%x", *c);
-        c++;
-        if ((i %4) == 0) {
-            DEBUG_PRINTF(" ");
-        }
-    }
-    DEBUG_PRINTF("\r\n");
+//    DEBUG_PRINTF(" sending bytes: %x - ", CDWheelUARTRecieveCommandCurrentPatternInfo);
+//    char *c = (char*)&header;
+//    for (int i = 0; i < sizeof(CDPatternItemHeader); i++ ) {
+//        DEBUG_PRINTF("%x", *c);
+//        c++;
+//        if ((i %4) == 0) {
+//            DEBUG_PRINTF(" ");
+//        }
+//    }
+//    DEBUG_PRINTF("\r\n");
     
     // Write to the BLE all at once
     m_ble.setMode(BLUEFRUIT_MODE_DATA);

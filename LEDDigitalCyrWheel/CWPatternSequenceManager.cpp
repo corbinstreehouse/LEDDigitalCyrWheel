@@ -248,9 +248,9 @@ void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount)
 // if stackBufferSize == 0, it always allocates (yeah, bad mem mangement techniques)
 // This walks to the parent, adds its path, and then adds the child's path to get a complete path
 // returns SFN
-size_t _recursiveGetFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, size_t size, size_t startingOffset) {
+size_t _recursiveGetFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, size_t size, size_t startingOffset, bool useSFN) {
     if (fileInfo->parent) {
-        startingOffset = _recursiveGetFullpathName(rootDirName, fileInfo->parent, buffer, size, startingOffset);
+        startingOffset = _recursiveGetFullpathName(rootDirName, fileInfo->parent, buffer, size, startingOffset, useSFN);
     }
     // Add in our path, include seperators
     if (startingOffset > 0 && buffer[startingOffset-1] != '/') {
@@ -272,8 +272,14 @@ size_t _recursiveGetFullpathName(const char *rootDirName, CDPatternFileInfo *fil
 //            file.printName();
 //            DEBUG_PRINTLN(" <-- name printed");
 //    #endif
-            if (!file.getSFN(nameLocation)) {
+            if (useSFN) {
+                if (!file.getSFN(nameLocation)) {
+                    // errors?
+                }
             } else {
+                if (!file.getName(nameLocation, size-startingOffset)) {
+                    // errors?
+                }
             }
             file.close();
         } else {
@@ -285,10 +291,10 @@ size_t _recursiveGetFullpathName(const char *rootDirName, CDPatternFileInfo *fil
 }
 
 
-static void _getFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, size_t size) {
+static void _getFullpathName(const char *rootDirName, CDPatternFileInfo *fileInfo, char *buffer, size_t size, bool useSFN = true) {
     buffer[0] = 0;
 //    DEBUG_PRINTF(" start to get name for dir: %d \r\n", fileInfo->dirIndex);
-    _recursiveGetFullpathName(rootDirName, fileInfo, buffer, size, 0);
+    _recursiveGetFullpathName(rootDirName, fileInfo, buffer, size, 0, useSFN);
 //    DEBUG_PRINTF(" computed filename: %s\r\n", buffer);
 }
 
@@ -665,7 +671,7 @@ void CWPatternSequenceManager::loadCurrentSequence() {
     firstPatternItem();
 }
 
-bool CWPatternSequenceManager::getCurrentPatternFileName(char *buffer, size_t bufferSize) {
+bool CWPatternSequenceManager::getCurrentPatternFileName(char *buffer, size_t bufferSize, bool useSFN) {
     _ensureCurrentFileInfo();
     
     bool result;
@@ -673,7 +679,7 @@ bool CWPatternSequenceManager::getCurrentPatternFileName(char *buffer, size_t bu
         strcpy(buffer, "Default Sequence");
         result = true;
     } else {
-        _getFullpathName(_getRootDirectory(), m_currentFileInfo, buffer, bufferSize);
+        _getFullpathName(_getRootDirectory(), m_currentFileInfo, buffer, bufferSize, useSFN);
         FatFile file = FatFile(buffer, O_READ);
         result = file.getName(buffer, bufferSize);
         file.close();
