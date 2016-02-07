@@ -30,7 +30,7 @@ CDWheelBluetoothController::CDWheelBluetoothController() : m_ble(BLUETOOTH_CS, B
 
 // Abstract code that isn't going to depend on the BT backend
 void _WheelChangedHandler(CDWheelChangeReason reason, void *data) {
-    DEBUG_PRINTF("Pinging bluetooth: wheel changes\r\n");
+    DEBUG_PRINTF("Pinging bluetooth: wheel changed reason: %d\r\n", reason);
     ((CDWheelBluetoothController*)data)->wheelChanged(reason);
 }
 
@@ -356,38 +356,55 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
             header.filenameLength = 0; // Just make sure
         }
         
-        DEBUG_PRINTF(" sending header.patternType: %d, filelength: %d\r\n", header.patternType, header.filenameLength);
+        DEBUG_PRINTF(" sending header.patternType: %d (0x%2x), filelength: %d\r\n", header.patternType, header.patternType, header.filenameLength);
     } else {
         // Write a header still indicating no pattern is playing by noting the count...
         bzero(&header, sizeof(CDPatternItemHeader));
         header.patternType = LEDPatternTypeCount;
     }
     
-//    DEBUG_PRINTF(" sending bytes: %x - ", CDWheelUARTRecieveCommandCurrentPatternInfo);
-//    char *c = (char*)&header;
-//    for (int i = 0; i < sizeof(CDPatternItemHeader); i++ ) {
-//        DEBUG_PRINTF("%x", *c);
-//        c++;
-//        if ((i %4) == 0) {
-//            DEBUG_PRINTF(" ");
-//        }
-//    }
-//    DEBUG_PRINTF("\r\n");
+    DEBUG_PRINTF(" sending bytes, command %2X: ", CDWheelUARTRecieveCommandCurrentPatternInfo);
+    char *c = (char*)&header;
+    for (int i = 0; i < sizeof(CDPatternItemHeader); i++ ) {
+        if (i >=4 && (i %4) == 0) {
+            DEBUG_PRINTF(" ");
+        }
+        DEBUG_PRINTF("%02X", *c);
+        c++;
+    }
+    DEBUG_PRINTF("\r\n");
     
+    int bytesSent = 0;
     // Write to the BLE all at once
     m_ble.setMode(BLUEFRUIT_MODE_DATA);
     // Write the UART command we are sending
-    m_ble.write(CDWheelUARTRecieveCommandCurrentPatternInfo);
+    m_ble.write((int8_t)CDWheelUARTRecieveCommandCurrentPatternInfo);
     // Maybe write how much data we are going to write....
+    bytesSent += 1;
     
     // Write the header..then the filename (if available)
     m_ble.write((char*)&header, sizeof(CDPatternItemHeader));
+    bytesSent += sizeof(CDPatternItemHeader);
     if (filenameToWrite != NULL) {
-        DEBUG_PRINTLN(" **** writing relative filename...");
+        DEBUG_PRINTLN(" **** writing relative filename: ");
+        
+        // debug..
+        char *c = (char*)&filenameToWrite;
+        for (int i = 0; i <= header.filenameLength; i++ ) {
+            if (i >=4 && (i %4) == 0) {
+                DEBUG_PRINTF(" ");
+            }
+            DEBUG_PRINTF("%02x", *c);
+            c++;
+        }
+        DEBUG_PRINTF("\r\n");
+        
+        
         m_ble.write(filenameToWrite, header.filenameLength + 1); // Includes NULL terminator in what we write.
+        bytesSent += header.filenameLength+1;
     }
     
-    DEBUG_PRINTLN(" **** done sending pattern info...");
+    DEBUG_PRINTF(" **** done sending pattern info, sent: %d bytes\r\n", bytesSent);
 }
 
 void CDWheelBluetoothController::process() {
@@ -420,7 +437,7 @@ void CDWheelBluetoothController::process() {
                     ASSERT(sizeof(CDWheelCommand) == sizeof(uint16_t));
                     m_ble.readBytes((char*)&wheelCommand, sizeof(CDWheelCommand));
                     DEBUG_PRINTF("wheel command: %d\r\n", wheelCommand);
-                    m_manager->processCommand(wheelCommand);
+                    m_manager->processCommand(wheelCommand); // may re-enter!
                     break;
                 }
                 case CDWheelUARTCommandSetBrightness: {
@@ -512,7 +529,12 @@ void CDWheelBluetoothController::process() {
             DEBUG_PRINTF("invalid command: %d", command);
         }
     }
-    m_ble.setMode(BLUEFRUIT_MODE_COMMAND); // needed?
+    // Maybe: If we have more data, process it on the next tick to make it go faster; otherwise, wait...
+    m_ble.setMode(BLUEFRUIT_MODE_DATA);
+//    if (!m_ble.available())
+    {
+        m_lastProcessTime = millis();
+    }
 
     
     
@@ -606,9 +628,6 @@ void CDWheelBluetoothController::process() {
     }
 #endif
     
-    
-    
-    m_lastProcessTime = millis();
 }
 
 #endif
