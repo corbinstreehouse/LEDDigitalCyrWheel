@@ -11,27 +11,7 @@
 
 #include <stdint.h>
 
-#include "LEDPatternType.h"
-
-// Stuff shared with the app side of things
-
-// Make this more portable with ARM compilers
-//#ifndef __has_feature
-//#define __has_feature(a) 0
-//#endif
-//
-//#ifndef __has_extension
-//#define __has_extension(a) 0
-//#endif
-
-// TODO: share the enum defines..
-//#if (__cplusplus && __cplusplus >= 201103L && (__has_extension(cxx_strong_enums) || __has_feature(objc_fixed_enum))) || (!__cplusplus && __has_feature(objc_fixed_enum))
-//    #define CD_ENUM(_type, _name)     enum _name : _type _name; enum _name : _type // for swift..
-////    #define CD_ENUM(_type, _name)     enum _name : _type // for compiler to work in arduino
-//#else
-//    #define CD_ENUM(_type, _name)     enum _name : _type
-//#endif
-
+#include "LEDPatternType.h" // Defines CD_ENUM
 
 typedef CD_ENUM(int16_t, CDWheelCommand)  {
     CDWheelCommandFirst = 0,
@@ -53,14 +33,15 @@ typedef CD_ENUM(int16_t, CDWheelCommand)  {
     CDWheelCommandLast = CDWheelCommandPause,
     CDWheelCommandCount = CDWheelCommandLast + 1,
 };
+    
 
 typedef CD_ENUM(int16_t, CDWheelState)  {
     CDWheelStatePlaying,
     CDWheelStatePaused,
-    
 };
+    
 
-// When sending data over serial UART, I first send a command, and then the rest of the data to be processed (ie: uploaded file)
+// When sending data over serial UART to the wheel, I first send a command, and then the rest of the data to be processed (ie: uploaded file)
 // It is much easier if this is an 8 bit byte; the UART command and wheel command can be set in one BLE packet.
 typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
     CDWheelUARTCommandWheelCommand, //
@@ -68,12 +49,33 @@ typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
     CDWheelUARTCommandSetCurrentPatternSpeed,
     CDWheelUARTCommandPlayProgrammedPattern,
     CDWheelUARTCommandPlayImagePattern,
+    CDWheelUARTCommandRequestPatternInfo,
+    
     
     // Other things....like get a list of files or upload a new pattern, or "paint" pixels.
     
-    CDWheelUARTCommandLastValue = CDWheelUARTCommandPlayImagePattern,
-
+    CDWheelUARTCommandLastValue = CDWheelUARTCommandRequestPatternInfo,
 };
-
+    
+    
+// When receiving data over serial URART fromm the wheel
+typedef CD_ENUM(int8_t, CDWheelUARTRecieveCommand)  {
+    CDWheelUARTRecieveCommandInvalid, // So we don't interpret 0...
+    CDWheelUARTRecieveCommandCurrentPatternInfo, //
+    
+    
+    
+};
+    
+// We recieve a struct of data depending on the command, and if i can really get it packed..if it isn't packed, it might not be worth it..
+//typedef struct  __attribute__((__packed__)) {
+//    CDWheelUARTRecieveCommand command; // CDWheelUARTRecieveCommandCurrentPatternInfo
+//    CDPatternItemHeader itemHeader
+//} CDWheelUARTRecievePatternInfoData; // Followed by the filename (optional)
+    
+    
+    
+    
+ 
 
 #endif /* CDPatternSequenceManagerShared_h */
