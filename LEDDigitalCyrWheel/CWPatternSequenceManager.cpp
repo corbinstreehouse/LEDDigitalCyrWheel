@@ -120,7 +120,7 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     
     int i = 0;
     for (int p = LEDPatternTypeMin; p < LEDPatternTypeCount; p++) {
-        if (p == LEDPatternTypeDoNothing || p == LEDPatternTypeFadeIn || p == LEDPatternTypeImageReferencedBitmap || p == LEDPatternTypeImageEntireStrip_UNUSED) {
+        if (p == LEDPatternTypeDoNothing || p == LEDPatternTypeFadeIn || p == LEDPatternTypeImageReferencedBitmap || p == LEDPatternTypeImageEntireStrip_UNUSED || p == LEDPatternTypeFadeOut || p == LEDPatternTypeCrossfade || p == LEDPatternTypeCount || p == LEDPatternTypeBitmap) {
             continue; // skip a few
         }
         bzero(&_patternItems[i], sizeof(CDPatternItemHeader));
@@ -793,9 +793,10 @@ const char *CWPatternSequenceManager::_getPatternDirectory() {
         return [m_patternDirectoryURL fileSystemRepresentation];
     } else {
         ASSERT(false); // we need it .
-        return "";
+        return "/Patterns"; // ?
     }
 #else
+    // Customizable?
     return g_sequencePath;
 #endif
 }
