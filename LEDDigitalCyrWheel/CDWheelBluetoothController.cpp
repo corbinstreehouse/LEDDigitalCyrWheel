@@ -497,9 +497,9 @@ void CDWheelBluetoothController::process() {
                     m_ble.readBytes((char*)&duration, sizeof(uint32_t));
 
                     // Read in LEDBitmapPatternOptions
-                    ASSERT(sizeof(LEDPatternOptions) == 4);
-                    LEDPatternOptions options = 0;
-                    m_ble.readBytes((char*)&options, sizeof(LEDPatternOptions));
+                    ASSERT(sizeof(LEDBitmapPatternOptions) == 4);
+                    LEDBitmapPatternOptions options = LEDBitmapPatternOptions(false, false);
+                    m_ble.readBytes((char*)&options, sizeof(LEDBitmapPatternOptions));
                     
                     // Read the 32-bit size of the filename to play (relative to root), and then read that in (including NULL terminator)
                     uint32_t filenameSize = 0;

@@ -40,6 +40,7 @@ const int g_batteryVoltagePin = A3; // pin 17
 #define ORIENT_EEPROM_MIN_CALIBRATION_VALUE 24 // rather abitrary
 #define ORIENT_EEPROM_MAX_CALIBRATION_VALUE (24+2*3)    // min value has a vector of 3 16-bit values; 16-bits is 2 bytes. 3*2 = 6 bytes for the prior read
 #define EEPROM_SHOULD_SHOW_BOOT_PROGRESS (ORIENT_EEPROM_MAX_CALIBRATION_VALUE + 2*3) // 1 byte stored here
+#define EEPROM_SHOULD_STRETCH_BITMAP (EEPROM_SHOULD_SHOW_BOOT_PROGRESS+1) // 1 byte stored here
 
 
 /* Teensy 3.1 wiring diagram 

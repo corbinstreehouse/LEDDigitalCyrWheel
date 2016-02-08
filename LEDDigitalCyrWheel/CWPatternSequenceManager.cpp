@@ -222,7 +222,7 @@ void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, uint32
     loadCurrentPatternItem();
 }
 
-void CWPatternSequenceManager::setDynamicBitmapPatternType(const char *filename, uint32_t patternDuration, LEDPatternOptions patternOptions) {
+void CWPatternSequenceManager::setDynamicBitmapPatternType(const char *filename, uint32_t patternDuration, LEDBitmapPatternOptions bitmapOptions) {
     CDPatternItemHeader result;
     bzero(&result, sizeof(CDPatternItemHeader));
     // TODO: might be better to find it in the list!!
@@ -231,7 +231,7 @@ void CWPatternSequenceManager::setDynamicBitmapPatternType(const char *filename,
     result.duration = 50;
     result.patternDuration = patternDuration;
     result.patternEndCondition = CDPatternEndConditionOnButtonClick;
-    result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, false));
+    result.patternOptions = LEDPatternOptions(bitmapOptions);
     // filename is later freed automatically when not NULL
     result.filename = (char*)malloc(strlen(filename) + 1);
     strcpy(result.filename, filename);
@@ -336,7 +336,7 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
     
     result.patternDuration = defaultDuration;
     result.patternEndCondition = CDPatternEndConditionOnButtonClick;
-    result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, false));
+    result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, m_defaultShouldStretchBitmap));
     result.filename = NULL;
     
     setSingleItemPatternHeader(&result);
@@ -769,6 +769,8 @@ void CWPatternSequenceManager::burnInitialStateInEEPROM() {
     EEPROM.write(EEPROM_BRIGHTNESS_ADDRESS, DEFAULT_BRIGHTNESS);
     EEPROM.write(BLUETOOTH_EEPROM_SERVICES_ARE_REGISTERED, 0); // False
     EEPROM.write(ORIENT_EEPROM_MIN_MAX_IS_SAVED_ADDRESS, 0);
+    EEPROM.write(EEPROM_SHOULD_STRETCH_BITMAP, 0);
+    
 #else
 #if DEBUG
     m_ledPatterns.flashThreeTimes(CRGB::Red); // Don't call this..
@@ -786,6 +788,8 @@ void CWPatternSequenceManager::loadSettings() {
 
     // Make sure we don't overflow the bitset
     m_shouldShowBootProgress = EEPROM.read(EEPROM_SHOULD_SHOW_BOOT_PROGRESS) ? 1 : 0;
+    m_defaultShouldStretchBitmap = EEPROM.read(EEPROM_SHOULD_STRETCH_BITMAP) ? 1 : 0;
+    
     if (m_brightness < MIN_BRIGHTNESS || m_brightness > MAX_BRIGHTNESS) {
         m_brightness = DEFAULT_BRIGHTNESS;
         DEBUG_PRINTF("SAVED BRIGHTNESS setting to default..out of band\r\n");
