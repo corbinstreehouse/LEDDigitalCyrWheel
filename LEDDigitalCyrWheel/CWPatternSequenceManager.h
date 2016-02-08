@@ -257,7 +257,7 @@ public:
     void play(); 
     void pause();
     inline bool isPaused() { return m_ledPatterns.isPaused(); }
-    CDWheelState getWheelState() { return m_ledPatterns.isPaused() ? CDWheelStatePaused : CDWheelStatePlaying; }
+    CDWheelState getWheelState();
 
     void setWheelChangeHandler(CDWheelChangedHandler *handler, void *data) { m_changeHandler = handler; m_changeHandlerData = data; }
     

@@ -9,7 +9,12 @@
 #ifndef LEDDigitalCyrWheel_LEDCommon_h
 #define LEDDigitalCyrWheel_LEDCommon_h
 
+#if PATTERN_EDITOR
+#define DEBUG 0
+#else
 #define DEBUG 1
+#endif
+
 // warning!! debug on
 
 #if PATTERN_EDITOR

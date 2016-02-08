@@ -225,6 +225,7 @@ void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, uint32
 void CWPatternSequenceManager::setDynamicBitmapPatternType(const char *filename, uint32_t patternDuration, LEDPatternOptions patternOptions) {
     CDPatternItemHeader result;
     bzero(&result, sizeof(CDPatternItemHeader));
+    // TODO: might be better to find it in the list!!
     result.patternType = LEDPatternTypeImageReferencedBitmap;
     result.color = CRGB::Red;
     result.duration = 50;
@@ -1377,6 +1378,8 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     
     m_orientation.setFirstPass(true); // why do I need this??
     sendWheelChanged(CDWheelChangeReasonPatternChanged);
+    // toDO: Only sent state changed when needed
+    sendWheelChanged(CDWheelChangeReasonStateChanged);
 }
 
 void CWPatternSequenceManager::processCommand(CDWheelCommand command) {
@@ -1469,7 +1472,37 @@ void CWPatternSequenceManager::pause() {
     }
 }
 
+CDWheelState CWPatternSequenceManager::getWheelState() {
+    CDWheelState result = CDWheelStateNone;
+    if (!m_ledPatterns.isPaused()) {
+        result = result | CDWheelStatePlaying;
+    }
+    if (m_currentPatternItemIndex != -1) {
+        if (currentFileInfoIsBitmapImage()) {
+            // slightly different behavior to enumerate images in the directories...
+            if (m_rootFileInfo.numberOfChildren > 1) {
+                result = result | CDWheelStatePriorPatternAvailable;
+                result = result | CDWheelStateNextPatternAvailable;
+            }
+        } else {
+            if (_numberOfPatternItems > 1) {
+                if (m_currentPatternItemIndex > 0) {
+                    result = result | CDWheelStatePriorPatternAvailable;
+                }
+                if (m_currentPatternItemIndex < _numberOfPatternItems+1) {
+                    result = result | CDWheelStateNextPatternAvailable;
+                }
+            }
+        }
+    }
 
+    // sequences always available..if we have more than one!
+    if (m_rootFileInfo.numberOfChildren > 1) {
+        result = result | CDWheelStateNextSequenceAvailable;
+        result = result | CDWheelStatePriorSequenceAvailable;
+    }
+    return result;
+}
 
 
 

@@ -363,16 +363,16 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
         header.patternType = LEDPatternTypeCount;
     }
     
-    DEBUG_PRINTF(" sending bytes, command %2X: ", CDWheelUARTRecieveCommandCurrentPatternInfo);
-    char *c = (char*)&header;
-    for (int i = 0; i < sizeof(CDPatternItemHeader); i++ ) {
-        if (i >=4 && (i %4) == 0) {
-            DEBUG_PRINTF(" ");
-        }
-        DEBUG_PRINTF("%02X", *c);
-        c++;
-    }
-    DEBUG_PRINTF("\r\n");
+//    DEBUG_PRINTF(" sending bytes, command %2X: ", CDWheelUARTRecieveCommandCurrentPatternInfo);
+//    char *c = (char*)&header;
+//    for (int i = 0; i < sizeof(CDPatternItemHeader); i++ ) {
+//        if (i >=4 && (i %4) == 0) {
+//            DEBUG_PRINTF(" ");
+//        }
+//        DEBUG_PRINTF("%02X", *c);
+//        c++;
+//    }
+//    DEBUG_PRINTF("\r\n");
     
     int bytesSent = 0;
     // Write to the BLE all at once
@@ -386,19 +386,19 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
     m_ble.write((char*)&header, sizeof(CDPatternItemHeader));
     bytesSent += sizeof(CDPatternItemHeader);
     if (filenameToWrite != NULL) {
-        DEBUG_PRINTLN(" **** writing relative filename: ");
-        
-        // debug..
-        char *c = (char*)&filenameToWrite;
-        for (int i = 0; i <= header.filenameLength; i++ ) {
-            if (i >=4 && (i %4) == 0) {
-                DEBUG_PRINTF(" ");
-            }
-            DEBUG_PRINTF("%02x", *c);
-            c++;
-        }
-        DEBUG_PRINTF("\r\n");
-        
+//        DEBUG_PRINTLN(" **** writing relative filename: ");
+//        
+//        // debug..
+//        char *c = (char*)&filenameToWrite;
+//        for (int i = 0; i <= header.filenameLength; i++ ) {
+//            if (i >=4 && (i %4) == 0) {
+//                DEBUG_PRINTF(" ");
+//            }
+//            DEBUG_PRINTF("%02x", *c);
+//            c++;
+//        }
+//        DEBUG_PRINTF("\r\n");
+//        
         
         m_ble.write(filenameToWrite, header.filenameLength + 1); // Includes NULL terminator in what we write.
         bytesSent += header.filenameLength+1;
@@ -453,8 +453,8 @@ void CDWheelBluetoothController::process() {
                     break;
                 }
                 case CDWheelUARTCommandSetCurrentPatternSpeed: {
-                    uint16_t speed = 32;
-                    m_ble.readBytes((char*)&speed, sizeof(uint16_t));
+                    uint32_t speed = 32;
+                    m_ble.readBytes((char*)&speed, sizeof(uint32_t));
                     DEBUG_PRINTF("speed command: %d\r\n", speed);
                     m_manager->setCurrentPatternSpeed(speed);
                     break;
@@ -507,14 +507,6 @@ void CDWheelBluetoothController::process() {
                     } else {
                         DEBUG_PRINTLN("BAD SIZE");
                     }
-//                    if (m_ble.available()) {
-//                        DEBUG_PRINTLN("extra junk??");
-//
-//                    }
-//                    while (m_ble.available()) {
-//                        char c = m_ble.read();
-//                        DEBUG_PRINTF("%c", c);
-//                    }
                     
                     break;
                 }
@@ -536,36 +528,6 @@ void CDWheelBluetoothController::process() {
         m_lastProcessTime = millis();
     }
 
-    
-    
-    // If characteristics were callbackable..I would do this.
-    /*
-    if (m_ble.available()) {
-        int16_t result;
-        if (readChar16BitValue(m_wheelCommandCharactersticID, &result)) {
-            if (result == -1) {
-                // No command set; we set it to -1 initially, and also after we process a command given
-            } else if (result >= CDWheelCommandFirst && result < CDWheelCommandCount) {
-                DEBUG_PRINTF("   command given: %d\r\n", result);
-                // Reset the value to -1
-                CDWheelCommand command = (CDWheelCommand)result;
-                m_manager->processCommand(command);
-                // reset the value, so we stop processing it
-                setCharacteristic16BitValue(m_wheelCommandCharactersticID, -1);
-            } else {
-                // out of band error
-                DEBUG_PRINTF("   bad command number: %d\r\n", result);
-                setCharacteristic16BitValue(m_wheelCommandCharactersticID, -1);
-            }
-        }
-        
-        if (readChar16BitValue(m_brightnessWriteID, &result)) {
-            m_manager->setBrightness(result);
-        }
-    }
-     m_ble.flush();
-
-     */
     
     
 #if SPEED_TEST

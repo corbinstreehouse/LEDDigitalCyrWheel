@@ -35,9 +35,13 @@ typedef CD_ENUM(int16_t, CDWheelCommand)  {
 };
     
 
-typedef CD_ENUM(int16_t, CDWheelState)  {
-    CDWheelStatePlaying,
-    CDWheelStatePaused,
+typedef CD_OPTIONS(uint16_t, CDWheelState)  {
+    CDWheelStateNone = 0,
+    CDWheelStatePlaying = 1 << 0,
+    CDWheelStateNextPatternAvailable = 1 << 1,
+    CDWheelStatePriorPatternAvailable = 1 << 2,
+    CDWheelStateNextSequenceAvailable = 1 << 3,
+    CDWheelStatePriorSequenceAvailable = 1 << 4,
 };
     
 
