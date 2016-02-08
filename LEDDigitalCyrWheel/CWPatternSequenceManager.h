@@ -268,6 +268,8 @@ public:
     // In ms..
     uint32_t getCurrentPatternSpeed();
     void setCurrentPatternSpeed(uint32_t speedInMs);
+    void setCurrentPatternColor(CRGB color);
+    void setCurrentPattenShouldSetBrightnessByRotationalVelocity(bool value);
     
     bool shouldShowBootProgress() { return m_shouldShowBootProgress; }
     void setShouldShowBootProgress(bool value);

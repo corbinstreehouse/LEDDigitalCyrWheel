@@ -444,7 +444,7 @@ void CDWheelBluetoothController::process() {
                     // 16 bit brightness
                     uint16_t brightness = 0;
                     m_ble.readBytes((char*)&brightness, sizeof(uint16_t));
-                    DEBUG_PRINTF("bright command: %d\r\n", brightness);
+//                    DEBUG_PRINTF("bright command: %d\r\n", brightness);
                     // FOR NOW, this is an 8-bit value.
                     if (brightness > MAX_BRIGHTNESS) {
                         brightness = MAX_BRIGHTNESS;
@@ -455,8 +455,20 @@ void CDWheelBluetoothController::process() {
                 case CDWheelUARTCommandSetCurrentPatternSpeed: {
                     uint32_t speed = 32;
                     m_ble.readBytes((char*)&speed, sizeof(uint32_t));
-                    DEBUG_PRINTF("speed command: %d\r\n", speed);
                     m_manager->setCurrentPatternSpeed(speed);
+                    break;
+                }
+                case CDWheelUARTCommandSetCurrentPatternColor: {
+                    uint32_t colorCode = 1234; // random not black..
+                    m_ble.readBytes((char*)&colorCode, sizeof(uint32_t));
+                    CRGB color = CRGB(colorCode);
+                    m_manager->setCurrentPatternColor(color);
+                    break;
+                }
+                case CDWheelUARTCommandSetCurrentPatternBrightnessByRotationalVelocity: {
+                    uint32_t value = 0;
+                    m_ble.readBytes((char*)&value, sizeof(uint32_t));
+                    m_manager->setCurrentPattenShouldSetBrightnessByRotationalVelocity(value);
                     break;
                 }
                 case CDWheelUARTCommandPlayProgrammedPattern: {

@@ -349,12 +349,39 @@ uint32_t CWPatternSequenceManager::getCurrentPatternSpeed() {
     return header ? header->patternDuration : 0;
 }
 
+void CWPatternSequenceManager::setCurrentPatternColor(CRGB color) {
+    CDPatternItemHeader *header = getCurrentItemHeader();
+    if (header) {
+        if (header->color != color) {
+            header->color = color;
+            m_ledPatterns.setPatternColor(color);
+            sendWheelChanged(CDWheelChangeReasonPatternChanged);
+        }
+    }
+}
+
+
+void CWPatternSequenceManager::setCurrentPattenShouldSetBrightnessByRotationalVelocity(bool value) {
+    CDPatternItemHeader *header = getCurrentItemHeader();
+    if (header) {
+        if (header->shouldSetBrightnessByRotationalVelocity != value) {
+            header->shouldSetBrightnessByRotationalVelocity = value;
+            updateBrightness();
+            sendWheelChanged(CDWheelChangeReasonPatternChanged);
+        }
+    }
+}
+
+
 void CWPatternSequenceManager::setCurrentPatternSpeed(uint32_t speedInMs) {
     CDPatternItemHeader *header = getCurrentItemHeader();
     if (header) {
-        header->patternDuration = speedInMs;
+        if (header->patternDuration != speedInMs) {
+            header->patternDuration = speedInMs;
+            m_ledPatterns.setPatternDuration(speedInMs);
+            sendWheelChanged(CDWheelChangeReasonPatternChanged);
+        }
     }
-    m_ledPatterns.setPatternDuration(speedInMs);
 }
 
 

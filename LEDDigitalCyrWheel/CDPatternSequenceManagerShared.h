@@ -51,10 +51,11 @@ typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
     CDWheelUARTCommandWheelCommand, //
     CDWheelUARTCommandSetBrightness,
     CDWheelUARTCommandSetCurrentPatternSpeed,
+    CDWheelUARTCommandSetCurrentPatternColor,
+    CDWheelUARTCommandSetCurrentPatternBrightnessByRotationalVelocity,
     CDWheelUARTCommandPlayProgrammedPattern,
     CDWheelUARTCommandPlayImagePattern,
     CDWheelUARTCommandRequestPatternInfo,
-    
     
     // Other things....like get a list of files or upload a new pattern, or "paint" pixels.
     
