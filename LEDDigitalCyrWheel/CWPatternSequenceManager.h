@@ -199,7 +199,6 @@ public:
     
     void restartCurrentSequence();
     void setCurrentSequenceAtIndex(int index); // index in the parent
-//    void setCurrentSequenceWithName(const char *name); // broken..
     
     bool getCardInitPassed() { return m_sdCardWorks; }
 

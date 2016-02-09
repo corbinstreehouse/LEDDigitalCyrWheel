@@ -650,32 +650,6 @@ void CWPatternSequenceManager::setCurrentSequenceAtIndex(int index) {
     loadCurrentSequence();
 }
 
-static CDPatternFileInfo *_findInfoWithName(CDPatternFileInfo *info, const char *name) {
-    // TODO: "full path" name compare search...
-#warning broken
-    /*
-    
-    if (strcmp(info->filename, name) == 0) {
-        return info;
-    }
-
-    if (info->children != NULL) {
-        for (int i = 0; i < info->numberOfChildren; i++) {
-            CDPatternFileInfo *tmp = _findInfoWithName(&info->children[i], name);
-            if (tmp) {
-                return tmp;
-            }
-        }
-    }
-     */
-    return NULL;
-}
-
-//void CWPatternSequenceManager::setCurrentSequenceWithName(const char *name) {
-//    m_currentFileInfo = _findInfoWithName(&m_rootFileInfo, name);
-//    loadCurrentSequence();
-//}
-
 void CWPatternSequenceManager::setSingleItemPatternHeader(CDPatternItemHeader *header) {
 //    m_currentFileInfo = NULL;
 //    m_currentPatternItemsAreDynamic = true;
@@ -1259,8 +1233,10 @@ void CWPatternSequenceManager::updateBrightness() {
 
 void CWPatternSequenceManager::setBrightness(uint8_t brightness) {
     if (m_brightness != brightness) {
+#if DEBUG
         CDPatternItemHeader *itemHeader = getCurrentItemHeader();
         DEBUG_PRINTF("old bright: %d, new: %d, itemHeader->shouldSetBrightnessByRotationalVelocity: %d\r\n", m_brightness, brightness, itemHeader ? itemHeader->shouldSetBrightnessByRotationalVelocity : 0);
+#endif
         m_brightness = brightness;
         updateBrightness();
         sendWheelChanged(CDWheelChangeReasonBrightnessChanged);
