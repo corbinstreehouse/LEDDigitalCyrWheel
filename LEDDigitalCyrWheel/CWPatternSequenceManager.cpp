@@ -423,7 +423,7 @@ void CWPatternSequenceManager::loadAsSequenceFromFatFile(FatFile *sequenceFile) 
                     // fill it in with something..
                     _patternItems[i] = makeFlashPatternItem(CRGB::Red);
                 } else {
-                    ASSERT(_patternItems[i].duration > 0);
+                    // I guess a 0 duration is okay..it will just blink it..
                     // After the header, is the (optional) image data
                     
                     // Read in the filename, if it is there..

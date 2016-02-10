@@ -273,6 +273,8 @@ public:
     
     bool shouldShowBootProgress() { return m_shouldShowBootProgress; }
     void setShouldShowBootProgress(bool value);
+    
+    uint16_t getFPS() { return FastLED.getFPS(); }
 
 };
 

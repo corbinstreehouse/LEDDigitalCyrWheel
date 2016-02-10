@@ -26,8 +26,8 @@
 #define kLEDWheelBrightnessCharacteristicReadUUID "592BEE73-6749-4128-8A10-B98F21ED9049"
 #define kLEDWheelBrightnessCharacteristicReadUUID_AdaFruit "59-2B-EE-73-67-49-41-28-8A-10-B9-8F-21-ED-90-49"
 
-//#define kLEDWheelBrightnessCharacteristicWriteUUID "592BEE74-6749-4128-8A10-B98F21ED9049"
-//#define kLEDWheelBrightnessCharacteristicWriteUUID_AdaFruit "59-2B-EE-74-67-49-41-28-8A-10-B9-8F-21-ED-90-49"
+#define kLEDWheelFPSCharacteristicUUID "592BEE74-6749-4128-8A10-B98F21ED9049"
+#define kLEDWheelFPSCharacteristicUUID_AdaFruit "59-2B-EE-74-67-49-41-28-8A-10-B9-8F-21-ED-90-49"
 
 
 //#define kLEDWheelCharGetSequencesUUID "592BEE75-6749-4128-8A10-B98F21ED9049"

@@ -77,7 +77,8 @@ void CDWheelBluetoothController::registerWheelCharacteristics() {
     
     _addCharacteristic(kLEDWheelCharGetWheelStateUUID_AdaFruit, CHAR_PROP_READ|CHAR_PROP_NOTIFY, BLUETOOTH_EEPROM_WHEEL_STATE_CHAR, &m_wheelStateID, m_manager->getWheelState());
     _addCharacteristic(kLEDWheelBrightnessCharacteristicReadUUID_AdaFruit, CHAR_PROP_READ, BLUETOOTH_EEPROM_BRIGHTNESS_CHAR, &m_brightnessID, m_manager->getBrightness());
-
+    _addCharacteristic(kLEDWheelFPSCharacteristicUUID_AdaFruit, CHAR_PROP_READ|CHAR_PROP_NOTIFY, BLUETOOTH_EEPROM_FPS_CHAR, &m_FPSCharID, m_manager->getFPS());
+    
     // CHAR_PROP_WRITE_WITHOUT_RESPONSE fails
 //    _addCharacteristic(kLEDWheelBrightnessCharacteristicWriteUUID_AdaFruit, CHAR_PROP_WRITE, BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR, &m_brightnessWriteID, m_manager->getBrightness());
 }
@@ -147,6 +148,10 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
 
         setCharacteristic16BitValue(m_wheelStateID, m_manager->getWheelState());
         m_manager->incBootProgress();
+
+        // FPS can start out as 0
+//        setCharacteristic16BitValue(m_FPSCharID, m_manager->getFPS());
+//        m_manager->incBootProgress();
         
         // Attempt to read in existing values for m_wheelServiceID...
         DEBUG_PRINTF("restored: m_wheelServiceID %d, m_wheelCommandCharactersticID: %d\r\n", m_wheelServiceID, m_wheelCommandCharactersticID);
@@ -176,6 +181,8 @@ bool CDWheelBluetoothController::servicesAreRegistered() {
     EEPROM.get(BLUETOOTH_EEPROM_WHEEL_SERVICE, m_wheelServiceID);
     EEPROM.get(BLUETOOTH_EEPROM_WHEEL_STATE_CHAR, m_wheelStateID);
     EEPROM.get(BLUETOOTH_EEPROM_BRIGHTNESS_CHAR, m_brightnessID);
+    EEPROM.get(BLUETOOTH_EEPROM_FPS_CHAR, m_FPSCharID);
+    
 //    EEPROM.get(BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR, m_brightnessWriteID);
     
     DEBUG_PRINTF("EEPROM services/chars: m_wheelServiceID %d, m_wheelCommandCharactersticID %d, m_wheelStateID %d, m_brightnessID %d\r\n", m_wheelServiceID, m_wheelCommandCharactersticID, m_wheelStateID, m_brightnessID);
@@ -417,6 +424,10 @@ void CDWheelBluetoothController::process() {
     if ((millis() - m_lastProcessTime) < BT_REFRESH_RATE) {
         return;
     }
+    
+    // update the FPS more slowly?
+    setCharacteristic16BitValue(m_FPSCharID, m_manager->getFPS());
+
 
     // So, I don't use command mode anymore except for setting characteristic values
     m_ble.setMode(BLUEFRUIT_MODE_DATA);
