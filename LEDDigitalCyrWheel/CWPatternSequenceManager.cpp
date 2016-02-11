@@ -336,7 +336,8 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
     
     result.patternDuration = defaultDuration;
     result.patternEndCondition = CDPatternEndConditionOnButtonClick;
-    result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, m_defaultShouldStretchBitmap));
+    bool shouldInterpolateToNextRow = false; // TODO:??
+    result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, m_defaultShouldStretchBitmap, shouldInterpolateToNextRow));
     result.filename = NULL;
     
     setSingleItemPatternHeader(&result);
