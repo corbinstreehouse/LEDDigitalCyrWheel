@@ -124,7 +124,6 @@ private:
     void loadAsSequenceFromFatFile(FatFile *sequenceFile);
 
     void updateBrightness();
-    const char *_getRootDirectory();
     const char *_getPatternDirectory();
     
     // for crossfade
@@ -202,6 +201,8 @@ public:
     
     bool getCardInitPassed() { return m_sdCardWorks; }
 
+    const char *_getRootDirectory();
+    
     void incBootProgress();
     
     void loadDefaultSequence();
@@ -233,9 +234,29 @@ public:
     void setLowBatteryWarning();
     inline LEDPatterns *getLEDPatterns() { return &m_ledPatterns; }
 
-    bool getCurrentPatternFileName(char *buffer, size_t bufferSize, bool useSFN = true);
+    void getCurrentPatternFileName(char *buffer, size_t bufferSize, bool useSFN = true);
 
     int getRootNumberOfSequenceFilenames() { return m_rootFileInfo.numberOfChildren; };
+
+    // TODO: only changes to the root dir..
+    void changeToDirectory(const char *dir);
+  
+    // Hmm..need blocks/closures
+    template <typename T>
+    void enumerateCurrentPatternFileInfoChildren(T *objPtr, void (T::*memberPtr)(const CDPatternFileInfo *fileInfo)) {
+        _ensureCurrentFileInfo();
+        CDPatternFileInfo *parent = m_currentFileInfo->parent;
+        if (parent) {
+            for (int i = 0; i < parent->numberOfChildren; i++) {
+                const CDPatternFileInfo *info = &parent->children[i];
+                (objPtr->*memberPtr)(info);
+            }
+        }
+    }
+
+    
+    // always Long filenames returned
+    void getFilenameForPatternFileInfo(const CDPatternFileInfo *fileInfo, char *buffer, size_t bufferSize);
     
     uint32_t getPatternTimePassed() { return millis() - m_timedPatternStartTime - m_timedUsedBeforeCurrentPattern; };
     uint32_t getPatternTimePassedFromFirstTimedPattern() { return millis() - m_timedPatternStartTime; };

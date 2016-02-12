@@ -45,41 +45,6 @@ typedef CD_OPTIONS(uint16_t, CDWheelState)  {
 };
     
 
-// When sending data over serial UART to the wheel, I first send a command, and then the rest of the data to be processed (ie: uploaded file)
-// It is much easier if this is an 8 bit byte; the UART command and wheel command can be set in one BLE packet.
-typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
-    CDWheelUARTCommandWheelCommand, //
-    CDWheelUARTCommandSetBrightness,
-    CDWheelUARTCommandSetCurrentPatternSpeed,
-    CDWheelUARTCommandSetCurrentPatternColor,
-    CDWheelUARTCommandSetCurrentPatternBrightnessByRotationalVelocity,
-    CDWheelUARTCommandPlayProgrammedPattern,
-    CDWheelUARTCommandPlayImagePattern,
-    CDWheelUARTCommandRequestPatternInfo,
-    
-    // Other things....like get a list of files or upload a new pattern, or "paint" pixels.
-    
-    CDWheelUARTCommandLastValue = CDWheelUARTCommandRequestPatternInfo,
-};
-    
-    
-// When receiving data over serial URART fromm the wheel
-typedef CD_ENUM(int8_t, CDWheelUARTRecieveCommand)  {
-    CDWheelUARTRecieveCommandInvalid, // So we don't interpret 0...
-    CDWheelUARTRecieveCommandCurrentPatternInfo, //
-    
-    
-    
-};
-    
-// We recieve a struct of data depending on the command, and if i can really get it packed..if it isn't packed, it might not be worth it..
-//typedef struct  __attribute__((__packed__)) {
-//    CDWheelUARTRecieveCommand command; // CDWheelUARTRecieveCommandCurrentPatternInfo
-//    CDPatternItemHeader itemHeader
-//} CDWheelUARTRecievePatternInfoData; // Followed by the filename (optional)
-    
-    
-    
     
  
 

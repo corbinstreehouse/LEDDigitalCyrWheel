@@ -9,6 +9,8 @@
 #ifndef BluetoothShared_h
 #define BluetoothShared_h
 
+#import "LEDPatternType.h" // For CD_ENUM
+
 #define kLEDWheelServiceUUID "592BEE70-6749-4128-8A10-B98F21ED9049"
 // Damn AdaFruit does different formatting because they send it a "byte" at a time..
 #define kLEDWheelServiceUUID_AdaFruit "59-2B-EE-70-67-49-41-28-8A-10-B9-8F-21-ED-90-49"
@@ -35,6 +37,53 @@
 //#define kLEDWheelCharRequestSequencesUUID "592BEE77-6749-4128-8A10-B98F21ED9049"
 
 
+
+// When sending data over serial UART to the wheel, I first send a command, and then the rest of the data to be processed (ie: uploaded file)
+// It is much easier if this is an 8 bit byte; the UART command and wheel command can be set in one BLE packet.
+typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
+    CDWheelUARTCommandWheelCommand, //
+    CDWheelUARTCommandSetBrightness,
+    CDWheelUARTCommandSetCurrentPatternSpeed,
+    CDWheelUARTCommandSetCurrentPatternColor,
+    CDWheelUARTCommandSetCurrentPatternBrightnessByRotationalVelocity,
+    CDWheelUARTCommandPlayProgrammedPattern,
+    CDWheelUARTCommandPlayImagePattern,
+    CDWheelUARTCommandRequestPatternInfo,
+    CDWheelUARTCommandRequestCustomSequences,
+    
+    // Other things....like get a list of files or upload a new pattern, or "paint" pixels.
+    
+    CDWheelUARTCommandLastValue = CDWheelUARTCommandRequestCustomSequences,
+};
+    
+    
+// When receiving data over serial URART fromm the wheel
+typedef CD_ENUM(int8_t, CDWheelUARTRecieveCommand)  {
+    CDWheelUARTRecieveCommandInvalid, // So we don't interpret 0...
+    CDWheelUARTRecieveCommandCurrentPatternInfo, //
+    CDWheelUARTRecieveCommandCustomSequences, //
+    
+    
+    
+};
+    
+// For CDWheelUARTRecieveCommandCustomSequences..
+// size=3
+typedef struct __attribute__((__packed__)) {
+    CDWheelUARTRecieveCommand command; // CDWheelUARTRecieveCommandCustomSequences
+    uint16_t count;
+    // For each count, a CDWheelUARTFilePacket packet follows
+} CDWheelUARTCustomSequenceData;
+    
+        
+// We recieve a struct of data depending on the command, and if i can really get it packed..if it isn't packed, it might not be worth it..
+//typedef struct  __attribute__((__packed__)) {
+//    CDWheelUARTRecieveCommand command; // CDWheelUARTRecieveCommandCurrentPatternInfo
+//    CDPatternItemHeader itemHeader
+//} CDWheelUARTRecievePatternInfoData; // Followed by the filename (optional)
+    
+    
+    
 
 
 #endif /* BluetoothShared_h */

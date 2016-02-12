@@ -24,7 +24,7 @@
 #define BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR (BLUETOOTH_EEPROM_WHEEL_SERVICE+4) // int32_t value, ending: 21        // NOT USED
 #define BLUETOOTH_EEPROM_WHEEL_STATE_CHAR (BLUETOOTH_EEPROM_WHEEL_COMMAND_CHAR+4) // int32_t value
 #define BLUETOOTH_EEPROM_BRIGHTNESS_CHAR (BLUETOOTH_EEPROM_WHEEL_STATE_CHAR+4) // int32_t value
-#define BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR (BLUETOOTH_EEPROM_BRIGHTNESS_CHAR+4) // int32_t value
+#define BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR (BLUETOOTH_EEPROM_BRIGHTNESS_CHAR+4) // int32_t value    /////// NOT USED anymore
 #define BLUETOOTH_EEPROM_SERVICES_ARE_REGISTERED (BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR+4) // 1 byte value
 #define BLUETOOTH_EEPROM_FPS_CHAR (BLUETOOTH_EEPROM_SERVICES_ARE_REGISTERED+4) // int32_t value
 
@@ -45,6 +45,7 @@ private:
     int32_t m_brightnessID;
     int32_t m_FPSCharID;
     uint32_t m_lastProcessTime;
+    uint32_t m_counter;
     
     bool servicesAreRegistered();
     bool registerServices();
@@ -66,6 +67,9 @@ private:
     
     void _addCharacteristic(const char *characteristicStr, int propertyType, int eepromLocation, int32_t *characteristicID, uint16_t value);
     void _sendCurrentPatternInfo();
+    void _sendCustomSequencesFromDirectory(const char* dir);
+    void _countSequencesForFileInfo(const CDPatternFileInfo *fileInfo);
+    void _writeSequenceFilenameForFileInfo(const CDPatternFileInfo *fileInfo);
 public:
     CDWheelBluetoothController();
     void init(CWPatternSequenceManager *manager, bool buttonIsDown);

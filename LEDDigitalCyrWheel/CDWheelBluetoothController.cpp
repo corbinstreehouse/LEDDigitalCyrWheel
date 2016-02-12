@@ -129,10 +129,10 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
     
     DEBUG_PRINTLN("bluetooth initialized, seeing if we have to burn in initial state");
     
+    m_ble.echo(false);
 #if DEBUG
     // Enable echo
-    m_ble.echo(false);
-    m_ble.sendCommandCheckOK("ATI"); // print version information
+//    m_ble.sendCommandCheckOK("ATI"); // print version information
 #else
     m_ble.echo(false);
 #endif
@@ -186,7 +186,7 @@ bool CDWheelBluetoothController::servicesAreRegistered() {
 //    EEPROM.get(BLUETOOTH_EEPROM_BRIGHTNESS_WRITE_CHAR, m_brightnessWriteID);
     
     DEBUG_PRINTF("EEPROM services/chars: m_wheelServiceID %d, m_wheelCommandCharactersticID %d, m_wheelStateID %d, m_brightnessID %d\r\n", m_wheelServiceID, m_wheelCommandCharactersticID, m_wheelStateID, m_brightnessID);
-
+    //TODO: validate each item??
     if (m_wheelServiceID < 0 || m_wheelServiceID > 10) {
         return false;
     } else if (m_wheelCommandCharactersticID < 0 || m_wheelCommandCharactersticID > 10) {
@@ -298,7 +298,7 @@ void CDWheelBluetoothController::setName(char *name) {
 
 void CDWheelBluetoothController::setCharacteristic16BitValue(const int cmdID, const uint16_t value) {
     m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
-    DEBUG_PRINTF("%s=%d,0x%x\r\n", kCharacteristicCmd, cmdID, value);
+//    DEBUG_PRINTF("%s=%d,0x%x\r\n", kCharacteristicCmd, cmdID, value);
     m_ble.printf("%s=%d,0x%x\r\n", kCharacteristicCmd, cmdID, value);
     m_ble.waitForOK();
 }
@@ -338,6 +338,22 @@ void CDWheelBluetoothController::setCharacteristic16BitValue(const int cmdID, co
 //}
 //
 
+
+static void _printBytes(char *b, int size) {
+#if DEBUG
+    DEBUG_PRINTF(" sending bytes: ");
+    char *c = b;
+    for (int i = 0; i < size; i++ ) {
+        if (i >=4 && (i %4) == 0) {
+            DEBUG_PRINTF(" ");
+        }
+        DEBUG_PRINTF("%02X", *c);
+        c++;
+    }
+    DEBUG_PRINTF("\r\n");
+#endif
+}
+
 void CDWheelBluetoothController::_sendCurrentPatternInfo() {
     char filename[MAX_PATH];
     char *filenameToWrite = NULL;
@@ -370,16 +386,7 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
         header.patternType = LEDPatternTypeCount;
     }
     
-//    DEBUG_PRINTF(" sending bytes, command %2X: ", CDWheelUARTRecieveCommandCurrentPatternInfo);
-//    char *c = (char*)&header;
-//    for (int i = 0; i < sizeof(CDPatternItemHeader); i++ ) {
-//        if (i >=4 && (i %4) == 0) {
-//            DEBUG_PRINTF(" ");
-//        }
-//        DEBUG_PRINTF("%02X", *c);
-//        c++;
-//    }
-//    DEBUG_PRINTF("\r\n");
+    // _printBytes((char*)&header, sizeof(CDPatternItemHeader))
     
     int bytesSent = 0;
     // Write to the BLE all at once
@@ -387,31 +394,60 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
     // Write the UART command we are sending
     m_ble.write((int8_t)CDWheelUARTRecieveCommandCurrentPatternInfo);
     // Maybe write how much data we are going to write....
-    bytesSent += 1;
+    bytesSent += sizeof(int8_t);
     
     // Write the header..then the filename (if available)
     m_ble.write((char*)&header, sizeof(CDPatternItemHeader));
     bytesSent += sizeof(CDPatternItemHeader);
     if (filenameToWrite != NULL) {
 //        DEBUG_PRINTLN(" **** writing relative filename: ");
-//        
-//        // debug..
-//        char *c = (char*)&filenameToWrite;
-//        for (int i = 0; i <= header.filenameLength; i++ ) {
-//            if (i >=4 && (i %4) == 0) {
-//                DEBUG_PRINTF(" ");
-//            }
-//            DEBUG_PRINTF("%02x", *c);
-//            c++;
-//        }
-//        DEBUG_PRINTF("\r\n");
-//        
-        
-        m_ble.write(filenameToWrite, header.filenameLength + 1); // Includes NULL terminator in what we write.
-        bytesSent += header.filenameLength+1;
+        // _printBytes(filenameToWrite, header.filenameLength)
+        m_ble.write(filenameToWrite, header.filenameLength); // No NULL terminator anymore
+        bytesSent += header.filenameLength;
     }
     
     DEBUG_PRINTF(" **** done sending pattern info, sent: %d bytes\r\n", bytesSent);
+}
+
+void CDWheelBluetoothController::_writeSequenceFilenameForFileInfo(const CDPatternFileInfo *fileInfo) {
+    if (fileInfo->patternFileType == CDPatternFileTypeSequenceFile) {
+        char filename[MAX_PATH];
+        m_manager->getFilenameForPatternFileInfo(fileInfo, filename, MAX_PATH);
+        uint32_t filenameLength = strlen(filename); // We don't write a NULL terminator because we have a size byte
+        m_ble.write((char*)&filenameLength, sizeof(filenameLength));
+        m_ble.write((char*)filename, filenameLength);
+//        _printBytes((char*)&filenameLength, sizeof(filenameLength));
+//        _printBytes((char*)filename, sizeof(filenameLength));
+    }
+}
+
+void CDWheelBluetoothController::_countSequencesForFileInfo(const CDPatternFileInfo *fileInfo) {
+    if (fileInfo->patternFileType == CDPatternFileTypeSequenceFile) {
+        m_counter++;
+    }
+}
+
+void CDWheelBluetoothController::_sendCustomSequencesFromDirectory(const char *dir) {
+    m_manager->changeToDirectory(dir); // not implemented!
+    
+    // Two passes..one to count, one to write the names
+    m_counter = 0;
+    m_manager->enumerateCurrentPatternFileInfoChildren(this, &CDWheelBluetoothController::_countSequencesForFileInfo);
+    
+    m_ble.setMode(BLUEFRUIT_MODE_DATA);
+    // Write the count of them, and then for each one the filename and length
+    
+    CDWheelUARTCustomSequenceData d;
+    d.command = CDWheelUARTRecieveCommandCustomSequences;
+    d.count = m_counter;
+    ASSERT(sizeof(CDWheelUARTCustomSequenceData) == 3);
+    
+    // Write out the header... and then each item.
+    m_ble.setMode(BLUEFRUIT_MODE_DATA);
+    m_ble.write((char*)&d, sizeof(CDWheelUARTCustomSequenceData));
+//    _printBytes((char*)&d, sizeof(CDWheelUARTCustomSequenceData));
+    
+    m_manager->enumerateCurrentPatternFileInfoChildren(this, &CDWheelBluetoothController::_writeSequenceFilenameForFileInfo);
 }
 
 void CDWheelBluetoothController::process() {
@@ -509,7 +545,7 @@ void CDWheelBluetoothController::process() {
 
                     // Read in LEDBitmapPatternOptions
                     ASSERT(sizeof(LEDBitmapPatternOptions) == 4);
-                    LEDBitmapPatternOptions options = LEDBitmapPatternOptions(false, false);
+                    LEDBitmapPatternOptions options = LEDBitmapPatternOptions(false, false, false);
                     m_ble.readBytes((char*)&options, sizeof(LEDBitmapPatternOptions));
                     
                     // Read the 32-bit size of the filename to play (relative to root), and then read that in (including NULL terminator)
@@ -536,6 +572,12 @@ void CDWheelBluetoothController::process() {
                 case CDWheelUARTCommandRequestPatternInfo: {
                     // Nothing else is sent; we start sending back the pattern info..
                     _sendCurrentPatternInfo();
+                    break;
+                }
+                case CDWheelUARTCommandRequestCustomSequences: {
+                    // TODO: Read from what directory they are being requested from
+                    _sendCustomSequencesFromDirectory(m_manager->_getRootDirectory());
+                    
                     break;
                 }
             }
