@@ -13,6 +13,9 @@
 #include "LEDCommon.h"
 #include "SdFat.h"
 #include "EEPROM.h"
+#if BLUETOOTH
+#include "CDWheelBluetoothController.h"
+#endif
 
 #define RECORD_INDICATOR_FILENAME "record.txt" // If this file exists, we record data in other files.
 #define BITMAP_FILE_EXTENSION "bmp"
@@ -296,7 +299,7 @@ static void _getFullpathName(const char *rootDirName, const CDPatternFileInfo *f
     buffer[0] = 0;
 //    DEBUG_PRINTF(" start to get name for dir: %d \r\n", fileInfo->dirIndex);
     _recursiveGetFullpathName(rootDirName, fileInfo, buffer, size, 0, useSFN);
-    DEBUG_PRINTF(" computed filename: %s\r\n", buffer);
+//    DEBUG_PRINTF(" computed filename: %s\r\n", buffer);
 }
 
 static void _appendFilename(const char *rootDirName, const char *filename, char *fullFilenamePath, size_t size) {
@@ -340,9 +343,8 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
     result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, m_defaultShouldStretchBitmap, shouldInterpolateToNextRow));
     result.filename = NULL;
     
-    setSingleItemPatternHeader(&result);
+    setSingleItemPatternHeader(&result); // Sends sequenceChanged
     m_shouldIgnoreButtonClickWhenTimed = false; // This could be made an option that is settable/dynamically changable.
-    sequenceChanged();
 }
 
 uint32_t CWPatternSequenceManager::getCurrentPatternSpeed() {
@@ -476,7 +478,6 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
 void CWPatternSequenceManager::loadSequenceInMemoryFromFatFile(FatFile *sequenceFile) {
     m_currentPatternItemIndex = -1; // Set this first so that the sendWheelChanged doesn't allow the caller to acccess anything
     loadAsSequenceFromFatFile(sequenceFile);
-    sendWheelChanged(CDWheelChangeReasonSequenceChanged);
     firstPatternItem();
 }
 
@@ -690,10 +691,6 @@ void CWPatternSequenceManager::getCurrentPatternFileName(char *buffer, size_t bu
         strcpy(buffer, "Default Sequence");
     } else {
         _getFullpathName(_getRootDirectory(), m_currentFileInfo, buffer, bufferSize, useSFN);
-        // Why do I need to do the extra read? Just to validate it?? I don't need to do this right?
-//        FatFile file = FatFile(buffer, O_READ);
-//        result = file.getName(buffer, bufferSize);
-//        file.close();
     }
 }
 
@@ -1395,6 +1392,8 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     }
     
     m_orientation.setFirstPass(true); // why do I need this??
+    
+    // TODO: aggregate these into one BT send!
     sendWheelChanged(CDWheelChangeReasonPatternChanged);
     // toDO: Only sent state changed when needed
     sendWheelChanged(CDWheelChangeReasonStateChanged);

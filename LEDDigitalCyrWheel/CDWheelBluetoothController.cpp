@@ -175,6 +175,11 @@ bool CDWheelBluetoothController::servicesAreRegistered() {
     if (servicesAreRegistered != 0 && servicesAreRegistered != 1) {
         return false;
     }
+    
+    // The BT lies..I need to query it's state and see if it has at least the service.
+    //m_ble.sendCommandCheckOK("AT+GATTLIST");
+    return false;
+    
 
     // Read values and validate
     // TODO: validation...they seem to be incremented rather systematically.
@@ -193,12 +198,6 @@ bool CDWheelBluetoothController::servicesAreRegistered() {
         return false;
     }
     return true;
-    
-    
-    /*
-// parsing the GATTLIST seems a waste of time.. just store once if I did it, and re-flash if I need to do it again, and allow BT to reset the value so I can reflash it
-//    m_ble.sendCommandCheckOK("AT+GATTLIST");
- */
 }
 
 void CDWheelBluetoothController::sendCommandWithUUID128(const char *cmd, const char *uuid, const char *properties, int32_t *serviceID, int eepromIndex) {

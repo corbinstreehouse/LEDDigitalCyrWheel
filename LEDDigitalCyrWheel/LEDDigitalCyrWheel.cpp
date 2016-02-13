@@ -107,6 +107,7 @@ void setup() {
     analogReadAveraging(16); // longer averaging of reads; drastically stabilizes my battery voltage read compared to the default of 4
     analogReadRes(16); // 16 bit analog read resolution
 
+    
     Wire.begin();
     
     SPI.begin(); // Do this early??
