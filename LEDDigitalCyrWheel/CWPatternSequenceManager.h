@@ -218,6 +218,7 @@ public:
     void setSingleItemPatternHeader(CDPatternItemHeader *header);
     void setDynamicPatternType(LEDPatternType type, uint32_t patternDuration = 500, CRGB color = CRGB::Red);
     void setDynamicBitmapPatternType(const char *filename, uint32_t patternDuration, LEDBitmapPatternOptions bitmapOptions);
+    void playSequenceWithFilename(const char *filename);
     
     void startCalibration();
     void endCalibration();
@@ -291,6 +292,7 @@ public:
     void setCurrentPatternSpeed(uint32_t speedInMs);
     void setCurrentPatternColor(CRGB color);
     void setCurrentPattenShouldSetBrightnessByRotationalVelocity(bool value);
+    void setCurrentPattenOptions(LEDPatternOptions options);
     
     bool shouldShowBootProgress() { return m_shouldShowBootProgress; }
     void setShouldShowBootProgress(bool value);

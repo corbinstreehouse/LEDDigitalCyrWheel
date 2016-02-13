@@ -46,8 +46,10 @@ typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
     CDWheelUARTCommandSetCurrentPatternSpeed,
     CDWheelUARTCommandSetCurrentPatternColor,
     CDWheelUARTCommandSetCurrentPatternBrightnessByRotationalVelocity,
+    CDWheelUARTCommandSetCurrentPatternOptions,
     CDWheelUARTCommandPlayProgrammedPattern,
     CDWheelUARTCommandPlayImagePattern,
+    CDWheelUARTCommandPlaySequence,
     CDWheelUARTCommandRequestPatternInfo,
     CDWheelUARTCommandRequestCustomSequences,
     

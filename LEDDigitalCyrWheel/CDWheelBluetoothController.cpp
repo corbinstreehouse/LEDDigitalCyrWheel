@@ -370,6 +370,8 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
             // Non-referenced images; the file we are showing is what we are playing. We want the full filename..
             m_manager->getCurrentPatternFileName(filename, MAX_PATH, false);
             filenameToWrite = filename;
+            // But bypass the root dir so it shows relative
+            filenameToWrite++;
         }
         
         if (filenameToWrite) {
@@ -412,11 +414,15 @@ void CDWheelBluetoothController::_writeSequenceFilenameForFileInfo(const CDPatte
     if (fileInfo->patternFileType == CDPatternFileTypeSequenceFile) {
         char filename[MAX_PATH];
         m_manager->getFilenameForPatternFileInfo(fileInfo, filename, MAX_PATH);
-        uint32_t filenameLength = strlen(filename); // We don't write a NULL terminator because we have a size byte
+        char *filenameToWrite = filename;
+        // Bypass the root dir so it looks relative
+        filenameToWrite++;
+        
+        uint32_t filenameLength = strlen(filenameToWrite); // We don't write a NULL terminator because we have a size byte
         m_ble.write((char*)&filenameLength, sizeof(filenameLength));
-        m_ble.write((char*)filename, filenameLength);
+        m_ble.write((char*)filenameToWrite, filenameLength);
 //        _printBytes((char*)&filenameLength, sizeof(filenameLength));
-//        _printBytes((char*)filename, sizeof(filenameLength));
+//        _printBytes((char*)filenameToWrite, sizeof(filenameLength));
     }
 }
 
@@ -517,6 +523,12 @@ void CDWheelBluetoothController::process() {
                     m_manager->setCurrentPattenShouldSetBrightnessByRotationalVelocity(value);
                     break;
                 }
+                case CDWheelUARTCommandSetCurrentPatternOptions: {
+                    uint32_t value = 0;
+                    m_ble.readBytes((char*)&value, sizeof(uint32_t));
+                    m_manager->setCurrentPattenOptions(LEDPatternOptions(value));
+                    break;
+                }
                 case CDWheelUARTCommandPlayProgrammedPattern: {
                     ASSERT(sizeof(LEDPatternType) == 4); // Make sure the size didn't change
                     // Type, speed, color
@@ -566,6 +578,27 @@ void CDWheelBluetoothController::process() {
                         DEBUG_PRINTLN("BAD SIZE");
                     }
                     
+                    break;
+                }
+                case CDWheelUARTCommandPlaySequence: {
+                    // Read the 32-bit size of the filename to play (relative to root), and then read that in (including NULL terminator)
+                    uint32_t filenameSize = 0;
+                    m_ble.readBytes((char*)&filenameSize, sizeof(uint32_t));
+                    DEBUG_PRINTF("reading: %d bytes for filename\r\n", filenameSize); // includes NULL term in size sent..
+                    
+                    // Sanity check
+                    if (filenameSize <= MAX_PATH) {
+                        char filename[MAX_PATH];
+                        m_ble.readBytes(filename, filenameSize);
+                        DEBUG_PRINTF("playSequenceWithFilename: %s\r\n", filename);
+                        m_manager->playSequenceWithFilename(filename);
+                        // start playing if we are paused
+                        if (m_manager->isPaused()) {
+                            m_manager->play();
+                        }
+                    } else {
+                        DEBUG_PRINTLN("BAD SIZE");
+                    }
                     break;
                 }
                 case CDWheelUARTCommandRequestPatternInfo: {

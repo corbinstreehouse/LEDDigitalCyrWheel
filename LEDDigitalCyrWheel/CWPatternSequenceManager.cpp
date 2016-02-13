@@ -245,6 +245,37 @@ void CWPatternSequenceManager::setDynamicBitmapPatternType(const char *filename,
     loadCurrentPatternItem();
 }
 
+static void _appendFilename(const char *rootDirName, const char *filename, char *fullFilenamePath, size_t size) {
+    char *nameLocation = fullFilenamePath;
+    // copy the directory for the patterns
+    strcpy(nameLocation, rootDirName);
+    nameLocation += strlen(rootDirName);
+    if (nameLocation[-1] != '/') {
+        nameLocation[0] = '/';
+        nameLocation++;
+    }
+    strcpy(nameLocation, filename);
+    nameLocation += strlen(filename);
+    nameLocation[0] = NULL;
+}
+
+void CWPatternSequenceManager::playSequenceWithFilename(const char *filename) {
+    // relative filename
+    char fullFilenamePath[MAX_PATH];
+    _appendFilename(_getRootDirectory(), filename, fullFilenamePath, MAX_PATH);
+    
+    // open the file
+    FatFile sequenceFile = FatFile(fullFilenamePath, O_READ);
+#if DEBUG
+    DEBUG_PRINTF(" pattern sequence OPENED file:");
+    sequenceFile.printName();
+    DEBUG_PRINTLN();
+#endif
+    loadAsSequenceFromFatFile(&sequenceFile);
+    sequenceFile.close();
+    firstPatternItem();
+}
+
 void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount) {
     m_ledPatterns.flashThreeTimes(color);
 }
@@ -302,20 +333,6 @@ static void _getFullpathName(const char *rootDirName, const CDPatternFileInfo *f
 //    DEBUG_PRINTF(" computed filename: %s\r\n", buffer);
 }
 
-static void _appendFilename(const char *rootDirName, const char *filename, char *fullFilenamePath, size_t size) {
-    char *nameLocation = fullFilenamePath;
-    // copy the directory for the patterns
-    strcpy(nameLocation, rootDirName);
-    nameLocation += strlen(rootDirName);
-    if (nameLocation[-1] != '/') {
-        nameLocation[0] = '/';
-        nameLocation++;
-    }
-    strcpy(nameLocation, filename);
-    nameLocation += strlen(filename);
-    nameLocation[0] = NULL;
-}
-
 void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo) {
     CDPatternItemHeader result;
     result.patternType = LEDPatternTypeBitmap; // Easy testing: LEDPatternTypeTheaterChase;
@@ -363,6 +380,16 @@ void CWPatternSequenceManager::setCurrentPatternColor(CRGB color) {
     }
 }
 
+void CWPatternSequenceManager::setCurrentPattenOptions(LEDPatternOptions options) {
+    CDPatternItemHeader *header = getCurrentItemHeader();
+    if (header) {
+        if (header->patternOptions.raw != options.raw) {
+            header->patternOptions = options;
+            m_ledPatterns.setPatternOptions(options);
+            sendWheelChanged(CDWheelChangeReasonPatternChanged);
+        }
+    }
+}
 
 void CWPatternSequenceManager::setCurrentPattenShouldSetBrightnessByRotationalVelocity(bool value) {
     CDPatternItemHeader *header = getCurrentItemHeader();
@@ -471,7 +498,7 @@ void CWPatternSequenceManager::loadAsSequenceFileInfo(CDPatternFileInfo *fileInf
 #endif
 
     loadAsSequenceFromFatFile(&sequenceFile);
-    
+
     sequenceFile.close();
 }
 
