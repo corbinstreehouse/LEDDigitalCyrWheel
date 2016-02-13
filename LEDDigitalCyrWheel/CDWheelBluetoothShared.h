@@ -52,10 +52,11 @@ typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
     CDWheelUARTCommandPlaySequence,
     CDWheelUARTCommandRequestPatternInfo,
     CDWheelUARTCommandRequestCustomSequences,
+    CDWheelUARTCommandUploadSequence,
     
     // Other things....like get a list of files or upload a new pattern, or "paint" pixels.
     
-    CDWheelUARTCommandLastValue = CDWheelUARTCommandRequestCustomSequences,
+    CDWheelUARTCommandLastValue = CDWheelUARTCommandUploadSequence,
 };
     
     
@@ -64,6 +65,7 @@ typedef CD_ENUM(int8_t, CDWheelUARTRecieveCommand)  {
     CDWheelUARTRecieveCommandInvalid, // So we don't interpret 0...
     CDWheelUARTRecieveCommandCurrentPatternInfo, //
     CDWheelUARTRecieveCommandCustomSequences, //
+    CDWheelUARTRecieveCommandUploadSequenceFinished,
     
     
     

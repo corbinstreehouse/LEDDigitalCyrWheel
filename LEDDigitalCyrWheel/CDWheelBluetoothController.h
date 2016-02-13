@@ -70,6 +70,7 @@ private:
     void _sendCustomSequencesFromDirectory(const char* dir);
     void _countSequencesForFileInfo(const CDPatternFileInfo *fileInfo);
     void _writeSequenceFilenameForFileInfo(const CDPatternFileInfo *fileInfo);
+    void _handleUploadSequence();
 public:
     CDWheelBluetoothController();
     void init(CWPatternSequenceManager *manager, bool buttonIsDown);

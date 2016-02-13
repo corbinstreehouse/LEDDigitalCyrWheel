@@ -22,6 +22,7 @@
 
 #define BT_REFRESH_RATE 20 // every X ms
 #define BT_REFRESH_RATE_POV 1000 // every second
+#define BT_FILE_READ_TIMEOUT 500 // ms
 
 CDWheelBluetoothController::CDWheelBluetoothController() : m_ble(BLUETOOTH_CS, BLUETOOTH_IRQ, BLUETOOTH_RST), m_initialized(false) {
     
@@ -454,6 +455,115 @@ void CDWheelBluetoothController::_sendCustomSequencesFromDirectory(const char *d
     m_manager->enumerateCurrentPatternFileInfoChildren(this, &CDWheelBluetoothController::_writeSequenceFilenameForFileInfo);
 }
 
+/*
+ 
+ uint32_t filenameSize - including NULL
+ char * filename, including NULL
+ uint32_t file size
+ data
+ 
+ */
+
+void CDWheelBluetoothController::_handleUploadSequence() {
+    // Read the 32-bit size of the filename
+    uint32_t filenameSize = 0;
+    m_ble.readBytes((char*)&filenameSize, sizeof(uint32_t));
+    DEBUG_PRINTF("reading: %d bytes for filename\r\n", filenameSize); // includes NULL term in size sent..
+    
+    // Sanity check
+    if (filenameSize > MAX_PATH) {
+        DEBUG_PRINTLN("BAD SIZE");
+        return;
+    }
+    char filename[MAX_PATH];
+    m_ble.readBytes(filename, filenameSize);
+    DEBUG_PRINTF("_handleUploadSequence: %s\r\n", filename);
+    
+    // Some basic validation
+    if (strlen(filename) > MAX_PATH) {
+        DEBUG_PRINTLN("BAD name");
+        return;
+    }
+    
+    uint32_t totalBytes = 0;
+    m_ble.readBytes((char*)&totalBytes, sizeof(uint32_t));
+    //  open it up and write it out as we read it in..
+    uint32_t start = millis();
+    
+    SdFile file = SdFile(filename, O_WRITE|O_CREAT);
+    // Worked?
+    if (!file.isFile()) {
+        DEBUG_PRINTF("file creation failed for %2\r\n", filename);
+        return;
+    }
+    
+    bool timeoutHit = false;
+    
+#define bufferSize 1024
+    uint8_t buffer[bufferSize];
+    
+    DEBUG_PRINTF("totalBytes: %d\r\n", totalBytes);
+    if (totalBytes > 0) {
+        int sizeLeft = totalBytes;
+        uint32_t lastReadTime = millis();
+        while (sizeLeft > 0) {
+            while (!m_ble.available()) {
+                //                    delay(50); // Give it some time; this is faster so we aren't making it do lots of SPI work??
+                //                    DEBUG_PRINTF("busy wait..., %d\r\n", millis());
+                if (millis() - lastReadTime > BT_FILE_READ_TIMEOUT) {
+                    DEBUG_PRINTF("timeout! read: %d\r\n", totalBytes);
+                    sizeLeft = 0;
+                    timeoutHit = true;
+                    break;
+                    // TODO: errors
+                }
+            }
+            DEBUG_PRINTF("available at %d\r\n", millis());
+            
+            int read = 0;
+            while (m_ble.available()) {
+                int amountToRead = min(sizeLeft, bufferSize);
+                int amountRead = m_ble.readBytes(buffer, amountToRead);
+                if (amountRead > 0) {
+                    file.write(buffer, amountRead);
+                }
+                
+                //                    for (int tt = 0; tt < amountRead; tt++) {
+                //                        DEBUG_PRINTF("%c", buffer[tt]);
+                //                    }
+//                count += amountRead;
+                sizeLeft -= amountRead;
+                lastReadTime = millis();
+                read += amountRead;
+                
+                // TODO: ping back progress??
+            }
+            
+            //                DEBUG_PRINTF("  %d READ: %d/%d \r\n", i, read, count);
+            //                if (read != 20 && count != totalBytes) {
+            //                    DEBUG_PRINTLN("                 BAD FOOD!!!!!!!!!!!!!!!!!!");
+            //                }
+//            i++;
+        }
+    }
+    uint32_t time = millis() - start;
+    DEBUG_PRINTF("  read time took: %d ms, %g s\r\n", time, time /1000.0 );
+    
+    file.close();
+    
+    if (!timeoutHit) {
+        // ping the stuff to reload
+        m_manager->reloadRootSequences();
+    } else {
+        // delete the file if we hit the timeout.
+        file.remove();
+    }
+    // Send a ping back that we finished
+    m_ble.setMode(BLUEFRUIT_MODE_DATA);
+    // Write the UART command we are done sending...
+    m_ble.write((int8_t)CDWheelUARTRecieveCommandUploadSequenceFinished);
+}
+
 void CDWheelBluetoothController::process() {
     
     if (!m_initialized) {
@@ -612,6 +722,10 @@ void CDWheelBluetoothController::process() {
                     
                     break;
                 }
+                case CDWheelUARTCommandUploadSequence: {
+                    _handleUploadSequence();
+                    break;
+                }
             }
         } else {
             // Invalid command; ugh..ignore it?
@@ -630,7 +744,6 @@ void CDWheelBluetoothController::process() {
 #if SPEED_TEST
     m_ble.setMode(BLUEFRUIT_MODE_DATA);
     if (m_ble.available()) {
-#define BT_FILE_READ_TIMEOUT 500 // ms
         DEBUG_PRINTF("available!\r\n");
         m_ble.setTimeout(500); // Larger timeout during this period of time..
         

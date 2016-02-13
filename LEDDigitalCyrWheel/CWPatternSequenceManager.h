@@ -101,7 +101,6 @@ private:
     NSURL *m_patternDirectoryURL;
 #endif
     
-    
     CDWheelChangedHandler *m_changeHandler;
     void *m_changeHandlerData;
     
@@ -193,6 +192,7 @@ public:
     void buttonClick();
     void buttonLongClick();
     
+    void reloadRootSequences();
     void loadFirstSequence();
     void loadNextSequence();
     void loadPriorSequence();

@@ -869,6 +869,11 @@ void CWPatternSequenceManager::loadSequencesFromRootDirectory() {
     loadFirstSequence();
 }
 
+void CWPatternSequenceManager::reloadRootSequences() {
+    loadPatternFileInfoChildren(&m_rootFileInfo);
+    loadFirstSequence();
+}
+
 void CWPatternSequenceManager::loadPatternFileInfoChildren(CDPatternFileInfo *parent) {
     ASSERT(parent);
     bool isRoot = isRootFileInfo(parent);
