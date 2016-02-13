@@ -772,7 +772,9 @@ design rules under a new name.</description>
 <signal name="N$8">
 <contactref element="U$1" pad="23/A9"/>
 <contactref element="BUTTON_1" pad="1"/>
-<wire x1="13.8176" y1="80.2386" x2="24.638" y2="81.0768" width="0.254" layer="1"/>
+<wire x1="13.8176" y1="80.2386" x2="13.7922" y2="80.2386" width="0.254" layer="1"/>
+<wire x1="13.7922" y1="80.2386" x2="13.7922" y2="81.026" width="0.254" layer="1"/>
+<wire x1="13.7922" y1="81.026" x2="24.638" y2="81.0768" width="0.254" layer="1"/>
 <wire x1="24.638" y1="81.0768" x2="24.765" y2="73.025" width="0.254" layer="1"/>
 </signal>
 <signal name="3.3V">

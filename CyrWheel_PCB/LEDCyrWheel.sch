@@ -1934,7 +1934,7 @@ SPI</text>
 <label x="147.32" y="58.42" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$6" class="0">
+<net name="SDA" class="0">
 <segment>
 <pinref part="R3" gate="G$1" pin="2"/>
 <pinref part="U$3" gate="G$1" pin="SDA"/>
@@ -1948,7 +1948,7 @@ SPI</text>
 <junction x="66.04" y="25.4"/>
 </segment>
 </net>
-<net name="N$7" class="0">
+<net name="SCL" class="0">
 <segment>
 <pinref part="R4" gate="G$1" pin="2"/>
 <wire x1="53.34" y1="33.02" x2="60.96" y2="33.02" width="0.1524" layer="91"/>

@@ -1733,8 +1733,6 @@ SPI</text>
 <instance part="SUPPLY5" gate="G$1" x="149.86" y="78.74"/>
 <instance part="IC1" gate="A" x="50.8" y="114.3" rot="R180"/>
 <instance part="IC1" gate="B" x="35.56" y="86.36" rot="R180"/>
-<instance part="IC1" gate="C" x="15.24" y="60.96"/>
-<instance part="IC1" gate="D" x="15.24" y="43.18"/>
 <instance part="IC1" gate="P" x="15.24" y="15.24"/>
 <instance part="SUPPLY4" gate="G$1" x="15.24" y="27.94"/>
 <instance part="GND7" gate="1" x="15.24" y="0"/>
