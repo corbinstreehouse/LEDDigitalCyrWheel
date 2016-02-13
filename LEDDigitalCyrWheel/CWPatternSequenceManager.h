@@ -178,6 +178,7 @@ private:
     void setupBootProgress();
     void burnInitialStateInEEPROM();
     void sequenceChanged();
+    
 public:
     CWPatternSequenceManager();
 #if PATTERN_EDITOR
@@ -274,6 +275,11 @@ public:
         } else {
             return NULL;
         }
+    }
+    
+    bool currentPatternIsPOV() {
+        CDPatternItemHeader *h = getCurrentItemHeader();
+        return h && h->patternOptions.bitmapOptions.pov && (h->patternType == LEDPatternTypeBitmap || h->patternType == LEDPatternTypeImageReferencedBitmap);
     }
 
     void play(); 

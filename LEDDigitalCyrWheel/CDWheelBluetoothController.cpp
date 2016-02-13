@@ -20,9 +20,8 @@
     #define VERBOSE_MODE 0
 #endif
 
-#define BT_REFRESH_RATE 20 // ever X ms
-
-
+#define BT_REFRESH_RATE 20 // every X ms
+#define BT_REFRESH_RATE_POV 1000 // every second
 
 CDWheelBluetoothController::CDWheelBluetoothController() : m_ble(BLUETOOTH_CS, BLUETOOTH_IRQ, BLUETOOTH_RST), m_initialized(false) {
     
@@ -462,13 +461,14 @@ void CDWheelBluetoothController::process() {
     }
     
     // This refresh rate keeps my FPS at 600 or so. Otherwise we drop down to like 400 when just checkin isConnected(), and 180 when we check characteristics and such.
-    if ((millis() - m_lastProcessTime) < BT_REFRESH_RATE) {
+    // We refresh slower for POV patterns
+    const uint32_t refreshRate = m_manager->currentPatternIsPOV()? BT_REFRESH_RATE_POV : BT_REFRESH_RATE;
+    if ((millis() - m_lastProcessTime) < refreshRate) {
         return;
     }
     
     // update the FPS more slowly?
     setCharacteristic16BitValue(m_FPSCharID, m_manager->getFPS());
-
 
     // So, I don't use command mode anymore except for setting characteristic values
     m_ble.setMode(BLUEFRUIT_MODE_DATA);

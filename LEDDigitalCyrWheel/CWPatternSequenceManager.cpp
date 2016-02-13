@@ -338,6 +338,7 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
     result.patternType = LEDPatternTypeBitmap; // Easy testing: LEDPatternTypeTheaterChase;
     result.color = CRGB::Red;
     result.duration = 50;
+    bool isPOV = false;
     // POV patterns will be as fast as they can go (value == 0)... but that looks terrible for non POV patterns
     // Harcode certain directory names as being POV
     // Load our parent directory name to find out
@@ -350,14 +351,15 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
         if (parentDirectory.getName(filenameBuffer, FILENAME_MAX_LENGTH)) {
             if (strcmp(filenameBuffer, "Pictures") == 0) {
                 defaultDuration = 0; // POV duration
+                isPOV = true;
             }
         }
     }
     
     result.patternDuration = defaultDuration;
     result.patternEndCondition = CDPatternEndConditionOnButtonClick;
-    bool shouldInterpolateToNextRow = false; // TODO:??
-    result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, m_defaultShouldStretchBitmap, shouldInterpolateToNextRow));
+    bool shouldInterpolateToNextRow = false; // TODO:?? default value for these??
+    result.patternOptions = LEDPatternOptions(LEDBitmapPatternOptions(false, m_defaultShouldStretchBitmap, shouldInterpolateToNextRow, isPOV));
     result.filename = NULL;
     
     setSingleItemPatternHeader(&result); // Sends sequenceChanged
