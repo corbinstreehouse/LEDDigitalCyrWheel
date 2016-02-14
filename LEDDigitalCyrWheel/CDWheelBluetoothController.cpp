@@ -455,6 +455,46 @@ void CDWheelBluetoothController::_sendCustomSequencesFromDirectory(const char *d
     m_manager->enumerateCurrentPatternFileInfoChildren(this, &CDWheelBluetoothController::_writeSequenceFilenameForFileInfo);
 }
 
+bool CDWheelBluetoothController::_readFilename(char *filename, size_t bufferSize) {
+    uint32_t filenameSize = 0;
+    m_ble.readBytes((char*)&filenameSize, sizeof(uint32_t));
+    DEBUG_PRINTF("reading: %d bytes for filename\r\n", filenameSize); // includes NULL term in size sent..
+    
+    // Sanity check
+    if (filenameSize > bufferSize) {
+        DEBUG_PRINTLN("BAD SIZE");
+        return false;
+    }
+    
+    m_ble.readBytes(filename, filenameSize);
+    if (strlen(filename) > bufferSize) {
+        DEBUG_PRINTLN("BAD name");
+        return false;
+    }
+    
+    DEBUG_PRINTF("readFilename: %s\r\n", filename);
+    return true;
+}
+
+void CDWheelBluetoothController::_handleDeleteSequence() {
+    char filename[MAX_PATH];
+    if (!_readFilename(filename, MAX_PATH)) {
+        return;
+    }
+    
+    // Prepend the dir or anything?
+    SdFile file = SdFile(filename, O_WRITE);
+    bool deleted = false;
+    if (file.isFile()) {
+        deleted = file.remove();
+    }
+    file.close();
+
+    if (deleted) {
+        m_manager->reloadRootSequences();
+    }
+}
+
 /*
  
  uint32_t filenameSize - including NULL
@@ -465,23 +505,8 @@ void CDWheelBluetoothController::_sendCustomSequencesFromDirectory(const char *d
  */
 
 void CDWheelBluetoothController::_handleUploadSequence() {
-    // Read the 32-bit size of the filename
-    uint32_t filenameSize = 0;
-    m_ble.readBytes((char*)&filenameSize, sizeof(uint32_t));
-    DEBUG_PRINTF("reading: %d bytes for filename\r\n", filenameSize); // includes NULL term in size sent..
-    
-    // Sanity check
-    if (filenameSize > MAX_PATH) {
-        DEBUG_PRINTLN("BAD SIZE");
-        return;
-    }
     char filename[MAX_PATH];
-    m_ble.readBytes(filename, filenameSize);
-    DEBUG_PRINTF("_handleUploadSequence: %s\r\n", filename);
-    
-    // Some basic validation
-    if (strlen(filename) > MAX_PATH) {
-        DEBUG_PRINTLN("BAD name");
+    if (!_readFilename(filename, MAX_PATH)) {
         return;
     }
     
@@ -490,6 +515,7 @@ void CDWheelBluetoothController::_handleUploadSequence() {
     //  open it up and write it out as we read it in..
     uint32_t start = millis();
     
+    // Prepend the dir or anything?
     SdFile file = SdFile(filename, O_WRITE|O_CREAT);
     // Worked?
     if (!file.isFile()) {
@@ -724,6 +750,10 @@ void CDWheelBluetoothController::process() {
                 }
                 case CDWheelUARTCommandUploadSequence: {
                     _handleUploadSequence();
+                    break;
+                }
+                case CDWheelUARTCommandDeletePatternSequence: {
+                    _handleDeleteSequence();
                     break;
                 }
             }

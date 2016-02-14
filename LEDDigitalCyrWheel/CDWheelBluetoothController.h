@@ -71,6 +71,8 @@ private:
     void _countSequencesForFileInfo(const CDPatternFileInfo *fileInfo);
     void _writeSequenceFilenameForFileInfo(const CDPatternFileInfo *fileInfo);
     void _handleUploadSequence();
+    void _handleDeleteSequence();
+    bool _readFilename(char *buffer, size_t bufferSize);
 public:
     CDWheelBluetoothController();
     void init(CWPatternSequenceManager *manager, bool buttonIsDown);

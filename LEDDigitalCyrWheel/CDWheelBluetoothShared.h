@@ -53,10 +53,11 @@ typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
     CDWheelUARTCommandRequestPatternInfo,
     CDWheelUARTCommandRequestCustomSequences,
     CDWheelUARTCommandUploadSequence,
+    CDWheelUARTCommandDeletePatternSequence,
     
     // Other things....like get a list of files or upload a new pattern, or "paint" pixels.
     
-    CDWheelUARTCommandLastValue = CDWheelUARTCommandUploadSequence,
+    CDWheelUARTCommandLastValue = CDWheelUARTCommandDeletePatternSequence,
 };
     
     
