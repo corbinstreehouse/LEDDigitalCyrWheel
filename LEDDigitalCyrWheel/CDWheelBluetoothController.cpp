@@ -285,7 +285,7 @@ bool CDWheelBluetoothController::registerServices() {
 void CDWheelBluetoothController::setName(char *name) {
     m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
     if (name == NULL) {
-        name = "LED Cyr Wheel AFv3";
+        name = "LED Cyr Wheel";
     }
     m_ble.print("AT+GAPDEVNAME=");
     m_ble.println(name);
@@ -353,6 +353,20 @@ static void _printBytes(char *b, int size) {
 #endif
 }
 
+int CDWheelBluetoothController::_writeFilename(char *filename) {
+    // I don't write the NULL terminator on sending, but I do on reading. I should be more consistent..
+    uint32_t length = filename ? strlen(filename) : 0;
+//    DEBUG_PRINTF(" **** writing length: %d :", length);
+    _printBytes((char*)&length, sizeof(uint32_t));
+    m_ble.write((char*)&length, sizeof(uint32_t));
+    if (length > 0) {
+//        DEBUG_PRINTLN(" **** writing relative filename: ");
+        _printBytes(filename, length);
+        m_ble.write(filename, length); // No NULL terminator anymore
+    }
+    return length + sizeof(uint32_t);
+}
+
 void CDWheelBluetoothController::_sendCurrentPatternInfo() {
     char filename[MAX_PATH];
     char *filenameToWrite = NULL;
@@ -374,13 +388,9 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
             filenameToWrite++;
         }
         
-        if (filenameToWrite) {
-            header.filenameLength = strlen(filenameToWrite);
-        } else {
-            header.filenameLength = 0; // Just make sure
-        }
+        header.filenameLength = 0; // Just make sure
         
-        DEBUG_PRINTF(" sending header.patternType: %d (0x%2x), filelength: %d\r\n", header.patternType, header.patternType, header.filenameLength);
+        DEBUG_PRINTF(" sending header.patternType: %d (0x%2x)\r\n", header.patternType, header.patternType);
     } else {
         // Write a header still indicating no pattern is playing by noting the count...
         bzero(&header, sizeof(CDPatternItemHeader));
@@ -400,14 +410,39 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
     // Write the header..then the filename (if available)
     m_ble.write((char*)&header, sizeof(CDPatternItemHeader));
     bytesSent += sizeof(CDPatternItemHeader);
-    if (filenameToWrite != NULL) {
-//        DEBUG_PRINTLN(" **** writing relative filename: ");
-        // _printBytes(filenameToWrite, header.filenameLength)
-        m_ble.write(filenameToWrite, header.filenameLength); // No NULL terminator anymore
-        bytesSent += header.filenameLength;
-    }
+
+    // Always write the filename including its size beforehand; handled NULL fine
+    bytesSent += _writeFilename(filenameToWrite);
+ 
+    // follow with the sequence name..
+    bytesSent += _sendCurrentSequenceName(false);
     
     DEBUG_PRINTF(" **** done sending pattern info, sent: %d bytes\r\n", bytesSent);
+}
+
+int CDWheelBluetoothController::_sendCurrentSequenceName(bool includeHeader) {
+    char filename[MAX_PATH];
+    char *filenameTowWrite = filename;
+    if (includeHeader) {
+        m_ble.setMode(BLUEFRUIT_MODE_DATA);
+        m_ble.write((int8_t)CDWheelUARTRecieveCommandCurrentSequenceName);
+    }
+    
+    // If we are playing a referenced bitmap, then the pattern contains the name. So, only return it if we are playing a pattern file
+    CDPatternFileInfo *info = m_manager->getCurrentPatternFileInfo();
+    if (info != NULL) {
+        if (info->patternFileType == CDPatternFileTypeBitmapImage && m_manager->getCurrentPatternFileInfo()->parent != NULL) {
+            // Show the directory it is in..
+            m_manager->getFilenameForPatternFileInfo(m_manager->getCurrentPatternFileInfo()->parent, filename, MAX_PATH);
+        } else {
+            m_manager->getCurrentPatternFileName(filename, MAX_PATH, false);
+        }
+        // go pass the root dir..kind of hacky
+        filenameTowWrite++;
+    } else {
+        filename[0] = NULL;
+    }
+    return _writeFilename(filenameTowWrite);
 }
 
 void CDWheelBluetoothController::_writeSequenceFilenameForFileInfo(const CDPatternFileInfo *fileInfo) {
@@ -740,6 +775,10 @@ void CDWheelBluetoothController::process() {
                 case CDWheelUARTCommandRequestPatternInfo: {
                     // Nothing else is sent; we start sending back the pattern info..
                     _sendCurrentPatternInfo();
+                    break;
+                }
+                case CDWheelUARTCommandRequestSequenceName: {
+                    _sendCurrentSequenceName(true);
                     break;
                 }
                 case CDWheelUARTCommandRequestCustomSequences: {

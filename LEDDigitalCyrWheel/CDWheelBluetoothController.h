@@ -73,6 +73,8 @@ private:
     void _handleUploadSequence();
     void _handleDeleteSequence();
     bool _readFilename(char *buffer, size_t bufferSize);
+    int _writeFilename(char *name);
+    int _sendCurrentSequenceName(bool includeHeader);
 public:
     CDWheelBluetoothController();
     void init(CWPatternSequenceManager *manager, bool buttonIsDown);

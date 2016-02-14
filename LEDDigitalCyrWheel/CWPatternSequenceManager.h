@@ -255,6 +255,11 @@ public:
             }
         }
     }
+    
+    CDPatternFileInfo *getCurrentPatternFileInfo() {
+        _ensureCurrentFileInfo();
+        return m_currentFileInfo;
+    }
 
     
     // always Long filenames returned
