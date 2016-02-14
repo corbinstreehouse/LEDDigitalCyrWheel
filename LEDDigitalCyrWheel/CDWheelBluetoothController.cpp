@@ -48,11 +48,13 @@ void CDWheelBluetoothController::wheelChanged(CDWheelChangeReason reason) {
             // TODO: make sure this doesn't slow down things....
             if (m_ble.isConnected()) {
                 _sendCurrentPatternInfo();
+            } else {
+                m_streamingOreintationData = false; // Make sure we aren't streaming when not connected...
             }
             break;
         }
         case CDWheelChangeReasonSequenceChanged: {
-            
+            // Beuller??
             break;
         }
     }
@@ -93,6 +95,7 @@ static const char *kCharacteristicCmd = "AT+GATTCHAR";
 
 void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool buttonIsDown) {
     m_manager = manager;
+    m_streamingOreintationData = false;
     
     // See if we should even initialize; only initialize if set to init on startup, OR the buttonIsDown
     bool shouldInit = buttonIsDown;
@@ -428,19 +431,25 @@ int CDWheelBluetoothController::_sendCurrentSequenceName(bool includeHeader) {
         m_ble.write((int8_t)CDWheelUARTRecieveCommandCurrentSequenceName);
     }
     
-    // If we are playing a referenced bitmap, then the pattern contains the name. So, only return it if we are playing a pattern file
-    CDPatternFileInfo *info = m_manager->getCurrentPatternFileInfo();
-    if (info != NULL) {
-        if (info->patternFileType == CDPatternFileTypeBitmapImage && m_manager->getCurrentPatternFileInfo()->parent != NULL) {
-            // Show the directory it is in..
-            m_manager->getFilenameForPatternFileInfo(m_manager->getCurrentPatternFileInfo()->parent, filename, MAX_PATH);
-        } else {
-            m_manager->getCurrentPatternFileName(filename, MAX_PATH, false);
-        }
-        // go pass the root dir..kind of hacky
-        filenameTowWrite++;
+    if (m_manager->isDynamicPattern()) {
+        strcpy(filename, "Dynamic Sequence");
     } else {
-        filename[0] = NULL;
+        // If we are playing a referenced bitmap, then the pattern contains the name. So, only return it if we are playing a pattern file
+        CDPatternFileInfo *info = m_manager->getCurrentPatternFileInfo();
+        if (info != NULL) {
+            if (info->patternFileType == CDPatternFileTypeBitmapImage && m_manager->getCurrentPatternFileInfo()->parent != NULL) {
+                // Show the directory it is in..
+                m_manager->getFilenameForPatternFileInfo(m_manager->getCurrentPatternFileInfo()->parent, filename, MAX_PATH);
+            } else {
+                m_manager->getCurrentPatternFileName(filename, MAX_PATH, false);
+            }
+            // go pass the root dir..kind of hacky
+            if (info->patternFileType != CDPatternFileTypeDefaultSequence) {
+                filenameTowWrite++;
+            }
+        } else {
+            strcpy(filename, "[NOTHING]");
+        }
     }
     return _writeFilename(filenameTowWrite);
 }
@@ -528,6 +537,12 @@ void CDWheelBluetoothController::_handleDeleteSequence() {
     if (deleted) {
         m_manager->reloadRootSequences();
     }
+}
+
+void CDWheelBluetoothController::_sendOrientationData() {
+    m_ble.setMode(BLUEFRUIT_MODE_DATA);
+    m_ble.write((int8_t)CDWheelUARTRecieveCommandOrientationData);
+    m_manager->writeOrientationData(&m_ble);
 }
 
 /*
@@ -795,12 +810,23 @@ void CDWheelBluetoothController::process() {
                     _handleDeleteSequence();
                     break;
                 }
+                case CDWheelUARTCommandOrientationStreaming: {
+                    uint8_t value = 0;
+                    m_ble.readBytes((char*)&value, sizeof(uint8_t));
+                    m_streamingOreintationData = value;
+                    break;
+                }
             }
         } else {
             // Invalid command; ugh..ignore it?
             DEBUG_PRINTF("invalid command: %d", command);
         }
     }
+    
+    if (m_streamingOreintationData) {
+        _sendOrientationData();
+    }
+    
     // Maybe: If we have more data, process it on the next tick to make it go faster; otherwise, wait...
     m_ble.setMode(BLUEFRUIT_MODE_DATA);
 //    if (!m_ble.available())

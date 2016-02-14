@@ -919,6 +919,17 @@ void CDOrientation::writeStatusToFile() {
     file.close();
 }
 
+void CDOrientation::writeOrientationData(Stream *stream) {
+    // Format:
+    // _gyro.g.x, _gyro.g.y, _gyro.g.z,     GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z), _compass.a.x, _compass.a.y, _compass.a.z,  _compass.m.x, _compass.m.y, _compass.m.z,    ROLL (degrees), PITCH (degrees), YAW (degrees)
+    
+    stream->printf("%.0f,%0.f,%0.f, \t  %.0f,%0.f,%0.f, \t %d,%d,%d, \t %d,%d,%d, \t %.3f, %.3f, %.3f \r\n",
+                   _gyro.g.x, _gyro.g.y, _gyro.g.z,
+                   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z),
+                   _compass.a.x, _compass.a.y, _compass.a.z,
+                   _compass.m.x, _compass.m.y, _compass.m.z,
+                   ToDeg(roll), ToDeg(pitch), ToDeg(yaw));
+}
 
 void CDOrientation::print()
 {

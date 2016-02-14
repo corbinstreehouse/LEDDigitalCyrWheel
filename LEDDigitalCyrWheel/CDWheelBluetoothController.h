@@ -46,6 +46,7 @@ private:
     int32_t m_FPSCharID;
     uint32_t m_lastProcessTime;
     uint32_t m_counter;
+    bool m_streamingOreintationData;
     
     bool servicesAreRegistered();
     bool registerServices();
@@ -75,6 +76,7 @@ private:
     bool _readFilename(char *buffer, size_t bufferSize);
     int _writeFilename(char *name);
     int _sendCurrentSequenceName(bool includeHeader);
+    void _sendOrientationData();
 public:
     CDWheelBluetoothController();
     void init(CWPatternSequenceManager *manager, bool buttonIsDown);

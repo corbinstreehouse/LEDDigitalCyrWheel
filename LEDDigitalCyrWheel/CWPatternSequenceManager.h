@@ -18,7 +18,14 @@
     #include "SdFat.h"
 #endif
 
+#ifndef ACCELEROMETER
+#define ACCELEROMETER 1
+#endif
+
+#if ACCELEROMETER
 #include "CDOrientation.h"
+#endif
+
 #include "LEDCommon.h"
 #include "LEDPatterns.h"
 #include "CDPatternSequenceManagerShared.h"
@@ -89,10 +96,13 @@ private:
     uint32_t m_lowBattery:1;
     uint32_t m_shouldShowBootProgress:1;
     uint32_t m_defaultShouldStretchBitmap:1;
-    uint32_t __reserved:26;
+    uint32_t m_dynamicPattern:1;
+    uint32_t __reserved:25;
     
     LED_PATTERNS_CLASS m_ledPatterns;
+#if ACCELEROMETER
     CDOrientation m_orientation;
+#endif
 
     uint32_t m_timedPatternStartTime; // In milliseconds; the time that all the current run of timed patterns starts, so we can accurately generate a full duration for all of them
     uint32_t m_timedUsedBeforeCurrentPattern;
@@ -219,14 +229,18 @@ public:
     void setSingleItemPatternHeader(CDPatternItemHeader *header);
     void setDynamicPatternType(LEDPatternType type, uint32_t patternDuration = 500, CRGB color = CRGB::Red);
     void setDynamicBitmapPatternType(const char *filename, uint32_t patternDuration, LEDBitmapPatternOptions bitmapOptions);
+    bool isDynamicPattern() { return m_dynamicPattern; }
     void playSequenceWithFilename(const char *filename);
     
+#if ACCELEROMETER
     void startCalibration();
     void endCalibration();
     void cancelCalibration();
+    void writeOrientationData(Stream *stream);
 
     void startRecordingData();
     void endRecordingData();
+#endif
     
     void process();
     

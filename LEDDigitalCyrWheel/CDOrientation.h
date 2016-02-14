@@ -159,12 +159,15 @@ public:
     
 
     double getRotationalVelocity(); // In degress per second
-    
 
     void setFirstPass(bool isFirstPass) {  m_isFirstPass = isFirstPass; m_brightnessStartTime = millis(); };
     
     // Calculations for brightness based on the velocity of things for the cyr wheel
     uint8_t getRotationalVelocityBrightness(uint8_t currentBrightness);
+    
+#if !PATTERN_EDITOR
+    void writeOrientationData(Stream *stream);
+#endif
     
 };
 

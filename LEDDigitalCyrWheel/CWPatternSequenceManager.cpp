@@ -25,7 +25,6 @@
 #include "SdFatUtil.h"
 #endif
 
-#define ACCELEROMETER 1
 #define FILENAME_MAX_LENGTH MAX_PATH
 #define BURN_INITIAL_STATE 0 // Set to 1 and run once
 
@@ -206,6 +205,8 @@ void CWPatternSequenceManager::makePatternsBlinkColor(CRGB color) {
 }
 
 void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, uint32_t patternDuration, CRGB color) {
+    m_dynamicPattern = true;
+    
     CDPatternItemHeader header;
     bzero(&header, sizeof(CDPatternItemHeader));
     header.patternType = type;
@@ -228,7 +229,8 @@ void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, uint32
 void CWPatternSequenceManager::setDynamicBitmapPatternType(const char *filename, uint32_t patternDuration, LEDBitmapPatternOptions bitmapOptions) {
     CDPatternItemHeader result;
     bzero(&result, sizeof(CDPatternItemHeader));
-    // TODO: might be better to find it in the list!!
+    // TODO: might be better to find it in the list!! and then not set m_dynamicPattern!
+    m_dynamicPattern = true;
     result.patternType = LEDPatternTypeImageReferencedBitmap;
     result.color = CRGB::Red;
     result.duration = 50;
@@ -242,6 +244,12 @@ void CWPatternSequenceManager::setDynamicBitmapPatternType(const char *filename,
     setSingleItemPatternHeader(&result);
     m_shouldIgnoreButtonClickWhenTimed = false; // This could be made an option that is settable/dynamically changable.
     m_currentPatternItemIndex = 0;
+    
+    // TODO: it would be better to find this item in the parent and set it...
+    m_dynamicPattern = true;
+    
+    
+    
     loadCurrentPatternItem();
 }
 
@@ -419,6 +427,7 @@ void CWPatternSequenceManager::setCurrentPatternSpeed(uint32_t speedInMs) {
 
 void CWPatternSequenceManager::loadAsSequenceFromFatFile(FatFile *sequenceFile) {
     freePatternItems();
+    m_dynamicPattern = false;
     // This is reading the file format I created..
     // Header first
     CDPatternSequenceHeader patternHeader;
@@ -528,6 +537,8 @@ void CWPatternSequenceManager::loadFileInfo(CDPatternFileInfo *fileInfo) {
     }
     
     freePatternItems();
+    
+    m_dynamicPattern = false;
     
     switch (fileInfo->patternFileType) {
         case CDPatternFileTypeSequenceFile: {
@@ -715,8 +726,9 @@ void CWPatternSequenceManager::getFilenameForPatternFileInfo(const CDPatternFile
 
 void CWPatternSequenceManager::getCurrentPatternFileName(char *buffer, size_t bufferSize, bool useSFN) {
     _ensureCurrentFileInfo();
-    
-    if (m_currentFileInfo->patternFileType == CDPatternFileTypeDefaultSequence) {
+    if (m_dynamicPattern) {
+        strcpy(buffer, "Dynamic Sequence");
+    } else if (m_currentFileInfo->patternFileType == CDPatternFileTypeDefaultSequence) {
         strcpy(buffer, "Default Sequence");
     } else {
         _getFullpathName(_getRootDirectory(), m_currentFileInfo, buffer, bufferSize, useSFN);
@@ -1090,6 +1102,8 @@ void CWPatternSequenceManager::init() {
     loadSequencesFromRootDirectory();
 }
 
+#if ACCELEROMETER
+
 void CWPatternSequenceManager::startRecordingData() {
     if (!m_orientation.isSavingData()) {
         m_ledPatterns.flashThreeTimes(CRGB::Green);
@@ -1142,6 +1156,8 @@ bool CWPatternSequenceManager::initOrientation() {
     return result;
 }
 
+#endif
+
 void CWPatternSequenceManager::loadNextSequence() {
     DEBUG_PRINTLN("loadNextSequence");
     _ensureCurrentFileInfo();
@@ -1161,10 +1177,13 @@ void CWPatternSequenceManager::loadPriorSequence() {
 }
 
 void CWPatternSequenceManager::buttonClick() {
+#if ACCELEROMETER
     if (m_orientation.isCalibrating()) {
         m_orientation.endCalibration();
         firstPatternItem();
-    } else if (isPaused()) {
+    } else
+#endif
+    if (isPaused()) {
         // Only the BT stuff can pause us... make the button click start us up again..
         play();
     } else {
@@ -1188,11 +1207,13 @@ void CWPatternSequenceManager::buttonClick() {
 
 void CWPatternSequenceManager::buttonLongClick() {
     if (m_shouldRecordData) {
+#if ACCELEROMETER
         if (!m_orientation.isSavingData()) {
             startRecordingData();
         } else {
             endRecordingData();
         }
+#endif
     } else {
         if (currentFileInfoIsBitmapImage()) {
             loadNextDirectory();
@@ -1213,13 +1234,14 @@ void CWPatternSequenceManager::process() {
 //    float time = millis()-m_timedPatternStartTime;
 //    time = time / 1000.0;
 //    Serial.println(time);
-    
+#if ACCELEROMETER
     m_orientation.process();
     if (m_orientation.isCalibrating()) {
         // Show the flashing, and return
         m_ledPatterns.show();
         return;
     }
+#endif
 
     if (_numberOfPatternItems == 0) {
         DEBUG_PRINTLN("No pattern items to show!");
@@ -1258,7 +1280,11 @@ void CWPatternSequenceManager::updateBrightness() {
     } else {
         CDPatternItemHeader *itemHeader = getCurrentItemHeader();
         if (itemHeader && itemHeader->shouldSetBrightnessByRotationalVelocity) {
+#if ACCELEROMETER
             uint8_t brightness = m_orientation.getRotationalVelocityBrightness(m_ledPatterns.getBrightness());
+#else
+            uint8_t brightness = m_brightness;
+#endif
     #if DEBUG
             if (brightness < 10){
                 DEBUG_PRINTLN("low brightness from velocity based updateBrightness");
@@ -1425,7 +1451,9 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
         }
     }
     
+#if ACCELEROMETER
     m_orientation.setFirstPass(true); // why do I need this??
+#endif
     
     // TODO: aggregate these into one BT send!
     sendWheelChanged(CDWheelChangeReasonPatternChanged);
@@ -1473,6 +1501,7 @@ void CWPatternSequenceManager::processCommand(CDWheelCommand command) {
             restartCurrentSequence();
             break;
         }
+#if ACCELEROMETER
         case CDWheelCommandStartCalibrating: {
             startCalibration();
             break;
@@ -1493,6 +1522,7 @@ void CWPatternSequenceManager::processCommand(CDWheelCommand command) {
             endRecordingData();
             break;
         }
+#endif
         case CDWheelCommandPlay: {
             play();
             break;
@@ -1555,5 +1585,10 @@ CDWheelState CWPatternSequenceManager::getWheelState() {
     return result;
 }
 
+#if ACCELEROMETER
+void CWPatternSequenceManager::writeOrientationData(Stream *stream) {
+    m_orientation.writeOrientationData(stream);
+}
+#endif
 
 
