@@ -4882,7 +4882,6 @@
 				9D4FCB29193BB3A40000DE28 /* LEDCommon.h */,
 				9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */,
 				9D8ED2D117C01F7F001E1C06 /* LEDDigitalCyrWheel.cpp */,
-				9DE5C4DE1C6ED4BD00E0B96C /* New Group */,
 				9D142EEE1C02B1A90085A377 /* CDWheelBluetoothShared.h */,
 				9D142EEC1C02B14D0085A377 /* CDWheelBluetoothController.h */,
 				9D142EEB1C02B14D0085A377 /* CDWheelBluetoothController.cpp */,
@@ -5522,13 +5521,6 @@
 				9DDC60041938488D00C602BC /* Serial.ino */,
 			);
 			path = Serial;
-			sourceTree = "<group>";
-		};
-		9DE5C4DE1C6ED4BD00E0B96C /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "New Group";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

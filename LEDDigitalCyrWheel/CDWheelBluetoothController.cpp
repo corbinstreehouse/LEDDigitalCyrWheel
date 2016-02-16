@@ -30,7 +30,7 @@ CDWheelBluetoothController::CDWheelBluetoothController() : m_ble(BLUETOOTH_CS, B
 
 // Abstract code that isn't going to depend on the BT backend
 void _WheelChangedHandler(CDWheelChangeReason reason, void *data) {
-    DEBUG_PRINTF("Pinging bluetooth: wheel changed reason: %d\r\n", reason);
+//    DEBUG_PRINTF("Pinging bluetooth: wheel changed reason: %d\r\n", reason);
     ((CDWheelBluetoothController*)data)->wheelChanged(reason);
 }
 
@@ -360,11 +360,11 @@ int CDWheelBluetoothController::_writeFilename(char *filename) {
     // I don't write the NULL terminator on sending, but I do on reading. I should be more consistent..
     uint32_t length = filename ? strlen(filename) : 0;
 //    DEBUG_PRINTF(" **** writing length: %d :", length);
-    _printBytes((char*)&length, sizeof(uint32_t));
+//    _printBytes((char*)&length, sizeof(uint32_t));
     m_ble.write((char*)&length, sizeof(uint32_t));
     if (length > 0) {
 //        DEBUG_PRINTLN(" **** writing relative filename: ");
-        _printBytes(filename, length);
+//        _printBytes(filename, length);
         m_ble.write(filename, length); // No NULL terminator anymore
     }
     return length + sizeof(uint32_t);
@@ -373,7 +373,7 @@ int CDWheelBluetoothController::_writeFilename(char *filename) {
 void CDWheelBluetoothController::_sendCurrentPatternInfo() {
     char filename[MAX_PATH];
     char *filenameToWrite = NULL;
-    DEBUG_PRINTLN(" **** sending pattern info...");
+//    DEBUG_PRINTLN(" **** sending pattern info...");
 
     // Figre out what we want to write
     CDPatternItemHeader header;
@@ -392,8 +392,7 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
         }
         
         header.filenameLength = 0; // Just make sure
-        
-        DEBUG_PRINTF(" sending header.patternType: %d (0x%2x)\r\n", header.patternType, header.patternType);
+//        DEBUG_PRINTF(" sending header.patternType: %d (0x%2x)\r\n", header.patternType, header.patternType);
     } else {
         // Write a header still indicating no pattern is playing by noting the count...
         bzero(&header, sizeof(CDPatternItemHeader));
@@ -420,7 +419,7 @@ void CDWheelBluetoothController::_sendCurrentPatternInfo() {
     // follow with the sequence name..
     bytesSent += _sendCurrentSequenceName(false);
     
-    DEBUG_PRINTF(" **** done sending pattern info, sent: %d bytes\r\n", bytesSent);
+//    DEBUG_PRINTF(" **** done sending pattern info, sent: %d bytes\r\n", bytesSent);
 }
 
 int CDWheelBluetoothController::_sendCurrentSequenceName(bool includeHeader) {
@@ -623,7 +622,8 @@ void CDWheelBluetoothController::_handleUploadSequence() {
         }
     }
     uint32_t time = millis() - start;
-    DEBUG_PRINTF("  read time took: %d ms, %g s\r\n", time, time /1000.0 );
+    float seconds = time /1000.0;
+    DEBUG_PRINTF("  UPLOAD time took: %d ms, %g s, %d bytes, %.3f kB/s\r\n", time, seconds, totalBytes, ((float)totalBytes/1000.0)/seconds);
     
     file.close();
     
@@ -648,14 +648,16 @@ void CDWheelBluetoothController::process() {
     
     // This refresh rate keeps my FPS at 600 or so. Otherwise we drop down to like 400 when just checkin isConnected(), and 180 when we check characteristics and such.
     // We refresh slower for POV patterns
-    const uint32_t refreshRate = m_manager->currentPatternIsPOV()? BT_REFRESH_RATE_POV : BT_REFRESH_RATE;
-    if ((millis() - m_lastProcessTime) < refreshRate) {
-        return;
+    if (!m_streamingOreintationData) {
+        const uint32_t refreshRate = m_manager->currentPatternIsPOV() ? BT_REFRESH_RATE_POV : BT_REFRESH_RATE;
+        if (((millis() - m_lastProcessTime) < refreshRate)) {
+            return;
+        }
+        
+        // update the FPS more slowly?
+        setCharacteristic16BitValue(m_FPSCharID, m_manager->getFPS());
     }
     
-    // update the FPS more slowly?
-    setCharacteristic16BitValue(m_FPSCharID, m_manager->getFPS());
-
     // So, I don't use command mode anymore except for setting characteristic values
     m_ble.setMode(BLUEFRUIT_MODE_DATA);
     // I also don't check if we are connected, and just read...
@@ -810,10 +812,15 @@ void CDWheelBluetoothController::process() {
                     _handleDeleteSequence();
                     break;
                 }
-                case CDWheelUARTCommandOrientationStreaming: {
-                    uint8_t value = 0;
-                    m_ble.readBytes((char*)&value, sizeof(uint8_t));
-                    m_streamingOreintationData = value;
+                case CDWheelUARTCommandOrientationStartStreaming: {
+                    m_streamingOreintationData = true;
+                    // Pause
+                    m_manager->pause();
+                    break;
+                }
+                case CDWheelUARTCommandOrientationEndStreaming: {
+                    m_streamingOreintationData = false;
+                    m_manager->play();
                     break;
                 }
             }
@@ -823,6 +830,7 @@ void CDWheelBluetoothController::process() {
         }
     }
     
+    // send this as fast as we can
     if (m_streamingOreintationData) {
         _sendOrientationData();
     }

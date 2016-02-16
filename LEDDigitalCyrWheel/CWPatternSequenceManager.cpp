@@ -282,6 +282,11 @@ void CWPatternSequenceManager::playSequenceWithFilename(const char *filename) {
     loadAsSequenceFromFatFile(&sequenceFile);
     sequenceFile.close();
     firstPatternItem();
+    
+    // TODO: it would be better to find this item in the parent and set it...
+    m_dynamicPattern = true;
+    
+
 }
 
 void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount) {
@@ -1433,7 +1438,7 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
 #endif
     
     
-#if DEBUG
+#if 0 // DEBUG
     DEBUG_PRINTF("--------- loadCurrentPatternItem (patternType: %d): %d of %d, dur: %d patDur: %d\r\n", itemHeader->patternType, m_currentPatternItemIndex + 1, _numberOfPatternItems, itemHeader->duration, itemHeader->patternDuration);
 #endif
     
