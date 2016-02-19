@@ -475,8 +475,37 @@ void CDWheelBluetoothController::_countSequencesForFileInfo(const CDPatternFileI
     }
 }
 
+void CDWheelBluetoothController::_sendFilenamesInDirectory(const char *dir) {
+    // I just use the SD card reading..
+    // To avoid two passes i'm going to parse for newlines and send an empty line when done.
+    // I think I like this better than sending sizes
+    m_ble.setMode(BLUEFRUIT_MODE_DATA);
+    m_ble.write((int8_t)CDWheelUARTRecieveCommandFilenames);
+
+    FatFile directoryFile = FatFile(dir, O_READ);
+    FatFile file;
+    char *newline = "\r\n";
+    char filename[MAX_PATH];
+    while (file.openNext(&directoryFile, O_READ)) {
+        if (file.isHidden()) {
+            // Ignore hidden files
+        } else {
+            // Maybe send back some info about it being a dir? or am i going to imply it based on no extension?
+            //  if (file.isDir()) {
+            if (file.getName(filename, MAX_PATH)) {
+                m_ble.write(filename, strlen(filename));
+                m_ble.write(newline, 2);
+            }
+        }
+        file.close();
+    }
+    directoryFile.close();
+    // terminator is an empty line.
+    m_ble.write(newline, 2);
+}
+
 void CDWheelBluetoothController::_sendCustomSequencesFromDirectory(const char *dir) {
-    m_manager->changeToDirectory(dir); // not implemented!
+/*    m_manager->changeToDirectory(dir); // not implemented!
     
     // Two passes..one to count, one to write the names
     m_counter = 0;
@@ -496,6 +525,37 @@ void CDWheelBluetoothController::_sendCustomSequencesFromDirectory(const char *d
 //    _printBytes((char*)&d, sizeof(CDWheelUARTCustomSequenceData));
     
     m_manager->enumerateCurrentPatternFileInfoChildren(this, &CDWheelBluetoothController::_writeSequenceFilenameForFileInfo);
+ */
+    
+    m_ble.setMode(BLUEFRUIT_MODE_DATA);
+    m_ble.write((int8_t)CDWheelUARTRecieveCommandCustomSequences);
+    
+    DEBUG_PRINTF("opening %s\r\n", dir);
+    FatFile directoryFile = FatFile(dir, O_READ);
+    FatFile file;
+    char *newline = "\r\n";
+    char filename[MAX_PATH];
+    while (file.openNext(&directoryFile, O_READ)) {
+        if (file.isHidden()) {
+            // Ignore hidden files
+        } else {
+            // only send back sequence files. This is so close to the above code...but slightlyd ifferent.
+            if (file.getName(filename, MAX_PATH)) {
+                DEBUG_PRINTF("considering %s\r\n", filename);
+                char *ext = getExtension(filename);
+                if (ext) {
+                    if (strcasecmp(ext, SEQUENCE_FILE_EXTENSION) == 0) {
+                        m_ble.write(filename, strlen(filename));
+                        m_ble.write(newline, 2);
+                    }
+                }
+            }
+        }
+        file.close();
+    }
+    directoryFile.close();
+    // terminator is an empty line.
+    m_ble.write(newline, 2);
 }
 
 bool CDWheelBluetoothController::_readFilename(char *filename, size_t bufferSize) {
@@ -509,7 +569,7 @@ bool CDWheelBluetoothController::_readFilename(char *filename, size_t bufferSize
         return false;
     }
     
-    m_ble.readBytes(filename, filenameSize);
+    m_ble.readBytes(filename, filenameSize); // includes NULL terminator
     if (strlen(filename) > bufferSize) {
         DEBUG_PRINTLN("BAD name");
         return false;
@@ -542,6 +602,29 @@ void CDWheelBluetoothController::_sendOrientationData() {
     m_ble.setMode(BLUEFRUIT_MODE_DATA);
     m_ble.write((int8_t)CDWheelUARTRecieveCommandOrientationData);
     m_manager->writeOrientationData(&m_ble);
+    return;
+    
+//    //hack test..
+//    
+//    SdFile file = SdFile("/gyro2.txt", O_READ);
+//    if (file.isFile() ) {
+//        char buffer[1024]; // 5k at a time.. on the stack..
+//        Serial.printf("size: %d\r\n", file.fileSize());
+//        while (file.curPosition() < file.fileSize()) {
+//            int left = file.fileSize() - file.curPosition();
+//            left = MIN(1024, left);
+//            file.read((void*)buffer, left);
+//            Serial.printf("buffer: %s, \r\nleft: %d\r\n", buffer, file.fileSize() - file.curPosition());
+//
+//            m_ble.write(buffer, left);
+//            Serial.println("1024 sent");
+//            break;
+//        }
+//        m_streamingOreintationData = false;
+//        file.close();
+//        Serial.printf("DONE: %d\r\n", file.fileSize());
+//    }
+
 }
 
 /*
@@ -748,14 +831,8 @@ void CDWheelBluetoothController::process() {
                     m_ble.readBytes((char*)&options, sizeof(LEDBitmapPatternOptions));
                     
                     // Read the 32-bit size of the filename to play (relative to root), and then read that in (including NULL terminator)
-                    uint32_t filenameSize = 0;
-                    m_ble.readBytes((char*)&filenameSize, sizeof(uint32_t));
-                    DEBUG_PRINTF("reading: %d bytes for filename\r\n", filenameSize); // includes NULL term in size sent..
-
-                    // Sanity check
-                    if (filenameSize <= MAX_PATH) {
-                        char filename[MAX_PATH];
-                        m_ble.readBytes(filename, filenameSize);
+                    char filename[MAX_PATH];
+                    if (_readFilename(filename, MAX_PATH)) {
                         DEBUG_PRINTF("setDynamicBitmapPatternType: %s  - duration: %d\r\n", filename, duration);
                         m_manager->setDynamicBitmapPatternType((const char*)filename, duration, options);
                         // start playing if we are paused
@@ -770,15 +847,8 @@ void CDWheelBluetoothController::process() {
                 }
                 case CDWheelUARTCommandPlaySequence: {
                     // Read the 32-bit size of the filename to play (relative to root), and then read that in (including NULL terminator)
-                    uint32_t filenameSize = 0;
-                    m_ble.readBytes((char*)&filenameSize, sizeof(uint32_t));
-                    DEBUG_PRINTF("reading: %d bytes for filename\r\n", filenameSize); // includes NULL term in size sent..
-                    
-                    // Sanity check
-                    if (filenameSize <= MAX_PATH) {
-                        char filename[MAX_PATH];
-                        m_ble.readBytes(filename, filenameSize);
-                        DEBUG_PRINTF("playSequenceWithFilename: %s\r\n", filename);
+                    char filename[MAX_PATH];
+                    if (_readFilename(filename, MAX_PATH)) {
                         m_manager->playSequenceWithFilename(filename);
                         // start playing if we are paused
                         if (m_manager->isPaused()) {
@@ -801,7 +871,13 @@ void CDWheelBluetoothController::process() {
                 case CDWheelUARTCommandRequestCustomSequences: {
                     // TODO: Read from what directory they are being requested from
                     _sendCustomSequencesFromDirectory(m_manager->_getRootDirectory());
-                    
+                    break;
+                }
+                case CDWheelUARTCommandRequestFilenames: {
+                    char directoryName[MAX_PATH];
+                    if (_readFilename(directoryName, MAX_PATH)) {
+                        _sendFilenamesInDirectory(directoryName);
+                    }
                     break;
                 }
                 case CDWheelUARTCommandUploadSequence: {

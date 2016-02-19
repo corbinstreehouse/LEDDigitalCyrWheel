@@ -18,7 +18,6 @@
 #endif
 
 #define RECORD_INDICATOR_FILENAME "record.txt" // If this file exists, we record data in other files.
-#define BITMAP_FILE_EXTENSION "bmp"
 
 #if DEBUG
     #warning "DEBUG Code is on!!"
@@ -33,7 +32,7 @@
 static const char *g_sequencePath = "/"; // warning..changing this may require different buffers
 #endif
 
-static char *getExtension(char *filename) {
+char *getExtension(char *filename) {
     char *ext = strchr(filename, '.');
     if (ext) {
         ext++; // go past the dot...
@@ -282,11 +281,6 @@ void CWPatternSequenceManager::playSequenceWithFilename(const char *filename) {
     loadAsSequenceFromFatFile(&sequenceFile);
     sequenceFile.close();
     firstPatternItem();
-    
-    // TODO: it would be better to find this item in the parent and set it...
-    m_dynamicPattern = true;
-    
-
 }
 
 void CWPatternSequenceManager::flashThreeTimes(CRGB color, uint32_t delayAmount) {

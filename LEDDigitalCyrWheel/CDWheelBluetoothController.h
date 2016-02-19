@@ -69,6 +69,7 @@ private:
     void _addCharacteristic(const char *characteristicStr, int propertyType, int eepromLocation, int32_t *characteristicID, uint16_t value);
     void _sendCurrentPatternInfo();
     void _sendCustomSequencesFromDirectory(const char* dir);
+    void _sendFilenamesInDirectory(const char *dir);
     void _countSequencesForFileInfo(const CDPatternFileInfo *fileInfo);
     void _writeSequenceFilenameForFileInfo(const CDPatternFileInfo *fileInfo);
     void _handleUploadSequence();

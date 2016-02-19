@@ -892,21 +892,23 @@ double CDOrientation::getRotationalVelocity() {
 }
 
 void CDOrientation::beginSavingData() {
-    m_shouldSaveDataToFile = true;
-    // figure out a new filename to try
-    int v = 0;
-    FatFile rootDir = FatFile("/", O_READ);
-    sprintf(_filenameBuffer, "Gyro%d.txt", v);
-    
-    while (rootDir.exists(_filenameBuffer)) {
-        v++;
+    if (!m_shouldSaveDataToFile) {
+        m_shouldSaveDataToFile = true;
+        // figure out a new filename to try
+        int v = 0;
+        FatFile rootDir = FatFile("/", O_READ);
         sprintf(_filenameBuffer, "Gyro%d.txt", v);
-        if (v > 1024) {
-            // Too many files...
-            break;
+        
+        while (rootDir.exists(_filenameBuffer)) {
+            v++;
+            sprintf(_filenameBuffer, "Gyro%d.txt", v);
+            if (v > 1024) {
+                // Too many files...
+                break;
+            }
         }
+        rootDir.close();
     }
-    rootDir.close();
 }
 
 void CDOrientation::endSavingData() {
@@ -915,6 +917,7 @@ void CDOrientation::endSavingData() {
 
 void CDOrientation::writeStatusToFile() {
     SdFile file = SdFile(_filenameBuffer, O_WRITE|O_APPEND);
+//    writeOrientationData(file);
     file.printf("%.0f,\t%.0f,\t%.0f,\t  RotationalVelocityDPS:%.1f\r\n",   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z), getRotationalVelocity());
     file.close();
 }
@@ -924,21 +927,24 @@ void CDOrientation::writeOrientationData(Stream *stream) {
     // _gyro.g.x, _gyro.g.y, _gyro.g.z,     GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z), _compass.a.x, _compass.a.y, _compass.a.z,  _compass.m.x, _compass.m.y, _compass.m.z,    ROLL (degrees), PITCH (degrees), YAW (degrees)
     static int count = 0;
     count++;
-    stream->printf("%d, %.0f,%0.f,%0.f,\t  %.0f,%0.f,%0.f,\t %d,%d,%d,\t %d,%d,%d,\t %.3f,%.3f,%.3f \r\n",
-                   count,
-                   _gyro.g.x, _gyro.g.y, _gyro.g.z,
-                   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z),
-                   _compass.a.x, _compass.a.y, _compass.a.z,
-                   _compass.m.x, _compass.m.y, _compass.m.z,
-                   ToDeg(roll), ToDeg(pitch), ToDeg(yaw));
-    Serial.printf("%d, %.0f,%0.f,%0.f,\t  %.0f,%0.f,%0.f,\t %d,%d,%d,\t %d,%d,%d,\t %.3f,%.3f,%.3f \r\n",
-                   count,
-                   _gyro.g.x, _gyro.g.y, _gyro.g.z,
-                   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z),
-                   _compass.a.x, _compass.a.y, _compass.a.z,
-                   _compass.m.x, _compass.m.y, _compass.m.z,
-                   ToDeg(roll), ToDeg(pitch), ToDeg(yaw));
+    
+    char buffer[1024];
+    sprintf(buffer, "%d, %.0f,%0.f,%0.f,\t  %.0f,%0.f,%0.f,\t %d,%d,%d,\t %d,%d,%d,\t %.3f,%.3f,%.3f \r\n",
+            count,
+            _gyro.g.x, _gyro.g.y, _gyro.g.z,
+            GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z),
+            _compass.a.x, _compass.a.y, _compass.a.z,
+            _compass.m.x, _compass.m.y, _compass.m.z,
+            ToDeg(roll), ToDeg(pitch), ToDeg(yaw));
+    
+    Serial.write(buffer, strlen(buffer));
+    
+//    SdFile file = SdFile("/gyro2.txt", O_WRITE|O_APPEND);
+//    file.write(buffer, strlen(buffer));
+//    file.close();
+//^ gobs and gobs faster..
 
+   stream->write(buffer, strlen(buffer));    
 }
 
 void CDOrientation::print()

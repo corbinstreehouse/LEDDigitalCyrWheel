@@ -53,6 +53,7 @@ typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
     CDWheelUARTCommandRequestPatternInfo,
     CDWheelUARTCommandRequestSequenceName,
     CDWheelUARTCommandRequestCustomSequences,
+    CDWheelUARTCommandRequestFilenames,
     CDWheelUARTCommandUploadSequence,
     CDWheelUARTCommandDeletePatternSequence,
     CDWheelUARTCommandOrientationStartStreaming,
@@ -70,6 +71,7 @@ typedef CD_ENUM(int8_t, CDWheelUARTRecieveCommand)  {
     CDWheelUARTRecieveCommandCurrentPatternInfo, //
     CDWheelUARTRecieveCommandCurrentSequenceName,
     CDWheelUARTRecieveCommandCustomSequences, //
+    CDWheelUARTRecieveCommandFilenames, //
     CDWheelUARTRecieveCommandUploadSequenceFinished,
     CDWheelUARTRecieveCommandOrientationData,
     
@@ -79,13 +81,13 @@ typedef CD_ENUM(int8_t, CDWheelUARTRecieveCommand)  {
     
 // For CDWheelUARTRecieveCommandCustomSequences..
 // size=3
-typedef struct __attribute__((__packed__)) {
-    CDWheelUARTRecieveCommand command; // CDWheelUARTRecieveCommandCustomSequences
-    uint16_t count;
-    // For each count, a CDWheelUARTFilePacket packet follows
-} CDWheelUARTCustomSequenceData;
+//typedef struct __attribute__((__packed__)) {
+//    CDWheelUARTRecieveCommand command; // CDWheelUARTRecieveCommandCustomSequences
+//    uint16_t count;
+//    // For each count, a CDWheelUARTFilePacket packet follows
+//} CDWheelUARTCustomSequenceData;
+//    
     
-        
 // We recieve a struct of data depending on the command, and if i can really get it packed..if it isn't packed, it might not be worth it..
 //typedef struct  __attribute__((__packed__)) {
 //    CDWheelUARTRecieveCommand command; // CDWheelUARTRecieveCommandCurrentPatternInfo

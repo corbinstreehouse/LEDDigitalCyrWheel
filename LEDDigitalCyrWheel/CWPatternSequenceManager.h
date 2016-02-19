@@ -31,6 +31,7 @@
 #include "CDPatternSequenceManagerShared.h"
 
 #define SEQUENCE_FILE_EXTENSION "pat"
+#define BITMAP_FILE_EXTENSION "bmp"
 
 #if PATTERN_EDITOR
     #include "CDSimulatorLEDPatterns.h"
@@ -326,5 +327,6 @@ public:
 
 };
 
+extern char *getExtension(char *filename);
 
 #endif /* defined(__LEDDigitalCyrWheel__CWPatternSequence__) */
