@@ -25,3 +25,9 @@
 [submodule "Libraries/SdFat"]
 	path = Libraries/SdFat
 	url = git@github.com:corbinstreehouse/SdFat.git
+[submodule "Libraries/Adafruit_BNO055"]
+	path = Libraries/Adafruit_BNO055
+	url = https://github.com/adafruit/Adafruit_BNO055.git
+[submodule "Libraries/Adafruit_Sensor"]
+	path = Libraries/Adafruit_Sensor
+	url = https://github.com/adafruit/Adafruit_Sensor.git
