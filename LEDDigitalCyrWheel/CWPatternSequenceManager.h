@@ -23,7 +23,15 @@
 #endif
 
 #if ACCELEROMETER
-#include "CDOrientation.h"
+
+    #include "CDBaseOrientation.h"
+    #if PATTERN_EDITOR
+        #define ORIENTATION_CLASS CDBaseOrientation
+    #else
+        #include "CDOrientation.h"
+        #define ORIENTATION_CLASS CDOrientation
+    #endif
+
 #endif
 
 #include "LEDCommon.h"
@@ -102,7 +110,7 @@ private:
     
     LED_PATTERNS_CLASS m_ledPatterns;
 #if ACCELEROMETER
-    CDOrientation m_orientation;
+    ORIENTATION_CLASS m_orientation;
 #endif
 
     uint32_t m_timedPatternStartTime; // In milliseconds; the time that all the current run of timed patterns starts, so we can accurately generate a full duration for all of them

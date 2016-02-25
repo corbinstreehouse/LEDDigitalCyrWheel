@@ -129,6 +129,10 @@
 		9DAF74F01C2CD8A200B43F75 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 9DAF74E51C2CD8A200B43F75 /* README.md */; };
 		9DAF74F11C2CD8A200B43F75 /* release_notes.md in Sources */ = {isa = PBXBuildFile; fileRef = 9DAF74E61C2CD8A200B43F75 /* release_notes.md */; };
 		9DAF74F21C2CD8A200B43F75 /* wiring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DAF74E71C2CD8A200B43F75 /* wiring.cpp */; };
+		9DB5038B1C7EA7090079155D /* Adafruit_BNO055.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DB5036E1C7EA7090079155D /* Adafruit_BNO055.cpp */; };
+		9DB5038C1C7EA7090079155D /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 9DB503811C7EA7090079155D /* README.md */; };
+		9DB5038D1C7EA7090079155D /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 9DB5038A1C7EA7090079155D /* README.md */; };
+		9DB503901C7EA8160079155D /* CDBaseOrientation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DB5038E1C7EA8160079155D /* CDBaseOrientation.cpp */; };
 		9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */; };
 		9DD1E672193EC47100290878 /* LEDPatterns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DD1E66E193EC47100290878 /* LEDPatterns.cpp */; };
 		9DDC61C71938488E00C602BC /* Adafruit_NeoPixel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9DDC5FE81938488D00C602BC /* Adafruit_NeoPixel.cpp */; };
@@ -1657,6 +1661,27 @@
 		9DAF74E51C2CD8A200B43F75 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9DAF74E61C2CD8A200B43F75 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = release_notes.md; sourceTree = "<group>"; };
 		9DAF74E71C2CD8A200B43F75 /* wiring.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wiring.cpp; sourceTree = "<group>"; };
+		9DB5036E1C7EA7090079155D /* Adafruit_BNO055.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Adafruit_BNO055.cpp; sourceTree = "<group>"; };
+		9DB5036F1C7EA7090079155D /* Adafruit_BNO055.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_BNO055.h; sourceTree = "<group>"; };
+		9DB503721C7EA7090079155D /* bunny.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bunny.ino; sourceTree = "<group>"; };
+		9DB503751C7EA7090079155D /* cuberotate.pde */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cuberotate.pde; sourceTree = "<group>"; };
+		9DB503771C7EA7090079155D /* bunny.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bunny.mtl; sourceTree = "<group>"; };
+		9DB503781C7EA7090079155D /* bunny.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bunny.obj; sourceTree = "<group>"; };
+		9DB503791C7EA7090079155D /* serialconfig.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = serialconfig.txt; sourceTree = "<group>"; };
+		9DB5037B1C7EA7090079155D /* rawdata.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rawdata.ino; sourceTree = "<group>"; };
+		9DB5037D1C7EA7090079155D /* restore_offsets.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = restore_offsets.ino; sourceTree = "<group>"; };
+		9DB5037F1C7EA7090079155D /* sensorapi.ino */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sensorapi.ino; sourceTree = "<group>"; };
+		9DB503801C7EA7090079155D /* library.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = library.properties; sourceTree = "<group>"; };
+		9DB503811C7EA7090079155D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9DB503831C7EA7090079155D /* imumaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imumaths.h; sourceTree = "<group>"; };
+		9DB503841C7EA7090079155D /* matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = matrix.h; sourceTree = "<group>"; };
+		9DB503851C7EA7090079155D /* quaternion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = quaternion.h; sourceTree = "<group>"; };
+		9DB503861C7EA7090079155D /* vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vector.h; sourceTree = "<group>"; };
+		9DB503881C7EA7090079155D /* Adafruit_Sensor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Adafruit_Sensor.h; sourceTree = "<group>"; };
+		9DB503891C7EA7090079155D /* library.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = library.properties; sourceTree = "<group>"; };
+		9DB5038A1C7EA7090079155D /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9DB5038E1C7EA8160079155D /* CDBaseOrientation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDBaseOrientation.cpp; sourceTree = "<group>"; };
+		9DB5038F1C7EA8160079155D /* CDBaseOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDBaseOrientation.h; sourceTree = "<group>"; };
 		9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CWPatternSequenceManager.cpp; sourceTree = "<group>"; };
 		9DBB2A6A18A2CD5E00C44C7C /* CWPatternSequenceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CWPatternSequenceManager.h; sourceTree = "<group>"; };
 		9DBE92CC18AA85DA00154550 /* LEDDigitalCyrWheel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LEDDigitalCyrWheel.h; sourceTree = "<group>"; };
@@ -4891,6 +4916,8 @@
 				9DBB2A6918A2CD5E00C44C7C /* CWPatternSequenceManager.cpp */,
 				9D472E1C1902F1590076281A /* CDOrientation.h */,
 				9D472E1B1902F1590076281A /* CDOrientation.cpp */,
+				9DB5038F1C7EA8160079155D /* CDBaseOrientation.h */,
+				9DB5038E1C7EA8160079155D /* CDBaseOrientation.cpp */,
 				9D8ED2D317C01F7F001E1C06 /* Makefile */,
 				9D3A0DAC188A0EBD001AD553 /* Button.cpp */,
 				9D3A0DAD188A0EBD001AD553 /* Button.h */,
@@ -5380,6 +5407,113 @@
 			path = avr;
 			sourceTree = "<group>";
 		};
+		9DB5036D1C7EA7090079155D /* Adafruit_BNO055 */ = {
+			isa = PBXGroup;
+			children = (
+				9DB5036E1C7EA7090079155D /* Adafruit_BNO055.cpp */,
+				9DB5036F1C7EA7090079155D /* Adafruit_BNO055.h */,
+				9DB503701C7EA7090079155D /* examples */,
+				9DB503801C7EA7090079155D /* library.properties */,
+				9DB503811C7EA7090079155D /* README.md */,
+				9DB503821C7EA7090079155D /* utility */,
+			);
+			name = Adafruit_BNO055;
+			path = Libraries/Adafruit_BNO055;
+			sourceTree = SOURCE_ROOT;
+		};
+		9DB503701C7EA7090079155D /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				9DB503711C7EA7090079155D /* bunny */,
+				9DB5037A1C7EA7090079155D /* rawdata */,
+				9DB5037C1C7EA7090079155D /* restore_offsets */,
+				9DB5037E1C7EA7090079155D /* sensorapi */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
+		9DB503711C7EA7090079155D /* bunny */ = {
+			isa = PBXGroup;
+			children = (
+				9DB503721C7EA7090079155D /* bunny.ino */,
+				9DB503731C7EA7090079155D /* processing */,
+			);
+			path = bunny;
+			sourceTree = "<group>";
+		};
+		9DB503731C7EA7090079155D /* processing */ = {
+			isa = PBXGroup;
+			children = (
+				9DB503741C7EA7090079155D /* cuberotate */,
+			);
+			path = processing;
+			sourceTree = "<group>";
+		};
+		9DB503741C7EA7090079155D /* cuberotate */ = {
+			isa = PBXGroup;
+			children = (
+				9DB503751C7EA7090079155D /* cuberotate.pde */,
+				9DB503761C7EA7090079155D /* data */,
+				9DB503791C7EA7090079155D /* serialconfig.txt */,
+			);
+			path = cuberotate;
+			sourceTree = "<group>";
+		};
+		9DB503761C7EA7090079155D /* data */ = {
+			isa = PBXGroup;
+			children = (
+				9DB503771C7EA7090079155D /* bunny.mtl */,
+				9DB503781C7EA7090079155D /* bunny.obj */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		9DB5037A1C7EA7090079155D /* rawdata */ = {
+			isa = PBXGroup;
+			children = (
+				9DB5037B1C7EA7090079155D /* rawdata.ino */,
+			);
+			path = rawdata;
+			sourceTree = "<group>";
+		};
+		9DB5037C1C7EA7090079155D /* restore_offsets */ = {
+			isa = PBXGroup;
+			children = (
+				9DB5037D1C7EA7090079155D /* restore_offsets.ino */,
+			);
+			path = restore_offsets;
+			sourceTree = "<group>";
+		};
+		9DB5037E1C7EA7090079155D /* sensorapi */ = {
+			isa = PBXGroup;
+			children = (
+				9DB5037F1C7EA7090079155D /* sensorapi.ino */,
+			);
+			path = sensorapi;
+			sourceTree = "<group>";
+		};
+		9DB503821C7EA7090079155D /* utility */ = {
+			isa = PBXGroup;
+			children = (
+				9DB503831C7EA7090079155D /* imumaths.h */,
+				9DB503841C7EA7090079155D /* matrix.h */,
+				9DB503851C7EA7090079155D /* quaternion.h */,
+				9DB503861C7EA7090079155D /* vector.h */,
+			);
+			path = utility;
+			sourceTree = "<group>";
+		};
+		9DB503871C7EA7090079155D /* Adafruit_Sensor */ = {
+			isa = PBXGroup;
+			children = (
+				9DB503881C7EA7090079155D /* Adafruit_Sensor.h */,
+				9DB503891C7EA7090079155D /* library.properties */,
+				9DB5038A1C7EA7090079155D /* README.md */,
+			);
+			name = Adafruit_Sensor;
+			path = Libraries/Adafruit_Sensor;
+			sourceTree = SOURCE_ROOT;
+		};
 		9DBE8A7F18A8A9AF00154550 /* arm-none-eabi */ = {
 			isa = PBXGroup;
 			children = (
@@ -5391,6 +5525,8 @@
 		9DCC75F61589A3D300564CB8 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				9DB5036D1C7EA7090079155D /* Adafruit_BNO055 */,
+				9DB503871C7EA7090079155D /* Adafruit_Sensor */,
 				9D7D42F11C2900FE008F76E5 /* Adafruit_DotStar */,
 				9D142EA41C02458F0085A377 /* Adafruit_BluefruitLE_nRF51 */,
 				9DD1E66D193EC47100290878 /* LEDPatterns */,
@@ -5688,6 +5824,7 @@
 				9D1A12361C604CA700633033 /* Button.h in Sources */,
 				9DBB2A6B18A2CD5E00C44C7C /* CWPatternSequenceManager.cpp in Sources */,
 				9D1A12371C604CA700633033 /* CyrWheelLEDPatterns.h in Sources */,
+				9DB5038B1C7EA7090079155D /* Adafruit_BNO055.cpp in Sources */,
 				9D684B601C1941690058EFA0 /* FatFileLFN.cpp in Sources */,
 				9D0C1D0619CF3CE0004E027E /* LEDPatterns.h in Sources */,
 				9D0EEC4A1BFC372F002C687E /* touch.c in Sources */,
@@ -5741,6 +5878,7 @@
 				9DAF74EC1C2CD8A200B43F75 /* lib8tion.cpp in Sources */,
 				9D684AC81C17E9BD0058EFA0 /* CDLazyBitmap.cpp in Sources */,
 				9D0EED541BFC3747002C687E /* Makefile in Sources */,
+				9DB5038C1C7EA7090079155D /* README.md in Sources */,
 				9D0EED561BFC3747002C687E /* Makefile in Sources */,
 				9D684B611C1941690058EFA0 /* FatFilePrint.cpp in Sources */,
 				9DAF74E81C2CD8A200B43F75 /* colorpalettes.cpp in Sources */,
@@ -5749,6 +5887,7 @@
 				9D0EED4B1BFC3747002C687E /* Dns.cpp in Sources */,
 				9D0EEC351BFC372F002C687E /* HardwareSerial1.cpp in Sources */,
 				9D142EE91C0245900085A377 /* SDEP.md in Sources */,
+				9DB503901C7EA8160079155D /* CDBaseOrientation.cpp in Sources */,
 				9D684B671C1941690058EFA0 /* ostream.cpp in Sources */,
 				9D0EED691BFC3747002C687E /* twi.c in Sources */,
 				9D0EEC441BFC372F002C687E /* ser_print.c in Sources */,
@@ -5756,6 +5895,7 @@
 				9D684B581C1941690058EFA0 /* MinimumSerial.cpp in Sources */,
 				9D0EEC4E1BFC372F002C687E /* usb_inst.cpp in Sources */,
 				9D0EEC3E1BFC372F002C687E /* memcpy-armv7m.S in Sources */,
+				9DB5038D1C7EA7090079155D /* README.md in Sources */,
 				9D684B631C1941690058EFA0 /* FatVolume.cpp in Sources */,
 				9D142EE61C0245900085A377 /* README.md in Sources */,
 				9D0EEC311BFC372F002C687E /* AudioStream.cpp in Sources */,
