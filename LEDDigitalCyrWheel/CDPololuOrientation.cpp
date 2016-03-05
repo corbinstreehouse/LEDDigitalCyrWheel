@@ -1,5 +1,5 @@
 //
-//  CDOrientation.cpp
+//  CDPololuOrientation.cpp
 //  LEDDigitalCyrWheel
 //
 //  Created by Corbin Dunn on 4/19/14 .
@@ -7,59 +7,9 @@
 //
 // http://www.pololu.com/file/download/LSM303DLH-compass-app-note.pdf?file_id=0J434
 
-#include "CDOrientation.h"
+#include "CDPololuOrientation.h"
 #include "LEDCommon.h"
 #include "SdFat.h"
-
-#if PATTERN_EDITOR
-
-CDOrientation::CDOrientation() : m_maxVelocity(0), m_targetBrightness(0) {
-}
-
-bool CDOrientation::init() {
-    return true;
-}
-
-void CDOrientation::process() {
-}
-
-void CDOrientation::beginCalibration() {
-}
-
-void CDOrientation::endCalibration() {
-}
-
-void CDOrientation::cancelCalibration() {
-}
-
-
-double CDOrientation::getAccelX() {
-    return 0;
-}
-
-double CDOrientation::getAccelY() {
-    return 0;
-}
-
-double CDOrientation::getAccelZ() {
-    return 0;
-}
-
-double CDOrientation::getRotationalVelocity() {
-    return 0;
-}
-
-void CDOrientation::beginSavingData() {
-}
-
-void CDOrientation::endSavingData() {
-}
-
-uint8_t CDOrientation::getRotationalVelocityBrightness(uint8_t currentBrightness) {
-    return currentBrightness;
-}
-
-#else
 
 #include "LEDDigitalCyrWheel.h" // For EEPROM_ADDRESS....i could make this settable.
 #include "EEPROM.h"
@@ -193,16 +143,14 @@ void Matrix_Multiply(float a[3][3], float b[3][3],float mat[3][3])
 }
 
 
-CDOrientation::CDOrientation() {
-    m_shouldSaveDataToFile = false;
-    m_calibrating = false;
-    m_startBrightness = 0;
+CDPololuOrientation::CDPololuOrientation() : CDBaseOrientation::CDBaseOrientation() {
+
     m_gyroInitialized = false;
     m_compassInitialized = false;
 }
 
 /**************************************************/
-void CDOrientation::normalize()
+void CDPololuOrientation::normalize()
 {
 //    float error=0;
 //    float temporary[3][3];
@@ -353,7 +301,7 @@ void CDOrientation::normalize()
 }
 
 /**************************************************/
-void CDOrientation::driftCorrection()
+void CDPololuOrientation::driftCorrection()
 {
     float mag_heading_x;
     float mag_heading_y;
@@ -404,7 +352,7 @@ void CDOrientation::driftCorrection()
  */
 /**************************************************/
 
-void CDOrientation::Matrix_update()
+void CDPololuOrientation::Matrix_update()
 {
     Gyro_Vector[0]=Gyro_Scaled_X(gyro_x); //gyro x roll
     Gyro_Vector[1]=Gyro_Scaled_Y(gyro_y); //gyro y pitch
@@ -452,7 +400,7 @@ void CDOrientation::Matrix_update()
     }
 }
 
-void CDOrientation::Euler_angles(void)
+void CDPololuOrientation::Euler_angles(void)
 {
 #if (OUTPUTMODE==2)         // Only accelerometer info (debugging purposes)
     roll = 1.9*atan2(Accel_Vector[1],Accel_Vector[2]);    // atan2(acc_y,acc_z)
@@ -467,7 +415,7 @@ void CDOrientation::Euler_angles(void)
 
 
 
-void CDOrientation::Compass_Heading()
+void CDPololuOrientation::Compass_Heading()
 {
     float MAG_X;
     float MAG_Y;
@@ -499,7 +447,7 @@ static inline float convert_to_dec(float x)
     return x; // *10000000;
 }
 
-void CDOrientation::_initDCMMatrix() {
+void CDPololuOrientation::_initDCMMatrix() {
     bzero(&DCM_Matrix, sizeof(DCM_Matrix));
     //    DCM_Matrix[0] = { 1, 0, 0};
     DCM_Matrix[0][0] = 1;
@@ -509,7 +457,7 @@ void CDOrientation::_initDCMMatrix() {
     DCM_Matrix[2][2] = 1;
 }
 
-bool CDOrientation::init() {
+bool CDPololuOrientation::init() {
     SENSOR_SIGN[0] = SENSOR_SIGN[1] = SENSOR_SIGN[2] = 1;
     SENSOR_SIGN[3] = SENSOR_SIGN[4] = SENSOR_SIGN[5] = -1;
     SENSOR_SIGN[6] = SENSOR_SIGN[7] = SENSOR_SIGN[8] = 1;
@@ -592,7 +540,7 @@ bool CDOrientation::init() {
     return result;
 }
 
-bool CDOrientation::initGyro() {
+bool CDPololuOrientation::initGyro() {
     if (!m_gyroInitialized) {
         DEBUG_PRINTLN("  initGyro");
         // why do I try 10 times??
@@ -615,7 +563,7 @@ bool CDOrientation::initGyro() {
 #define IS_VALID_MIN_COMPASS_VALUE(x) ((x > -4000 && x <= 0) ? true : false)
 #define IS_VALID_MAX_COMPASS_VALUE(x) ((x > 0 && x < 4000) ? true : false)
 
-bool CDOrientation::initAccel() {
+bool CDPololuOrientation::initAccel() {
     DEBUG_PRINTLN("initAccel");
     if (!m_compassInitialized) {
         for (int i = 0; i < 10; i++) {
@@ -676,7 +624,7 @@ bool CDOrientation::initAccel() {
     return m_compassInitialized;
 }
 
-void CDOrientation::readGyro()
+void CDPololuOrientation::readGyro()
 {
     if (!m_gyroInitialized) return;
     _gyro.read();
@@ -690,7 +638,7 @@ void CDOrientation::readGyro()
 }
 
 // Reads x,y and z accelerometer registers
-void CDOrientation::readAccel() {
+void CDPololuOrientation::readAccel() {
     if (!m_compassInitialized) return;
     
     _compass.readAcc();
@@ -710,7 +658,7 @@ void CDOrientation::readAccel() {
 }
 
 
-void CDOrientation::readCompass() {
+void CDPololuOrientation::readCompass() {
     if (!m_compassInitialized) return;
     
     _compass.readMag();
@@ -722,7 +670,7 @@ void CDOrientation::readCompass() {
 
 
 
-void CDOrientation::_internalProcess() {
+void CDPololuOrientation::_internalProcess() {
     if (m_compassInitialized && m_gyroInitialized) {
         
         counter++;
@@ -793,30 +741,30 @@ void CDOrientation::_internalProcess() {
      //  print();
     #endif
         
-        if (m_shouldSaveDataToFile) {
+        if (isSavingData()) {
             writeStatusToFile();
         }
     }
 }
 
 
-void CDOrientation::process() {
-    if (m_calibrating) {
+void CDPololuOrientation::process() {
+    if (isCalibrating()) {
         _calibrate();
     } else if ((millis()-timer)>=20) {   // Main loop runs at 50Hz
         _internalProcess();
     }
 }
 
-void CDOrientation::beginCalibration() {
+void CDPololuOrientation::beginCalibration() {
+    CDBaseOrientation::beginCalibration();
     _calibrationMin = {INT16_MAX, INT16_MAX, INT16_MAX};
     _calibrationMax = {INT16_MIN, INT16_MIN, INT16_MIN};
     _compass.m_min = _calibrationMin;
     _compass.m_max = _calibrationMax;
-    m_calibrating = true;
 }
 
-void CDOrientation::_calibrate() {
+void CDPololuOrientation::_calibrate() {
     _compass.read();
     
     if (_compass.m.x == -4096) {
@@ -843,14 +791,9 @@ void CDOrientation::_calibrate() {
    // DEBUG_PRINTF("  compass.m_min.x = %+6d; compass.m_min.y = %+6d; compass.m_min.z = %+6d; \r\n  compass.m_max.x = %+6d; compass.m_max.y = %+6d; compass.m_max.z = %+6d;\r\n\r\n", _calibrationMin.x, _calibrationMin.y, _calibrationMin.z, _calibrationMax.x, _calibrationMax.y, _calibrationMax.z);
 }
 
-void CDOrientation::cancelCalibration() {
-    DEBUG_PRINTLN("cancel calibration called");
-    m_calibrating = false;
-}
-
-void CDOrientation::endCalibration() {
+void CDPololuOrientation::endCalibration() {
+    CDBaseOrientation::endCalibration();
     DEBUG_PRINTLN("endCalibration called");
-    m_calibrating = false;
     // TODO: maybe average it with the last calibration I did???
     
     _compass.m_min = _calibrationMin;
@@ -868,32 +811,33 @@ double rawAccelToG(int16_t a) {
     return result;
 }
 
-double CDOrientation::getAccelX() {
+double CDPololuOrientation::getAccelX() {
     return rawAccelToG(_compass.a.x);
 }
 
-double CDOrientation::getAccelY() {
+double CDPololuOrientation::getAccelY() {
     return rawAccelToG(_compass.a.y);
 }
 
-double CDOrientation::getAccelZ() {
+double CDPololuOrientation::getAccelZ() {
     return rawAccelToG(_compass.a.z);
 }
 
-double CDOrientation::getRotationalVelocity() {
+double CDPololuOrientation::getRotationalVelocity() {
     // Get the length of the gyro vector
     double temp = sqrt(sq(_gyro.g.x) + sq(_gyro.g.y) + sq(_gyro.g.z));
     double result = GYRO_RAW_VALUE_TO_DEG_PER_SEC(temp);
-    if (result > m_maxVelocity) {
-        m_maxVelocity = result; // I might do something with this later
-        //        DEBUG_PRINTF("new max velocity: %.3f\r\n", m_maxVelocity);
-    }
+//    if (result > m_maxVelocity) {
+//        m_maxVelocity = result; // I might do something with this later
+//        //        DEBUG_PRINTF("new max velocity: %.3f\r\n", m_maxVelocity);
+//    }
     return result;
 }
 
-void CDOrientation::beginSavingData() {
-    if (!m_shouldSaveDataToFile) {
-        m_shouldSaveDataToFile = true;
+void CDPololuOrientation::beginSavingData() {
+    if (!isSavingData()) {
+        CDBaseOrientation::beginSavingData();
+
         // figure out a new filename to try
         int v = 0;
         FatFile rootDir = FatFile("/", O_READ);
@@ -911,18 +855,15 @@ void CDOrientation::beginSavingData() {
     }
 }
 
-void CDOrientation::endSavingData() {
-    m_shouldSaveDataToFile = false;
-}
 
-void CDOrientation::writeStatusToFile() {
+void CDPololuOrientation::writeStatusToFile() {
     SdFile file = SdFile(_filenameBuffer, O_WRITE|O_APPEND);
 //    writeOrientationData(file);
     file.printf("%.0f,\t%.0f,\t%.0f,\t  RotationalVelocityDPS:%.1f\r\n",   GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z), getRotationalVelocity());
     file.close();
 }
 
-void CDOrientation::writeOrientationData(Stream *stream) {
+void CDPololuOrientation::writeOrientationData(Stream *stream) {
     // Format:
     // _gyro.g.x, _gyro.g.y, _gyro.g.z,     GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.x), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.y), GYRO_RAW_VALUE_TO_DEG_PER_SEC(_gyro.g.z), _compass.a.x, _compass.a.y, _compass.a.z,  _compass.m.x, _compass.m.y, _compass.m.z,    ROLL (degrees), PITCH (degrees), YAW (degrees)
     static int count = 0;
@@ -947,7 +888,7 @@ void CDOrientation::writeOrientationData(Stream *stream) {
    stream->write(buffer, strlen(buffer));    
 }
 
-void CDOrientation::print()
+void CDPololuOrientation::print()
 {
 //    if (abs(_compass.m.x) < 350 && abs(_compass.m.y) < 350 && abs(_compass.m.z) < 350) {
 //        Serial.printf("x %5d,   y %5d,    z %5d    a.x %5d %5d,   a.y %5d %4d,    a.z %5d %5d\r        ", _compass.m.x, _compass.m.y, _compass.m.z,      _compass.a.x, _compass.a.y, _compass.a.z, _compass.a.x >> 4, _compass.a.y >> 4, _compass.a.z >> 4);
@@ -1022,66 +963,3 @@ void CDOrientation::print()
  Serial.println();
     
 }
-
-uint8_t CDOrientation::getRotationalVelocityBrightness(uint8_t currentBrightness) {
-#define MIN_BRIGHTNESS 50
-#define MAX_BRIGHTNESS 240 // Not too bright....but seems bright
-    
-    uint8_t targetBrightness = 0;
-#define MAX_ROTATIONAL_VELOCITY 800 // at this value, we hit max brightness, but it is hard to hit..usually I hit half
-    double velocity = getRotationalVelocity();
-//    DEBUG_PRINTF("Velocity %.3f\r\n", velocity);
-
-    if (velocity >= MAX_ROTATIONAL_VELOCITY) {
-        targetBrightness = MAX_BRIGHTNESS;
-    } else {
-        float percentage = velocity / (float)MAX_ROTATIONAL_VELOCITY;
-        // quadric growth slows it down at the start
-        percentage = percentage*percentage*percentage;
-        
-        float diffBetweenMinMax = MAX_BRIGHTNESS - MIN_BRIGHTNESS;
-        targetBrightness = MIN_BRIGHTNESS + round(percentage * diffBetweenMinMax);
-    }
-    
-    uint8_t result = currentBrightness;
-    
-    if (m_isFirstPass) {
-        m_targetBrightness = targetBrightness;
-        result = targetBrightness;
-//        m_strip->setBrightness(targetBrightness);
-    }
-//    uint8_t currentBrightness = m_strip->getBrightness();
-    
-    if (m_targetBrightness != targetBrightness) {
-        m_targetBrightness = targetBrightness;
-        
-        if (m_startBrightness != currentBrightness) {
-            m_startBrightness = currentBrightness;
-            m_brightnessStartTime = millis();
-            DEBUG_PRINTF("START Brightness changed: current: %d target: %d\r\n", currentBrightness, targetBrightness);
-        } else {
-            DEBUG_PRINTF("TARGET Brightness changed: current: %d target: %d\r\n", currentBrightness, targetBrightness);
-        }
-    }
-    
-    if (currentBrightness != m_targetBrightness) {
-#define BRIGHTNESS_RAMPUP_TIME 200.0 // ms  -- this smooths things out
-        float timePassed = millis() - m_brightnessStartTime;
-        if (timePassed > BRIGHTNESS_RAMPUP_TIME || timePassed < 0) {
-            result = m_targetBrightness;
-        } else {
-            float percentagePassed = timePassed / BRIGHTNESS_RAMPUP_TIME;
-            //y =x^2  exponential ramp up (desired?)
-            //            percentagePassed = sq(percentagePassed);
-            float targetDiff = m_targetBrightness - m_startBrightness;
-            uint8_t brightness = m_startBrightness + round(percentagePassed * targetDiff);
-            //            DEBUG_PRINTF("    Changing brightness: %d,  time passed: %.3f   targetDiff: %.3f,    newB: %d\r\n", currentBrightness, timePassed, targetDiff, brightness);
-            result = brightness;
-        }
-    }
-//    DEBUG_PRINTF("brightness: %d\r\n", result);
-    return result;
-}
-
-#endif
-

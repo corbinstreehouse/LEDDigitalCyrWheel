@@ -22,18 +22,25 @@ private:
     uint8_t m_startBrightness;
     
 public:
-    CDBaseOrientation() {}
+    CDBaseOrientation()  {
+        m_shouldSaveDataToFile = false;
+        m_calibrating = false;
+        m_targetBrightness = 0;
+        m_isFirstPass = true;
+        m_brightnessStartTime = 0;
+        m_startBrightness = 0;
+    }
     virtual bool init() { return true; }
     void process();
     
     bool isCalibrating() { return m_calibrating; }
     virtual void beginCalibration() {  m_calibrating = true; }
-    virtual void endCalibration() {}
-    virtual void cancelCalibration() {}
+    virtual void endCalibration() { m_calibrating = false; }
+    virtual void cancelCalibration() { m_calibrating = false; }
     
     bool isSavingData() { return m_shouldSaveDataToFile; }
-    void beginSavingData();
-    void endSavingData();
+    virtual void beginSavingData()  { m_shouldSaveDataToFile = true; }
+    virtual void endSavingData() { }
 
     virtual double getRotationalVelocity() { return 0; }; // In degress per second
 

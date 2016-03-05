@@ -1,5 +1,5 @@
 //
-//  CDOrientation.h
+//  CDPololuOrientation.h
 //  LEDDigitalCyrWheel
 //
 //  Created by Corbin Dunn on 4/19/14 .
@@ -16,32 +16,26 @@
 //
 //
 
-#ifndef __LEDDigitalCyrWheel__CDOrientation__
-#define __LEDDigitalCyrWheel__CDOrientation__
+#ifndef __LEDDigitalCyrWheel__CDPololuOrientation__
+#define __LEDDigitalCyrWheel__CDPololuOrientation__
 
 
 #include  "Arduino.h"
 
-#if !PATTERN_EDITOR
+#include "CDBaseOrientation.h"
+
 #include <Wire.h>
 #include <L3G.h>
 #include <LSM303.h>
+#include "SdFat.h"
 
 #define SHORT_FILENAME_LENGTH 13 // 12 + 1 for NULL, and needs to be 256 or so for the simulator if I use it there!
 
-#endif
-
-#include "SdFat.h"
-
-
-class CDOrientation {
+class CDPololuOrientation : CDBaseOrientation {
 private:
-    bool m_shouldSaveDataToFile;
-    bool m_calibrating;
     bool m_gyroInitialized;
     bool m_compassInitialized;
 
-#if !PATTERN_EDITOR
     char _filenameBuffer[SHORT_FILENAME_LENGTH+1]; // +1 for root path
     L3G _gyro;
     LSM303 _compass;
@@ -130,28 +124,25 @@ private:
     void _initDCMMatrix();
     
     void writeStatusToFile();
-#endif
     
-    double m_maxVelocity;
-    double m_targetBrightness;
-    bool m_isFirstPass;
-    uint32_t m_brightnessStartTime;
-    uint8_t m_startBrightness;
+//    double m_maxVelocity;
+//    double m_targetBrightness;
+//    bool m_isFirstPass;
+//    uint32_t m_brightnessStartTime;
+//    uint8_t m_startBrightness;
     
 public:
-    CDOrientation();
+    CDPololuOrientation();
     bool init(); // returns false on failure to init. turn on debug for more info
     void process();
     void print();
     
-    bool isCalibrating() { return m_calibrating; }
     void beginCalibration();
     void endCalibration();
     void cancelCalibration();
     
-    bool isSavingData() { return m_shouldSaveDataToFile; }
-    void beginSavingData();
-    void endSavingData();
+    virtual void beginSavingData();
+    virtual void endSavingData();
     
     double getAccelX(); // in g's
     double getAccelY();
@@ -159,19 +150,12 @@ public:
     
 
     double getRotationalVelocity(); // In degress per second
-
-    void setFirstPass(bool isFirstPass) {  m_isFirstPass = isFirstPass; m_brightnessStartTime = millis(); };
     
-    // Calculations for brightness based on the velocity of things for the cyr wheel
-    uint8_t getRotationalVelocityBrightness(uint8_t currentBrightness);
-    
-#if !PATTERN_EDITOR
     void writeOrientationData(Stream *stream);
-#endif
     
 };
 
 
 
 
-#endif /* defined(__LEDDigitalCyrWheel__CDOrientation__) */
+#endif /* defined(__LEDDigitalCyrWheel__CDPololuOrientation__) */
