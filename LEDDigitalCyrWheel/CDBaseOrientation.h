@@ -40,7 +40,7 @@ public:
     
     bool isSavingData() { return m_shouldSaveDataToFile; }
     virtual void beginSavingData()  { m_shouldSaveDataToFile = true; }
-    virtual void endSavingData() { }
+    virtual void endSavingData() { m_shouldSaveDataToFile = false; }
 
     virtual double getRotationalVelocity() { return 0; }; // In degress per second
 

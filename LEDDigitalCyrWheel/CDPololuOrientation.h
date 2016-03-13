@@ -31,7 +31,7 @@
 
 #define SHORT_FILENAME_LENGTH 13 // 12 + 1 for NULL, and needs to be 256 or so for the simulator if I use it there!
 
-class CDPololuOrientation : CDBaseOrientation {
+class CDPololuOrientation : public CDBaseOrientation {
 private:
     bool m_gyroInitialized;
     bool m_compassInitialized;
@@ -139,10 +139,8 @@ public:
     
     void beginCalibration();
     void endCalibration();
-    void cancelCalibration();
     
-    virtual void beginSavingData();
-    virtual void endSavingData();
+    void beginSavingData();
     
     double getAccelX(); // in g's
     double getAccelY();

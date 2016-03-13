@@ -28,8 +28,8 @@
     #if PATTERN_EDITOR
         #define ORIENTATION_CLASS CDBaseOrientation
     #else
-        #include "CDOrientation.h"
-        #define ORIENTATION_CLASS CDOrientation
+        #include "CDPololuOrientation.h"
+        #define ORIENTATION_CLASS CDPololuOrientation
     #endif
 
 #endif
