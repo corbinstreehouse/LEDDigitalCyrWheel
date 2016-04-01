@@ -20,7 +20,7 @@
 #define USE_NEW_V_REFERENCE 1 // new resistor values (not in v2 wheel)
 
 // TOOD: actually make the strip length dynamic...
-#define STRIP_LENGTH 331 // 331 // my actual count // (14+60*2)// (60*4) // (67*2)
+#define STRIP_LENGTH 806 // 331 // 331 // my actual count // (14+60*2)// (60*4) // (67*2)
 // 70 LEDs gives 240-245 FPS with bluetooth. Without it, I get 2700
 // 331 gives 180-190 FPS with bluetooth. Without BT, I get 630
 // 700 LEDs (no BT) runs at about 300 FPS
