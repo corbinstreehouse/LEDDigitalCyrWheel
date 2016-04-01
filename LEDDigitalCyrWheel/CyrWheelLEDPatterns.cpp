@@ -90,9 +90,34 @@ protected:
         
         //corbin!!!! this is needed to discard any data that was sent/left on the pipe.. Otherwise it kills the Bluetooth. I need to find out why this really is... as I suspect the bluetooth
         SPI0_MCR |= SPI_MCR_CLR_RXF; // discard any received data
+
+         
+         /*
+        for(int i=0; i<4; i++) SPI.transfer(0);    // Start-frame marker
+        for(int i = 0; i < nLeds; i++) {
+            SPI.transfer(0xFF);                //  Pixel start
+            // RGB -> BGR
+            uint8_t b = pixels.loadAndScale0();
+            SPI.transfer(b);
+            b = pixels.loadAndScale1();
+            SPI.transfer(b);
+            b = pixels.loadAndScale2();
+            SPI.transfer(b);
+            pixels.stepDithering();
+            pixels.advanceData();
+            //        for(i=0; i<3; i++) SPI.transfer(*ptr++); // R,G,B
+        }
+
+        
+*/
         
         //ending marker..
-        for(int i=0; i<4; i++) SPI.transfer(0xFF);
+//        for(int i=0; i<4; i++) SPI.transfer(0xFF);
+        // End frame: 8+8*(leds >> 4) clock cycles
+        for (int i=0; i<nLeds; i+=16)
+        {
+            SPI.transfer(0xff); // 8 more clock cycles
+        }
         
     }
     
@@ -102,8 +127,10 @@ protected:
 #endif
 
 // 12Mhz // 12000000 is clock div 2
+// 12Mhz
 // Try 24? -- see issues..
-static SPISettings m_spiSettings = SPISettings(12000000, MSBFIRST, SPI_MODE0);
+// 6 Mhz!! geez..so slow..
+static SPISettings m_spiSettings = SPISettings(8000000, MSBFIRST, SPI_MODE0);
 
 void CyrWheelLEDPatterns::_spiBegin() {
     // DOUT/ MOSI on pin 7 for this
@@ -112,6 +139,12 @@ void CyrWheelLEDPatterns::_spiBegin() {
     SPI.setMOSI(APA102_LED_DATA_PIN); // 7
     SPI.setSCK(APA102_LED_CLOCK_PIN); // 14
     SPI.begin(); // resets the pins
+    
+    // corbin?? enable DSE??
+
+    CORE_PIN14_CONFIG = PORT_PCR_DSE | PORT_PCR_MUX(2); // SCK0 = 13 (PTC5)
+    CORE_PIN7_CONFIG = PORT_PCR_DSE | PORT_PCR_MUX(2); // DOUT/MOSI = 7 (PTD2)
+
     SPI.beginTransaction(m_spiSettings);
 }
 
@@ -130,16 +163,14 @@ void CyrWheelLEDPatterns::_spiEnd() {
 }
 
 void CyrWheelLEDPatterns::internalShow() {
-#if USE_FAST_LED
     _spiBegin();
+#if USE_FAST_LED
     FastLED.show();
 //    Serial.printf("FPS: %d\r\n", FastLED.getFPS());
-    _spiEnd();
 #elif USE_MANUAL_SPI
-    _spiBegin();
     show2();
-    _spiEnd();
 #endif
+    _spiEnd();
 }
 
 CyrWheelLEDPatterns::CyrWheelLEDPatterns(uint32_t ledCount) :
@@ -172,10 +203,14 @@ uint8_t CyrWheelLEDPatterns::getBrightness() {
     return FastLED.getBrightness();
 };
 
+
+// NOTE: not used!!
 void CyrWheelLEDPatterns::show2() {
+#if USE_MANUAL_SPI
     
     uint8_t *ptr = (uint8_t *)m_leds;            // -> LED data
-    uint16_t n   = getLEDCount();
+    uint16_t ledCount = getLEDCount();
+    uint16_t n = ledCount;
     int i;
     
 #if WORKS_BUT_SLOWER
@@ -217,11 +252,20 @@ void CyrWheelLEDPatterns::show2() {
     SPI0_MCR |= SPI_MCR_CLR_RXF; // discard any received data
     
     //ending marker..
-    for(i=0; i<4; i++) SPI.transfer(0xFF);
+    // NOTE: might need to send more bits according to the other people.
+//    for(i=0; i<4; i++) SPI.transfer(0xFF); // see next line
+    
+    // End frame: 8+8*(leds >> 4) clock cycles
+    for (i = 0; i < ledCount; i += 16) {
+        SPI.transfer(0xFF);  // 8 more clock cycles
+    }
     
 #endif
-    
+#endif
+
 }
+
+
 void CyrWheelLEDPatterns::begin() {
     DEBUG_PRINTLN("CyrWheelLEDPatterns::begin\r\n");
     // start all off..
