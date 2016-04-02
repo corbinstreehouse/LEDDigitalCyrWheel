@@ -107,15 +107,13 @@ protected:
             pixels.advanceData();
             //        for(i=0; i<3; i++) SPI.transfer(*ptr++); // R,G,B
         }
-
-        
 */
         
-        //ending marker..
+        //ending marker; we need to send more clock cycles than what the spec says. This is detailed on: https://cpldcpu.wordpress.com/2014/11/30/understanding-the-apa102-superled/
+        
 //        for(int i=0; i<4; i++) SPI.transfer(0xFF);
         // End frame: 8+8*(leds >> 4) clock cycles
-        for (int i=0; i<nLeds; i+=16)
-        {
+        for (int i=0; i<nLeds; i+=16) {
             SPI.transfer(0xff); // 8 more clock cycles
         }
         
@@ -129,7 +127,7 @@ protected:
 // 12Mhz // 12000000 is clock div 2
 // 12Mhz
 // Try 24? -- see issues..
-// 6 Mhz!! geez..so slow..
+// 6 Mhz!! geez..so slow.. 8 mhz might work
 static SPISettings m_spiSettings = SPISettings(8000000, MSBFIRST, SPI_MODE0);
 
 void CyrWheelLEDPatterns::_spiBegin() {
