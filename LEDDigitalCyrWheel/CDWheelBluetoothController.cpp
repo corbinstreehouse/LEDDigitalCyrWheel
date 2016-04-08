@@ -97,13 +97,15 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
     m_manager = manager;
     m_streamingOreintationData = false;
     
-    // See if we should even initialize; only initialize if set to init on startup, OR the buttonIsDown
-    bool shouldInit = buttonIsDown;
-    if (!shouldInit) {
-        shouldInit = true;
-        // Make BLE an option to startup??
-    }
-    if (!shouldInit) {
+    // Init only if the button is not down on startup...
+    m_initialized = !buttonIsDown;
+    if (!m_initialized) {
+        // Turn off the BLE chip??
+        // I don't think we can turn it off, but we could lower the power with:
+        // AT+BLEPOWERLEVEL=-40 // lowest power
+        m_ble.begin(VERBOSE_MODE);
+        m_ble.sendCommandCheckOK("AT+BLEPOWERLEVEL=-40"); // Highest transmit power (0 might work well too). Doesn't affect speed, but might affect
+        
         return;
     }
     
@@ -132,9 +134,9 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
     
     DEBUG_PRINTLN("bluetooth initialized, seeing if we have to burn in initial state");
     
-    m_ble.echo(false);
 #if DEBUG
     // Enable echo
+    m_ble.echo(false);
 //    m_ble.sendCommandCheckOK("ATI"); // print version information
 #else
     m_ble.echo(false);
@@ -181,7 +183,8 @@ bool CDWheelBluetoothController::servicesAreRegistered() {
     
     // The BT lies..I need to query it's state and see if it has at least the service.
     //m_ble.sendCommandCheckOK("AT+GATTLIST");
-    return false;
+
+    return false;     // NOTE: if I change this result, be SURE to to set the power level!! it may be lowered by the init on last boot, and will be saved...
     
 
     // Read values and validate
@@ -246,6 +249,9 @@ void CDWheelBluetoothController::_addCharacteristic(const char *characteristicSt
 
 // this only has to be done once for initialiation of the chip
 bool CDWheelBluetoothController::registerServices() {
+    if (!m_initialized) {
+        return false;
+    }
     m_ble.setMode(BLUEFRUIT_MODE_COMMAND);
     DEBUG_PRINTF("   registering all services..setting the name\r\n");
     m_initialized = true; // Set to false on errors

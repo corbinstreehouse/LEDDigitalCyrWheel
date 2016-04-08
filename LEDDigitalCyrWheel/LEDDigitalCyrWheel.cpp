@@ -116,9 +116,10 @@ void setup() {
     g_button.holdHandler(buttonHeld);
 
     g_button.process();
-    g_sequenceManager.init();
+    g_sequenceManager.init(g_button.isPressed());
 
 #if BLUETOOTH
+    // bt will NOT init if the button is down
     g_bluetoothController.init(&g_sequenceManager, g_button.isPressed());
 #endif
     
@@ -177,6 +178,7 @@ void loop() {
     // Don't show the LED pattern if we have too low of voltage; checkVoltage will slow down our processing with explicit delays
     if (checkVoltage()) {
 #if BLUETOOTH
+        //  process is a no-op if we didn't initialize the BT because the button was down on startup
         g_bluetoothController.process();
 #endif
         g_sequenceManager.process();

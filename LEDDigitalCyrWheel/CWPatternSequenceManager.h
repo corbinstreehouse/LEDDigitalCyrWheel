@@ -206,7 +206,7 @@ public:
     NSURL *getBaseURL() {return m_baseURL; }
     void setPatternDirectoryURL(NSURL *url) { m_patternDirectoryURL = url; }
 #endif
-    void init();
+    void init(bool buttonIsDown = false);
     
     void buttonClick();
     void buttonLongClick();

@@ -356,6 +356,8 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
         _getFullpathName(_getRootDirectory(), fileInfo->parent, filenameBuffer, FILENAME_MAX_LENGTH);
         FatFile parentDirectory = FatFile(filenameBuffer, O_READ);
         if (parentDirectory.getName(filenameBuffer, FILENAME_MAX_LENGTH)) {
+            // corbin, other dirs!! pixels, etc.
+            
             if (strcmp(filenameBuffer, "Pictures") == 0) {
                 defaultDuration = 0; // POV duration
                 isPOV = true;
@@ -739,10 +741,10 @@ void CWPatternSequenceManager::getCurrentPatternFileName(char *buffer, size_t bu
 
 bool CWPatternSequenceManager::initSDCard() {
     DEBUG_PRINTLN("initSD Card");
-#if 0 // DEBUG
-//    delay(2000);
-    DEBUG_PRINTLN("END: really slow pause... and doing SD init....");
-#endif
+//#if 0 // DEBUG
+////    delay(2000);
+//    DEBUG_PRINTLN("END: really slow pause... and doing SD init....");
+//#endif
 //    pinMode(SD_CARD_CS_PIN, OUTPUT); // Any pin can be used as SS, but it must remain low
 //    digitalWrite(SD_CARD_CS_PIN, LOW);
 // ^ done way earlier
@@ -807,7 +809,8 @@ void CWPatternSequenceManager::loadSettings() {
 
     // Make sure we don't overflow the bitset
     m_shouldShowBootProgress = EEPROM.read(EEPROM_SHOULD_SHOW_BOOT_PROGRESS) ? 1 : 0;
-    m_defaultShouldStretchBitmap = EEPROM.read(EEPROM_SHOULD_STRETCH_BITMAP) ? 1 : 0;
+    // TODO: set this!!
+    m_defaultShouldStretchBitmap = false; // EEPROM.read(EEPROM_SHOULD_STRETCH_BITMAP) ? 1 : 0;
     
     if (m_brightness < MIN_BRIGHTNESS || m_brightness > MAX_BRIGHTNESS) {
         m_brightness = DEFAULT_BRIGHTNESS;
@@ -1058,7 +1061,7 @@ void CWPatternSequenceManager::incBootProgress()  {
     }
 }
 
-void CWPatternSequenceManager::init() {
+void CWPatternSequenceManager::init(bool buttonIsDown) {
     DEBUG_PRINTLN("::init");
     m_shouldRecordData = false;
     
@@ -1081,10 +1084,6 @@ void CWPatternSequenceManager::init() {
     initOrientation();
 #endif
     incBootProgress();
-    
-#if DEBUG
-//    delay(1000);
-#endif
 
 #if  SD_CARD_SUPPORT
     m_sdCardWorks = initSDCard();
@@ -1092,10 +1091,6 @@ void CWPatternSequenceManager::init() {
     incBootProgress();
 #else
     m_sdCardWorks = false;
-#endif
-    
-#if DEBUG
-//    delay(1000);
 #endif
     
     loadSequencesFromRootDirectory();
