@@ -536,7 +536,7 @@ void CDWheelBluetoothController::_sendCustomSequencesFromDirectory(const char *d
     m_ble.setMode(BLUEFRUIT_MODE_DATA);
     m_ble.write((int8_t)CDWheelUARTRecieveCommandCustomSequences);
     
-    DEBUG_PRINTF("opening %s\r\n", dir);
+    DEBUG_PRINTF("reading our sequences for BT, opening %s\r\n", dir);
     FatFile directoryFile = FatFile(dir, O_READ);
     FatFile file;
     char *newline = "\r\n";
@@ -562,6 +562,7 @@ void CDWheelBluetoothController::_sendCustomSequencesFromDirectory(const char *d
     directoryFile.close();
     // terminator is an empty line.
     m_ble.write(newline, 2);
+    DEBUG_PRINTLN("_sendCustomSequencesFromDirectory done");
 }
 
 bool CDWheelBluetoothController::_readFilename(char *filename, size_t bufferSize) {
