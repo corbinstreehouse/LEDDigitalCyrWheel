@@ -139,8 +139,8 @@ void CyrWheelLEDPatterns::_spiBegin() {
     SPI.begin(); // resets the pins
     
     // corbin?? enable DSE??
-//    CORE_PIN14_CONFIG = PORT_PCR_DSE | PORT_PCR_MUX(2); // SCK0 = 13 (PTC5)
-//    CORE_PIN7_CONFIG = PORT_PCR_DSE | PORT_PCR_MUX(2); // DOUT/MOSI = 7 (PTD2)
+    CORE_PIN14_CONFIG = PORT_PCR_DSE | PORT_PCR_MUX(2); // SCK0 = 13 (PTC5)
+    CORE_PIN7_CONFIG = PORT_PCR_DSE | PORT_PCR_MUX(2); // DOUT/MOSI = 7 (PTD2)
 
     SPI.beginTransaction(m_spiSettings);
 }
