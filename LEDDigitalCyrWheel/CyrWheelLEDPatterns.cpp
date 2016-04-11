@@ -127,9 +127,8 @@ protected:
 // 12Mhz // 12000000 is clock div 2
 // 12Mhz
 // Try 24? -- see issues..
-// 6 Mhz!! geez..so slow.. 8 mhz might work
-// back to 6 Mhz...
-static SPISettings m_spiSettings = SPISettings(6000000, MSBFIRST, SPI_MODE0);
+// 8 mhz might work - 12mhz is too fast and causes corruption
+static SPISettings m_spiSettings = SPISettings(8000000, MSBFIRST, SPI_MODE0);
 
 void CyrWheelLEDPatterns::_spiBegin() {
     // DOUT/ MOSI on pin 7 for this
