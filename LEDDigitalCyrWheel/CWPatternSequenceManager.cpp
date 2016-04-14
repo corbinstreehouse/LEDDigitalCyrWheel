@@ -358,7 +358,7 @@ void CWPatternSequenceManager::loadAsBitmapFileInfo(CDPatternFileInfo *fileInfo)
         if (parentDirectory.getName(filenameBuffer, FILENAME_MAX_LENGTH)) {
             // corbin, other dirs!! pixels, etc.
             
-            if (strcmp(filenameBuffer, "Pictures") == 0) {
+            if (strcmp(filenameBuffer, "Pictures") == 0 || strcmp(filenameBuffer, "Figures") == 0) {
                 defaultDuration = 0; // POV duration
                 isPOV = true;
             }
