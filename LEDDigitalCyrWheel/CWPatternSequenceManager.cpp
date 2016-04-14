@@ -309,11 +309,11 @@ size_t _recursiveGetFullpathName(const char *rootDirName, const CDPatternFileInf
         FatFile parentDirectory = FatFile(buffer, O_READ);
         FatFile file;
         if (file.open(&parentDirectory, fileInfo->dirIndex, O_READ)) {
-//    #if DEBUG
+    #if DEBUG
 //            DEBUG_PRINTF("  opened and copying the name. buffer: %s, name: ", buffer);
 //            file.printName();
-//            DEBUG_PRINTLN(" <-- name printed");
-//    #endif
+//            DEBUG_PRINTF("\r\n");
+    #endif
             if (useSFN) {
                 if (!file.getSFN(nameLocation)) {
                     // errors?
@@ -325,7 +325,7 @@ size_t _recursiveGetFullpathName(const char *rootDirName, const CDPatternFileInf
             }
             file.close();
         } else {
-            DEBUG_PRINTLN("  open failed");
+            DEBUG_PRINTF("  open failed!!!!!\r\n");
         }
         parentDirectory.close();
     }
@@ -484,10 +484,12 @@ void CWPatternSequenceManager::loadAsSequenceFromFatFile(FatFile *sequenceFile) 
             DEBUG_PRINTLN("DONE");
         } else {
             // We don't support this version... flash purple
+            DEBUG_PRINTLN("wrong version!");
             makeSequenceFlashColor(CRGB::Purple);
         }
     } else {
         // Bad data...flash yellow
+        DEBUG_PRINTLN("bad sequence file!");
         makeSequenceFlashColor(CRGB::Yellow);
     }
     sequenceChanged();
@@ -1397,6 +1399,9 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
         // The filename is the bitmap we are set to play back
         char fullFilenamePath[MAX_PATH];
         _getFullpathName(_getRootDirectory(), m_currentFileInfo, fullFilenamePath, MAX_PATH);
+#if DEBUG
+        DEBUG_PRINTF("Bitmap: %s\r\n", fullFilenamePath);
+#endif
         m_ledPatterns.setBitmapFilename(fullFilenamePath);
         
         // If the bitmap was invalid, then we flip to a flashing sequence
@@ -1410,6 +1415,11 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
         if (itemHeader->filename) {
             char fullFilenamePath[MAX_PATH];
             _appendFilename(_getPatternDirectory(), itemHeader->filename, fullFilenamePath, MAX_PATH);
+            
+#if DEBUG
+            DEBUG_PRINTF("Referenced bitmap: %s\r\n", fullFilenamePath);
+#endif
+            
             m_ledPatterns.setBitmapFilename(fullFilenamePath);
             
             // Check if it is valid..

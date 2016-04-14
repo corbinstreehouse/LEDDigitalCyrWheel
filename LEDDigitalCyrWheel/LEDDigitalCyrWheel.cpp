@@ -145,6 +145,10 @@ void setup() {
         g_sequenceManager.flashThreeTimes(CRGB::Orange);
     }
 
+#if DEBUG
+    DEBUG_PRINTF("Battery voltage: %f\r\n!!!Starting!!!\r\n", readBatteryVoltage());
+#endif
+    
     // Start the patterns by loading the first sequence, if it didn't work
     // NOTE: the loading already did this. This just reloads, which is stupid.
 //    g_sequenceManager.loadFirstSequence();
