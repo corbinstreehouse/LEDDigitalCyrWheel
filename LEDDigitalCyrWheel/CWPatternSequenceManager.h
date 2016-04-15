@@ -75,6 +75,9 @@ typedef enum {
     CDWheelChangeReasonBrightnessChanged,
     CDWheelChangeReasonPatternChanged,
     CDWheelChangeReasonSequenceChanged,
+#if PATTERN_EDITOR
+    CDWheelChangeReasonPlayheadPositionChanged,
+#endif
 } CDWheelChangeReason;
 
 typedef void (CDWheelChangedHandler)(CDWheelChangeReason changeReason, void *data);
@@ -89,9 +92,9 @@ private:
 #endif
     
     // Current sequence information
-    CDPatternItemHeader *_patternItems;
+    CDPatternItemHeader *m_patternItems;
     
-    uint32_t _numberOfPatternItems;
+    uint32_t m_numberOfPatternItems;
     // Current pattern item; -1 means nothing is current at the time
     int32_t m_currentPatternItemIndex;
     
@@ -115,6 +118,7 @@ private:
 
     uint32_t m_timedPatternStartTime; // In milliseconds; the time that all the current run of timed patterns starts, so we can accurately generate a full duration for all of them
     uint32_t m_timedUsedBeforeCurrentPattern;
+    
 #if PATTERN_EDITOR
     NSURL *m_baseURL;
     NSURL *m_patternDirectoryURL;
@@ -146,27 +150,29 @@ private:
     
     // for crossfade
     inline CDPatternItemHeader *getNextItemHeader() {
+        ASSERT(m_currentPatternItemIndex != -1);
         int tmp = m_currentPatternItemIndex;
         tmp++;
-        if (tmp >= _numberOfPatternItems) {
+        if (tmp >= m_numberOfPatternItems) {
             tmp = 0;
         }
-        return &_patternItems[tmp];
+        return &m_patternItems[tmp];
     }
     
     inline CDPatternItemHeader *getPreviousItemHeader() {
+        ASSERT(m_currentPatternItemIndex != -1);
         int tmp = m_currentPatternItemIndex;
         tmp--;
         if (tmp < 0) {
-            tmp = _numberOfPatternItems - 1;
+            tmp = m_numberOfPatternItems - 1;
         }
-        return &_patternItems[tmp];
+        return &m_patternItems[tmp];
     }
     
-    inline void resetStartingTime() {
-        m_timedPatternStartTime = millis();
-        m_timedUsedBeforeCurrentPattern = 0;
-    }
+    void loadPatternItemHeaderIntoPatterns(CDPatternItemHeader *itemHeader);
+
+    
+    void resetStartingTime();
     
     CDPatternItemHeader makeFlashPatternItem(CRGB color);
     void makePatternsBlinkColor(CRGB color);
@@ -205,6 +211,10 @@ public:
     void setBaseURL(NSURL *url);
     NSURL *getBaseURL() {return m_baseURL; }
     void setPatternDirectoryURL(NSURL *url) { m_patternDirectoryURL = url; }
+    
+    void setPlayheadPositionInMS(uint32_t position);
+    uint32_t getPlayheadPositionInMS();
+    
 #endif
     void init(bool buttonIsDown = false);
     
@@ -283,23 +293,24 @@ public:
         _ensureCurrentFileInfo();
         return m_currentFileInfo;
     }
-
     
     // always Long filenames returned
     void getFilenameForPatternFileInfo(const CDPatternFileInfo *fileInfo, char *buffer, size_t bufferSize);
     
+#if PATTERN_EDITOR
     uint32_t getPatternTimePassed() { return millis() - m_timedPatternStartTime - m_timedUsedBeforeCurrentPattern; };
     uint32_t getPatternTimePassedFromFirstTimedPattern() { return millis() - m_timedPatternStartTime; };
+#endif
 
-    uint32_t getNumberOfPatternItems() { return _numberOfPatternItems; }
+    uint32_t getNumberOfPatternItems() { return m_numberOfPatternItems; }
     int32_t getCurrentPatternItemIndex() { return m_currentPatternItemIndex; } // -1 means nothing is current
-    CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &_patternItems[index]; }
+    CDPatternItemHeader *getPatternItemHeaderAtIndex(int index) { return &m_patternItems[index]; }
 
     void loadSequenceInMemoryFromFatFile(FatFile *sequenceFile);
 
     inline CDPatternItemHeader *getCurrentItemHeader() {
-        if (m_currentPatternItemIndex >= 0 && m_currentPatternItemIndex < _numberOfPatternItems) {
-            return  &_patternItems[m_currentPatternItemIndex];
+        if (m_currentPatternItemIndex >= 0 && m_currentPatternItemIndex < m_numberOfPatternItems) {
+            return &m_patternItems[m_currentPatternItemIndex];
         } else {
             return NULL;
         }

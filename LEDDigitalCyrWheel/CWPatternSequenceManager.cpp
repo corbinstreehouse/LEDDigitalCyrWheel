@@ -42,12 +42,13 @@ char *getExtension(char *filename) {
     }
 }
 
-CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH), m_changeHandler(NULL), _patternItems(NULL), _numberOfPatternItems(0)
+CWPatternSequenceManager::CWPatternSequenceManager() : m_ledPatterns(STRIP_LENGTH), m_changeHandler(NULL), m_patternItems(NULL), m_numberOfPatternItems(0)
 {
     bzero(&m_rootFileInfo, sizeof(CDPatternFileInfo));
     m_currentPatternItemIndex = -1;
     m_currentFileInfo = NULL;
     m_shouldIgnoreButtonClickWhenTimed = true; // TODO: make this an option per sequence...
+    m_timedPatternStartTime = 0;
     ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v5); // make sure I don't screw stuff up by chaning the size and not updating things again
     ASSERT(sizeof(LEDPatternOptions) == PATTERN_OPTIONS_SIZE_v5); // make sure I don't screw stuff up by chaning the size and not updating things again
     
@@ -113,35 +114,35 @@ void CWPatternSequenceManager::loadDefaultSequence() {
     DEBUG_PRINTLN("       --- loading default sequence because the name was NULL --- ");
     freePatternItems();
 
-    _numberOfPatternItems = LEDPatternTypeCount;
+    m_numberOfPatternItems = LEDPatternTypeCount;
     m_shouldIgnoreButtonClickWhenTimed = false;
     
     // After the header each item follows
-    _patternItems = (CDPatternItemHeader *)malloc(_numberOfPatternItems * sizeof(CDPatternItemHeader));
+    m_patternItems = (CDPatternItemHeader *)malloc(m_numberOfPatternItems * sizeof(CDPatternItemHeader));
     
     int i = 0;
     for (int p = LEDPatternTypeMin; p < LEDPatternTypeCount; p++) {
         if (p == LEDPatternTypeDoNothing || p == LEDPatternTypeFadeIn || p == LEDPatternTypeImageReferencedBitmap || p == LEDPatternTypeImageEntireStrip_UNUSED || p == LEDPatternTypeFadeOut || p == LEDPatternTypeCrossfade || p == LEDPatternTypeCount || p == LEDPatternTypeBitmap) {
             continue; // skip a few
         }
-        bzero(&_patternItems[i], sizeof(CDPatternItemHeader));
+        bzero(&m_patternItems[i], sizeof(CDPatternItemHeader));
         
-        _patternItems[i].patternType = (LEDPatternType)p;
-        _patternItems[i].patternEndCondition = CDPatternEndConditionOnButtonClick;
-        _patternItems[i].duration = 2000; //  2 seconds
-        _patternItems[i].patternDuration = 2000;
+        m_patternItems[i].patternType = (LEDPatternType)p;
+        m_patternItems[i].patternEndCondition = CDPatternEndConditionOnButtonClick;
+        m_patternItems[i].duration = 2000; //  2 seconds
+        m_patternItems[i].patternDuration = 2000;
         // bzero takes care of these
-//        _patternItems[i].patternOptions = 0;
-//        _patternItems[i].dataLength = 0;
-        _patternItems[i].shouldSetBrightnessByRotationalVelocity = 0; // Nope.
-//        _patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
-//        _patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
-        switch (random(3)) { case 0: _patternItems[i].color = 0xFF0000; break; case 1: _patternItems[i].color = 0x00FF00; break; case 2: _patternItems[i].color = 0x0000FF; break; }
-//        _patternItems[i].dataOffset = 0;
+//        m_patternItems[i].patternOptions = 0;
+//        m_patternItems[i].dataLength = 0;
+        m_patternItems[i].shouldSetBrightnessByRotationalVelocity = 0; // Nope.
+//        m_patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
+//        m_patternItems[i].color = (uint8_t)random(255) << 16 | (uint8_t)random(255) << 8 | (uint8_t)random(255); //        0xFF0000; // red
+        switch (random(3)) { case 0: m_patternItems[i].color = 0xFF0000; break; case 1: m_patternItems[i].color = 0x00FF00; break; case 2: m_patternItems[i].color = 0x0000FF; break; }
+//        m_patternItems[i].dataOffset = 0;
         i++;
     }
-    _numberOfPatternItems = i;
-    DEBUG_PRINTF(" --- default pattern count _numberOfPatternItems: %d\r\n", _numberOfPatternItems);
+    m_numberOfPatternItems = i;
+    DEBUG_PRINTF(" --- default pattern count m_numberOfPatternItems: %d\r\n", m_numberOfPatternItems);
     sequenceChanged();
 }
 
@@ -152,18 +153,18 @@ static inline bool verifyHeader(CDPatternSequenceHeader *h) {
 }
 
 void CWPatternSequenceManager::freePatternItems() {
-    if (_patternItems) {
+    if (m_patternItems) {
         DEBUG_PRINTLN(" --- free pattern Items");
-        for (int i = 0; i < _numberOfPatternItems; i++) {
+        for (int i = 0; i < m_numberOfPatternItems; i++) {
             // If it has data, we have to free it
-            if (_patternItems[i].filename) {
-                DEBUG_PRINTF("FREEING filename: %s\r\n", _patternItems[i].filename);
-                free(_patternItems[i].filename);
+            if (m_patternItems[i].filename) {
+                DEBUG_PRINTF("FREEING filename: %s\r\n", m_patternItems[i].filename);
+                free(m_patternItems[i].filename);
             }
         }
-        free(_patternItems);
-        _patternItems = NULL;
-        _numberOfPatternItems = 0; // can be removed
+        free(m_patternItems);
+        m_patternItems = NULL;
+        m_numberOfPatternItems = 0; // can be removed
     }
     
 }
@@ -187,9 +188,9 @@ void CWPatternSequenceManager::sequenceChanged() {
 void CWPatternSequenceManager::makeSequenceFlashColor(CRGB color) {
     freePatternItems();
     
-    _numberOfPatternItems = 1;
-    _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
-    _patternItems[0] = makeFlashPatternItem(color);
+    m_numberOfPatternItems = 1;
+    m_patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * m_numberOfPatternItems);
+    m_patternItems[0] = makeFlashPatternItem(color);
 
     m_currentPatternItemIndex = 0;
     
@@ -442,42 +443,42 @@ void CWPatternSequenceManager::loadAsSequenceFromFatFile(FatFile *sequenceFile) 
     if (verifyHeader(&patternHeader)) {
         if (patternHeader.version == SEQUENCE_VERSION_v5) {
             // Free existing stuff
-            ASSERT(_patternItems == NULL);
+            ASSERT(m_patternItems == NULL);
             
-            _numberOfPatternItems = patternHeader.patternCount;
+            m_numberOfPatternItems = patternHeader.patternCount;
             m_shouldIgnoreButtonClickWhenTimed = patternHeader.ignoreButtonForTimedPatterns;
             
             ASSERT(sizeof(CDPatternItemHeader) == PATTERN_HEADER_SIZE_v5); // MAKE SURE IT IS RIGHT..
-            DEBUG_PRINTF("now reading %d items, headerSize: %d\r\n", _numberOfPatternItems, sizeof(CDPatternItemHeader));
+            DEBUG_PRINTF("now reading %d items, headerSize: %d\r\n", m_numberOfPatternItems, sizeof(CDPatternItemHeader));
             
             // After the header each item follows
-            _patternItems = (CDPatternItemHeader *)calloc(_numberOfPatternItems, sizeof(CDPatternItemHeader));
-            //            memset(_patternItems, 0, numBytes); // shouldn't be needed, but do it anyways
+            m_patternItems = (CDPatternItemHeader *)calloc(m_numberOfPatternItems, sizeof(CDPatternItemHeader));
+            //            memset(m_patternItems, 0, numBytes); // shouldn't be needed, but do it anyways
             
-            for (int i = 0; i < _numberOfPatternItems; i++ ){
+            for (int i = 0; i < m_numberOfPatternItems; i++ ){
                 DEBUG_PRINTF("reading item %d\r\n", i);
-                sequenceFile->read((char*)&_patternItems[i], sizeof(CDPatternItemHeader));
-                DEBUG_PRINTF("Header, type: %d, duration: %d, patternDuration %d\r\n", _patternItems[i].patternType, _patternItems[i].duration, _patternItems[i].patternDuration);
+                sequenceFile->read((char*)&m_patternItems[i], sizeof(CDPatternItemHeader));
+                DEBUG_PRINTF("Header, type: %d, duration: %d, patternDuration %d\r\n", m_patternItems[i].patternType, m_patternItems[i].duration, m_patternItems[i].patternDuration);
                 // Verify it
-                bool validData = _patternItems[i].patternType >= LEDPatternTypeMin && _patternItems[i].patternType < LEDPatternTypeCount;
+                bool validData = m_patternItems[i].patternType >= LEDPatternTypeMin && m_patternItems[i].patternType < LEDPatternTypeCount;
                 ASSERT(validData);
                 if (!validData) {
                     // fill it in with something..
-                    _patternItems[i] = makeFlashPatternItem(CRGB::Red);
+                    m_patternItems[i] = makeFlashPatternItem(CRGB::Red);
                 } else {
                     // I guess a 0 duration is okay..it will just blink it..
                     // After the header, is the (optional) image data
                     
                     // Read in the filename, if it is there..
-                    uint32_t filenameLength = _patternItems[i].filenameLength; // We use a union, so we have to save the length first
+                    uint32_t filenameLength = m_patternItems[i].filenameLength; // We use a union, so we have to save the length first
                     if (filenameLength > 0) {
                         ASSERT(filenameLength <= MAX_PATH);
                         size_t filenameSize = sizeof(char) * filenameLength + 1; // Space for the name plus one for the NULL
-                        _patternItems[i].filename = (char*)malloc(filenameSize);
+                        m_patternItems[i].filename = (char*)malloc(filenameSize);
                         // Read into the filename buffer we allocated
-                        sequenceFile->read(_patternItems[i].filename, filenameSize);
+                        sequenceFile->read(m_patternItems[i].filename, filenameSize);
                     } else {
-                        _patternItems[i].filename = NULL; //
+                        m_patternItems[i].filename = NULL; //
                     }
                 }
             }
@@ -705,10 +706,10 @@ void CWPatternSequenceManager::setSingleItemPatternHeader(CDPatternItemHeader *h
 //    m_currentPatternItemsAreDynamic = true;
 
     freePatternItems();
-    _numberOfPatternItems = 1;
+    m_numberOfPatternItems = 1;
 
-    _patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * _numberOfPatternItems);
-    _patternItems[0] = *header;
+    m_patternItems = (CDPatternItemHeader *)malloc(sizeof(CDPatternItemHeader) * m_numberOfPatternItems);
+    m_patternItems[0] = *header;
     
     sequenceChanged();
 }
@@ -1239,7 +1240,7 @@ void CWPatternSequenceManager::process() {
     }
 #endif
 
-    if (_numberOfPatternItems == 0) {
+    if (m_numberOfPatternItems == 0) {
         DEBUG_PRINTLN("No pattern items to show!");
         m_ledPatterns.flashThreeTimes(CRGB::Yellow);
         delay(1000);
@@ -1251,10 +1252,10 @@ void CWPatternSequenceManager::process() {
     // First, always do one pass through the update of the patterns; this updates the time
     m_ledPatterns.show();
     
-    if (!isPaused()) {
+    if (!isPaused() && (m_currentPatternItemIndex != -1)) {
         // This updates how much time has passed since the pattern started and how many full intervals have run through.
         // See if we should go to the next pattern
-        CDPatternItemHeader *itemHeader = &_patternItems[m_currentPatternItemIndex];
+        CDPatternItemHeader *itemHeader = &m_patternItems[m_currentPatternItemIndex];
         // See if we should go to the next pattern if enough time passed
         if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
             // subtract out how much time has passed from our initial pattern, and when we actually started the first timed pattern. This gives more accurate timings.
@@ -1334,50 +1335,53 @@ void CWPatternSequenceManager::nextPatternItem() {
     loadCurrentPatternItem();
 }
 
-void CWPatternSequenceManager::loadCurrentPatternItem() {
-    // The simulator can have 0 items. We should blink if we aren't in the sim
-    if (_numberOfPatternItems == 0) {
-        m_currentPatternItemIndex = -1;
-#if 1 //!PATTERN_SIMULATOR
-        makePatternsBlinkColor(CRGB::Red);
+void CWPatternSequenceManager::resetStartingTime() {
+    m_timedPatternStartTime = millis();
+    m_timedUsedBeforeCurrentPattern = 0;
+#if PATTERN_EDITOR
+    sendWheelChanged(CDWheelChangeReasonPlayheadPositionChanged);
 #endif
-        return;
-    }
-    
-    // Ensure we always have good data
-    if (m_currentPatternItemIndex < 0) {
-        m_currentPatternItemIndex = _numberOfPatternItems - 1;
-    } else if (m_currentPatternItemIndex >= _numberOfPatternItems) {
-        // Loop around
+}
+
+#if PATTERN_EDITOR
+
+void CWPatternSequenceManager::setPlayheadPositionInMS(uint32_t position) {
+    // back it up to pretend the start time was in the past
+    m_timedPatternStartTime = millis() - position;
+    // Based on that, setup m_timedUsedBeforeCurrentPattern and m_currentPatternItemIndex
+    m_timedUsedBeforeCurrentPattern = 0;
+    if (m_numberOfPatternItems == 0) {
+        m_currentPatternItemIndex = -1;
+    } else {
         m_currentPatternItemIndex = 0;
-    }
-    
-    CDPatternItemHeader *itemHeader = getCurrentItemHeader();
-    if (itemHeader == NULL) {
-        // Really bad state
-        makePatternsBlinkColor(CRGB::Red);
-    }
-    // if we are the first timed pattern, then reset m_timedPatternStartTime and how many timed patterns have gone before us
-    if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
-        // We are the first timed one, or the only one, then we have to reset everything
-        if (m_currentPatternItemIndex == 0 || _numberOfPatternItems == 1) {
-            resetStartingTime();
-        } else if (getPreviousItemHeader()->patternEndCondition != CDPatternEndConditionAfterDuration) {
-            // The last one was NOT timed, so we need to reset, as this is the first timed pattern after a button click, and all timed ones need to go off the start of this one so we get accurate full length timing
-            resetStartingTime();
-        } else {
-            // The last one ran, and was timed, and we need to include its duration in what passed. Based on the first condition, we always have a previous that is not us, and was timed
-            ASSERT(getPreviousItemHeader()->patternEndCondition == CDPatternEndConditionAfterDuration);
-            m_timedUsedBeforeCurrentPattern += getPreviousItemHeader()->duration;
-            // If the actual time passed isn't this long...well, make it so
-            if ((millis() - m_timedPatternStartTime) < m_timedUsedBeforeCurrentPattern) {
-                m_timedPatternStartTime = millis() - m_timedUsedBeforeCurrentPattern; // go back in the past!
+        for (int i = 0; i < m_numberOfPatternItems; i++) {
+            uint32_t timePassed = m_timedUsedBeforeCurrentPattern + m_patternItems[i].duration;
+            if (timePassed >= position) {
+                break; // We are within this pattern
+            } else {
+                m_timedUsedBeforeCurrentPattern += m_patternItems[i].duration;
+                m_currentPatternItemIndex++;
             }
         }
+        // TODO: maybe cap if it is passed everything?
+        CDPatternItemHeader *itemHeader = &m_patternItems[m_currentPatternItemIndex];
+        loadPatternItemHeaderIntoPatterns(itemHeader);
         
-    } else if (m_currentPatternItemIndex == 0) {
-        resetStartingTime();
+        // Figure out how far into the current pattern we are and assign its position based on that
+        uint32_t positionInCurrentPattern = position - m_timedUsedBeforeCurrentPattern;
+        m_ledPatterns.setDurationPassed(positionInCurrentPattern);
     }
+}
+
+uint32_t CWPatternSequenceManager::getPlayheadPositionInMS() {
+    return millis() - m_timedPatternStartTime;
+}
+
+
+#endif
+
+void CWPatternSequenceManager::loadPatternItemHeaderIntoPatterns(CDPatternItemHeader *itemHeader) {
+    ASSERT(itemHeader != NULL);
     
     // Reset the stuff based on the new header
     m_ledPatterns.setPatternType(itemHeader->patternType);
@@ -1386,7 +1390,7 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     if (LEDPatterns::PatternDurationShouldBeEqualToSegmentDuration(itemHeader->patternType)) {
         m_ledPatterns.setPatternDuration(itemHeader->duration);
     } else {
-        // The duration affects the "speed" about how fast it repeats
+        // The duration affects the "speed" about how fast it repeats..I need to rename this to speed or something better...
         m_ledPatterns.setPatternDuration(itemHeader->patternDuration);
     }
     
@@ -1438,7 +1442,7 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     
     
 #if 0 // DEBUG
-    DEBUG_PRINTF("--------- loadCurrentPatternItem (patternType: %d): %d of %d, dur: %d patDur: %d\r\n", itemHeader->patternType, m_currentPatternItemIndex + 1, _numberOfPatternItems, itemHeader->duration, itemHeader->patternDuration);
+    DEBUG_PRINTF("----- loadPatternItemHeaderIntoPatterns (patternType: %d): %d of %d, dur: %d patDur: %d\r\n", itemHeader->patternType, m_currentPatternItemIndex + 1, m_numberOfPatternItems, itemHeader->duration, itemHeader->patternDuration);
 #endif
     
     // Crossfade patterns need to know the next one!
@@ -1454,6 +1458,46 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
             m_ledPatterns.setPatternColor(CRGB::Red);
         }
     }
+    
+}
+
+void CWPatternSequenceManager::loadCurrentPatternItem() {
+    // The simulator could have 0 items (but I should make it not!)
+    if (m_numberOfPatternItems == 0) {
+        m_currentPatternItemIndex = -1;
+        makePatternsBlinkColor(CRGB::Red);
+        return;
+    }
+    
+    // Ensure we always have good data
+    if (m_currentPatternItemIndex < 0) {
+        m_currentPatternItemIndex = m_numberOfPatternItems - 1;
+    } else if (m_currentPatternItemIndex >= m_numberOfPatternItems) {
+        // Loop around
+        m_currentPatternItemIndex = 0;
+    }
+    // m_currentPatternItemIndex is validated, so directly grab it from the array
+    CDPatternItemHeader *itemHeader = &m_patternItems[m_currentPatternItemIndex];
+    
+    // if we are the first timed pattern, then reset m_timedPatternStartTime and how many timed patterns have gone before us
+    if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
+        // We are the first timed one, or the only one, then we just loop
+        if (m_currentPatternItemIndex == 0 || m_numberOfPatternItems == 1) {
+            resetStartingTime();
+        } else {
+            ASSERT(m_currentPatternItemIndex >= 1);
+            // Keep track of the full amount of previous patterns that passed
+            m_timedUsedBeforeCurrentPattern += getPreviousItemHeader()->duration;
+            // If the actual time passed isn't this long...well, make it so..i think this was to fix up some slight timing issues
+            if ((millis() - m_timedPatternStartTime) < m_timedUsedBeforeCurrentPattern) {
+                m_timedPatternStartTime = millis() - m_timedUsedBeforeCurrentPattern; // go back in the past!
+            }
+        }
+    } else if (m_currentPatternItemIndex == 0) {
+        resetStartingTime();
+    }
+    
+    loadPatternItemHeaderIntoPatterns(itemHeader);
     
 #if ACCELEROMETER
     m_orientation.setFirstPass(true); // why do I need this??
@@ -1544,8 +1588,15 @@ void CWPatternSequenceManager::processCommand(CDWheelCommand command) {
 
 void CWPatternSequenceManager::play() {
     if (m_ledPatterns.isPaused()) {
-        resetStartingTime();
-        m_ledPatterns.play();
+        // Reset m_timedPatternStartTime based on the amount of time we were paused
+        uint32_t now = millis();
+        // we might wrap...
+        uint32_t pausedTime = m_ledPatterns.getPauseTime();
+        if (pausedTime < now) {
+            uint32_t pausedDuration = pausedTime - now;
+            m_timedPatternStartTime += pausedDuration;
+        }
+        m_ledPatterns.play(); // this unpauses us
         sendWheelChanged(CDWheelChangeReasonStateChanged);
     }
 }
@@ -1570,11 +1621,11 @@ CDWheelState CWPatternSequenceManager::getWheelState() {
                 result = result | CDWheelStateNextPatternAvailable;
             }
         } else {
-            if (_numberOfPatternItems > 1) {
+            if (m_numberOfPatternItems > 1) {
                 if (m_currentPatternItemIndex > 0) {
                     result = result | CDWheelStatePriorPatternAvailable;
                 }
-                if (m_currentPatternItemIndex < _numberOfPatternItems+1) {
+                if (m_currentPatternItemIndex < m_numberOfPatternItems+1) {
                     result = result | CDWheelStateNextPatternAvailable;
                 }
             }
