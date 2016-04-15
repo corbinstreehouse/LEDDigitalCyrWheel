@@ -28,7 +28,7 @@
 #endif
 
 
-#define IGNORE_VOLTAGE 1 //for hardware testing w/out a battery
+#define IGNORE_VOLTAGE 0 //for hardware testing w/out a battery
 
 // 2 cell LiPO, 4.2v each: 8.4v max. 3.0v should be the min, 3.0*2=6v min
 #define LOW_VOLTAGE_VALUE 6.3 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
