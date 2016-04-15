@@ -1334,6 +1334,32 @@ void CWPatternSequenceManager::firstPatternItem() {
     loadCurrentPatternItem();
 }
 
+void CWPatternSequenceManager::rewind() {
+    if (m_currentPatternItemIndex == 0) {
+        resetStartingTime();
+        loadCurrentPatternItem();
+    } else if (m_currentPatternItemIndex > 0) {
+        uint32_t position = tickCountInMS() - m_timedPatternStartTime;
+        // some threshold of allowing it to rest
+        uint32_t timePassed = position - m_timedUsedBeforeCurrentPattern;
+        if (timePassed > 500) { // half a second...
+            // Okay reset
+            m_timedPatternStartTime = tickCountInMS() - m_timedUsedBeforeCurrentPattern;
+#if PATTERN_EDITOR
+            sendWheelChanged(CDWheelChangeReasonPlayheadPositionChanged);
+#endif
+            loadCurrentPatternItem();
+            // show the current state in case we are paused
+            m_ledPatterns.forceShow();
+        } else {
+            // prior..we are basically at the start
+            priorPatternItem();
+        }
+    } else {
+        priorPatternItem(); // fallback..
+    }
+}
+
 void CWPatternSequenceManager::priorPatternItem() {
     m_currentPatternItemIndex--;
     if (m_currentPatternItemIndex < 0) {
@@ -1350,6 +1376,8 @@ void CWPatternSequenceManager::priorPatternItem() {
             m_timedUsedBeforeCurrentPattern += m_patternItems[i].duration;
         }
         m_timedPatternStartTime = tickCountInMS() - m_timedUsedBeforeCurrentPattern;
+        // show the current state in case we are paused
+        m_ledPatterns.forceShow();
 #if PATTERN_EDITOR
         sendWheelChanged(CDWheelChangeReasonPlayheadPositionChanged);
 #endif   
@@ -1380,6 +1408,8 @@ void CWPatternSequenceManager::nextPatternItem() {
                 m_timedUsedBeforeCurrentPattern += m_patternItems[i].duration;
             }
             m_timedPatternStartTime = tickCountInMS() - m_timedUsedBeforeCurrentPattern;
+            // show the current state in case we are paused
+            m_ledPatterns.forceShow();
         }
 #if PATTERN_EDITOR
         sendWheelChanged(CDWheelChangeReasonPlayheadPositionChanged);
@@ -1394,6 +1424,7 @@ void CWPatternSequenceManager::resetStartingTime() {
     m_timedUsedBeforeCurrentPattern = 0;
 #if PATTERN_EDITOR
     sendWheelChanged(CDWheelChangeReasonPlayheadPositionChanged);
+    m_ledPatterns.forceShow();
 #endif
 }
 

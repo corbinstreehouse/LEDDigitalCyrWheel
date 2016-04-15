@@ -257,6 +257,7 @@ public:
     void nextPatternItem();
     void firstPatternItem();
     void priorPatternItem();
+    void rewind(); // Like prior, but attempts to rest the current item if needed
     
     void processCommand(CDWheelCommand command);
     
