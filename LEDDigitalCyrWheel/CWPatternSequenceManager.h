@@ -359,6 +359,8 @@ public:
     void setShouldShowBootProgress(bool value);
     
     uint16_t getFPS() { return FastLED.getFPS(); }
+    
+    void forceShow() { m_ledPatterns.forceShow(); }
 
 };
 
