@@ -109,7 +109,8 @@ private:
     uint32_t m_shouldShowBootProgress:1;
     uint32_t m_defaultShouldStretchBitmap:1;
     uint32_t m_dynamicPattern:1;
-    uint32_t __reserved:25;
+    uint32_t m_autoNextPatternItem:1;
+    uint32_t __reserved:24;
     
     LED_PATTERNS_CLASS m_ledPatterns;
 #if ACCELEROMETER
@@ -202,6 +203,20 @@ private:
     void setupBootProgress();
     void burnInitialStateInEEPROM();
     void sequenceChanged();
+    
+    inline void autoNextPatternItem() {
+        m_autoNextPatternItem = true;
+        nextPatternItem();
+        m_autoNextPatternItem = false;
+    }
+    
+    inline uint32_t tickCountInMS() {
+        if (m_ledPatterns.isPaused()) {
+            return m_ledPatterns.getPauseTime();
+        } else {
+            return millis();
+        }
+    }
     
 public:
     CWPatternSequenceManager();

@@ -182,6 +182,9 @@ CyrWheelLEDPatterns::CyrWheelLEDPatterns(uint32_t ledCount) :
     // 24mhz would be ideal, but it flickers... in tests
     static CD_APA102Controller<APA102_LED_DATA_PIN, APA102_LED_CLOCK_PIN, BGR> c;
     FastLED.addLeds(&c, m_leds, ledCount, 0);
+    // 15 amps max? TODO: test this...
+    // 18 amps for now...
+    FastLED.setMaxPowerInVoltsAndMilliamps(5.0, 18000);
     
 #elif USE_MANUAL_SPI
 

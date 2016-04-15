@@ -223,6 +223,7 @@ void CWPatternSequenceManager::setDynamicPatternType(LEDPatternType type, uint32
     header.filename = NULL;
     setSingleItemPatternHeader(&header);
     m_currentPatternItemIndex = 0;
+    resetStartingTime();
     loadCurrentPatternItem();
 }
 
@@ -247,9 +248,7 @@ void CWPatternSequenceManager::setDynamicBitmapPatternType(const char *filename,
     
     // TODO: it would be better to find this item in the parent and set it...
     m_dynamicPattern = true;
-    
-    
-    
+    resetStartingTime();
     loadCurrentPatternItem();
 }
 
@@ -1261,10 +1260,19 @@ void CWPatternSequenceManager::process() {
             // subtract out how much time has passed from our initial pattern, and when we actually started the first timed pattern. This gives more accurate timings.
             uint32_t timePassed = millis() - m_timedUsedBeforeCurrentPattern - m_timedPatternStartTime;
             if (timePassed >= itemHeader->duration) {
-                nextPatternItem();
+                autoNextPatternItem();
             }
         } else {
             // It is waiting for some other condition before going to the next pattern (button click is the only condition now)
+            // But if we are in the simulator, we do some more work
+#if PATTERN_EDITOR
+            uint32_t timePassed = millis() - m_timedUsedBeforeCurrentPattern - m_timedPatternStartTime;
+            if (timePassed >= itemHeader->duration) {
+                // reset our start time and ping the position changed
+                m_timedPatternStartTime = millis() - m_timedUsedBeforeCurrentPattern;
+                sendWheelChanged(CDWheelChangeReasonPlayheadPositionChanged);
+            }
+#endif
         }
     }
 }
@@ -1322,21 +1330,67 @@ void CWPatternSequenceManager::setLowBatteryWarning() {
 
 void CWPatternSequenceManager::firstPatternItem() {
     m_currentPatternItemIndex = 0;
+    resetStartingTime();
     loadCurrentPatternItem();
 }
 
 void CWPatternSequenceManager::priorPatternItem() {
     m_currentPatternItemIndex--;
+    if (m_currentPatternItemIndex < 0) {
+        // loop to the end
+        m_currentPatternItemIndex = m_numberOfPatternItems - 1; // m_currentPatternItemIndex could be negative if there are no patterns
+    }
+    // Keep track of the prior that passed; if m_currentPatternItemIndex is 0, we reset in loadCurrentPatternItem
+    if (m_currentPatternItemIndex == 0) {
+        resetStartingTime();
+    } else if (m_currentPatternItemIndex > 0) {
+        // Just manually reset m_timedUsedBeforeCurrentPattern; this isn't used often so who cares if it iterates
+        m_timedUsedBeforeCurrentPattern = 0;
+        for (int i = 0; i < m_currentPatternItemIndex; i++) {
+            m_timedUsedBeforeCurrentPattern += m_patternItems[i].duration;
+        }
+        m_timedPatternStartTime = tickCountInMS() - m_timedUsedBeforeCurrentPattern;
+#if PATTERN_EDITOR
+        sendWheelChanged(CDWheelChangeReasonPlayheadPositionChanged);
+#endif   
+    }
+    
     loadCurrentPatternItem();
 }
 
 void CWPatternSequenceManager::nextPatternItem() {
     m_currentPatternItemIndex++;
+    if (m_currentPatternItemIndex <= 0 || m_currentPatternItemIndex >= m_numberOfPatternItems) {
+        // Loop back or the initial time
+        m_currentPatternItemIndex = 0;
+        resetStartingTime();
+    } else {
+        // m_currentPatternItemIndex is >= 1
+        if (m_autoNextPatternItem) {
+            // We are just going to the next and can inc our time easily...
+            m_timedUsedBeforeCurrentPattern += m_patternItems[m_currentPatternItemIndex - 1].duration;
+            // If the actual time passed isn't this long...well, make it so..i think this was to fix up some slight timing issues
+            if (!isPaused() && (tickCountInMS() - m_timedPatternStartTime) < m_timedUsedBeforeCurrentPattern) {
+                m_timedPatternStartTime = tickCountInMS() - m_timedUsedBeforeCurrentPattern; // go back in the past!
+            }
+        } else {
+            // Slower computation method (just like prior)
+            m_timedUsedBeforeCurrentPattern = 0;
+            for (int i = 0; i < m_currentPatternItemIndex; i++) {
+                m_timedUsedBeforeCurrentPattern += m_patternItems[i].duration;
+            }
+            m_timedPatternStartTime = tickCountInMS() - m_timedUsedBeforeCurrentPattern;
+        }
+#if PATTERN_EDITOR
+        sendWheelChanged(CDWheelChangeReasonPlayheadPositionChanged);
+#endif
+    }
+    
     loadCurrentPatternItem();
 }
 
 void CWPatternSequenceManager::resetStartingTime() {
-    m_timedPatternStartTime = millis();
+    m_timedPatternStartTime = tickCountInMS();
     m_timedUsedBeforeCurrentPattern = 0;
 #if PATTERN_EDITOR
     sendWheelChanged(CDWheelChangeReasonPlayheadPositionChanged);
@@ -1347,6 +1401,7 @@ void CWPatternSequenceManager::resetStartingTime() {
 
 void CWPatternSequenceManager::setPlayheadPositionInMS(uint32_t position) {
     // back it up to pretend the start time was in the past
+    // NOTE: setDurationPassed also fixes up the paused time, if paused, so we use millis()
     m_timedPatternStartTime = millis() - position;
     // Based on that, setup m_timedUsedBeforeCurrentPattern and m_currentPatternItemIndex
     m_timedUsedBeforeCurrentPattern = 0;
@@ -1370,11 +1425,13 @@ void CWPatternSequenceManager::setPlayheadPositionInMS(uint32_t position) {
         // Figure out how far into the current pattern we are and assign its position based on that
         uint32_t positionInCurrentPattern = position - m_timedUsedBeforeCurrentPattern;
         m_ledPatterns.setDurationPassed(positionInCurrentPattern);
+        // show the current state in case we are paused
+        m_ledPatterns.show();
     }
 }
 
 uint32_t CWPatternSequenceManager::getPlayheadPositionInMS() {
-    return millis() - m_timedPatternStartTime;
+    return tickCountInMS() - m_timedPatternStartTime;
 }
 
 
@@ -1403,7 +1460,7 @@ void CWPatternSequenceManager::loadPatternItemHeaderIntoPatterns(CDPatternItemHe
         // The filename is the bitmap we are set to play back
         char fullFilenamePath[MAX_PATH];
         _getFullpathName(_getRootDirectory(), m_currentFileInfo, fullFilenamePath, MAX_PATH);
-#if DEBUG
+#if 0 // DEBUG
         DEBUG_PRINTF("Bitmap: %s\r\n", fullFilenamePath);
 #endif
         m_ledPatterns.setBitmapFilename(fullFilenamePath);
@@ -1420,7 +1477,7 @@ void CWPatternSequenceManager::loadPatternItemHeaderIntoPatterns(CDPatternItemHe
             char fullFilenamePath[MAX_PATH];
             _appendFilename(_getPatternDirectory(), itemHeader->filename, fullFilenamePath, MAX_PATH);
             
-#if DEBUG
+#if 0 // DEBUG
             DEBUG_PRINTF("Referenced bitmap: %s\r\n", fullFilenamePath);
 #endif
             
@@ -1470,33 +1527,15 @@ void CWPatternSequenceManager::loadCurrentPatternItem() {
     }
     
     // Ensure we always have good data
-    if (m_currentPatternItemIndex < 0) {
-        m_currentPatternItemIndex = m_numberOfPatternItems - 1;
-    } else if (m_currentPatternItemIndex >= m_numberOfPatternItems) {
-        // Loop around
+    // TODO: I'm now expecting the caller to do this, but do it here just to check
+    if (m_currentPatternItemIndex < 0 || m_currentPatternItemIndex >= m_numberOfPatternItems) {
+        ASSERT(false);
         m_currentPatternItemIndex = 0;
-    }
-    // m_currentPatternItemIndex is validated, so directly grab it from the array
-    CDPatternItemHeader *itemHeader = &m_patternItems[m_currentPatternItemIndex];
-    
-    // if we are the first timed pattern, then reset m_timedPatternStartTime and how many timed patterns have gone before us
-    if (itemHeader->patternEndCondition == CDPatternEndConditionAfterDuration) {
-        // We are the first timed one, or the only one, then we just loop
-        if (m_currentPatternItemIndex == 0 || m_numberOfPatternItems == 1) {
-            resetStartingTime();
-        } else {
-            ASSERT(m_currentPatternItemIndex >= 1);
-            // Keep track of the full amount of previous patterns that passed
-            m_timedUsedBeforeCurrentPattern += getPreviousItemHeader()->duration;
-            // If the actual time passed isn't this long...well, make it so..i think this was to fix up some slight timing issues
-            if ((millis() - m_timedPatternStartTime) < m_timedUsedBeforeCurrentPattern) {
-                m_timedPatternStartTime = millis() - m_timedUsedBeforeCurrentPattern; // go back in the past!
-            }
-        }
-    } else if (m_currentPatternItemIndex == 0) {
         resetStartingTime();
     }
     
+    // m_currentPatternItemIndex is validated, so directly grab it from the array
+    CDPatternItemHeader *itemHeader = &m_patternItems[m_currentPatternItemIndex];
     loadPatternItemHeaderIntoPatterns(itemHeader);
     
 #if ACCELEROMETER
