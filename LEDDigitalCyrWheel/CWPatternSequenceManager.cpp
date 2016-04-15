@@ -1433,7 +1433,8 @@ void CWPatternSequenceManager::resetStartingTime() {
 void CWPatternSequenceManager::setPlayheadPositionInMS(uint32_t position) {
     // back it up to pretend the start time was in the past
     // NOTE: setDurationPassed also fixes up the paused time, if paused, so we use millis()
-    m_timedPatternStartTime = millis() - position;
+    uint32_t now = millis();
+    m_timedPatternStartTime = now - position;
     // Based on that, setup m_timedUsedBeforeCurrentPattern and m_currentPatternItemIndex
     m_timedUsedBeforeCurrentPattern = 0;
     if (m_numberOfPatternItems == 0) {
@@ -1455,7 +1456,7 @@ void CWPatternSequenceManager::setPlayheadPositionInMS(uint32_t position) {
         
         // Figure out how far into the current pattern we are and assign its position based on that
         uint32_t positionInCurrentPattern = position - m_timedUsedBeforeCurrentPattern;
-        m_ledPatterns.setDurationPassed(positionInCurrentPattern);
+        m_ledPatterns.setDurationPassed(positionInCurrentPattern, now);
         // show the current state in case we are paused
         m_ledPatterns.show();
     }
