@@ -1592,9 +1592,11 @@ void CWPatternSequenceManager::play() {
         uint32_t now = millis();
         // we might wrap...
         uint32_t pausedTime = m_ledPatterns.getPauseTime();
-        if (pausedTime < now) {
-            uint32_t pausedDuration = pausedTime - now;
-            m_timedPatternStartTime += pausedDuration;
+        if (now > pausedTime) {
+            uint32_t timePassed = now - pausedTime;
+            m_timedPatternStartTime += timePassed;
+        } else {
+            // wrap..
         }
         m_ledPatterns.play(); // this unpauses us
         sendWheelChanged(CDWheelChangeReasonStateChanged);
