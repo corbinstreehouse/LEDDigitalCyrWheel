@@ -643,7 +643,7 @@ void CDWheelBluetoothController::_sendOrientationData() {
  
  */
 
-void CDWheelBluetoothController::_handleUploadSequence() {
+void CDWheelBluetoothController::_handleUploadFile() {
     char filename[MAX_PATH];
     if (!_readFilename(filename, MAX_PATH)) {
         return;
@@ -727,7 +727,7 @@ void CDWheelBluetoothController::_handleUploadSequence() {
     // Send a ping back that we finished
     m_ble.setMode(BLUEFRUIT_MODE_DATA);
     // Write the UART command we are done sending...
-    m_ble.write((int8_t)CDWheelUARTRecieveCommandUploadSequenceFinished);
+    m_ble.write((int8_t)CDWheelUARTRecieveCommandUploadFinished);
 }
 
 void CDWheelBluetoothController::process() {
@@ -887,8 +887,8 @@ void CDWheelBluetoothController::process() {
                     }
                     break;
                 }
-                case CDWheelUARTCommandUploadSequence: {
-                    _handleUploadSequence();
+                case CDWheelUARTCommandUploadFile: {
+                    _handleUploadFile();
                     break;
                 }
                 case CDWheelUARTCommandDeletePatternSequence: {

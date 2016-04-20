@@ -27,9 +27,6 @@
 #include "CDWheelBluetoothController.h"
 #endif
 
-
-#define IGNORE_VOLTAGE 0 //for hardware testing w/out a battery
-
 // 2 cell LiPO, 4.2v each: 8.4v max. 3.0v should be the min, 3.0*2=6v min
 #define LOW_VOLTAGE_VALUE 6.3 // min voltage for 2 cells....I was seeing values "normally" from 7.57+ on up...probably due to voltage sag when illuminating things. I might have to average the voltage over time to see what i am really getting, or lower the min value.
 #define TIME_BETWEEN_VOLTAGE_READS 1000 // read every second..
@@ -125,12 +122,8 @@ void setup() {
     
 
 #if DEBUG
-    #if IGNORE_VOLTAGE
         // Having this on could be bad..flash red just to let me know...
-        g_sequenceManager.flashThreeTimes(CRGB::Red);
-    #else
-        g_sequenceManager.getLEDPatterns()->flashOnce(CRGB::Red);
-    #endif
+    g_sequenceManager.flashThreeTimes(CRGB::Red);
 #endif
     
     if (g_sequenceManager.getCardInitPassed()) {
@@ -156,15 +149,18 @@ void setup() {
 
 
 bool checkVoltage() {
-#if DEBUG
-    if (IGNORE_VOLTAGE) return true;
-#endif
     // check the voltage; if we are low, flast red 3 times at a low brightness...
     static uint32_t lastReadVoltageTime = 0;
     if (millis() - lastReadVoltageTime > TIME_BETWEEN_VOLTAGE_READS) {
         lastReadVoltageTime = millis();
         float voltage = readBatteryVoltage();
-        if (voltage < LOW_VOLTAGE_VALUE) {
+        bool voltageLow = voltage < LOW_VOLTAGE_VALUE;
+#if DEBUG
+        if (voltageLow && voltage < 1.0) {
+            voltageLow = false; // the voltage read isn't hooked up so ignor eit
+        }
+#endif
+        if (voltageLow) {
             DEBUG_PRINTF("---------------------- LOW BATTERY VOLTAGE: %f\r\n", voltage);
             // half the max brightness...
             g_sequenceManager.setLowBatteryWarning();

@@ -1280,8 +1280,8 @@ void CWPatternSequenceManager::process() {
 
 void CWPatternSequenceManager::updateBrightness() {
     if (m_lowBattery) {
-        // Harcoded to have a low brightness
-        m_ledPatterns.setBrightness(64);
+        // Harcoded to have a low brightness..but is this low enough?
+        m_ledPatterns.setBrightness(25);
     } else {
         CDPatternItemHeader *itemHeader = getCurrentItemHeader();
         if (itemHeader && itemHeader->shouldSetBrightnessByRotationalVelocity) {

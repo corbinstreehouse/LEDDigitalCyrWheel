@@ -141,6 +141,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9D0C64721CC46273005D7C6D /* RamMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RamMonitor.h; sourceTree = "<group>"; };
 		9D0EEBC01BFC372F002C687E /* analog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = analog.c; sourceTree = "<group>"; };
 		9D0EEBC11BFC372F002C687E /* Arduino.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arduino.h; sourceTree = "<group>"; };
 		9D0EEBC21BFC372F002C687E /* arm_common_tables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = arm_common_tables.h; sourceTree = "<group>"; };
@@ -5543,6 +5544,7 @@
 		9DD1E66D193EC47100290878 /* LEDPatterns */ = {
 			isa = PBXGroup;
 			children = (
+				9D0C64721CC46273005D7C6D /* RamMonitor.h */,
 				9D908D981C5D630500908670 /* LEDPatternType.h */,
 				9DD1E66F193EC47100290878 /* LEDPatterns.h */,
 				9DD1E66E193EC47100290878 /* LEDPatterns.cpp */,

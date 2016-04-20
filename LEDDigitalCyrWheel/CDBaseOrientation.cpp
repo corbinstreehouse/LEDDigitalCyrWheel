@@ -12,7 +12,7 @@
 
 uint8_t CDBaseOrientation::getRotationalVelocityBrightness(uint8_t currentBrightness) {
 #define MIN_VELOCITY_BRIGHTNESS 50
-#define MAX_VELOCITY_BRIGHTNESS 240 // Not too bright....but seems bright
+#define MAX_VELOCITY_BRIGHTNESS 140 // Not too bright....but seems bright
     
     uint8_t targetBrightness = 0;
 #define MAX_ROTATIONAL_VELOCITY 800 // at this value, we hit max brightness, but it is hard to hit..usually I hit half

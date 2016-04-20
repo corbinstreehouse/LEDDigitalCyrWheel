@@ -54,7 +54,7 @@ typedef CD_ENUM(int8_t, CDWheelUARTCommand)  {
     CDWheelUARTCommandRequestSequenceName,
     CDWheelUARTCommandRequestCustomSequences,
     CDWheelUARTCommandRequestFilenames,
-    CDWheelUARTCommandUploadSequence,
+    CDWheelUARTCommandUploadFile,
     CDWheelUARTCommandDeletePatternSequence,
     CDWheelUARTCommandOrientationStartStreaming,
     CDWheelUARTCommandOrientationEndStreaming,
@@ -72,7 +72,7 @@ typedef CD_ENUM(int8_t, CDWheelUARTRecieveCommand)  {
     CDWheelUARTRecieveCommandCurrentSequenceName,
     CDWheelUARTRecieveCommandCustomSequences, //
     CDWheelUARTRecieveCommandFilenames, //
-    CDWheelUARTRecieveCommandUploadSequenceFinished,
+    CDWheelUARTRecieveCommandUploadFinished,
     CDWheelUARTRecieveCommandOrientationData,
     
     

@@ -72,7 +72,7 @@ private:
     void _sendFilenamesInDirectory(const char *dir);
     void _countSequencesForFileInfo(const CDPatternFileInfo *fileInfo);
     void _writeSequenceFilenameForFileInfo(const CDPatternFileInfo *fileInfo);
-    void _handleUploadSequence();
+    void _handleUploadFile();
     void _handleDeleteSequence();
     bool _readFilename(char *buffer, size_t bufferSize);
     int _writeFilename(char *name);
