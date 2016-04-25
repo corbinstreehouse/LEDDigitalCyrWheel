@@ -181,6 +181,7 @@ CyrWheelLEDPatterns::CyrWheelLEDPatterns(uint32_t ledCount) :
     // clock pin: 14
     // 24mhz would be ideal, but it flickers... in tests
     static CD_APA102Controller<APA102_LED_DATA_PIN, APA102_LED_CLOCK_PIN, BGR> c;
+    c.setCorrection(TypicalLEDStrip);
     FastLED.addLeds(&c, m_leds, ledCount, 0);
     // 15 amps max? TODO: test this...
     // 18 amps for now...
