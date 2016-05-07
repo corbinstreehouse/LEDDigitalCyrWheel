@@ -1342,7 +1342,8 @@ void CWPatternSequenceManager::rewind() {
         uint32_t position = tickCountInMS() - m_timedPatternStartTime;
         // some threshold of allowing it to rest
         uint32_t timePassed = position - m_timedUsedBeforeCurrentPattern;
-        if (timePassed > 500) { // half a second...
+        uint32_t minToGo = isPaused() ? 50 : 500;
+        if (timePassed > minToGo) { // half a second...
             // Okay reset
             m_timedPatternStartTime = tickCountInMS() - m_timedUsedBeforeCurrentPattern;
 #if PATTERN_EDITOR
