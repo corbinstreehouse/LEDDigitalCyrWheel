@@ -128,7 +128,8 @@ protected:
 // 12Mhz
 // Try 24? -- see issues..
 // 8 mhz might work - 12mhz is too fast and causes corruption
-static SPISettings m_spiSettings = SPISettings(8000000, MSBFIRST, SPI_MODE0);
+// 8 Mhz causes corruption still, so trying 7mhz
+static SPISettings m_spiSettings = SPISettings(7000000, MSBFIRST, SPI_MODE0);
 
 void CyrWheelLEDPatterns::_spiBegin() {
     // DOUT/ MOSI on pin 7 for this
@@ -181,7 +182,7 @@ CyrWheelLEDPatterns::CyrWheelLEDPatterns(uint32_t ledCount) :
     // clock pin: 14
     // 24mhz would be ideal, but it flickers... in tests
     static CD_APA102Controller<APA102_LED_DATA_PIN, APA102_LED_CLOCK_PIN, BGR> c;
-    c.setCorrection(TypicalLEDStrip);
+//    c.setCorrection(TypicalLEDStrip);
     FastLED.addLeds(&c, m_leds, ledCount, 0);
     // 15 amps max? TODO: test this...
     // 18 amps for now...
