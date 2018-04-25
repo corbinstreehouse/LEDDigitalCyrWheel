@@ -97,14 +97,15 @@ void CDWheelBluetoothController::init(CWPatternSequenceManager *manager, bool bu
     m_manager = manager;
     m_streamingOreintationData = false;
     
-    // Init only if the button is not down on startup...
-    m_initialized = !buttonIsDown;
+    // Init only if the button IS down on startup...
+    m_initialized = buttonIsDown;
     if (!m_initialized) {
         // Turn off the BLE chip??
         // I don't think we can turn it off, but we could lower the power with:
         // AT+BLEPOWERLEVEL=-40 // lowest power
         m_ble.begin(VERBOSE_MODE);
-        m_ble.sendCommandCheckOK("AT+BLEPOWERLEVEL=-40"); // Highest transmit power (0 might work well too). Doesn't affect speed, but might affect
+        // don't wait for an OK..just send it..
+        m_ble.println("AT+BLEPOWERLEVEL=-40"); // Highest transmit power (0 might work well too). Doesn't affect speed, but might affect
         
         return;
     }
