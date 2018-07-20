@@ -1818,8 +1818,8 @@
 				9D0EEC2F1BFC372F002C687E /* yield.cpp */,
 			);
 			name = teensy/cores/teensy3;
-			path = ../../../../Applications/Arduino.app/Contents/Java/hardware/teensy/avr/cores/teensy3;
-			sourceTree = "<group>";
+			path = /Applications/Arduino.app/Contents/Java/hardware/teensy/avr/cores/teensy3;
+			sourceTree = "<absolute>";
 		};
 		9D0EEBC61BFC372F002C687E /* avr */ = {
 			isa = PBXGroup;
@@ -1860,8 +1860,8 @@
 				9D0EED341BFC3747002C687E /* Wire */,
 			);
 			name = teensy/libraries;
-			path = ../../../../Applications/Arduino.app/Contents/Java/hardware/teensy/avr/libraries;
-			sourceTree = "<group>";
+			path = /Applications/Arduino.app/Contents/Java/hardware/teensy/avr/libraries;
+			sourceTree = "<absolute>";
 		};
 		9D0EEC5C1BFC3747002C687E /* Bounce */ = {
 			isa = PBXGroup;
